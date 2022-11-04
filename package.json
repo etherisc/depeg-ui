@@ -1,0 +1,34 @@
+{
+  "name": "depeg-interface",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typechainGifContractTypes": "typechain --target ethers-v5 --out-dir src/contracts/gif-contracts './node_modules/@etherisc/gif-contracts/build/**/*json'",
+    "typechainChainLinkAggregatorType": "typechain --target ethers-v5 --out-dir src/contracts/chainlink './node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json'"
+  },
+  "dependencies": {
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.25",
+    "@types/react-blockies": "^1.4.1",
+    "@types/react-dom": "^18.0.8",
+    "abi-coder": "^4.1.1",
+    "eslint": "^8.26.0",
+    "eslint-config-next": "^13.0.2",
+    "ethers": "^5.7.2",
+    "next": "^13.0.2",
+    "react": "^18.2.0",
+    "react-blockies": "^1.4.1",
+    "react-dom": "^18.2.0",
+    "typescript": "^4.8.4"
+  },
+  "devDependencies": {
+    "@chainlink/contracts": "^0.5.1",
+    "@etherisc/gif-contracts": "2.0.0-rc.1-0",
+    "@typechain/ethers-v5": "^10.1.1",
+    "typechain": "^8.1.1"
+  }
+}
