@@ -11,6 +11,11 @@
     "typechainChainLinkAggregatorType": "typechain --target ethers-v5 --out-dir src/contracts/chainlink './node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json'"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@fontsource/roboto": "^4.5.8",
+    "@mui/icons-material": "^5.10.9",
+    "@mui/material": "^5.10.12",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-blockies": "^1.4.1",
