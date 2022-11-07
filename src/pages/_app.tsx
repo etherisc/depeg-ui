@@ -10,6 +10,7 @@ import Container from '@mui/material/Container';
 import Header from '../components/shared/header';
 import Head from 'next/head';
 import { initialSignerData, SignerActionType, SignerContext, signerReducer } from '../context/signer_context';
+import Footer from '../components/shared/footer';
 
 // TODO: extract to a separate file
 async function switchAccount(dispatch: any) {
@@ -74,6 +75,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <Container maxWidth="lg" sx={{ p: 1 }}>
           <Component {...pageProps} />
         </Container>
+        <Footer />
       </SignerContext.Provider>
     </React.Fragment>
   );
