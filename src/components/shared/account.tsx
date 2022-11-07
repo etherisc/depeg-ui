@@ -29,8 +29,8 @@ export default function Account() {
     if (signerContext?.data.signer != undefined && address !== undefined && address !== "") {
         account = (
             <Box sx={{ display: 'inline-flex', alignItems: 'center' }}>
-                <Avatar sx={{ mr: 1 }}>
-                    <Blockies seed={address} size={8} scale={4} />
+                <Avatar sx={{ mr: 1 }} >
+                    <Blockies seed={address} size={10} scale={4} />
                 </Avatar>
                 <Box sx={{ mr: 1, alignItems: 'center', verticalAlign: 'middle' }}>
                     <AccountAddress signer={signerContext?.data.signer} address={address}/>
