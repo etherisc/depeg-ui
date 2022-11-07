@@ -11,6 +11,10 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import Account from './account';
+import LoginWithMetaMaskButton from './login_metamask';
+import LoginWithWalletConnectButton from './login_walletconnect';
+import Logout from './logout';
 
 export default function Header() {
 
@@ -40,10 +44,11 @@ export default function Header() {
                         
                     </Box>
 
-                    <Box sx={{ flexGrow: 0 }}>
-                        <IconButton sx={{ p: 0 }}>
-                            <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                        </IconButton>
+                    <Box sx={{ flexGrow: 0, display: 'inline-flex' }}>
+                        <Account />
+                        <Logout />
+                        <LoginWithMetaMaskButton />
+                        <LoginWithWalletConnectButton />
                     </Box>
                 </Toolbar>
             </Container>
