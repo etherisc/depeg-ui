@@ -1,7 +1,8 @@
 import { ethers } from "ethers";
 import { useContext } from "react";
-import { SignerActionType, SignerContext } from "../../context/signer_context";
+import { setSigner, SignerContext } from "../../context/signer_context";
 import Button from '@mui/material/Button'
+import { getAccount } from "../../utils/metamask";
 
 export default function LoginWithMetaMaskButton() {
     const signerContext = useContext(SignerContext);
@@ -15,20 +16,7 @@ export default function LoginWithMetaMaskButton() {
             return;
         }
 
-        // A Web3Provider wraps a standard Web3 provider, which is
-        // what MetaMask injects as window.ethereum into each page
-        // @ts-ignore
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-
-        // MetaMask requires requesting permission to connect users accounts
-        await provider.send("eth_requestAccounts", []);
-
-        console.log("getting signer");
-        // The MetaMask plugin also allows signing transactions to
-        // send ether and pay to change state within the blockchain.
-        // For this, you need the account signer...
-        const signer = provider.getSigner();
-        signerContext?.dispatch({ type: SignerActionType.SET, signer: signer, provider: provider });
+        getAccount(signerContext?.dispatch);
     }
 
     let button = (<></>);

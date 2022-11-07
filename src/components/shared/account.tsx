@@ -1,9 +1,7 @@
-import { ContentCopy } from "@mui/icons-material";
 import { useContext, useEffect, useState } from "react";
 import Blockies from 'react-blockies';
 import { SignerContext } from "../../context/signer_context";
 import { DOT, NBSP } from "../../utils/chars";
-import { useSnackbar } from 'notistack';
 import { Box, Avatar } from "@mui/material";
 import Balance from "./balance";
 import AccountAddress from "./account_address";

@@ -1,5 +1,5 @@
-import { providers, Signer } from "ethers";
-import React from "react";
+import { ethers, providers, Signer } from "ethers";
+import React, { Dispatch } from "react";
 
 export interface SignerContext {
     data: SignerData;
@@ -32,7 +32,7 @@ export interface SignerAction {
     provider?: providers.Web3Provider;
 }
 
-export const signerReducer = (state: SignerData, action: SignerAction): SignerData => {
+export function signerReducer(state: SignerData, action: SignerAction): SignerData {
     switch (action.type) {
         case SignerActionType.SET:
             return { 
@@ -52,4 +52,22 @@ export const signerReducer = (state: SignerData, action: SignerAction): SignerDa
         default:
             throw Error("unxpected action type " + action.type);
     }
+}
+
+export function setSigner(dispatch: Dispatch<SignerAction>, provider: ethers.providers.Web3Provider) {
+    const signer = provider.getSigner();  
+    console.log("set signer", signer);
+    dispatch({ type: SignerActionType.SET, signer: signer, provider: provider });
+}
+
+export function updateSigner(dispatch: Dispatch<SignerAction>, provider: ethers.providers.Web3Provider) {
+    const signer = provider.getSigner();  
+    console.log("update signer", signer);
+    dispatch({ type: SignerActionType.UPDATE_SIGNER, signer: signer });
+}
+
+export function removeSigner(dispatch: Dispatch<SignerAction>) {
+    dispatch({ type: SignerActionType.UNSET });
+    console.log("unset signer");
+    window.localStorage.clear();
 }

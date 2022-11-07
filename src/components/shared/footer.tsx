@@ -1,8 +1,5 @@
-import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import { makeStyles } from '@mui/material/styles';
-import Link from 'next/link';
 import React from 'react';
 import ChainData from './chain_data';
 

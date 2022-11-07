@@ -1,13 +1,12 @@
 import { useContext } from "react";
-import { SignerActionType, SignerContext } from "../../context/signer_context";
+import { removeSigner, SignerContext } from "../../context/signer_context";
 import Button from '@mui/material/Button'
 
 export default function Logout() {
     const signerContext = useContext(SignerContext);
 
     const logout = async () => {
-        signerContext?.dispatch({ type: SignerActionType.UNSET });
-        window.localStorage.clear();
+        removeSigner(signerContext!!.dispatch);
     }
 
     let button = (<></>);
