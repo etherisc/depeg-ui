@@ -11,6 +11,7 @@ import Header from '../components/shared/header';
 import Head from 'next/head';
 import { initialSignerData, SignerActionType, SignerContext, signerReducer } from '../context/signer_context';
 import Footer from '../components/shared/footer';
+import { SnackbarProvider } from 'notistack';
 
 // TODO: extract to a separate file
 async function switchAccount(dispatch: any) {
@@ -71,11 +72,13 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <CssBaseline enableColorScheme />
       <SignerContext.Provider value={{ data, dispatch}}>
-        <Header />
-        <Container maxWidth="lg" sx={{ p: 1 }}>
-          <Component {...pageProps} />
-        </Container>
-        <Footer />
+        <SnackbarProvider maxSnack={3}>
+          <Header />
+          <Container maxWidth="lg" sx={{ p: 1 }}>
+            <Component {...pageProps} />
+          </Container>
+          <Footer />
+        </SnackbarProvider>
       </SignerContext.Provider>
     </React.Fragment>
   );
