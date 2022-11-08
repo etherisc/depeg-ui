@@ -13,9 +13,10 @@ import { initialSignerData, removeSigner, SignerContext, signerReducer } from '.
 import Footer from '../components/shared/footer';
 import { SnackbarProvider } from 'notistack';
 import { getAccount } from '../utils/metamask';
+import { appWithTranslation } from 'next-i18next';
 
 
-export default function App({ Component, pageProps }: AppProps) {
+export function App({ Component, pageProps }: AppProps) {
   const [ data, dispatch ] = useReducer(signerReducer, initialSignerData());
 
   if (data.provider != undefined) {
@@ -67,3 +68,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </React.Fragment>
   );
 }
+
+export default appWithTranslation(App);

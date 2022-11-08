@@ -1,0 +1,8 @@
+{
+    "title": "Apply for {{currency}} depeg protection",
+    "step0": "Connect wallet",
+    "step1": "Enter data",
+    "step2": "Buy",
+    "step3": "Confirm premium allowance",
+    "step4": "Confirm payment"
+}
