@@ -9,6 +9,8 @@ export default function Logout() {
         removeSigner(signerContext!!.dispatch);
     }
 
+    // TODO: i18n
+    
     let button = (<></>);
 
     if (signerContext?.data.signer !== undefined) {

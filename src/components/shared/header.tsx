@@ -13,6 +13,8 @@ export default function Header() {
 
     const pages = ['Products', 'Pricing', 'Blog'];
 
+    // TODO: i18n
+
     return (
         <AppBar position="static" sx={{ mb: 2 }}>
             <Container maxWidth="xl">

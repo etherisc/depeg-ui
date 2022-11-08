@@ -7,6 +7,8 @@ import Button from '@mui/material/Button'
 export default function LoginWithWalletConnectButton() {
     const signerContext = useContext(SignerContext);
 
+    // TODO: i18n
+    
     async function login() {
         console.log("wallet connect login");
 

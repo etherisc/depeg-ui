@@ -29,6 +29,7 @@ export default function AccountAddress(props: AccountAddressProps) {
 
     async function copyAddressToClipboard() {
         await navigator.clipboard.writeText(address);
+        // TODO: i18n
         enqueueSnackbar('Address copied to clipboard',  { autoHideDuration: 2000, variant: 'info' });
     }
     

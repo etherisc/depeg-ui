@@ -7,6 +7,8 @@ import { getAccount } from "../../utils/metamask";
 export default function LoginWithMetaMaskButton() {
     const signerContext = useContext(SignerContext);
 
+    // TODO: i18n
+    
     async function login() {
         console.log("metamask login");
 
