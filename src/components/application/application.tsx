@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { SignerContext } from "../../context/signer_context";
 import { useTranslation } from 'next-i18next';
 import { InsuranceData } from "../../utils/insurance_data";
+import Form from "./form";
 
 export interface ApplicationProps {
     insurance: InsuranceData;
@@ -45,6 +46,8 @@ export default function Application(props: ApplicationProps) {
                         );
                     })}
                 </Stepper>
+
+                <Form />
             </div>
         </>
     );
