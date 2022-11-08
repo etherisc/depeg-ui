@@ -2,6 +2,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
+import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment from 'moment';
@@ -13,6 +14,8 @@ const formInputVariant = 'outlined';
 export interface FormProperties {
     disabled: boolean;
     walletAddress: string;
+    usd1: string;
+    usd2: string;
 }
 
 export default function Form(props: FormProperties) {
@@ -55,6 +58,7 @@ export default function Form(props: FormProperties) {
             </Grid>
             <Grid item xs={12}>
                 <TextField
+                    required
                     fullWidth
                     disabled={props.disabled}
                     variant={formInputVariant}
@@ -62,19 +66,24 @@ export default function Form(props: FormProperties) {
                     label={t('insuredAmount')}
                     type="text"
                     defaultValue=""
-                    required
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
+                    }}
                 />
             </Grid>
             <Grid item xs={6}>
                 <TextField
                     fullWidth
+                    required
                     disabled={props.disabled}
                     variant={formInputVariant}
                     id="coverageDurationDays"
                     label={t('coverageDurationDays')}
                     type="text"
                     defaultValue=""
-                    required
+                    InputProps={{
+                        endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
+                    }}
                 />
             </Grid>
             <Grid item xs={6}>
@@ -92,19 +101,24 @@ export default function Form(props: FormProperties) {
             <Grid item xs={12}>
                 <TextField
                     required
+                    fullWidth
                     disabled={props.disabled}
                     variant={formInputVariant}
                     id="premiumAmount"
                     label={t('premiumAmount')}
                     type="text"
                     defaultValue=""
-                    fullWidth
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>,
+                    }}
                 />
             </Grid>
             <Grid item xs={12}>
                 <FormControlLabel 
                     control={
-                        <Checkbox defaultChecked={false} />
+                        <Checkbox 
+                            defaultChecked={false}
+                            />
                     } 
                     disabled={props.disabled}
                     label={t('checkbox_t_and_c_label')} />

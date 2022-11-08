@@ -66,6 +66,8 @@ export default function Application(props: ApplicationProps) {
                 <Form 
                     disabled={activeStep < 1}
                     walletAddress={walletAddress}
+                    usd1={props.insurance.usd1}
+                    usd2={props.insurance.usd2}
                 />
             </div>
         </>
