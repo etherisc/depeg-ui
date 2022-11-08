@@ -8,6 +8,8 @@ import Account from './account';
 import LoginWithMetaMaskButton from './login_metamask';
 import LoginWithWalletConnectButton from './login_walletconnect';
 import Logout from './logout';
+import SvgIcon from '@mui/icons-material/Adb';
+import Image from 'next/image';
 
 export default function Header() {
 
@@ -19,20 +21,24 @@ export default function Header() {
         <AppBar position="static" sx={{ mb: 2 }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    {/* <SvgIcon viewbox="0 0 100 20" component={}>
+                        <img src="/etherisc_logo_white." alt="logo" />
+                    </SvgIcon> */}
+                    <Image src="/etherisc_logo_white.svg" alt="Etherisc logo" width={100} height={22} />
                     <Typography
                         variant="h6"
                         noWrap
                         component="a"
                         href="/"
                         sx={{
+                            ml: 2,
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
                             color: 'inherit',
                             textDecoration: 'none',
                         }}
                     >
-                        Etherisc Depeg Protection
+                        Depeg Protection
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>

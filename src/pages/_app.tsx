@@ -54,6 +54,7 @@ export function App({ Component, pageProps }: AppProps) {
     <React.Fragment>
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
+        <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <CssBaseline enableColorScheme />
       <SignerContext.Provider value={{ data, dispatch}}>
