@@ -14,7 +14,7 @@ export default function Header() {
     const pages = ['Products', 'Pricing', 'Blog'];
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" sx={{ mb: 2 }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />

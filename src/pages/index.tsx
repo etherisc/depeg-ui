@@ -1,14 +1,17 @@
-import Button from '@mui/material/Button'
-import Head from 'next/head'
+import Application, { ApplicationProps } from "../components/application/application";
+import { InsuranceData } from "../utils/insurance_data";
 
 export default function Home() {
+
+  const insurance = {
+      usd1: 'USDC',
+      usd2: 'USDT',
+    
+  } as InsuranceData;
+
   return (
     <>
-      <Head>
-        <title>Etherisc depeg protection</title>
-      </Head>
-
-      <Button variant="contained">Hello World</Button>
+      <Application insurance={insurance} />
     </>
   )
 }
