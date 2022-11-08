@@ -17,13 +17,29 @@ export default function Application(props: ApplicationProps) {
     
     const signerContext = useContext(SignerContext);
     const [activeStep, setActiveStep] = useState(signerContext?.data.signer === undefined ? 0 : 1);
+    const [walletAddress, setWalletAddress] = useState("");
+
+    async function walletDisconnected() {
+        setActiveStep(0);
+        setWalletAddress("");
+    }
+
+    if (signerContext?.data.signer !== undefined) {
+        signerContext?.data.signer.getAddress().then((address) => {
+            setWalletAddress(address);
+        });
+    }    
 
     useEffect(() => {
         console.log("signer changed");
         if (activeStep < 1 && signerContext?.data.signer !== undefined) {
             setActiveStep(1);
+            signerContext?.data.signer.getAddress().then((address) => {
+                // console.log("address: ", address);
+                setWalletAddress(address);
+            });
         } else if (signerContext?.data.signer === undefined) {
-            setActiveStep(0);
+            walletDisconnected();
         }
         
     }, [signerContext?.data.signer, activeStep]);
@@ -47,7 +63,10 @@ export default function Application(props: ApplicationProps) {
                     })}
                 </Stepper>
 
-                <Form />
+                <Form 
+                    disabled={activeStep < 1}
+                    walletAddress={walletAddress}
+                />
             </div>
         </>
     );

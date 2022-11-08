@@ -15,7 +15,7 @@ export default function Balance(props: BalanceProps) {
     const [ showBalanceUsd, setShowBalanceUsd ] = useState(false);
 
     useEffect(() => {
-        console.log("signer changed");
+        // console.log("signer changed");
         async function updateData() {
             const balance = await props.signer.getBalance();
             setBalance(balance);
@@ -25,11 +25,11 @@ export default function Balance(props: BalanceProps) {
                     props.usdAggregatorAddress, 
                     props.signer)
             const result = await chainlinkAggregatorAvaxUsd.latestRoundData();
-            console.log(result);
+            // console.log(result);
             const avaxUsdPrice = result.answer.toNumber() / 10 ** 8;
-            console.log(avaxUsdPrice);
+            // console.log(avaxUsdPrice);
             const balanceEth = Number.parseFloat(formatEthersNumber(balance!, 4));
-            console.log(balanceEth);
+            // console.log(balanceEth);
             setBalanceUsd(balanceEth * avaxUsdPrice);
         }
         updateData();
