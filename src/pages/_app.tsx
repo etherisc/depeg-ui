@@ -14,6 +14,8 @@ import Footer from '../components/shared/footer';
 import { SnackbarProvider } from 'notistack';
 import { getAccount } from '../utils/metamask';
 import { appWithTranslation } from 'next-i18next';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 
 export function App({ Component, pageProps }: AppProps) {
@@ -59,11 +61,13 @@ export function App({ Component, pageProps }: AppProps) {
       <CssBaseline enableColorScheme />
       <SignerContext.Provider value={{ data, dispatch}}>
         <SnackbarProvider maxSnack={3}>
-          <Header />
-          <Container maxWidth="lg" sx={{ p: 1 }}>
-            <Component {...pageProps} />
-          </Container>
-          <Footer />
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <Header />
+            <Container maxWidth="lg" sx={{ p: 1 }}>
+              <Component {...pageProps} />
+            </Container>
+            <Footer />
+          </LocalizationProvider>
         </SnackbarProvider>
       </SignerContext.Provider>
     </React.Fragment>

@@ -11,21 +11,25 @@
     "typechainChainLinkAggregatorType": "typechain --target ethers-v5 --out-dir src/contracts/chainlink './node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json'"
   },
   "dependencies": {
+    "@date-io/moment": "^2.16.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.12",
+    "@mui/x-date-pickers": "^5.0.7",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-blockies": "^1.4.1",
     "@types/react-dom": "^18.0.8",
     "@walletconnect/web3-provider": "^1.8.0",
     "abi-coder": "^4.1.1",
+    "add": "^2.0.6",
     "eslint": "^8.26.0",
     "eslint-config-next": "^13.0.2",
     "ethers": "^5.7.2",
     "i18next": "^22.0.4",
+    "moment": "^2.29.4",
     "next": "^13.0.2",
     "next-i18next": "^12.1.0",
     "notistack": "^2.0.8",
@@ -33,7 +37,8 @@
     "react-blockies": "^1.4.1",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.0.0",
-    "typescript": "^4.8.4"
+    "typescript": "^4.8.4",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.5.1",

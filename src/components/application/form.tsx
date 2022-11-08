@@ -4,7 +4,10 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField'
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import moment from 'moment';
 import { useTranslation } from 'next-i18next';
+import { useState } from 'react';
 
 const formInputVariant = 'outlined';
 
@@ -14,6 +17,12 @@ export interface FormProperties {
 
 export default function Form(props: FormProperties) {
     const { t } = useTranslation('application');
+
+    const [coverageUntil, setCoverageUntil] = useState<moment.Moment | null>(moment().add(3, 'month'));
+
+    const handleCoverageUntilChange = (date: moment.Moment | null) => {
+        setCoverageUntil(date);
+    };
     
     return (
         <Grid container maxWidth="md" spacing={4} mt={2} sx={{ p: 1, ml: 'auto', mr: 'auto' }} >
@@ -51,16 +60,16 @@ export default function Form(props: FormProperties) {
                 />
             </Grid>
             <Grid item xs={6}>
-                <TextField
-                    fullWidth
-                    variant={formInputVariant}
-                    id="coverageDurationUntil"
+                <DesktopDatePicker
                     label={t('coverageDurationUntil')}
-                    type="text"
-                    defaultValue=""
-                    required
-                />
-            </Grid>
+                    inputFormat="MM/DD/YYYY"
+                    value={coverageUntil}
+                    onChange={handleCoverageUntilChange}
+                    renderInput={(params) => <TextField {...params} fullWidth />}
+                    disablePast={true}
+                    />
+                {/* TODO: mobile version */}
+                </Grid>
             <Grid item xs={12}>
                 <TextField
                     fullWidth
