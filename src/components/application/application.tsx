@@ -25,7 +25,6 @@ export default function Application(props: ApplicationProps) {
     const [ readyToBuy, setReadyToBuy ] = useState(false);
 
     async function walletDisconnected() {
-        setActiveStep(0);
         setWalletAddress("");
     }
 
@@ -35,15 +34,17 @@ export default function Application(props: ApplicationProps) {
         });
     }    
 
+    // change steps according to application state
     useEffect(() => {
-        if (activeStep < 1 && signerContext?.data.signer !== undefined) {
+        if (signerContext?.data.signer === undefined) {
+            setActiveStep(0);
+            walletDisconnected();
+        } else if (activeStep < 1 && signerContext?.data.signer !== undefined) {
             setActiveStep(1);
             signerContext?.data.signer.getAddress().then((address) => {
                 // console.log("address: ", address);
                 setWalletAddress(address);
             });
-        } else if (signerContext?.data.signer === undefined) {
-            walletDisconnected();
         } else if (activeStep == 1 && readyToBuy) {
             setActiveStep(2);
         } else if (activeStep == 2 && !readyToBuy) { 
