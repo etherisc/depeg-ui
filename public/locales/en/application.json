@@ -7,6 +7,8 @@
     "step4": "Confirm payment",
     "insuredWallet": "Insured wallet",
     "insuredAmount": "Insured amount",
+    "insuredAmountMinError": "Insured amount must be at least {{currency}} {{amount}}",
+    "insuredAmountMaxError": "Insured amount must be at most {{currency}} {{amount}}",
     "coverageDurationDays": "Coverage duration",
     "coverageDurationUntil": "Coverage duration until *",
     "premiumAmount": "Premium",

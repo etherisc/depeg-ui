@@ -8,19 +8,21 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment from 'moment';
 import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { InsuranceData } from '../../model/insurance_data';
+import { formatCurrency } from '../../utils/numbers';
 
 const formInputVariant = 'outlined';
 
 export interface FormProperties {
     disabled: boolean;
     walletAddress: string;
-    usd1: string;
-    usd2: string;
+    insurance: InsuranceData;
 }
 
 export default function Form(props: FormProperties) {
     const { t } = useTranslation('application');
 
+    // wallet address
     const [ walletAddress, setWalletAddress ] = useState(props.walletAddress);
     function handleWalletAddressChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setWalletAddress((x.target as HTMLInputElement).value);
@@ -30,11 +32,38 @@ export default function Form(props: FormProperties) {
         setWalletAddress(props.walletAddress);
     }, [props.walletAddress]);
 
+    // insured amount
+    const [ insuredAmount, setInsuredAmount ] = useState(props.insurance.insuredAmountMax);
+    function handleInsuredAmountChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        let val = (x.target as HTMLInputElement).value;
+        if (val == "") {
+            setInsuredAmount(0);
+            return;
+        }
+        setInsuredAmount(parseInt(val.replaceAll(',', '')));
+    }
+
+    const [ insuredAmountError, setInsuredAmountError ] = useState("");
+    function validateInsuredAmount() {
+        if (insuredAmount < props.insurance.insuredAmountMin) {
+            setInsuredAmountError(t('insuredAmountMinError', { amount: formatCurrency(props.insurance.insuredAmountMin), currency: props.insurance.usd1 }));
+            return false;
+        } 
+        if ( insuredAmount > props.insurance.insuredAmountMax) {
+            setInsuredAmountError(t('insuredAmountMaxError', { amount: formatCurrency(props.insurance.insuredAmountMax), currency: props.insurance.usd1 }));
+            return false;
+        }
+        setInsuredAmountError("");
+        return true;
+    }
+
+    // coverage until
     const [coverageUntil, setCoverageUntil] = useState<moment.Moment | null>(moment().add(3, 'month'));
     const handleCoverageUntilChange = (date: moment.Moment | null) => {
         setCoverageUntil(date);
     };
 
+    // terms accepted and validation
     let buyButtonDisabled = props.disabled;
     useEffect(() => {
         // TODO: enable buy button if all fields are set and checkbox ticked
@@ -66,10 +95,14 @@ export default function Form(props: FormProperties) {
                     id="insuredAmount"
                     label={t('insuredAmount')}
                     type="text"
-                    defaultValue=""
                     InputProps={{
-                        startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
+                        startAdornment: <InputAdornment position="start">{props.insurance.usd1}</InputAdornment>,
                     }}
+                    value={formatCurrency(insuredAmount)}
+                    onChange={handleInsuredAmountChange}
+                    onBlur={validateInsuredAmount}
+                    helperText={insuredAmountError}
+                    error={insuredAmountError != ""}
                 />
                 {/* TODO: check if amount is in range min/max */}
                 {/* TODO: preload with wallet amount */}
@@ -115,7 +148,7 @@ export default function Form(props: FormProperties) {
                     type="text"
                     defaultValue=""
                     InputProps={{
-                        startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>,
+                        startAdornment: <InputAdornment position="start">{props.insurance.usd2}</InputAdornment>,
                     }}
                 />
                 {/* TODO: read only */}
