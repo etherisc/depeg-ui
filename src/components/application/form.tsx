@@ -8,7 +8,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment from 'moment';
 import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { InsuranceData } from '../../model/insurance_data';
+import { InsuranceApi } from '../../model/insurance_data';
 import { formatCurrency } from '../../utils/numbers';
 
 const formInputVariant = 'outlined';
@@ -16,7 +16,7 @@ const formInputVariant = 'outlined';
 export interface FormProperties {
     disabled: boolean;
     walletAddress: string;
-    insurance: InsuranceData;
+    insurance: InsuranceApi;
 }
 
 export default function Form(props: FormProperties) {

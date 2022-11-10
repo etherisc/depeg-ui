@@ -1,5 +1,5 @@
 import Application, { ApplicationProps } from "../components/application/application";
-import { InsuranceData } from "../model/insurance_data";
+import { InsuranceApi } from "../model/insurance_data";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from "next-i18next";
 import Head from "next/head";
@@ -17,7 +17,7 @@ export default function Home() {
       calculatePremium(walletAddress, insuredAmount, coverageDurationDays) {
         return Promise.resolve(insuredAmount * 0.017);
       },
-  } as InsuranceData;
+  } as InsuranceApi;
 
   const {t} = useTranslation('common');
 

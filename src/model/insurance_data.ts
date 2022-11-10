@@ -1,4 +1,4 @@
-export interface InsuranceData {
+export interface InsuranceApi {
     usd1: string;
     usd2: string;
     insuredAmountMin: number;
