@@ -6,6 +6,7 @@ import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../model/insurance_data";
 import Form from "./form";
 import { useSnackbar } from "notistack";
+import confetti from "canvas-confetti";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -76,6 +77,11 @@ export default function Application(props: ApplicationProps) {
                 }
             }
         );
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
     }
 
     async function applyForPolicy(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<boolean> {

@@ -25,6 +25,7 @@
     "@walletconnect/web3-provider": "^1.8.0",
     "abi-coder": "^4.1.1",
     "add": "^2.0.6",
+    "canvas-confetti": "^1.6.0",
     "eslint": "^8.27.0",
     "eslint-config-next": "^13.0.2",
     "ethers": "^5.7.2",
@@ -44,6 +45,7 @@
     "@chainlink/contracts": "^0.5.1",
     "@etherisc/gif-contracts": "2.0.0-rc.1-0",
     "@typechain/ethers-v5": "^10.1.1",
+    "@types/canvas-confetti": "^1.4.3",
     "typechain": "^8.1.1"
   }
 }
