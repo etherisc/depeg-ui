@@ -72,6 +72,8 @@ export default function Form(props: FormProperties) {
 
     // coverage until date
     const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.insurance.coverageDurationDaysMax, 'days'));
+    const coverageUntilMin = moment().add(props.insurance.coverageDurationDaysMin, 'days');
+    const coverageUntilMax = moment().add(props.insurance.coverageDurationDaysMax, 'days');
     const handleCoverageUntilChange = (t: moment.Moment | null) => {
         let date = t;
         if (date == null) {
@@ -80,6 +82,30 @@ export default function Form(props: FormProperties) {
         setCoverageUntil(date);
         setCoverageDays(date.startOf('day').diff(moment().startOf('day'), 'days'));
     };
+
+    // validate coverageDays when coverageUntil changes
+    useEffect(() => {
+        if (coverageUntil != null) {
+            validateCoverageDays();
+        }
+    }, [coverageUntil]);  // eslint-disable-line react-hooks/exhaustive-deps
+
+    const [ coverageDaysError, setCoverageDaysError ] = useState("");
+    function validateCoverageDays() {
+        if (coverageDays < props.insurance.coverageDurationDaysMin) {
+            setCoverageDaysError(t('coverageDurationDaysMinError', { days: props.insurance.coverageDurationDaysMin }));
+            return false;
+        } 
+        if (coverageDays > props.insurance.coverageDurationDaysMax) {
+            setCoverageDaysError(t('coverageDurationDaysMaxError', { days: props.insurance.coverageDurationDaysMax }));
+            return false;
+        }
+        setCoverageDaysError("");
+        return true;
+    }
+
+    // premium
+    const [ premium, setPremium ] = useState(0);
 
     // terms accepted and validation
     let buyButtonDisabled = props.disabled;
@@ -133,23 +159,27 @@ export default function Form(props: FormProperties) {
                     id="coverageDurationDays"
                     label={t('coverageDurationDays')}
                     type="text"
-                    value={coverageDays}
-                    onChange={handleCoverageDaysChange}
                     InputProps={{
                         endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                     }}
+                    value={coverageDays}
+                    onChange={handleCoverageDaysChange}
+                    onBlur={validateCoverageDays}
+                    helperText={coverageDaysError}
+                    error={coverageDaysError != ""}
                 />
-                {/* TODO: check in range min/max */}
             </Grid>
             <Grid item xs={6}>
                 <DesktopDatePicker
                     disabled={props.disabled}
                     label={t('coverageDurationUntil')}
                     inputFormat="MM/DD/YYYY"
-                    value={coverageUntil}
-                    onChange={handleCoverageUntilChange}
                     renderInput={(params) => <TextField {...params} fullWidth />}
                     disablePast={true}
+                    value={coverageUntil}
+                    onChange={handleCoverageUntilChange}
+                    minDate={coverageUntilMin}
+                    maxDate={coverageUntilMax}
                     />
                 {/* TODO: mobile version */}
                 </Grid>
@@ -162,12 +192,12 @@ export default function Form(props: FormProperties) {
                     id="premiumAmount"
                     label={t('premiumAmount')}
                     type="text"
-                    defaultValue=""
+                    value={formatCurrency(premium)}
                     InputProps={{
                         startAdornment: <InputAdornment position="start">{props.insurance.usd2}</InputAdornment>,
+                        readOnly: true,
                     }}
                 />
-                {/* TODO: read only */}
                 {/* TODO: grab premium from smart contract */}
             </Grid>
             <Grid item xs={12}>
