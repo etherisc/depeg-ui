@@ -10,12 +10,12 @@ import LoginWithWalletConnectButton from './login_walletconnect';
 import Logout from './logout';
 import SvgIcon from '@mui/icons-material/Adb';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 
 export default function Header() {
+    const { t } = useTranslation('common');
 
     const pages = ['Products', 'Pricing', 'Blog'];
-
-    // TODO: i18n
 
     return (
         <AppBar position="static" sx={{ mb: 2 }}>
@@ -38,7 +38,7 @@ export default function Header() {
                             textDecoration: 'none',
                         }}
                     >
-                        Depeg Protection
+                        {t('apptitle_short')}
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>

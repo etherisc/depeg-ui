@@ -3,11 +3,11 @@ import { useContext } from "react";
 import { walletConnectConfig } from "../../config/appConfig";
 import { SignerContext, setSigner, removeSigner, updateSigner } from "../../context/signer_context";
 import Button from '@mui/material/Button'
+import { useTranslation } from "next-i18next";
 
 export default function LoginWithWalletConnectButton() {
     const signerContext = useContext(SignerContext);
-
-    // TODO: i18n
+    const { t } = useTranslation('common');
     
     async function login() {
         console.log("wallet connect login");
@@ -45,7 +45,7 @@ export default function LoginWithWalletConnectButton() {
     if (signerContext?.data.signer === undefined) {
         button = (
             <Button variant="contained" color="secondary" onClick={login}>
-                Connect with Wallet Connect
+                {t('action.login_walletconnect')}
             </Button>
         );
     }
