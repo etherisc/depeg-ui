@@ -57,10 +57,28 @@ export default function Form(props: FormProperties) {
         return true;
     }
 
-    // coverage until
-    const [coverageUntil, setCoverageUntil] = useState<moment.Moment | null>(moment().add(3, 'month'));
-    const handleCoverageUntilChange = (date: moment.Moment | null) => {
+    // coverage period (days and date)
+
+    // coverage days
+    const [ coverageDays, setCoverageDays ] = useState(props.insurance.coverageDurationDaysMax);
+    function handleCoverageDaysChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        let val = (x.target as HTMLInputElement).value;
+        if (val == "") {
+            val = "0";
+        }
+        setCoverageDays(parseInt(val));
+        setCoverageUntil(moment().add(parseInt(val), 'days'));
+    };
+
+    // coverage until date
+    const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.insurance.coverageDurationDaysMax, 'days'));
+    const handleCoverageUntilChange = (t: moment.Moment | null) => {
+        let date = t;
+        if (date == null) {
+            date = moment();
+        }
         setCoverageUntil(date);
+        setCoverageDays(date.startOf('day').diff(moment().startOf('day'), 'days'));
     };
 
     // terms accepted and validation
@@ -104,7 +122,6 @@ export default function Form(props: FormProperties) {
                     helperText={insuredAmountError}
                     error={insuredAmountError != ""}
                 />
-                {/* TODO: check if amount is in range min/max */}
                 {/* TODO: preload with wallet amount */}
             </Grid>
             <Grid item xs={6}>
@@ -116,13 +133,12 @@ export default function Form(props: FormProperties) {
                     id="coverageDurationDays"
                     label={t('coverageDurationDays')}
                     type="text"
-                    defaultValue=""
+                    value={coverageDays}
+                    onChange={handleCoverageDaysChange}
                     InputProps={{
                         endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                     }}
                 />
-                {/* TODO: preload with max days */}
-                {/* TODO: update calender field and vice versa}
                 {/* TODO: check in range min/max */}
             </Grid>
             <Grid item xs={6}>
