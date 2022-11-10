@@ -46,6 +46,8 @@ export default function Application(props: ApplicationProps) {
             walletDisconnected();
         } else if (activeStep == 1 && readyToBuy) {
             setActiveStep(2);
+        } else if (activeStep == 2 && !readyToBuy) { 
+            setActiveStep(1);
         } else if (activeStep > 4) { // application completed
             setFormDisabled(true);
         }
