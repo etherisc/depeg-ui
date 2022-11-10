@@ -12,10 +12,10 @@ import Head from 'next/head';
 import { initialSignerData, removeSigner, SignerContext, signerReducer } from '../context/signer_context';
 import Footer from '../components/shared/footer';
 import { SnackbarProvider } from 'notistack';
-import { getAccount } from '../utils/metamask';
 import { appWithTranslation } from 'next-i18next';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { getAndUpdateAccount } from '../utils/metamask';
 
 
 export function App({ Component, pageProps }: AppProps) {
@@ -34,7 +34,7 @@ export function App({ Component, pageProps }: AppProps) {
         if (accounts.length == 0) {
           removeSigner(dispatch);
         } else {
-          getAccount(dispatch);
+          getAndUpdateAccount(dispatch);
         }
       });
       // @ts-ignore

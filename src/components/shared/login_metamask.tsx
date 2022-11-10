@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { useContext } from "react";
 import { setSigner, SignerContext } from "../../context/signer_context";
 import Button from '@mui/material/Button'
-import { getAccount } from "../../utils/metamask";
+import { getAndSetAccount } from "../../utils/metamask";
 
 export default function LoginWithMetaMaskButton() {
     const signerContext = useContext(SignerContext);
@@ -18,7 +18,7 @@ export default function LoginWithMetaMaskButton() {
             return;
         }
 
-        getAccount(signerContext?.dispatch);
+        getAndSetAccount(signerContext?.dispatch);
     }
 
     let button = (<></>);
