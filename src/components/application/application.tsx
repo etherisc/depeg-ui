@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useContext, useEffect, useState } from "react";
 import { SignerContext } from "../../context/signer_context";
 import { useTranslation } from 'next-i18next';
-import { InsuranceData } from "../../utils/insurance_data";
+import { InsuranceData } from "../../model/insurance_data";
 import Form from "./form";
 
 export interface ApplicationProps {
@@ -43,6 +43,8 @@ export default function Application(props: ApplicationProps) {
         }
         
     }, [signerContext?.data.signer, activeStep]);
+
+    // TODO: update stepper on progress
 
     return (
         <>

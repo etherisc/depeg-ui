@@ -55,6 +55,7 @@ export default function Form(props: FormProperties) {
                     onChange={handleWalletAddressChange}
                     required
                 />
+                {/* TODO: check if address if externally owned */}
             </Grid>
             <Grid item xs={12}>
                 <TextField
@@ -70,6 +71,8 @@ export default function Form(props: FormProperties) {
                         startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
                     }}
                 />
+                {/* TODO: check if amount is in range min/max */}
+                {/* TODO: preload with wallet amount */}
             </Grid>
             <Grid item xs={6}>
                 <TextField
@@ -85,6 +88,9 @@ export default function Form(props: FormProperties) {
                         endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                     }}
                 />
+                {/* TODO: preload with max days */}
+                {/* TODO: update calender field and vice versa}
+                {/* TODO: check in range min/max */}
             </Grid>
             <Grid item xs={6}>
                 <DesktopDatePicker
@@ -112,6 +118,8 @@ export default function Form(props: FormProperties) {
                         startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>,
                     }}
                 />
+                {/* TODO: read only */}
+                {/* TODO: grab premium from smart contract */}
             </Grid>
             <Grid item xs={12}>
                 <FormControlLabel 
@@ -131,6 +139,7 @@ export default function Form(props: FormProperties) {
                 >
                     {t('button_buy')}
                 </Button>
+                {/* TODO: enable only if all form is valid */}
             </Grid>
         </Grid>
     );

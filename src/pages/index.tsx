@@ -1,5 +1,5 @@
 import Application, { ApplicationProps } from "../components/application/application";
-import { InsuranceData } from "../utils/insurance_data";
+import { InsuranceData } from "../model/insurance_data";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from "next-i18next";
 import Head from "next/head";
@@ -10,7 +10,10 @@ export default function Home() {
   const insurance = {
       usd1: 'USDC',
       usd2: 'USDT',
-    
+      insuredAmountMin: 3000,
+      insuredAmountMax: 10000,
+      coverageDurationDaysMin: 14,
+      coverageDurationDaysMax: 45,
   } as InsuranceData;
 
   const {t} = useTranslation('common');
