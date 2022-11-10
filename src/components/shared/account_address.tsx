@@ -3,6 +3,7 @@ import { Signer } from "ethers";
 import { useState, useEffect } from "react";
 import { NBSP } from "../../utils/chars";
 import { useSnackbar } from 'notistack';
+import { useTranslation } from "next-i18next";
 
 export interface AccountAddressProps {
     signer: Signer;
@@ -11,6 +12,7 @@ export interface AccountAddressProps {
 
 export default function AccountAddress(props: AccountAddressProps) {
     const { enqueueSnackbar } = useSnackbar();
+    const { t } = useTranslation('common');
 
     const [ address, setAddress ] = useState(props.address ?? "");
 
@@ -29,8 +31,7 @@ export default function AccountAddress(props: AccountAddressProps) {
 
     async function copyAddressToClipboard() {
         await navigator.clipboard.writeText(address);
-        // TODO: i18n
-        enqueueSnackbar('Address copied to clipboard',  { autoHideDuration: 2000, variant: 'info' });
+        enqueueSnackbar(t('action.address_copied'),  { autoHideDuration: 2000, variant: 'info' });
     }
     
     return (

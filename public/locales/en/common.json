@@ -6,7 +6,8 @@
         "login_metamask": "Login with Metamask",
         "disconnect": "Disconnect",
         "close": "Close",
-        "hide": "Hide"
+        "hide": "Hide",
+        "address_copied": "Address copied to clipboard"
     },
     "error": {
         "metamask_not_found": "Missing metamask plugin - get it from",
