@@ -5,4 +5,5 @@ export interface InsuranceData {
     insuredAmountMax: number;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
+    calculatePremium: (walletAddress: string, insuredAmount: number, coverageDurationDays: number) => Promise<number>;
 }

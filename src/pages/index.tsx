@@ -14,6 +14,9 @@ export default function Home() {
       insuredAmountMax: 10000,
       coverageDurationDaysMin: 14,
       coverageDurationDaysMax: 45,
+      calculatePremium(walletAddress, insuredAmount, coverageDurationDays) {
+        return Promise.resolve(insuredAmount * 0.017);
+      },
   } as InsuranceData;
 
   const {t} = useTranslation('common');

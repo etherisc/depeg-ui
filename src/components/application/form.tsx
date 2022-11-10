@@ -74,7 +74,7 @@ export default function Form(props: FormProperties) {
     const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.insurance.coverageDurationDaysMax, 'days'));
     const coverageUntilMin = moment().add(props.insurance.coverageDurationDaysMin, 'days');
     const coverageUntilMax = moment().add(props.insurance.coverageDurationDaysMax, 'days');
-    const handleCoverageUntilChange = (t: moment.Moment | null) => {
+    function handleCoverageUntilChange(t: moment.Moment | null) {
         let date = t;
         if (date == null) {
             date = moment();
@@ -86,7 +86,7 @@ export default function Form(props: FormProperties) {
     // validate coverageDays when coverageUntil changes
     useEffect(() => {
         if (coverageUntil != null) {
-            validateCoverageDays();
+            validateFormAndCalculatePremium();
         }
     }, [coverageUntil]);  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -107,12 +107,29 @@ export default function Form(props: FormProperties) {
     // premium
     const [ premium, setPremium ] = useState(0);
 
+    async function validateFormAndCalculatePremium() {
+        let valid = true;
+        valid = validateInsuredAmount() && valid;
+        valid = validateCoverageDays() && valid;
+        if (valid) {
+            setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays));
+        }
+        setFormValid(valid);
+    }
+
     // terms accepted and validation
-    let buyButtonDisabled = props.disabled;
+    const [ termsAccepted, setTermsAccepted ] = useState(false);
+    function handleTermsAcceptedChange(x: ChangeEvent<any>) {
+        setTermsAccepted((x.target as HTMLInputElement).checked);
+    }
+
+    // buy button
+    const [ formValid, setFormValid ] = useState(true);
+    const [ buyButtonDisabled, setBuyButtonDisabled ] = useState(true);
+
     useEffect(() => {
-        // TODO: enable buy button if all fields are set and checkbox ticked
-        buyButtonDisabled = props.disabled;
-    }, [props.disabled]);
+        setBuyButtonDisabled(!formValid || !termsAccepted || props.disabled);
+    }, [formValid, termsAccepted, props.disabled]);  
     
     return (
         <Grid container maxWidth="md" spacing={4} mt={2} sx={{ p: 1, ml: 'auto', mr: 'auto' }} >
@@ -126,6 +143,7 @@ export default function Form(props: FormProperties) {
                     type="text"
                     value={walletAddress}
                     onChange={handleWalletAddressChange}
+                    onBlur={validateFormAndCalculatePremium}
                     required
                 />
                 {/* TODO: check if address if externally owned */}
@@ -144,7 +162,7 @@ export default function Form(props: FormProperties) {
                     }}
                     value={formatCurrency(insuredAmount)}
                     onChange={handleInsuredAmountChange}
-                    onBlur={validateInsuredAmount}
+                    onBlur={validateFormAndCalculatePremium}
                     helperText={insuredAmountError}
                     error={insuredAmountError != ""}
                 />
@@ -164,7 +182,7 @@ export default function Form(props: FormProperties) {
                     }}
                     value={coverageDays}
                     onChange={handleCoverageDaysChange}
-                    onBlur={validateCoverageDays}
+                    onBlur={validateFormAndCalculatePremium}
                     helperText={coverageDaysError}
                     error={coverageDaysError != ""}
                 />
@@ -205,6 +223,8 @@ export default function Form(props: FormProperties) {
                     control={
                         <Checkbox 
                             defaultChecked={false}
+                            value={termsAccepted}
+                            onChange={handleTermsAcceptedChange}
                             />
                     } 
                     disabled={props.disabled}
@@ -218,7 +238,6 @@ export default function Form(props: FormProperties) {
                 >
                     {t('button_buy')}
                 </Button>
-                {/* TODO: enable only if all form is valid */}
             </Grid>
         </Grid>
     );
