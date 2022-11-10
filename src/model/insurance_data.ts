@@ -6,4 +6,6 @@ export interface InsuranceApi {
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
     calculatePremium: (walletAddress: string, insuredAmount: number, coverageDurationDays: number) => Promise<number>;
+    createApproval: (walletAddress: string, premium: number) => Promise<boolean>;
+    applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDurationDays: number) => Promise<boolean>;
 }

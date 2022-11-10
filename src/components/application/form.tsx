@@ -1,8 +1,10 @@
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import CircularProgress from '@mui/material/CircularProgress';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
+import LinearProgress from '@mui/material/LinearProgress';
 import TextField from '@mui/material/TextField'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment from 'moment';
@@ -17,6 +19,8 @@ export interface FormProperties {
     disabled: boolean;
     walletAddress: string;
     insurance: InsuranceApi;
+    formReadyForApply: (isFormReady: boolean) => void;
+    applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => Promise<boolean>;
 }
 
 export default function Form(props: FormProperties) {
@@ -126,10 +130,26 @@ export default function Form(props: FormProperties) {
     // buy button
     const [ formValid, setFormValid ] = useState(true);
     const [ buyButtonDisabled, setBuyButtonDisabled ] = useState(true);
+    const [ applicationInProgress, setApplicationInProgress ] = useState(false);
 
     useEffect(() => {
-        setBuyButtonDisabled(!formValid || !termsAccepted || props.disabled);
-    }, [formValid, termsAccepted, props.disabled]);  
+        let isBuyButtonDisabled = !formValid || !termsAccepted || props.disabled || applicationInProgress;
+        setBuyButtonDisabled(isBuyButtonDisabled);
+        props.formReadyForApply(!isBuyButtonDisabled);
+    }, [formValid, termsAccepted, props.disabled, applicationInProgress, props]);  
+
+
+    async function buy() {
+        setApplicationInProgress(true);
+
+        try {
+            await props.applyForPolicy(walletAddress, insuredAmount, coverageDays, premium);
+        } finally {
+            setApplicationInProgress(false);
+        }
+    }
+
+    const waitForApply = applicationInProgress ? <LinearProgress /> : null;
     
     return (
         <Grid container maxWidth="md" spacing={4} mt={2} sx={{ p: 1, ml: 'auto', mr: 'auto' }} >
@@ -234,9 +254,11 @@ export default function Form(props: FormProperties) {
                     variant='contained'
                     disabled={buyButtonDisabled}
                     fullWidth
+                    onClick={buy}
                 >
                     {t('button_buy')}
                 </Button>
+                {waitForApply}
             </Grid>
         </Grid>
     );

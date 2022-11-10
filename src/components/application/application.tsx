@@ -1,10 +1,11 @@
-import { Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import Head from "next/head";
 import { useContext, useEffect, useState } from "react";
 import { SignerContext } from "../../context/signer_context";
 import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../model/insurance_data";
 import Form from "./form";
+import { useSnackbar } from "notistack";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -13,11 +14,14 @@ export interface ApplicationProps {
 const steps = ['step0', 'step1', 'step2', 'step3', 'step4'];
 
 export default function Application(props: ApplicationProps) {
-    const { t } = useTranslation('application');
-    
+    const { t } = useTranslation(['application', 'common']);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
     const signerContext = useContext(SignerContext);
-    const [activeStep, setActiveStep] = useState(signerContext?.data.signer === undefined ? 0 : 1);
-    const [walletAddress, setWalletAddress] = useState("");
+    const [ activeStep, setActiveStep ] = useState(signerContext?.data.signer === undefined ? 0 : 1);
+    const [ formDisabled, setFormDisabled ] = useState(true);
+    const [ walletAddress, setWalletAddress ] = useState("");
+    const [ readyToBuy, setReadyToBuy ] = useState(false);
 
     async function walletDisconnected() {
         setActiveStep(0);
@@ -31,7 +35,6 @@ export default function Application(props: ApplicationProps) {
     }    
 
     useEffect(() => {
-        console.log("signer changed");
         if (activeStep < 1 && signerContext?.data.signer !== undefined) {
             setActiveStep(1);
             signerContext?.data.signer.getAddress().then((address) => {
@@ -40,11 +43,54 @@ export default function Application(props: ApplicationProps) {
             });
         } else if (signerContext?.data.signer === undefined) {
             walletDisconnected();
+        } else if (activeStep == 1 && readyToBuy) {
+            setActiveStep(2);
+        } else if (activeStep > 4) { // application completed
+            setFormDisabled(true);
         }
-        
-    }, [signerContext?.data.signer, activeStep]);
+    }, [signerContext?.data.signer, activeStep, readyToBuy]);
 
-    // TODO: update stepper on progress
+    useEffect(() => {
+        if (activeStep < 1 || activeStep > 2) {
+            setFormDisabled(true);
+        } else {
+            setFormDisabled(false);
+        }
+    }, [activeStep]);
+
+    function formReadyForApply(isFormReady: boolean) {
+        setReadyToBuy(isFormReady);
+    }
+
+    function applicationSuccessful() {
+        enqueueSnackbar(
+            t('application_success'),
+            { 
+                variant: 'success', 
+                persist: true, 
+                preventDuplicate: true,
+                action: (key) => {
+                    return (
+                        <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                    );
+                }
+            }
+        );
+    }
+
+    async function applyForPolicy(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<boolean> {
+        setActiveStep(3);
+        await props.insurance.createApproval(walletAddress, premium);
+        // FIXME: handle error during approval
+        setActiveStep(4);
+        await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration);
+        // FIXME: handle error during apply for policy
+        setActiveStep(5);
+        applicationSuccessful();
+        return Promise.resolve(true);        
+    }
+
+
 
     return (
         <>
@@ -66,9 +112,11 @@ export default function Application(props: ApplicationProps) {
                 </Stepper>
 
                 <Form 
-                    disabled={activeStep < 1}
+                    disabled={formDisabled}
                     walletAddress={walletAddress}
                     insurance={props.insurance}
+                    formReadyForApply={formReadyForApply}
+                    applyForPolicy={applyForPolicy}
                 />
             </div>
         </>
