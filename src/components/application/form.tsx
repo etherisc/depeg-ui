@@ -216,7 +216,6 @@ export default function Form(props: FormProperties) {
                         readOnly: true,
                     }}
                 />
-                {/* TODO: grab premium from smart contract */}
             </Grid>
             <Grid item xs={12}>
                 <FormControlLabel 
