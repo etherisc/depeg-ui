@@ -9,6 +9,7 @@
         "hide": "Hide"
     },
     "error": {
-        "metamask_not_found": "Missing metamask plugin - get it from"
+        "metamask_not_found": "Missing metamask plugin - get it from",
+        "wallet_connect_failed": "WalletConnect login failed or cancelled"
     }
 }

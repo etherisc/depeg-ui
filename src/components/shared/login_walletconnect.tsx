@@ -4,19 +4,33 @@ import { walletConnectConfig } from "../../config/appConfig";
 import { SignerContext, setSigner, removeSigner, updateSigner } from "../../context/signer_context";
 import Button from '@mui/material/Button'
 import { useTranslation } from "next-i18next";
+import { useSnackbar } from "notistack";
 
 export default function LoginWithWalletConnectButton() {
     const signerContext = useContext(SignerContext);
     const { t } = useTranslation('common');
-    
+    const { enqueueSnackbar } = useSnackbar();
+
     async function login() {
         console.log("wallet connect login");
 
         //  Create WalletConnect Provider
         const wcProvider = new WalletConnectProvider(walletConnectConfig);
 
-        //  Enable session (triggers QR Code modal)
-        await wcProvider.enable();
+        try {
+            //  Enable session (triggers QR Code modal)
+            await wcProvider.enable();
+        } catch (error) {
+            enqueueSnackbar(
+                t('error.wallet_connect_failed'),
+                { 
+                    variant: 'warning',
+                    autoHideDuration: 4000,
+                    preventDuplicate: true,
+                }
+            );
+        }
+
         // TODO: make this implementation more robust
         wcProvider.on("accountsChanged", async (accounts: string[]) => {
             console.log("accountsChanged", accounts);
@@ -37,8 +51,6 @@ export default function LoginWithWalletConnectButton() {
         const provider = new ethers.providers.Web3Provider(wcProvider);
         setSigner(signerContext!!.dispatch, provider);
     }
-
-    // TODO: handle abort connection
 
     let button = (<></>);
     
