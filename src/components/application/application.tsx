@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useContext, useEffect, useState } from "react";
 import { SignerContext } from "../../context/signer_context";
 import { useTranslation } from 'next-i18next';
-import { InsuranceApi } from "../../model/insurance_data";
+import { InsuranceApi } from "../../model/insurance_api";
 import Form from "./form";
 import { useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
