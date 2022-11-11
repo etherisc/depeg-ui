@@ -40,6 +40,10 @@ export default function Policies(props: PoliciesProps) {
         <>
             <Typography variant="h5" mb={2}>{t('title')}</Typography>
 
+            {/* TODO: add application button */}
+            {/* TODO: add 'Show only active policies' filter */}
+
+            {/* FIXME: remove fixes height */}
             <div style={{ height: '600px', width: '100%' }}>
                 <DataGrid 
                     rows={policies} 
