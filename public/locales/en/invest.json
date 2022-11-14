@@ -1,0 +1,22 @@
+{
+    "title": "Create a new risk bundle",
+    "step0": "Connect wallet",
+    "step1": "Enter data",
+    "step2": "Invest",
+    "step3": "Confirm capital allowance",
+    "step4": "Confirm payment",
+    "investedAmount": "Invested amount",
+    "minSumInsured": "Minimum sum insured",
+    "maxSumInsured": "Maximum sum insured",
+    "insuredAmountMinError": "Insured amount must be at least {{currency}} {{amount}}",
+    "insuredAmountMaxError": "Insured amount must be at most {{currency}} {{amount}}",
+    "minDuration": "Minimum duration",
+    "maxDuration": "Maximum duration",
+    "coverageDurationDaysMinError": "Coverage duration must be at least {{days}} days",
+    "coverageDurationDaysMaxError": "Coverage duration must be at most {{days}} days",
+    "annualPercentageReturn": "Annual percentage return",
+    "checkbox_t_and_c_label": "By checking this box, I confirm that I have read and agree to the Terms and Conditions.",
+    "button_invest": "Invest",
+    "application_success": "Your application has been successful",
+    "days": "Days"
+}
