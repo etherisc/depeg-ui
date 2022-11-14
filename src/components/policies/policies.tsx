@@ -43,14 +43,12 @@ export default function Policies(props: PoliciesProps) {
             {/* TODO: add application button */}
             {/* TODO: add 'Show only active policies' filter */}
 
-            {/* FIXME: remove fixes height */}
-            <div style={{ height: '600px', width: '100%' }}>
-                <DataGrid 
-                    rows={policies} 
-                    columns={columns} 
-                    getRowId={(row) => row.id}
-                    />
-            </div>
+            <DataGrid 
+                autoHeight
+                rows={policies} 
+                columns={columns} 
+                getRowId={(row) => row.id}
+                />
         </>
     );
 }
