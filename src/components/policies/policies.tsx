@@ -9,7 +9,8 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import Link from "next/link";
+import { LinkBehaviour } from "../shared/link_behaviour";
+import Link from "@mui/material/Link";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -63,8 +64,8 @@ export default function Policies(props: PoliciesProps) {
                         label={t('action.filter_active')} />   
                 </Box>
                 {/* aligned right beyond here */}
-                <Link href="/application" passHref style={{ textDecoration: 'none' }}>
-                    <Button variant="contained" color="secondary">
+                <Link component={LinkBehaviour} href="/application" passHref style={{ textDecoration: 'none' }}>
+                    <Button variant="text" color="secondary">
                         {t('action.create_application')}
                     </Button>
                 </Link>
