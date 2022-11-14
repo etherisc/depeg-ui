@@ -8,5 +8,9 @@
             "coverageUntil": "Coverage Until",
             "status": "Status"
         }
+    },  
+    "action": {
+        "create_application": "Apply for new policy",
+        "filter_active": "Show only active policies"
     }
 }

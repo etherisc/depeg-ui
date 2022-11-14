@@ -25,13 +25,16 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
             await delay(2000);
             return Promise.resolve(true);
         },
-        async policies(walletAddress: string): Promise<Array<PolicyRowView>> {
+        async policies(walletAddress: string, onlyActive: boolean): Promise<Array<PolicyRowView>> {
+            if (onlyActive) {
+                return Promise.resolve(mockPoliciesActive);
+            }
             return Promise.resolve(mockPolicies);
         }
     } as InsuranceApi;
 }
 
-const mockPolicies = [
+const mockPoliciesActive = [
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF66',
         walletAddress: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
@@ -47,6 +50,9 @@ const mockPolicies = [
         coverageUntil: moment().add(47, 'days').format('DD MMM YYYY'),
         status: PolicyStatus[PolicyStatus.APPLIED]
     } as PolicyRowView,
+];
+
+const mockPolicies = mockPoliciesActive.concat(
     {
         id: '0x23e190322453300229d2be2a38450b8a8bd8cf66',
         walletAddress: '0xFEeC4C063Fef1074B0CD53022C3306A6FADb4729',
@@ -61,4 +67,4 @@ const mockPolicies = [
         coverageUntil: moment().add(-2, 'months').format('DD MMM YYYY'),
         status: PolicyStatus[PolicyStatus.PAYED_OUT]
     } as PolicyRowView,
-];
+);
