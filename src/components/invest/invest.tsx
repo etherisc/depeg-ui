@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import { SignerContext } from "../../context/signer_context";
 import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../model/insurance_api";
-import Form from "./invest_form";
 import { useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import InvestForm from "./invest_form";
@@ -21,38 +20,23 @@ export default function Invest(props: InvestProps) {
     const signerContext = useContext(SignerContext);
     const [ activeStep, setActiveStep ] = useState(signerContext?.data.signer === undefined ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
-    const [ walletAddress, setWalletAddress ] = useState("");
-    const [ readyToBuy, setReadyToBuy ] = useState(false);
+    const [ readyToInvest, setReadyToInvest ] = useState(false);
 
-    async function walletDisconnected() {
-        setWalletAddress("");
-    }
-
-    if (signerContext?.data.signer !== undefined) {
-        signerContext?.data.signer.getAddress().then((address) => {
-            setWalletAddress(address);
-        });
-    }    
 
     // change steps according to application state
     useEffect(() => {
         if (signerContext?.data.signer === undefined) {
             setActiveStep(0);
-            walletDisconnected();
         } else if (activeStep < 1 && signerContext?.data.signer !== undefined) {
             setActiveStep(1);
-            signerContext?.data.signer.getAddress().then((address) => {
-                // console.log("address: ", address);
-                setWalletAddress(address);
-            });
-        } else if (activeStep == 1 && readyToBuy) {
+        } else if (activeStep == 1 && readyToInvest) {
             setActiveStep(2);
-        } else if (activeStep == 2 && !readyToBuy) { 
+        } else if (activeStep == 2 && !readyToInvest) { 
             setActiveStep(1);
         } else if (activeStep > 4) { // application completed
             setFormDisabled(true);
         }
-    }, [signerContext?.data.signer, activeStep, readyToBuy]);
+    }, [signerContext?.data.signer, activeStep, readyToInvest]);
 
     useEffect(() => {
         if (activeStep < 1 || activeStep > 2) {
@@ -62,8 +46,8 @@ export default function Invest(props: InvestProps) {
         }
     }, [activeStep]);
 
-    function formReadyForApply(isFormReady: boolean) {
-        setReadyToBuy(isFormReady);
+    function formReadyForInvest(isFormReady: boolean) {
+        setReadyToInvest(isFormReady);
     }
 
     function applicationSuccessful() {
@@ -87,15 +71,15 @@ export default function Invest(props: InvestProps) {
         });
     }
 
-    async function applyForPolicy(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<boolean> {
-        setActiveStep(3);
-        await props.insurance.createApproval(walletAddress, premium);
-        // FIXME: handle error during approval
-        setActiveStep(4);
-        await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration);
-        // FIXME: handle error during apply for policy
-        setActiveStep(5);
-        applicationSuccessful();
+    async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
+        // setActiveStep(3);
+        // await props.insurance.createApproval(walletAddress, premium);
+        // // FIXME: handle error during approval
+        // setActiveStep(4);
+        // await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration);
+        // // FIXME: handle error during apply for policy
+        // setActiveStep(5);
+        // applicationSuccessful();
         return Promise.resolve(true);        
     }
 
@@ -122,10 +106,9 @@ export default function Invest(props: InvestProps) {
 
                 <InvestForm 
                     disabled={formDisabled}
-                    walletAddress={walletAddress}
                     insurance={props.insurance}
-                    formReadyForApply={formReadyForApply}
-                    applyForPolicy={applyForPolicy}
+                    formReadyForInvest={formReadyForInvest}
+                    invest={invest}
                 />
             </div>
         </>

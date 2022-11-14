@@ -17,24 +17,13 @@ const formInputVariant = 'outlined';
 
 export interface InvestFormProperties {
     disabled: boolean;
-    walletAddress: string;
     insurance: InsuranceApi;
-    formReadyForApply: (isFormReady: boolean) => void;
-    applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => Promise<boolean>;
+    formReadyForInvest: (isFormReady: boolean) => void;
+    invest: (investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) => Promise<boolean>;
 }
 
 export default function InvestForm(props: InvestFormProperties) {
     const { t } = useTranslation('invest');
-
-    // wallet address
-    const [ walletAddress, setWalletAddress ] = useState(props.walletAddress);
-    function handleWalletAddressChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        setWalletAddress((x.target as HTMLInputElement).value);
-    }
-
-    useEffect(() => {
-        setWalletAddress(props.walletAddress);
-    }, [props.walletAddress]);
 
     // insured amount
     const [ insuredAmount, setInsuredAmount ] = useState(props.insurance.insuredAmountMax);
@@ -115,9 +104,6 @@ export default function InvestForm(props: InvestFormProperties) {
         let valid = true;
         valid = validateInsuredAmount() && valid;
         valid = validateCoverageDays() && valid;
-        if (valid) {
-            setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays));
-        }
         setFormValid(valid);
     }
 
@@ -135,7 +121,7 @@ export default function InvestForm(props: InvestFormProperties) {
     useEffect(() => {
         let isBuyButtonDisabled = !formValid || !termsAccepted || props.disabled || applicationInProgress;
         setBuyButtonDisabled(isBuyButtonDisabled);
-        props.formReadyForApply(!isBuyButtonDisabled);
+        props.formReadyForInvest(!isBuyButtonDisabled);
     }, [formValid, termsAccepted, props.disabled, applicationInProgress, props]);  
 
 
@@ -144,7 +130,7 @@ export default function InvestForm(props: InvestFormProperties) {
 
         try {
             // TODO: invest
-            await props.applyForPolicy(walletAddress, insuredAmount, coverageDays, premium);
+            
         } finally {
             setApplicationInProgress(false);
         }
