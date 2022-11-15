@@ -12,10 +12,12 @@ import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { InsuranceApi } from '../../model/insurance_api';
 import { formatCurrency } from '../../utils/numbers';
+import CurrencyTextField from '../shared/currency_text_field';
+import NumericTextField, { INPUT_VARIANT } from '../shared/numeric_text_field';
 
 const formInputVariant = 'outlined';
 
-export interface FormProperties {
+export interface ApplicationFormProperties {
     disabled: boolean;
     walletAddress: string;
     insurance: InsuranceApi;
@@ -23,13 +25,31 @@ export interface FormProperties {
     applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => Promise<boolean>;
 }
 
-export default function Form(props: FormProperties) {
+export default function ApplicationForm(props: ApplicationFormProperties) {
     const { t } = useTranslation('application');
 
     // wallet address
     const [ walletAddress, setWalletAddress ] = useState(props.walletAddress);
     function handleWalletAddressChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setWalletAddress((x.target as HTMLInputElement).value);
+    }
+    const [ walletAddressError, setWalletAddressError ] = useState("");
+    function validateWalletAddress() {
+        if (walletAddress == "") {
+            return t('insuredWalletRequired');
+        }
+        if (walletAddress.length != 42) {
+            return t('insuredWalletInvalid');
+        }
+        // TODO check if wallet address is externally owned account
+        return "";
+    }
+
+    const [ walletAddressValid, setWalletAddressValid ] = useState(false);
+    function validateWalletAddressAndSetError() {
+        const error = validateWalletAddress();
+        setWalletAddressError(error);
+        setWalletAddressValid(error == "");
     }
 
     useEffect(() => {
@@ -38,41 +58,13 @@ export default function Form(props: FormProperties) {
 
     // insured amount
     const [ insuredAmount, setInsuredAmount ] = useState(props.insurance.insuredAmountMax);
-    function handleInsuredAmountChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        let val = (x.target as HTMLInputElement).value;
-        if (val == "") {
-            setInsuredAmount(0);
-            return;
-        }
-        setInsuredAmount(parseInt(val.replaceAll(',', '')));
-    }
-
-    const [ insuredAmountError, setInsuredAmountError ] = useState("");
-    function validateInsuredAmount() {
-        if (insuredAmount < props.insurance.insuredAmountMin) {
-            setInsuredAmountError(t('insuredAmountMinError', { amount: formatCurrency(props.insurance.insuredAmountMin), currency: props.insurance.usd1 }));
-            return false;
-        } 
-        if ( insuredAmount > props.insurance.insuredAmountMax) {
-            setInsuredAmountError(t('insuredAmountMaxError', { amount: formatCurrency(props.insurance.insuredAmountMax), currency: props.insurance.usd1 }));
-            return false;
-        }
-        setInsuredAmountError("");
-        return true;
-    }
+    const [ insuredAmountValid, setInsuredAmountValid ] = useState(true);
 
     // coverage period (days and date)
 
     // coverage days
     const [ coverageDays, setCoverageDays ] = useState(props.insurance.coverageDurationDaysMax);
-    function handleCoverageDaysChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        let val = (x.target as HTMLInputElement).value;
-        if (val == "") {
-            val = "0";
-        }
-        setCoverageDays(parseInt(val));
-        setCoverageUntil(moment().add(parseInt(val), 'days'));
-    };
+    const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
 
     // coverage until date
     const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.insurance.coverageDurationDaysMax, 'days'));
@@ -87,39 +79,25 @@ export default function Form(props: FormProperties) {
         setCoverageDays(date.startOf('day').diff(moment().startOf('day'), 'days'));
     };
 
-    // validate coverageDays when coverageUntil changes
-    useEffect(() => {
-        if (coverageUntil != null) {
-            validateFormAndCalculatePremium();
-        }
-    }, [coverageUntil]);  // eslint-disable-line react-hooks/exhaustive-deps
-
-    const [ coverageDaysError, setCoverageDaysError ] = useState("");
-    function validateCoverageDays() {
-        if (coverageDays < props.insurance.coverageDurationDaysMin) {
-            setCoverageDaysError(t('coverageDurationDaysMinError', { days: props.insurance.coverageDurationDaysMin }));
-            return false;
-        } 
-        if (coverageDays > props.insurance.coverageDurationDaysMax) {
-            setCoverageDaysError(t('coverageDurationDaysMaxError', { days: props.insurance.coverageDurationDaysMax }));
-            return false;
-        }
-        setCoverageDaysError("");
-        return true;
-    }
-
     // premium
     const [ premium, setPremium ] = useState(0);
 
-    async function validateFormAndCalculatePremium() {
-        let valid = true;
-        valid = validateInsuredAmount() && valid;
-        valid = validateCoverageDays() && valid;
-        if (valid) {
+    useEffect(() => {
+        async function calculatePremium() {
             setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays));
         }
+
+        let valid = true;
+        valid = walletAddressValid && valid;
+        valid = insuredAmountValid && valid;
+        valid = coverageDaysValid && valid;
+        if (valid) {
+            calculatePremium();
+        } else {
+            setPremium(0);
+        }
         setFormValid(valid);
-    }
+    }, [walletAddressValid, insuredAmountValid, coverageDaysValid, props.insurance, walletAddress, insuredAmount, coverageDays]);
 
     // terms accepted and validation
     const [ termsAccepted, setTermsAccepted ] = useState(false);
@@ -157,54 +135,56 @@ export default function Form(props: FormProperties) {
                 <TextField
                     fullWidth
                     disabled={props.disabled}
-                    variant={formInputVariant}
+                    variant={INPUT_VARIANT}
                     id="insuredWallet"
                     label={t('insuredWallet')}
                     type="text"
                     value={walletAddress}
                     onChange={handleWalletAddressChange}
-                    onBlur={validateFormAndCalculatePremium}
+                    onBlur={validateWalletAddressAndSetError}
                     required
+                    error={walletAddressError != ""}
+                    helperText={walletAddressError}
                 />
-                {/* TODO: check if address if externally owned */}
             </Grid>
             <Grid item xs={12}>
-                <TextField
-                    required
-                    fullWidth
+                <CurrencyTextField
+                    required={true}
+                    fullWidth={true}
                     disabled={props.disabled}
-                    variant={formInputVariant}
                     id="insuredAmount"
                     label={t('insuredAmount')}
-                    type="text"
-                    InputProps={{
+                    inputProps={{
                         startAdornment: <InputAdornment position="start">{props.insurance.usd1}</InputAdornment>,
                     }}
-                    value={formatCurrency(insuredAmount)}
-                    onChange={handleInsuredAmountChange}
-                    onBlur={validateFormAndCalculatePremium}
-                    helperText={insuredAmountError}
-                    error={insuredAmountError != ""}
+                    value={insuredAmount}
+                    currency={props.insurance.usd1}
+                    onChange={setInsuredAmount}
+                    minValue={props.insurance.insuredAmountMin}
+                    maxValue={props.insurance.insuredAmountMax}
+                    onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
                 />
                 {/* TODO: preload with wallet amount */}
             </Grid>
             <Grid item xs={6}>
-                <TextField
-                    fullWidth
-                    required
+                <NumericTextField
+                    fullWidth={true}
+                    required={true}
                     disabled={props.disabled}
-                    variant={formInputVariant}
                     id="coverageDurationDays"
                     label={t('coverageDurationDays')}
-                    type="text"
-                    InputProps={{
+                    inputProps={{
                         endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                     }}
                     value={coverageDays}
-                    onChange={handleCoverageDaysChange}
-                    onBlur={validateFormAndCalculatePremium}
-                    helperText={coverageDaysError}
-                    error={coverageDaysError != ""}
+                    unit={t('days').toLowerCase()}
+                    onChange={(days) => {
+                        setCoverageDays(days);
+                        setCoverageUntil(moment().add(days, 'days'));
+                    }}
+                    minValue={props.insurance.coverageDurationDaysMin}
+                    maxValue={props.insurance.coverageDurationDaysMax}
+                    onError={(errMsg) => setCoverageDaysValid(errMsg === "")}
                 />
             </Grid>
             <Grid item xs={6}>
