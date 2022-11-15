@@ -51,6 +51,55 @@ export default function InvestForm(props: InvestFormProperties) {
         return true;
     }
 
+    // minimum sum insured
+    const [ minSumInsured, setMinSumInsured ] = useState(investProps.minSumInsured);
+    function handleMinSumInsuredChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        let val = (x.target as HTMLInputElement).value;
+        if (val == "") {
+            setMinSumInsured(0);
+            return;
+        }
+        setMinSumInsured(parseInt(val.replaceAll(',', '')));
+    }
+    const [ minSumInsuredError, setMinSumInsuredError ] = useState("");
+
+    function validateMinSumInsured() {
+        if (minSumInsured < investProps.minSumInsured) {
+            setMinSumInsuredError(t('minSumInsuredMinError', { amount: formatCurrency(investProps.minSumInsured), currency: investProps.usd1 }));
+            return false;
+        }
+
+        if (minSumInsured > maxSumInsured) {
+            setMinSumInsuredError(t('minSumInsuredMaxError'));
+            return false;
+        }
+        // TODO if same show note instead of error
+        setMinSumInsuredError("");
+        return true;
+    }
+
+    // maximum sum insured
+    const [ maxSumInsured, setMaxSumInsured ] = useState(investProps.maxSumInsured);
+    function handleMaxSumInsuredChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        let val = (x.target as HTMLInputElement).value;
+        if (val == "") {
+            setMaxSumInsured(0);
+            return;
+        }
+        setMaxSumInsured(parseInt(val.replaceAll(',', '')));
+    }
+    const [ maxSumInsuredError, setMaxSumInsuredError ] = useState("");
+
+    function validateMaxSumInsured() {
+        if (maxSumInsured > investProps.maxSumInsured) {
+            setMaxSumInsuredError(t('maxSumInsuredMaxError', { amount: formatCurrency(investProps.maxSumInsured), currency: investProps.usd1 }));
+            return false;
+        }
+        // TODO if same show note instead of error
+        setMaxSumInsuredError("");
+        return true;
+    }
+
     // coverage period (days and date)
 
     // coverage days
@@ -104,6 +153,8 @@ export default function InvestForm(props: InvestFormProperties) {
     async function validateForm() {
         let valid = true;
         valid = validateInvestedAmount() && valid;
+        valid = validateMinSumInsured() && valid;
+        valid = validateMaxSumInsured() && valid;
         valid = validateCoverageDays() && valid;
         setFormValid(valid);
     }
@@ -170,16 +221,13 @@ export default function InvestForm(props: InvestFormProperties) {
                     label={t('minSumInsured')}
                     type="text"
                     InputProps={{
-                        /* TODO: adornment currency */
-                        /* endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,*/
+                        startAdornment: <InputAdornment position="start">{investProps.usd1}</InputAdornment>
                     }}
-                    // TODO: enable
-                    // value={coverageDays}
-                    // onChange={handleCoverageDaysChange}
-                    // onBlur={validateFormAndCalculatePremium}
-                    // TODO: error
-                    // helperText={coverageDaysError}
-                    // error={coverageDaysError != ""}
+                    value={formatCurrency(minSumInsured)}
+                    onChange={handleMinSumInsuredChange}
+                    onBlur={validateForm}
+                    helperText={minSumInsuredError}
+                    error={minSumInsuredError != ""}
                     />
             </Grid>
             <Grid item xs={6}>
@@ -192,16 +240,13 @@ export default function InvestForm(props: InvestFormProperties) {
                     label={t('maxSumInsured')}
                     type="text"
                     InputProps={{
-                        /* TODO: adornment currency */
-                        /* endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,*/
+                        startAdornment: <InputAdornment position="start">{investProps.usd1}</InputAdornment>
                     }}
-                    // TODO: enable
-                    // value={coverageDays}
-                    // onChange={handleCoverageDaysChange}
-                    // onBlur={validateFormAndCalculatePremium}
-                    // TODO: error
-                    // helperText={coverageDaysError}
-                    // error={coverageDaysError != ""}
+                    value={formatCurrency(maxSumInsured)}
+                    onChange={handleMaxSumInsuredChange}
+                    onBlur={validateForm}
+                    helperText={maxSumInsuredError}
+                    error={maxSumInsuredError != ""}
                     />
             </Grid>
             <Grid item xs={6}>
