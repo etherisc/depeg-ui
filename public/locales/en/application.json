@@ -6,6 +6,8 @@
     "step3": "Confirm premium allowance",
     "step4": "Confirm payment",
     "insuredWallet": "Insured wallet",
+    "insuredWalletRequired": "Insured wallet is required",
+    "insuredWalletInvalid": "Insured wallet is not valid address",
     "insuredAmount": "Insured amount",
     "insuredAmountMinError": "Insured amount must be at least {{currency}} {{amount}}",
     "insuredAmountMaxError": "Insured amount must be at most {{currency}} {{amount}}",

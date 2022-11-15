@@ -12,6 +12,7 @@ import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { InsuranceApi } from '../../model/insurance_api';
 import { formatCurrency } from '../../utils/numbers';
+import { INPUT_VARIANT } from '../shared/numeric_text_field';
 
 const formInputVariant = 'outlined';
 
@@ -30,6 +31,24 @@ export default function Form(props: FormProperties) {
     const [ walletAddress, setWalletAddress ] = useState(props.walletAddress);
     function handleWalletAddressChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setWalletAddress((x.target as HTMLInputElement).value);
+    }
+    const [ walletAddressError, setWalletAddressError ] = useState("");
+    function validateWalletAddress() {
+        if (walletAddress == "") {
+            return t('insuredWalletRequired');
+        }
+        if (walletAddress.length != 42) {
+            return t('insuredWalletInvalid');
+        }
+        // TODO check if wallet address is externally owned account
+        return "";
+    }
+
+    const [ walletAddressValid, setWalletAddressValid ] = useState(false);
+    function validateWalletAddressAndSetError() {
+        const error = validateWalletAddress();
+        setWalletAddressError(error);
+        setWalletAddressValid(error == "");
     }
 
     useEffect(() => {
@@ -113,6 +132,7 @@ export default function Form(props: FormProperties) {
 
     async function validateFormAndCalculatePremium() {
         let valid = true;
+        valid = walletAddressValid && valid;
         valid = validateInsuredAmount() && valid;
         valid = validateCoverageDays() && valid;
         if (valid) {
@@ -157,16 +177,17 @@ export default function Form(props: FormProperties) {
                 <TextField
                     fullWidth
                     disabled={props.disabled}
-                    variant={formInputVariant}
+                    variant={INPUT_VARIANT}
                     id="insuredWallet"
                     label={t('insuredWallet')}
                     type="text"
                     value={walletAddress}
                     onChange={handleWalletAddressChange}
-                    onBlur={validateFormAndCalculatePremium}
+                    onBlur={validateWalletAddressAndSetError}
                     required
+                    error={walletAddressError != ""}
+                    helperText={walletAddressError}
                 />
-                {/* TODO: check if address if externally owned */}
             </Grid>
             <Grid item xs={12}>
                 <TextField
