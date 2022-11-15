@@ -1,12 +1,11 @@
 import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
-import Head from "next/head";
 import { useContext, useEffect, useState } from "react";
 import { SignerContext } from "../../context/signer_context";
 import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../model/insurance_api";
-import Form from "./form";
 import { useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
+import ApplicationForm from "./application_form";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -120,7 +119,7 @@ export default function Application(props: ApplicationProps) {
                     })}
                 </Stepper>
 
-                <Form 
+                <ApplicationForm 
                     disabled={formDisabled}
                     walletAddress={walletAddress}
                     insurance={props.insurance}

@@ -16,7 +16,7 @@ import { INPUT_VARIANT } from '../shared/numeric_text_field';
 
 const formInputVariant = 'outlined';
 
-export interface FormProperties {
+export interface ApplicationFormProperties {
     disabled: boolean;
     walletAddress: string;
     insurance: InsuranceApi;
@@ -24,7 +24,7 @@ export interface FormProperties {
     applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => Promise<boolean>;
 }
 
-export default function Form(props: FormProperties) {
+export default function ApplicationForm(props: ApplicationFormProperties) {
     const { t } = useTranslation('application');
 
     // wallet address
