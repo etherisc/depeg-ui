@@ -13,6 +13,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { InsuranceApi } from '../../model/insurance_api';
 import { formatCurrency } from '../../utils/numbers';
 import CurrencyTextField from '../shared/currency_text_field';
+import NumericTextField from '../shared/numeric_text_field';
 
 const formInputVariant = 'outlined';
 
@@ -49,49 +50,18 @@ export default function InvestForm(props: InvestFormProperties) {
 
     // minimum coverage duration
     const [ minDuration, setMinDuration ] = useState(investProps.minCoverageDuration);
-    function handleMinDurationChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        let val = (x.target as HTMLInputElement).value;
-        if (val == "") {
-            setMinDuration(0);
-            return;
-        }
-        setMinDuration(parseInt(val));
-    }
+    const [ minDurationValid, setMinDurationValid ] = useState(true);
 
-    const [ minDurationError, setMinDurationError ] = useState("");
     function validateMinDuration() {
-        if (minDuration < investProps.minCoverageDuration) {
-            setMinDurationError(t('minDurationMinError', { duration: investProps.minCoverageDuration }));
-            return false;
-        }
         if (minDuration > maxDuration) {
-            setMinDurationError(t('minDurationMaxError'));
-            return false;
+            return t('minDurationMaxError');
         }
-        setMinDurationError("");
-        return true;
+        return "";
     }
 
     // maxmium coverage duration
     const [ maxDuration, setMaxDuration ] = useState(investProps.maxCoverageDuration);
-    function handleMaxDurationChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        let val = (x.target as HTMLInputElement).value;
-        if (val == "") {
-            setMaxDuration(0);
-            return;
-        }
-        setMaxDuration(parseInt(val));
-    }
-
-    const [ maxDurationError, setMaxDurationError ] = useState("");
-    function validateMaxDuration() {
-        if (maxDuration > investProps.maxCoverageDuration) {
-            setMaxDurationError(t('maxDurationMaxError', { duration: investProps.maxCoverageDuration }));
-            return false;
-        }
-        setMaxDurationError("");
-        return true;
-    }
+    const [ maxDurationValid, setMaxDurationValid ] = useState(true);
 
     // annual percentage return
     const [ annualPctReturn, setAnnualPctReturn ] = useState(investProps.annualPctReturn);
@@ -131,11 +101,11 @@ export default function InvestForm(props: InvestFormProperties) {
         valid = investedAmountValid && valid;
         valid = minSumInsuredValid && valid;
         valid = maxSumInsuredValid && valid;
-        valid = validateMinDuration() && valid;
-        valid = validateMaxDuration() && valid;
+        valid = minDurationValid && valid;
+        valid = maxDurationValid && valid;
         valid = validateAnnualPctReturn() && valid;
         setFormValid(valid);
-    }, [investedAmountValid, minSumInsuredValid, maxSumInsuredValid]);
+    }, [investedAmountValid, minSumInsuredValid, maxSumInsuredValid, minDurationValid, maxDurationValid]);
 
     // terms accepted and validation
     const [ termsAccepted, setTermsAccepted ] = useState(false);
@@ -225,41 +195,40 @@ export default function InvestForm(props: InvestFormProperties) {
                     />
             </Grid>
             <Grid item xs={6}>
-                <TextField
-                    fullWidth
-                    required
+                <NumericTextField
+                    fullWidth={true}
+                    required={true}
                     disabled={props.disabled}
-                    variant={formInputVariant}
                     id="minDuration"
                     label={t('minDuration')}
-                    type="text"
-                    InputProps={{
+                    inputProps={{
                         endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                     }}
                     value={minDuration}
-                    onChange={handleMinDurationChange}
-                    // onBlur={validateForm}
-                    helperText={minDurationError}
-                    error={minDurationError != ""}
+                    unit={t('days').toLowerCase()}
+                    onChange={setMinDuration}
+                    minValue={investProps.minCoverageDuration}
+                    maxValue={investProps.maxCoverageDuration}
+                    extraValidation={validateMinDuration}
+                    onError={(errMsg) => setMinDurationValid(errMsg === "")}
                 />
             </Grid>
             <Grid item xs={6}>
-                <TextField
-                    fullWidth
-                    required
+                <NumericTextField
+                    fullWidth= {true}
+                    required={true}
                     disabled={props.disabled}
-                    variant={formInputVariant}
                     id="maxDuration"
                     label={t('maxDuration')}
-                    type="text"
-                    InputProps={{
+                    inputProps={{
                         endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                     }}
                     value={maxDuration}
-                    onChange={handleMaxDurationChange}
-                    // onBlur={validateForm}
-                    helperText={maxDurationError}
-                    error={maxDurationError != ""}
+                    unit={t('days').toLowerCase()}
+                    onChange={setMaxDuration}
+                    minValue={investProps.minCoverageDuration}
+                    maxValue={investProps.maxCoverageDuration}
+                    onError={(errMsg) => setMaxDurationValid(errMsg === "")}
                     />
             </Grid>
             <Grid item xs={12}>

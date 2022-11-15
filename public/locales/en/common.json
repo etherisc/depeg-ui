@@ -13,6 +13,8 @@
         "metamask_not_found": "Missing metamask plugin - get it from",
         "wallet_connect_failed": "WalletConnect login failed or cancelled",
         "currencyTextFieldMinValue": "{{fieldName}} must be at least {{currency}} {{amount}}",
-        "currencyTextFieldMaxValue": "{{fieldName}} must be at most {{currency}} {{amount}}"
+        "currencyTextFieldMaxValue": "{{fieldName}} must be at most {{currency}} {{amount}}",
+        "numericTextFieldMinValue": "{{fieldName}} must be at least {{value}} {{unit}}",
+        "numericTextFieldMaxValue": "{{fieldName}} must be at most {{value}} {{unit}}"
     }
 }
