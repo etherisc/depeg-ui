@@ -1,5 +1,6 @@
 {
     "todo-tree.highlights.enabled": false,
+    "peacock.remoteColor": "#200525",
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#470b52",
         "activityBar.background": "#470b52",
@@ -19,5 +20,4 @@
         "titleBar.inactiveBackground": "#20052599",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.remoteColor": "#200525",
 }
