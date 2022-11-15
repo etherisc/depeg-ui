@@ -13,7 +13,7 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
         coverageDurationDaysMin: 14,
         coverageDurationDaysMax: 45,
         calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number) {
-          return Promise.resolve(insuredAmount * 0.017);
+          return Promise.resolve(insuredAmount * 0.017 * coverageDurationDays / 365);
         },
         async createApproval(walletAddress: string, premium: number) {
             enqueueSnackbar(`Approval mocked (${walletAddress}, ${premium}`,  { autoHideDuration: 3000, variant: 'info' });

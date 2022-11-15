@@ -13,7 +13,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { InsuranceApi } from '../../model/insurance_api';
 import { formatCurrency } from '../../utils/numbers';
 import CurrencyTextField from '../shared/currency_text_field';
-import { INPUT_VARIANT } from '../shared/numeric_text_field';
+import NumericTextField, { INPUT_VARIANT } from '../shared/numeric_text_field';
 
 const formInputVariant = 'outlined';
 
@@ -64,14 +64,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     // coverage days
     const [ coverageDays, setCoverageDays ] = useState(props.insurance.coverageDurationDaysMax);
-    function handleCoverageDaysChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        let val = (x.target as HTMLInputElement).value;
-        if (val == "") {
-            val = "0";
-        }
-        setCoverageDays(parseInt(val));
-        setCoverageUntil(moment().add(parseInt(val), 'days'));
-    };
+    const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
 
     // coverage until date
     const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.insurance.coverageDurationDaysMax, 'days'));
@@ -86,40 +79,25 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         setCoverageDays(date.startOf('day').diff(moment().startOf('day'), 'days'));
     };
 
-    // validate coverageDays when coverageUntil changes
-    useEffect(() => {
-        if (coverageUntil != null) {
-            validateFormAndCalculatePremium();
-        }
-    }, [coverageUntil]);  // eslint-disable-line react-hooks/exhaustive-deps
-
-    const [ coverageDaysError, setCoverageDaysError ] = useState("");
-    function validateCoverageDays() {
-        if (coverageDays < props.insurance.coverageDurationDaysMin) {
-            setCoverageDaysError(t('coverageDurationDaysMinError', { days: props.insurance.coverageDurationDaysMin }));
-            return false;
-        } 
-        if (coverageDays > props.insurance.coverageDurationDaysMax) {
-            setCoverageDaysError(t('coverageDurationDaysMaxError', { days: props.insurance.coverageDurationDaysMax }));
-            return false;
-        }
-        setCoverageDaysError("");
-        return true;
-    }
-
     // premium
     const [ premium, setPremium ] = useState(0);
 
-    async function validateFormAndCalculatePremium() {
+    useEffect(() => {
+        async function calculatePremium() {
+            setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays));
+        }
+
         let valid = true;
         valid = walletAddressValid && valid;
         valid = insuredAmountValid && valid;
-        valid = validateCoverageDays() && valid;
+        valid = coverageDaysValid && valid;
         if (valid) {
-            setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays));
+            calculatePremium();
+        } else {
+            setPremium(0);
         }
         setFormValid(valid);
-    }
+    }, [walletAddressValid, insuredAmountValid, coverageDaysValid, props.insurance, walletAddress, insuredAmount, coverageDays]);
 
     // terms accepted and validation
     const [ termsAccepted, setTermsAccepted ] = useState(false);
@@ -189,22 +167,24 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 {/* TODO: preload with wallet amount */}
             </Grid>
             <Grid item xs={6}>
-                <TextField
-                    fullWidth
-                    required
+                <NumericTextField
+                    fullWidth={true}
+                    required={true}
                     disabled={props.disabled}
-                    variant={formInputVariant}
                     id="coverageDurationDays"
                     label={t('coverageDurationDays')}
-                    type="text"
-                    InputProps={{
+                    inputProps={{
                         endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                     }}
                     value={coverageDays}
-                    onChange={handleCoverageDaysChange}
-                    onBlur={validateFormAndCalculatePremium}
-                    helperText={coverageDaysError}
-                    error={coverageDaysError != ""}
+                    unit={t('days').toLowerCase()}
+                    onChange={(days) => {
+                        setCoverageDays(days);
+                        setCoverageUntil(moment().add(days, 'days'));
+                    }}
+                    minValue={props.insurance.coverageDurationDaysMin}
+                    maxValue={props.insurance.coverageDurationDaysMax}
+                    onError={(errMsg) => setCoverageDaysValid(errMsg === "")}
                 />
             </Grid>
             <Grid item xs={6}>
