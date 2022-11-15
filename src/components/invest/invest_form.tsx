@@ -196,30 +196,29 @@ export default function InvestForm(props: InvestFormProperties) {
         setTermsAccepted((x.target as HTMLInputElement).checked);
     }
 
-    // buy button
+    // invest button
     const [ formValid, setFormValid ] = useState(true);
-    const [ buyButtonDisabled, setBuyButtonDisabled ] = useState(true);
-    const [ applicationInProgress, setApplicationInProgress ] = useState(false);
+    const [ investButtonDisabled, setInvestButtonDisabled ] = useState(true);
+    const [ paymentInProgress, setPaymentInProgress ] = useState(false);
 
     useEffect(() => {
-        let isBuyButtonDisabled = !formValid || !termsAccepted || props.disabled || applicationInProgress;
-        setBuyButtonDisabled(isBuyButtonDisabled);
+        let isBuyButtonDisabled = !formValid || !termsAccepted || props.disabled || paymentInProgress;
+        setInvestButtonDisabled(isBuyButtonDisabled);
         props.formReadyForInvest(!isBuyButtonDisabled);
-    }, [formValid, termsAccepted, props.disabled, applicationInProgress, props]);  
+    }, [formValid, termsAccepted, props.disabled, paymentInProgress, props]);  
 
 
     async function invest() {
-        setApplicationInProgress(true);
+        setPaymentInProgress(true);
 
         try {
-            // TODO: invest
-            
+            await props.invest(investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         } finally {
-            setApplicationInProgress(false);
+            setPaymentInProgress(false);
         }
     }
 
-    const waitForApply = applicationInProgress ? <LinearProgress /> : null;
+    const waitForPayment = paymentInProgress ? <LinearProgress /> : null;
     
     return (
         <Grid container maxWidth="md" spacing={4} mt={2} sx={{ p: 1, ml: 'auto', mr: 'auto' }} >
@@ -352,13 +351,13 @@ export default function InvestForm(props: InvestFormProperties) {
             <Grid item xs={12}>
                 <Button 
                     variant='contained'
-                    disabled={buyButtonDisabled}
+                    disabled={investButtonDisabled}
                     fullWidth
                     onClick={invest}
                 >
                     {t('button_invest')}
                 </Button>
-                {waitForApply}
+                {waitForPayment}
             </Grid>
         </Grid>
     );

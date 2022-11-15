@@ -31,7 +31,7 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
             }
             return Promise.resolve(mockPolicies);
         },
-        invest: investMock
+        invest: investMock(enqueueSnackbar)
     } as InsuranceApi;
 }
 
@@ -70,14 +70,32 @@ const mockPolicies = mockPoliciesActive.concat(
     } as PolicyRowView,
 );
 
-const investMock = {
-    usd1: 'USDC',
-    minInvestedAmount: 25000,
-    maxInvestedAmount: 100000,
-    minSumInsured: 1000,
-    maxSumInsured: 25000,
-    minCoverageDuration: 14,
-    maxCoverageDuration: 90,
-    annualPctReturn: 0.05,
-    maxAnnualPctReturn: 0.2
+function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
+    return {
+        usd1: 'USDC',
+        minInvestedAmount: 25000,
+        maxInvestedAmount: 100000,
+        minSumInsured: 1000,
+        maxSumInsured: 25000,
+        minCoverageDuration: 14,
+        maxCoverageDuration: 90,
+        annualPctReturn: 0.05,
+        maxAnnualPctReturn: 0.2,
+        async invest(
+            investorWalletAddress: string, 
+            investedAmount: number, 
+            minSumInsured: number, 
+            maxSumInsured: number, 
+            minDuration: number, 
+            maxDuration: number, 
+            annualPctReturn: number
+        ): Promise<boolean> {
+            enqueueSnackbar(
+                `Riskpool mocked ($investorWalletAddress, $investedAmount, $minSumInsured, $maxSumInsured, $minDuration, $maxDuration, $annualPctReturn)`,
+                { autoHideDuration: 3000, variant: 'info' }
+            );
+            await delay(2000);
+            return Promise.resolve(true);
+        }
+    };
 };

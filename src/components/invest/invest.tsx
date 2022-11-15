@@ -72,14 +72,15 @@ export default function Invest(props: InvestProps) {
     }
 
     async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
-        // setActiveStep(3);
-        // await props.insurance.createApproval(walletAddress, premium);
-        // // FIXME: handle error during approval
-        // setActiveStep(4);
-        // await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration);
-        // // FIXME: handle error during apply for policy
-        // setActiveStep(5);
-        // applicationSuccessful();
+        setActiveStep(3);
+        const investorWalletAddress = await signerContext!!.data.signer!!.getAddress();
+        await props.insurance.createApproval(investorWalletAddress, investedAmount);
+        // FIXME: handle error during approval
+        setActiveStep(4);
+        await props.insurance.invest.invest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+        // FIXME: handle error during investment
+        setActiveStep(5);
+        applicationSuccessful();
         return Promise.resolve(true);        
     }
 
