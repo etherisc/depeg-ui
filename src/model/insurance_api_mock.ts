@@ -30,7 +30,8 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
                 return Promise.resolve(mockPoliciesActive);
             }
             return Promise.resolve(mockPolicies);
-        }
+        },
+        invest: investMock
     } as InsuranceApi;
 }
 
@@ -68,3 +69,14 @@ const mockPolicies = mockPoliciesActive.concat(
         status: PolicyStatus[PolicyStatus.PAYED_OUT]
     } as PolicyRowView,
 );
+
+const investMock = {
+    usd1: 'USDC',
+    minInvestedAmount: 25000,
+    maxInvestedAmount: 100000,
+    minSumInsured: 1000,
+    maxSumInsured: 25000,
+    minCoverageDuration: 14,
+    maxCoverageDuration: 90,
+    annualPctReturn: 0.05
+};

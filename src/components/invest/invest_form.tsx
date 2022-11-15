@@ -24,29 +24,30 @@ export interface InvestFormProperties {
 
 export default function InvestForm(props: InvestFormProperties) {
     const { t } = useTranslation('invest');
+    const investProps = props.insurance.invest;
 
-    // insured amount
-    const [ insuredAmount, setInsuredAmount ] = useState(props.insurance.insuredAmountMax);
-    function handleInsuredAmountChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    // invested amount
+    const [ investedAmount, setInvestedAmount ] = useState(investProps.maxInvestedAmount);
+    function handleInvestedAmountChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         let val = (x.target as HTMLInputElement).value;
         if (val == "") {
-            setInsuredAmount(0);
+            setInvestedAmount(0);
             return;
         }
-        setInsuredAmount(parseInt(val.replaceAll(',', '')));
+        setInvestedAmount(parseInt(val.replaceAll(',', '')));
     }
 
-    const [ insuredAmountError, setInsuredAmountError ] = useState("");
-    function validateInsuredAmount() {
-        if (insuredAmount < props.insurance.insuredAmountMin) {
-            setInsuredAmountError(t('insuredAmountMinError', { amount: formatCurrency(props.insurance.insuredAmountMin), currency: props.insurance.usd1 }));
+    const [ investedAmountError, setInvestedAmountError ] = useState("");
+    function validateInvestedAmount() {
+        if (investedAmount < investProps.minInvestedAmount) {
+            setInvestedAmountError(t('investedAmountMinError', { amount: formatCurrency(investProps.minInvestedAmount), currency: investProps.usd1 }));
             return false;
         } 
-        if ( insuredAmount > props.insurance.insuredAmountMax) {
-            setInsuredAmountError(t('insuredAmountMaxError', { amount: formatCurrency(props.insurance.insuredAmountMax), currency: props.insurance.usd1 }));
+        if ( investedAmount > investProps.maxInvestedAmount) {
+            setInvestedAmountError(t('investedAmountMaxError', { amount: formatCurrency(investProps.maxInvestedAmount), currency: investProps.usd1 }));
             return false;
         }
-        setInsuredAmountError("");
+        setInvestedAmountError("");
         return true;
     }
 
@@ -79,7 +80,7 @@ export default function InvestForm(props: InvestFormProperties) {
     // validate coverageDays when coverageUntil changes
     useEffect(() => {
         if (coverageUntil != null) {
-            validateFormAndCalculatePremium();
+            validateForm();
         }
     }, [coverageUntil]);  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -100,9 +101,9 @@ export default function InvestForm(props: InvestFormProperties) {
     // premium
     const [ premium, setPremium ] = useState(0);
 
-    async function validateFormAndCalculatePremium() {
+    async function validateForm() {
         let valid = true;
-        valid = validateInsuredAmount() && valid;
+        valid = validateInvestedAmount() && valid;
         valid = validateCoverageDays() && valid;
         setFormValid(valid);
     }
@@ -148,11 +149,14 @@ export default function InvestForm(props: InvestFormProperties) {
                     id="investedAmount"
                     label={t('investedAmount')}
                     type="text"
-                    /* TODO: adornment currency */
-                    // TODO: enable
-                    // value={walletAddress}
-                    // onChange={handleWalletAddressChange}
-                    // onBlur={validateFormAndCalculatePremium}
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">{investProps.usd1}</InputAdornment>,
+                    }}
+                    value={formatCurrency(investedAmount)}
+                    onChange={handleInvestedAmountChange}
+                    onBlur={validateForm}
+                    helperText={investedAmountError}
+                    error={investedAmountError != ""}
                     required
                 />
             </Grid>
