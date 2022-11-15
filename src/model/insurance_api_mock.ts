@@ -78,5 +78,6 @@ const investMock = {
     maxSumInsured: 25000,
     minCoverageDuration: 14,
     maxCoverageDuration: 90,
-    annualPctReturn: 0.05
+    annualPctReturn: 0.05,
+    maxAnnualPctReturn: 0.2
 };

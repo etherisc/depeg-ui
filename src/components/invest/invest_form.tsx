@@ -146,6 +146,39 @@ export default function InvestForm(props: InvestFormProperties) {
         return true;
     }
 
+    // annual percentage return
+    const [ annualPctReturn, setAnnualPctReturn ] = useState(investProps.annualPctReturn);
+    function handleAnnualPctReturnChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        let val = (x.target as HTMLInputElement).value;
+        if (val == "") {
+            setAnnualPctReturn(0);
+            return;
+        }
+        if (parseInt(val) > 100) {
+            setAnnualPctReturn(1);
+            return;
+        }
+        setAnnualPctReturn(parseInt(val) / 100);
+    }
+
+    const [ annualPctReturnError, setAnnualPctReturnError ] = useState("");
+    function validateAnnualPctReturn() {
+        if (annualPctReturn <= 0) {
+            setAnnualPctReturnError(t('annualPctReturnMinError'));
+            return false;
+        }
+        if (annualPctReturn > 1) {
+            setAnnualPctReturnError(t('annualPctReturnMaxError', { pct: 100 }));
+            return false;
+        }
+        if (annualPctReturn > investProps.maxAnnualPctReturn) {
+            setAnnualPctReturnError(t('annualPctReturnMaxError', { pct: investProps.maxAnnualPctReturn * 100 }));
+            return false;
+        }
+        setAnnualPctReturnError("");
+        return true;
+    }
+
     async function validateForm() {
         let valid = true;
         valid = validateInvestedAmount() && valid;
@@ -153,6 +186,7 @@ export default function InvestForm(props: InvestFormProperties) {
         valid = validateMaxSumInsured() && valid;
         valid = validateMinDuration() && valid;
         valid = validateMaxDuration() && valid;
+        valid = validateAnnualPctReturn() && valid;
         setFormValid(valid);
     }
 
@@ -293,12 +327,14 @@ export default function InvestForm(props: InvestFormProperties) {
                     id="annualPercentageReturn"
                     label={t('annualPercentageReturn')}
                     type="text"
-                    // TODO: validation
-                    value={0}
+                    value={annualPctReturn * 100}
+                    onChange={handleAnnualPctReturnChange}
+                    onBlur={validateForm}
                     InputProps={{
                         startAdornment: <InputAdornment position="start">%</InputAdornment>,
-                        readOnly: true,
                     }}
+                    helperText={annualPctReturnError}
+                    error={annualPctReturnError != ""}
                 />
             </Grid>
             <Grid item xs={12}>

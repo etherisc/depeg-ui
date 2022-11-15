@@ -23,4 +23,5 @@ export interface InvestApi {
     minCoverageDuration: number;
     maxCoverageDuration: number;
     annualPctReturn: number;
+    maxAnnualPctReturn: number;
 }

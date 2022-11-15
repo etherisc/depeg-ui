@@ -19,6 +19,8 @@
     "minDurationMaxError": "Coverage duration must not be greater than maximum coverage duration",
     "maxDurationMaxError": "Coverage duration must be at least {{days}} days",
     "annualPercentageReturn": "Annual percentage return",
+    "annualPctReturnMinError": "Annual percentage return cannot be 0%",
+    "annualPctReturnMaxError": "Annual percentage return must be at most {{pct}}%",
     "checkbox_t_and_c_label": "By checking this box, I confirm that I have read and agree to the Terms and Conditions.",
     "button_invest": "Invest",
     "application_success": "Your application has been successful",
