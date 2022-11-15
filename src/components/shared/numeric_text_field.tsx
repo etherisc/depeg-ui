@@ -71,7 +71,7 @@ export default function NumericTextField(props: NumericTextFieldProps) {
             label={props.label}
             type="text"
             InputProps={props.inputProps}
-            value={formatCurrency(props.value)}
+            value={props.value}
             onChange={handleValueChange}
             onBlur={validateValue}
             helperText={error}
