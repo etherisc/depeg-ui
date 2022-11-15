@@ -12,6 +12,7 @@ import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { InsuranceApi } from '../../model/insurance_api';
 import { formatCurrency } from '../../utils/numbers';
+import CurrencyTextField from '../shared/currency_text_field';
 
 const formInputVariant = 'outlined';
 
@@ -28,28 +29,7 @@ export default function InvestForm(props: InvestFormProperties) {
 
     // invested amount
     const [ investedAmount, setInvestedAmount ] = useState(investProps.maxInvestedAmount);
-    function handleInvestedAmountChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        let val = (x.target as HTMLInputElement).value;
-        if (val == "") {
-            setInvestedAmount(0);
-            return;
-        }
-        setInvestedAmount(parseInt(val.replaceAll(',', '')));
-    }
-
-    const [ investedAmountError, setInvestedAmountError ] = useState("");
-    function validateInvestedAmount() {
-        if (investedAmount < investProps.minInvestedAmount) {
-            setInvestedAmountError(t('investedAmountMinError', { amount: formatCurrency(investProps.minInvestedAmount), currency: investProps.usd1 }));
-            return false;
-        } 
-        if ( investedAmount > investProps.maxInvestedAmount) {
-            setInvestedAmountError(t('investedAmountMaxError', { amount: formatCurrency(investProps.maxInvestedAmount), currency: investProps.usd1 }));
-            return false;
-        }
-        setInvestedAmountError("");
-        return true;
-    }
+    const [ investedAmountValid, setInvestedAmountValid ] = useState(true);
 
     // minimum sum insured
     const [ minSumInsured, setMinSumInsured ] = useState(investProps.minSumInsured);
@@ -179,16 +159,16 @@ export default function InvestForm(props: InvestFormProperties) {
         return true;
     }
 
-    async function validateForm() {
+    useEffect(() => {
         let valid = true;
-        valid = validateInvestedAmount() && valid;
+        valid = investedAmountValid && valid;
         valid = validateMinSumInsured() && valid;
         valid = validateMaxSumInsured() && valid;
         valid = validateMinDuration() && valid;
         valid = validateMaxDuration() && valid;
         valid = validateAnnualPctReturn() && valid;
         setFormValid(valid);
-    }
+    }, [investedAmountValid]);
 
     // terms accepted and validation
     const [ termsAccepted, setTermsAccepted ] = useState(false);
@@ -223,23 +203,22 @@ export default function InvestForm(props: InvestFormProperties) {
     return (
         <Grid container maxWidth="md" spacing={4} mt={2} sx={{ p: 1, ml: 'auto', mr: 'auto' }} >
             <Grid item xs={12}>
-                <TextField
-                    fullWidth
+                <CurrencyTextField
                     disabled={props.disabled}
-                    variant={formInputVariant}
+                    required={true}
+                    fullWidth={true}
                     id="investedAmount"
                     label={t('investedAmount')}
-                    type="text"
-                    InputProps={{
+                    inputProps={{
                         startAdornment: <InputAdornment position="start">{investProps.usd1}</InputAdornment>,
                     }}
-                    value={formatCurrency(investedAmount)}
-                    onChange={handleInvestedAmountChange}
-                    onBlur={validateForm}
-                    helperText={investedAmountError}
-                    error={investedAmountError != ""}
-                    required
-                />
+                    value={investedAmount}
+                    currency={investProps.usd1}
+                    onChange={setInvestedAmount}
+                    minValue={investProps.minInvestedAmount}
+                    maxValue={investProps.maxInvestedAmount}
+                    onError={(errMsg) => setInvestedAmountValid(errMsg === "")}
+                    />
             </Grid>
             <Grid item xs={6}>
                 <TextField
@@ -255,7 +234,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     }}
                     value={formatCurrency(minSumInsured)}
                     onChange={handleMinSumInsuredChange}
-                    onBlur={validateForm}
+                    // onBlur={validateForm}
                     helperText={minSumInsuredError}
                     error={minSumInsuredError != ""}
                     />
@@ -274,7 +253,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     }}
                     value={formatCurrency(maxSumInsured)}
                     onChange={handleMaxSumInsuredChange}
-                    onBlur={validateForm}
+                    // onBlur={validateForm}
                     helperText={maxSumInsuredError}
                     error={maxSumInsuredError != ""}
                     />
@@ -293,7 +272,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     }}
                     value={minDuration}
                     onChange={handleMinDurationChange}
-                    onBlur={validateForm}
+                    // onBlur={validateForm}
                     helperText={minDurationError}
                     error={minDurationError != ""}
                 />
@@ -312,7 +291,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     }}
                     value={maxDuration}
                     onChange={handleMaxDurationChange}
-                    onBlur={validateForm}
+                    // onBlur={validateForm}
                     helperText={maxDurationError}
                     error={maxDurationError != ""}
                     />
@@ -328,7 +307,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     type="text"
                     value={annualPctReturn * 100}
                     onChange={handleAnnualPctReturnChange}
-                    onBlur={validateForm}
+                    // onBlur={validateForm}
                     InputProps={{
                         startAdornment: <InputAdornment position="start">%</InputAdornment>,
                     }}

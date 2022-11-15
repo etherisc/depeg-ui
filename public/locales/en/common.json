@@ -11,6 +11,8 @@
     },
     "error": {
         "metamask_not_found": "Missing metamask plugin - get it from",
-        "wallet_connect_failed": "WalletConnect login failed or cancelled"
+        "wallet_connect_failed": "WalletConnect login failed or cancelled",
+        "currencyTextFieldMinValue": "{{fieldName}} must be at least {{currency}} {{amount}}",
+        "currencyTextFieldMaxValue": "{{fieldName}} must be at most {{currency}} {{amount}}"
     }
 }
