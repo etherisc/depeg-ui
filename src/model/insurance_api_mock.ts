@@ -79,8 +79,8 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         maxSumInsured: 25000,
         minCoverageDuration: 14,
         maxCoverageDuration: 90,
-        annualPctReturn: 0.05,
-        maxAnnualPctReturn: 0.2,
+        annualPctReturn: 5,
+        maxAnnualPctReturn: 20,
         async invest(
             investorWalletAddress: string, 
             investedAmount: number, 

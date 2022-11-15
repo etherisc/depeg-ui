@@ -1,17 +1,12 @@
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
-import CircularProgress from '@mui/material/CircularProgress';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
-import TextField from '@mui/material/TextField'
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import moment from 'moment';
 import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { InsuranceApi } from '../../model/insurance_api';
-import { formatCurrency } from '../../utils/numbers';
 import CurrencyTextField from '../shared/currency_text_field';
 import NumericTextField from '../shared/numeric_text_field';
 
@@ -65,36 +60,7 @@ export default function InvestForm(props: InvestFormProperties) {
 
     // annual percentage return
     const [ annualPctReturn, setAnnualPctReturn ] = useState(investProps.annualPctReturn);
-    function handleAnnualPctReturnChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        let val = (x.target as HTMLInputElement).value;
-        if (val == "") {
-            setAnnualPctReturn(0);
-            return;
-        }
-        if (parseInt(val) > 100) {
-            setAnnualPctReturn(1);
-            return;
-        }
-        setAnnualPctReturn(parseInt(val) / 100);
-    }
-
-    const [ annualPctReturnError, setAnnualPctReturnError ] = useState("");
-    function validateAnnualPctReturn() {
-        if (annualPctReturn <= 0) {
-            setAnnualPctReturnError(t('annualPctReturnMinError'));
-            return false;
-        }
-        if (annualPctReturn > 1) {
-            setAnnualPctReturnError(t('annualPctReturnMaxError', { pct: 100 }));
-            return false;
-        }
-        if (annualPctReturn > investProps.maxAnnualPctReturn) {
-            setAnnualPctReturnError(t('annualPctReturnMaxError', { pct: investProps.maxAnnualPctReturn * 100 }));
-            return false;
-        }
-        setAnnualPctReturnError("");
-        return true;
-    }
+    const [ annualPctReturnValid, setAnnualPctReturnValid ] = useState(true);
 
     useEffect(() => {
         let valid = true;
@@ -103,9 +69,9 @@ export default function InvestForm(props: InvestFormProperties) {
         valid = maxSumInsuredValid && valid;
         valid = minDurationValid && valid;
         valid = maxDurationValid && valid;
-        valid = validateAnnualPctReturn() && valid;
+        valid = annualPctReturnValid && valid;
         setFormValid(valid);
-    }, [investedAmountValid, minSumInsuredValid, maxSumInsuredValid, minDurationValid, maxDurationValid]);
+    }, [investedAmountValid, minSumInsuredValid, maxSumInsuredValid, minDurationValid, maxDurationValid, annualPctReturnValid]);
 
     // terms accepted and validation
     const [ termsAccepted, setTermsAccepted ] = useState(false);
@@ -232,22 +198,21 @@ export default function InvestForm(props: InvestFormProperties) {
                     />
             </Grid>
             <Grid item xs={12}>
-                <TextField
-                    required
-                    fullWidth
+                <NumericTextField
+                    required={true}
+                    fullWidth={true}
                     disabled={props.disabled}
-                    variant={formInputVariant}
                     id="annualPercentageReturn"
                     label={t('annualPercentageReturn')}
-                    type="text"
-                    value={annualPctReturn * 100}
-                    onChange={handleAnnualPctReturnChange}
-                    // onBlur={validateForm}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">%</InputAdornment>,
+                    value={annualPctReturn}
+                    unit="%"
+                    onChange={setAnnualPctReturn}
+                    inputProps={{
+                        endAdornment: <InputAdornment position="end">%</InputAdornment>,
                     }}
-                    helperText={annualPctReturnError}
-                    error={annualPctReturnError != ""}
+                    minValue={0.01}
+                    maxValue={investProps.maxAnnualPctReturn}
+                    onError={(errMsg) => setAnnualPctReturnValid(errMsg === "")}
                 />
             </Grid>
             <Grid item xs={12}>

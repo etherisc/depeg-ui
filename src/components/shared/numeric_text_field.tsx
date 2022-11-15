@@ -20,7 +20,7 @@ export interface NumericTextFieldProps {
     onError?: (errorMsg: string) => void;
 }
 
-const formInputVariant = 'outlined';
+export const INPUT_VARIANT = 'outlined';
 
 export default function NumericTextField(props: NumericTextFieldProps) {
     const { t } = useTranslation('common');
@@ -66,7 +66,7 @@ export default function NumericTextField(props: NumericTextFieldProps) {
             fullWidth={props.fullWidth}
             disabled={props.disabled}
             required={props.required}
-            variant={formInputVariant}
+            variant={INPUT_VARIANT}
             id={props.id}
             label={props.label}
             type="text"

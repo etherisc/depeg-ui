@@ -3,6 +3,7 @@ import TextField from "@mui/material/TextField";
 import { useTranslation } from "next-i18next";
 import { ChangeEvent, useState } from "react";
 import { formatCurrency } from "../../utils/numbers";
+import { INPUT_VARIANT } from "./numeric_text_field";
 
 export interface CurrencyTextfieldProps {
     value: number;
@@ -19,8 +20,6 @@ export interface CurrencyTextfieldProps {
     extraValidation?: (value: number) => string;
     onError?: (errorMsg: string) => void;
 }
-
-const formInputVariant = 'outlined';
 
 export default function CurrencyTextField(props: CurrencyTextfieldProps) {
     const { t } = useTranslation('common');
@@ -66,7 +65,7 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             fullWidth={props.fullWidth}
             disabled={props.disabled}
             required={props.required}
-            variant={formInputVariant}
+            variant={INPUT_VARIANT}
             id={props.id}
             label={props.label}
             type="text"
