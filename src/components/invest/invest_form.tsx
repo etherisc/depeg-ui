@@ -100,62 +100,59 @@ export default function InvestForm(props: InvestFormProperties) {
         return true;
     }
 
-    // coverage period (days and date)
-
-    // coverage days
-    const [ coverageDays, setCoverageDays ] = useState(props.insurance.coverageDurationDaysMax);
-    function handleCoverageDaysChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    // minimum coverage duration
+    const [ minDuration, setMinDuration ] = useState(investProps.minCoverageDuration);
+    function handleMinDurationChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         let val = (x.target as HTMLInputElement).value;
         if (val == "") {
-            val = "0";
+            setMinDuration(0);
+            return;
         }
-        setCoverageDays(parseInt(val));
-        setCoverageUntil(moment().add(parseInt(val), 'days'));
-    };
+        setMinDuration(parseInt(val));
+    }
 
-    // coverage until date
-    const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.insurance.coverageDurationDaysMax, 'days'));
-    const coverageUntilMin = moment().add(props.insurance.coverageDurationDaysMin, 'days');
-    const coverageUntilMax = moment().add(props.insurance.coverageDurationDaysMax, 'days');
-    function handleCoverageUntilChange(t: moment.Moment | null) {
-        let date = t;
-        if (date == null) {
-            date = moment();
-        }
-        setCoverageUntil(date);
-        setCoverageDays(date.startOf('day').diff(moment().startOf('day'), 'days'));
-    };
-
-    // validate coverageDays when coverageUntil changes
-    useEffect(() => {
-        if (coverageUntil != null) {
-            validateForm();
-        }
-    }, [coverageUntil]);  // eslint-disable-line react-hooks/exhaustive-deps
-
-    const [ coverageDaysError, setCoverageDaysError ] = useState("");
-    function validateCoverageDays() {
-        if (coverageDays < props.insurance.coverageDurationDaysMin) {
-            setCoverageDaysError(t('coverageDurationDaysMinError', { days: props.insurance.coverageDurationDaysMin }));
-            return false;
-        } 
-        if (coverageDays > props.insurance.coverageDurationDaysMax) {
-            setCoverageDaysError(t('coverageDurationDaysMaxError', { days: props.insurance.coverageDurationDaysMax }));
+    const [ minDurationError, setMinDurationError ] = useState("");
+    function validateMinDuration() {
+        if (minDuration < investProps.minCoverageDuration) {
+            setMinDurationError(t('minDurationMinError', { duration: investProps.minCoverageDuration }));
             return false;
         }
-        setCoverageDaysError("");
+        if (minDuration > maxDuration) {
+            setMinDurationError(t('minDurationMaxError'));
+            return false;
+        }
+        setMinDurationError("");
         return true;
     }
 
-    // premium
-    const [ premium, setPremium ] = useState(0);
+    // maxmium coverage duration
+    const [ maxDuration, setMaxDuration ] = useState(investProps.maxCoverageDuration);
+    function handleMaxDurationChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        let val = (x.target as HTMLInputElement).value;
+        if (val == "") {
+            setMaxDuration(0);
+            return;
+        }
+        setMaxDuration(parseInt(val));
+    }
+
+    const [ maxDurationError, setMaxDurationError ] = useState("");
+    function validateMaxDuration() {
+        if (maxDuration > investProps.maxCoverageDuration) {
+            setMaxDurationError(t('maxDurationMaxError', { duration: investProps.maxCoverageDuration }));
+            return false;
+        }
+        setMaxDurationError("");
+        return true;
+    }
 
     async function validateForm() {
         let valid = true;
         valid = validateInvestedAmount() && valid;
         valid = validateMinSumInsured() && valid;
         valid = validateMaxSumInsured() && valid;
-        valid = validateCoverageDays() && valid;
+        valid = validateMinDuration() && valid;
+        valid = validateMaxDuration() && valid;
         setFormValid(valid);
     }
 
@@ -261,13 +258,11 @@ export default function InvestForm(props: InvestFormProperties) {
                     InputProps={{
                         endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                     }}
-                    // TODO: enable
-                    // value={coverageDays}
-                    // onChange={handleCoverageDaysChange}
-                    // onBlur={validateFormAndCalculatePremium}
-                    // TODO: error
-                    // helperText={coverageDaysError}
-                    // error={coverageDaysError != ""}
+                    value={minDuration}
+                    onChange={handleMinDurationChange}
+                    onBlur={validateForm}
+                    helperText={minDurationError}
+                    error={minDurationError != ""}
                 />
             </Grid>
             <Grid item xs={6}>
@@ -282,13 +277,11 @@ export default function InvestForm(props: InvestFormProperties) {
                     InputProps={{
                         endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                     }}
-                    // TODO: enable
-                    // value={coverageDays}
-                    // onChange={handleCoverageDaysChange}
-                    // onBlur={validateFormAndCalculatePremium}
-                    // TODO: error
-                    // helperText={coverageDaysError}
-                    // error={coverageDaysError != ""}
+                    value={maxDuration}
+                    onChange={handleMaxDurationChange}
+                    onBlur={validateForm}
+                    helperText={maxDurationError}
+                    error={maxDurationError != ""}
                     />
             </Grid>
             <Grid item xs={12}>
@@ -301,7 +294,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     label={t('annualPercentageReturn')}
                     type="text"
                     // TODO: validation
-                    value={formatCurrency(premium)}
+                    value={0}
                     InputProps={{
                         startAdornment: <InputAdornment position="start">%</InputAdornment>,
                         readOnly: true,
