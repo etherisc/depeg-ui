@@ -16,6 +16,7 @@ export interface CurrencyTextfieldProps {
     inputProps: InputProps;
     minValue: number;
     maxValue: number;
+    extraValidation?: (value: number) => string;
     onError?: (errorMsg: string) => void;
 }
 
@@ -39,9 +40,16 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             handleError(t('error.currencyTextFieldMinValue', { fieldName: props.label, amount: formatCurrency(props.minValue), currency: props.currency }));
             return;
         } 
-        if ( props.value > props.maxValue) {
+        if (props.value > props.maxValue) {
             handleError(t('error.currencyTextFieldMaxValue', { fieldName: props.label, amount: formatCurrency(props.maxValue), currency: props.currency }));
             return;
+        }
+        if (props.extraValidation) {
+            const errorMsg = props.extraValidation(props.value);
+            if (errorMsg && errorMsg !== "") {
+                handleError(errorMsg);
+                return;
+            }
         }
         handleError("");
     }
