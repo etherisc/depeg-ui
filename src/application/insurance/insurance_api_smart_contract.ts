@@ -27,6 +27,7 @@ export function insuranceApiSmartContract(
                 return Promise.resolve(0);
             }
 
+            const durationSecs = coverageDurationDays * 24 * 60 * 60;
             console.log("calculatePremium", walletAddress, insuredAmount, coverageDurationDays);
             const product = DepegProduct__factory.connect(contractAddress, signer);
             const riskpoolId = (await product.getRiskpoolId()).toNumber();
@@ -35,12 +36,16 @@ export function insuranceApiSmartContract(
             const depegRiskpool = await getDepegRiskpool(instanceService, riskpoolId);
             const bundleData = await getBundleData(instanceService, riskpoolId, depegRiskpool);
             console.log("bundleData", bundleData);
-            const bestBundle = getBestQuote(bundleData, insuredAmount, coverageDurationDays * 24 * 60 * 60);
+            const bestBundle = getBestQuote(bundleData, insuredAmount, durationSecs);
             if (bestBundle.idx == -1) { 
                 throw new NoBundleFoundError();
             }
             console.log("bestBundle", bestBundle);
-            return Promise.resolve(1);
+            const netPremium = await product.calculateNetPremium(insuredAmount, durationSecs, bestBundle.bundleId)
+            console.log("netPremium", netPremium);
+            const premium = (await product.calculatePremium(netPremium)).toNumber();
+            console.log("premium", premium);
+            return Promise.resolve(premium);
         },
         async createApproval(walletAddress: string, premium: number) {
             enqueueSnackbar(`Approval mocked (${walletAddress}, ${premium}`,  { autoHideDuration: 3000, variant: 'info' });

@@ -88,6 +88,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             console.log("Calculating premium...");
             try {
                 setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays));
+                setPremiumError("");
             } catch (e) {
                 if (e instanceof NoBundleFoundError) {
                     console.log("No bundle found for this insurance.");
@@ -114,7 +115,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setPremium(0);
         }
         setFormValid(valid);
-    }, [walletAddressValid, insuredAmountValid, coverageDaysValid, props.insurance, walletAddress, insuredAmount, coverageDays]);
+    }, [walletAddressValid, insuredAmountValid, coverageDaysValid, props.insurance, walletAddress, insuredAmount, coverageDays, t]);
 
     // terms accepted and validation
     const [ termsAccepted, setTermsAccepted ] = useState(false);
