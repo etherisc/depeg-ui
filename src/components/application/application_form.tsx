@@ -109,6 +109,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         valid = coverageDaysValid && valid;
         if (valid) {
             console.log("Form is valid, calculating premium...");
+            // TODO: calculate premium only once bundle data is loaded
+            // TODO: recalculate premium on input onBlur not every keystroke (leads to intermediates error display while typing and data is incomplete invalid)
+            // TODO: show spinner while calculating premium
             calculatePremium();
         } else {
             console.log("Form is invalid, not calculating premium...");

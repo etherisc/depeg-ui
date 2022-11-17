@@ -34,6 +34,7 @@ export function insuranceApiSmartContract(
             const registryAddress = await product.getRegistry();
             const instanceService = await getInstanceService(registryAddress, signer);
             const depegRiskpool = await getDepegRiskpool(instanceService, riskpoolId);
+            // TODO: retrieve bundle data on component load and not for every form update
             const bundleData = await getBundleData(instanceService, riskpoolId, depegRiskpool);
             console.log("bundleData", bundleData);
             const bestBundle = getBestQuote(bundleData, insuredAmount, durationSecs);
