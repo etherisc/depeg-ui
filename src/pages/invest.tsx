@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
-import { insuranceApiMock } from "../model/insurance_api_mock";
+import { insuranceApiMock } from "../application/insurance/insurance_api_mock";
 import Invest from '../components/invest/invest';
 
 export default function InvestPage() {

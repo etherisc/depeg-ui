@@ -1,10 +1,18 @@
+import { Signer, VoidSigner } from "ethers";
 import moment from "moment";
 import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
-import { delay } from "../utils/delay";
-import { InsuranceApi } from "./insurance_api";
-import { PolicyRowView, PolicyStatus } from "./policy";
+import { DepegProduct__factory } from "../../contracts/depeg-contracts";
+import { InsuranceApi } from "../../model/insurance_api";
+import { PolicyRowView, PolicyStatus } from "../../model/policy";
+import { delay } from "../../utils/delay";
+import { getDepegRiskpool, getInstanceService } from "./gif_registry";
+import { getBundleData } from "./riskbundle";
 
-export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
+export function insuranceApiSmartContract(
+        signer: Signer,
+        contractAddress: string,  
+        enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey,
+        ): InsuranceApi {
     return {
         usd1: 'USDC',
         usd2: 'USDT',
@@ -12,8 +20,22 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
         insuredAmountMax: 10000,
         coverageDurationDaysMin: 14,
         coverageDurationDaysMax: 45,
-        calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number) {
-          return Promise.resolve(insuredAmount * 0.017 * coverageDurationDays / 365);
+        async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number): Promise<number> {
+            if (signer instanceof VoidSigner) {
+                console.log('no chain connection, no premium calculation');
+                return Promise.resolve(0);
+            }
+
+            console.log("calculatePremium", walletAddress, insuredAmount, coverageDurationDays);
+            const product = DepegProduct__factory.connect(contractAddress, signer);
+            const riskpoolId = (await product.getRiskpoolId()).toNumber();
+            const registryAddress = await product.getRegistry();
+            const instanceService = await getInstanceService(registryAddress, signer);
+            const depegRiskpool = await getDepegRiskpool(instanceService, riskpoolId);
+            const bundleData = await getBundleData(instanceService, riskpoolId, depegRiskpool);
+            console.log("bundleData", bundleData);
+
+            return Promise.resolve(1);
         },
         async createApproval(walletAddress: string, premium: number) {
             enqueueSnackbar(`Approval mocked (${walletAddress}, ${premium}`,  { autoHideDuration: 3000, variant: 'info' });

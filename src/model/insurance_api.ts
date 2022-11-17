@@ -1,3 +1,7 @@
+import { ethers, Signer } from "ethers";
+import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
+import { insuranceApiMock } from "../application/insurance/insurance_api_mock";
+import { insuranceApiSmartContract } from "../application/insurance/insurance_api_smart_contract";
 import { PolicyRowView } from "./policy";
 
 export interface InsuranceApi {
@@ -52,4 +56,23 @@ export interface InvestApi {
             maxDuration: number, 
             annualPctReturn: number
         ) => Promise<boolean>;
+}
+
+export function getInsuranceApi(
+        enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey, 
+        signer?: Signer,
+        provider?: ethers.providers.Provider
+        ): InsuranceApi {
+    const contractAddress = process.env.NEXT_PUBLIC_DEPECT_CONTRACT_ADDRESS;
+    if (contractAddress == null) {
+        console.log("Using mock insurance API");
+        return insuranceApiMock(enqueueSnackbar);
+    } else {
+        console.log("Using smart contract", contractAddress);
+        if (signer === undefined || provider === undefined) {
+            return insuranceApiSmartContract(new ethers.VoidSigner(contractAddress, provider), contractAddress, enqueueSnackbar);
+        } else {
+            return insuranceApiSmartContract(signer, contractAddress, enqueueSnackbar);
+        }
+    }
 }
