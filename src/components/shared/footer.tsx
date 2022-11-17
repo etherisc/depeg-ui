@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import React from 'react';
-import ChainData from './chain_data';
+import ChainData from './onchain/chain_data';
 
 
 export default function Footer() {

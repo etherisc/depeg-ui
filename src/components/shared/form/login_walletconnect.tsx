@@ -1,7 +1,7 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";import { ethers } from "ethers";
 import { useContext } from "react";
-import { walletConnectConfig } from "../../config/appConfig";
-import { SignerContext, setSigner, removeSigner, updateSigner } from "../../context/signer_context";
+import { walletConnectConfig } from "../../../config/appConfig";
+import { SignerContext, setSigner, removeSigner, updateSigner } from "../../../context/signer_context";
 import Button from '@mui/material/Button'
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";

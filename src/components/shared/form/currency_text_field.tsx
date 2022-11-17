@@ -2,7 +2,7 @@ import { InputProps } from "@mui/material/Input";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "next-i18next";
 import { ChangeEvent, useState } from "react";
-import { formatCurrency } from "../../utils/numbers";
+import { formatCurrency } from "../../../utils/numbers";
 import { INPUT_VARIANT } from "./numeric_text_field";
 
 export interface CurrencyTextfieldProps {

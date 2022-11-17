@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { removeSigner, SignerContext } from "../../context/signer_context";
+import { removeSigner, SignerContext } from "../../../context/signer_context";
 import Button from '@mui/material/Button'
 import { useTranslation } from "next-i18next";
 

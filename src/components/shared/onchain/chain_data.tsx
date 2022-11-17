@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
-import { SignerContext } from "../../context/signer_context";
+import { SignerContext } from "../../../context/signer_context";
 import Typography from '@mui/material/Typography'
 import { utils } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
-import { DOT } from "../../utils/chars";
+import { DOT } from "../../../utils/chars";
 
 export default function ChainData() {
 

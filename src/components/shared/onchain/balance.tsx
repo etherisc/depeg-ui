@@ -1,7 +1,7 @@
 import { BigNumber, Signer } from "ethers";
 import { useEffect, useState } from "react";
-import { AggregatorV3Interface__factory } from "../../contracts/chainlink";
-import { formatEthersNumber } from "../../utils/bignumber";
+import { AggregatorV3Interface__factory } from "../../../contracts/chainlink";
+import { formatEthersNumber } from "../../../utils/bignumber";
 
 export interface BalanceProps {
     signer: Signer;

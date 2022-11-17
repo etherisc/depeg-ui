@@ -3,8 +3,8 @@ import Blockies from 'react-blockies';
 import { SignerContext } from "../../context/signer_context";
 import { DOT, NBSP } from "../../utils/chars";
 import { Box, Avatar } from "@mui/material";
-import Balance from "./balance";
-import AccountAddress from "./account_address";
+import Balance from "./onchain/balance";
+import AccountAddress from "./onchain/account_address";
 
 export default function Account() {
     const signerContext = useContext(SignerContext);

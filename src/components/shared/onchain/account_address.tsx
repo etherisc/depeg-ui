@@ -1,7 +1,7 @@
 import { ContentCopy } from "@mui/icons-material";
 import { Signer } from "ethers";
 import { useState, useEffect } from "react";
-import { NBSP } from "../../utils/chars";
+import { NBSP } from "../../../utils/chars";
 import { useSnackbar } from 'notistack';
 import { useTranslation } from "next-i18next";
 

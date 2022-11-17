@@ -1,6 +1,5 @@
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
-import CircularProgress from '@mui/material/CircularProgress';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -12,8 +11,8 @@ import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { InsuranceApi } from '../../model/insurance_api';
 import { formatCurrency } from '../../utils/numbers';
-import CurrencyTextField from '../shared/currency_text_field';
-import NumericTextField, { INPUT_VARIANT } from '../shared/numeric_text_field';
+import CurrencyTextField from '../shared/form/currency_text_field';
+import NumericTextField, { INPUT_VARIANT } from '../shared/form/numeric_text_field';
 
 const formInputVariant = 'outlined';
 
