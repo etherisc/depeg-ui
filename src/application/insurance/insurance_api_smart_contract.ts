@@ -42,7 +42,7 @@ export function insuranceApiSmartContract(
                 throw new NoBundleFoundError();
             }
             console.log("bestBundle", bestBundle);
-            const netPremium = await product.calculateNetPremium(insuredAmount, durationSecs, bestBundle.bundleId)
+            const netPremium = (await product.calculateNetPremium(insuredAmount, durationSecs, bestBundle.bundleId)).toNumber();
             console.log("netPremium", netPremium);
             const premium = (await product.calculatePremium(netPremium)).toNumber();
             console.log("premium", premium);
