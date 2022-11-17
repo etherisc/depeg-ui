@@ -48,6 +48,6 @@
 	},
 
 	"mounts": [
-		"source=depeg-ui-node_modules,target=/workspace/node_modules,type=volume"
+		"source=depeg-ui-node_modules,target=/workspaces/depeg-ui/node_modules,type=volume"
 	]
 }
