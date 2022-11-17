@@ -5,8 +5,9 @@ import { DepegProduct__factory } from "../../contracts/depeg-contracts";
 import { InsuranceApi } from "../../model/insurance_api";
 import { PolicyRowView, PolicyStatus } from "../../model/policy";
 import { delay } from "../../utils/delay";
+import { NoBundleFoundError } from "../../utils/error";
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
-import { getBundleData } from "./riskbundle";
+import { getBestQuote, getBundleData } from "./riskbundle";
 
 export function insuranceApiSmartContract(
         signer: Signer,
@@ -16,10 +17,10 @@ export function insuranceApiSmartContract(
     return {
         usd1: 'USDC',
         usd2: 'USDT',
-        insuredAmountMin: 3000,
-        insuredAmountMax: 10000,
-        coverageDurationDaysMin: 14,
-        coverageDurationDaysMax: 45,
+        insuredAmountMin: 1000,
+        insuredAmountMax: 20000,
+        coverageDurationDaysMin: 10,
+        coverageDurationDaysMax: 90,
         async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number): Promise<number> {
             if (signer instanceof VoidSigner) {
                 console.log('no chain connection, no premium calculation');
@@ -34,7 +35,11 @@ export function insuranceApiSmartContract(
             const depegRiskpool = await getDepegRiskpool(instanceService, riskpoolId);
             const bundleData = await getBundleData(instanceService, riskpoolId, depegRiskpool);
             console.log("bundleData", bundleData);
-
+            const bestBundle = getBestQuote(bundleData, insuredAmount, coverageDurationDays * 24 * 60 * 60);
+            if (bestBundle.idx == -1) { 
+                throw new NoBundleFoundError();
+            }
+            console.log("bestBundle", bestBundle);
             return Promise.resolve(1);
         },
         async createApproval(walletAddress: string, premium: number) {

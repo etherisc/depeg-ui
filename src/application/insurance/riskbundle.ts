@@ -42,3 +42,44 @@ export async function getBundleData(
 
     return Promise.resolve(bundleData);
 }
+
+export function getBestQuote(bundleData: Array<BundleData>, sumInsured: number, duration: number): BundleData {
+    // let aprMin = 100.0;
+    // const bestQuote = bundleData.find((bundle) => {
+    //     if (sumInsured < bundle.minSumInsured) {
+    //         return false;
+    //     }
+    //     if (sumInsured > bundle.maxSumInsured) {
+    //         return false;
+    //     }
+    //     if (durationDays < bundle.minDuration) {
+    //         return false;
+    //     }
+    //     if (durationDays > bundle.maxDuration) {
+    //         return false;
+    //     }
+    //     if (aprMin < bundle.apr) {
+    //         return false;
+    //     }
+    //     return true;
+    // });
+
+    return bundleData.reduce((best, bundle) => {
+        if (sumInsured < bundle.minSumInsured) {
+            return best;
+        }
+        if (sumInsured > bundle.maxSumInsured) {
+            return best;
+        }
+        if (duration < bundle.minDuration) {
+            return best;
+        }
+        if (duration > bundle.maxDuration) {
+            return best;
+        }
+        if (best.apr < bundle.apr) {
+            return best;
+        }
+        return bundle;
+    }, { idx: -1, apr: 100, minDuration: Number.MAX_VALUE, maxDuration: Number.MIN_VALUE, minSumInsured: Number.MAX_VALUE, maxSumInsured: Number.MIN_VALUE } as BundleData);
+}
