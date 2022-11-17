@@ -91,7 +91,7 @@ export default function Application(props: ApplicationProps) {
         await props.insurance.createApproval(walletAddress, premium);
         // FIXME: handle error during approval
         setActiveStep(4);
-        await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration);
+        await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration, premium);
         // FIXME: handle error during apply for policy
         setActiveStep(5);
         applicationSuccessful();

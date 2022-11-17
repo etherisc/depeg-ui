@@ -83,6 +83,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ premium, setPremium ] = useState(0);
     const [ premiumError, setPremiumError ] = useState("");
 
+    // TODO: when premium cannot be calculated, show list of bundles
+
     useEffect(() => {
         async function calculatePremium() {
             console.log("Calculating premium...");
@@ -110,6 +112,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         if (valid) {
             console.log("Form is valid, calculating premium...");
             // TODO: calculate premium only once bundle data is loaded
+            // TODO: no parallel premium calculation
             // TODO: recalculate premium on input onBlur not every keystroke (leads to intermediates error display while typing and data is incomplete invalid)
             // TODO: show spinner while calculating premium
             calculatePremium();

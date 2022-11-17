@@ -20,7 +20,7 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
             await delay(2000);
             return Promise.resolve(true);
         },
-        async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays) {
+        async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays, premium) {
             enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationDays})`,  { autoHideDuration: 3000, variant: 'info' });
             await delay(2000);
             return Promise.resolve(true);

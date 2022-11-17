@@ -26,7 +26,8 @@ export interface InsuranceApi {
         (
             walletAddress: string, 
             insuredAmount: number, 
-            coverageDurationDays: number
+            coverageDurationDays: number,
+            premium: number
         ) => Promise<boolean>;
     policies: 
         (

@@ -10,7 +10,6 @@ export async function getBundleData(
         riskpoolId: number, // this could be retrieved from the IRiskpool contract, but that would require an additonal chain call which we can avoid
         riskpool: DepegRiskpool
         ): Promise<Array<BundleData>> {
-    // riskpoolId = riskpool.getId()
     const activeBundleIds = await riskpool.getActiveBundleIds();
 
     let bundleData = new Array<BundleData>();
@@ -44,26 +43,6 @@ export async function getBundleData(
 }
 
 export function getBestQuote(bundleData: Array<BundleData>, sumInsured: number, duration: number): BundleData {
-    // let aprMin = 100.0;
-    // const bestQuote = bundleData.find((bundle) => {
-    //     if (sumInsured < bundle.minSumInsured) {
-    //         return false;
-    //     }
-    //     if (sumInsured > bundle.maxSumInsured) {
-    //         return false;
-    //     }
-    //     if (durationDays < bundle.minDuration) {
-    //         return false;
-    //     }
-    //     if (durationDays > bundle.maxDuration) {
-    //         return false;
-    //     }
-    //     if (aprMin < bundle.apr) {
-    //         return false;
-    //     }
-    //     return true;
-    // });
-
     return bundleData.reduce((best, bundle) => {
         if (sumInsured < bundle.minSumInsured) {
             return best;
@@ -78,6 +57,9 @@ export function getBestQuote(bundleData: Array<BundleData>, sumInsured: number, 
             return best;
         }
         if (best.apr < bundle.apr) {
+            return best;
+        }
+        if (sumInsured > bundle.capacity) {
             return best;
         }
         return bundle;
