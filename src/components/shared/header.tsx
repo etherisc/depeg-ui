@@ -36,8 +36,37 @@ export default function Header() {
                         </Typography>
                     </Link>
                     
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 1 }}>
+                        <Link component={LinkBehaviour} href="/">
+                            <Typography
+                                variant="subtitle1"
+                                noWrap
+                                sx={{
+                                    ml: 2,
+                                    mr: 2,
+                                    display: { xs: 'none', md: 'flex' },
+                                    color: '#fff',
+                                    textDecoration: 'none',
+                                }}
+                            >
+                                {t('nav.link.protect')}
+                            </Typography>
+                        </Link>
+                        <Link component={LinkBehaviour} href="/invest">
+                            <Typography
+                                variant="subtitle1"
+                                noWrap
+                                sx={{
+                                    ml: 2,
+                                    mr: 2,
+                                    display: { xs: 'none', md: 'flex' },
+                                    color: '#fff',
+                                    textDecoration: 'none',
+                                }}
+                            >
+                                {t('nav.link.invest')}
+                            </Typography>
+                        </Link>
                     </Box>
 
                     <Box sx={{ flexGrow: 0, display: 'inline-flex' }}>
