@@ -44,11 +44,11 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         return "";
     }
 
-    const [ walletAddressValid, setWalletAddressValid ] = useState(false);
+    const [ walletAddressValid, setWalletAddressValid ] = useState(true);
     function validateWalletAddressAndSetError() {
         const error = validateWalletAddress();
         setWalletAddressError(error);
-        setWalletAddressValid(error == "");
+        setWalletAddressValid(error === "");
     }
 
     useEffect(() => {
@@ -83,16 +83,21 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     useEffect(() => {
         async function calculatePremium() {
+            console.log("Calculating premium...");
             setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays));
         }
+
+        console.log("Checking form validity...");
 
         let valid = true;
         valid = walletAddressValid && valid;
         valid = insuredAmountValid && valid;
         valid = coverageDaysValid && valid;
         if (valid) {
+            console.log("Form is valid, calculating premium...");
             calculatePremium();
         } else {
+            console.log("Form is invalid, not calculating premium...");
             setPremium(0);
         }
         setFormValid(valid);
