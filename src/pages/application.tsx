@@ -17,7 +17,7 @@ export default function ApplicationPage() {
       <Head>
           <title>{t('apptitle')}</title>
       </Head>
-            
+      
       <Application insurance={insurance} />
     </>
   )
@@ -29,6 +29,7 @@ export async function getStaticProps() {
   }
   return {
     props: {
-      ...(await serverSideTranslations('en', ['common', 'application'])),    },
+      ...(await serverSideTranslations('en', ['common', 'application'])),   
+    },
   }
 }
