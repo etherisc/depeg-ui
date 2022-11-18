@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { SignerContext } from "../../../context/signer_context";
+import { AppContext } from "../../../context/app_context";
 import Typography from '@mui/material/Typography'
 import { utils } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
@@ -7,7 +7,7 @@ import { DOT } from "../../../utils/chars";
 
 export default function ChainData() {
 
-    const signerContext = useContext(SignerContext);
+    const appContext = useContext(AppContext);
     let chainData = (<></>);
     const [lastBlock, setLastBlock] = useState(0);
     const [gasPrice, setGasPrice] = useState("");
@@ -25,8 +25,8 @@ export default function ChainData() {
         });
     };
     
-    if (signerContext?.data.provider !== undefined) {
-        const provider = signerContext?.data.provider;
+    if (appContext?.data.provider !== undefined) {
+        const provider = appContext?.data.provider;
         getAndSubscribeToLastBlock(provider);
     } else {
         if (lastBlock !== 0) {

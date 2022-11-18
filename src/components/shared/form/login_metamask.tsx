@@ -1,13 +1,13 @@
 import { ethers } from "ethers";
 import { useContext } from "react";
-import { setSigner, SignerContext } from "../../../context/signer_context";
+import { setSigner, AppContext } from "../../../context/app_context";
 import Button from '@mui/material/Button'
 import { getAndSetAccount } from "../../../utils/metamask";
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
 
 export default function LoginWithMetaMaskButton() {
-    const signerContext = useContext(SignerContext);
+    const appContext = useContext(AppContext);
     const { t } = useTranslation('common');
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -32,12 +32,12 @@ export default function LoginWithMetaMaskButton() {
             return;
         }
 
-        getAndSetAccount(signerContext?.dispatch);
+        getAndSetAccount(appContext?.dispatch);
     }
 
     let button = (<></>);
     
-    if (signerContext?.data.signer === undefined) {
+    if (appContext?.data.signer === undefined) {
         button = (
             <Button variant="contained" color="secondary" onClick={login} sx={{ mr: 1}} >
                 {t('action.login_metamask')}

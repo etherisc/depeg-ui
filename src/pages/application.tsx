@@ -5,19 +5,19 @@ import Head from "next/head";
 import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
 import { getInsuranceApi } from "../model/insurance_api";
-import { SignerContext } from "../context/signer_context";
+import { AppContext } from "../context/app_context";
 import { useContext, useMemo } from "react";
 
 export default function ApplicationPage() {
   const { enqueueSnackbar } = useSnackbar();
   const {t} = useTranslation('common');
-  const signerContext = useContext(SignerContext);
+  const appContext = useContext(AppContext);
 
   const insurance = useMemo(() => getInsuranceApi(
     enqueueSnackbar,
-    signerContext?.data.signer,
-    signerContext?.data.provider,
-  ), [enqueueSnackbar, signerContext]);
+    appContext.data.signer,
+    appContext.data.provider,
+  ), [enqueueSnackbar, appContext]);
   
   return (
     <>

@@ -1,4 +1,4 @@
-import { setSigner, updateSigner } from "../context/signer_context";
+import { setSigner, updateSigner } from "../context/app_context";
 import { ethers } from "ethers";
 
 export async function getAndSetAccount(dispatch: any) {

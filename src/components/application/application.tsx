@@ -1,6 +1,6 @@
 import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { SignerActionType, SignerContext } from "../../context/signer_context";
+import { AppActionType, AppContext } from "../../context/app_context";
 import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../model/insurance_api";
 import { useSnackbar } from "notistack";
@@ -18,8 +18,8 @@ export default function Application(props: ApplicationProps) {
     const { t } = useTranslation(['application', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    const signerContext = useContext(SignerContext);
-    const [ activeStep, setActiveStep ] = useState(signerContext?.data.signer === undefined ? 0 : 1);
+    const appContext = useContext(AppContext);
+    const [ activeStep, setActiveStep ] = useState(appContext.data.signer === undefined ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ walletAddress, setWalletAddress ] = useState("");
     const [ readyToBuy, setReadyToBuy ] = useState(false);
@@ -32,26 +32,26 @@ export default function Application(props: ApplicationProps) {
     useEffect(() => {
         async function asyncGetBundles(dispatch: any) {
             const bundles = await props.insurance.getRiskBundles();
-            bundles.forEach((bundle) => dispatch({ type: SignerActionType.ADD_BUNDLE, bundle: bundle}))
-            dispatch({ type: SignerActionType.BUNDLE_LOADING_FINISHED });
+            bundles.forEach((bundle) => dispatch({ type: AppActionType.ADD_BUNDLE, bundle: bundle}))
+            dispatch({ type: AppActionType.BUNDLE_LOADING_FINISHED });
         }
 
-        console.log("signer", signerContext.data.signer, "bundleDataInitialized", signerContext.data.bundlesInitialized);
-        if (signerContext.data.signer !== undefined && ! signerContext.data.bundlesInitialized && ! (signerContext.data.signer instanceof VoidSigner)) {
-            signerContext.dispatch({ type: SignerActionType.BUNDLE_INITIALIZING });
+        console.log("signer", appContext.data.signer, "bundleDataInitialized", appContext.data.bundlesInitialized);
+        if (appContext.data.signer !== undefined && ! appContext.data.bundlesInitialized && ! (appContext.data.signer instanceof VoidSigner)) {
+            appContext.dispatch({ type: AppActionType.BUNDLE_INITIALIZING });
             console.log("got a new signer ... getting bundles");
-            asyncGetBundles(signerContext.dispatch);
+            asyncGetBundles(appContext.dispatch);
         }    
-    }, [signerContext, props.insurance])
+    }, [appContext, props.insurance])
     
     // change steps according to application state
     useEffect(() => {
-        if (signerContext?.data.signer === undefined) {
+        if (appContext?.data.signer === undefined) {
             setActiveStep(0);
             walletDisconnected();
-        } else if (activeStep < 1 && signerContext?.data.signer !== undefined) {
+        } else if (activeStep < 1 && appContext?.data.signer !== undefined) {
             setActiveStep(1);
-            signerContext?.data.signer.getAddress().then((address) => {
+            appContext?.data.signer.getAddress().then((address) => {
                 // console.log("address: ", address);
                 setWalletAddress(address);
             });
@@ -62,7 +62,7 @@ export default function Application(props: ApplicationProps) {
         } else if (activeStep > 4) { // application completed
             setFormDisabled(true);
         }
-    }, [signerContext?.data.signer, activeStep, readyToBuy]);
+    }, [appContext?.data.signer, activeStep, readyToBuy]);
 
     useEffect(() => {
         if (activeStep < 1 || activeStep > 2) {
@@ -132,7 +132,7 @@ export default function Application(props: ApplicationProps) {
                     disabled={formDisabled}
                     walletAddress={walletAddress}
                     insurance={props.insurance}
-                    bundles={signerContext.data.bundles}
+                    bundles={appContext.data.bundles}
                     formReadyForApply={formReadyForApply}
                     applyForPolicy={applyForPolicy}
                 />

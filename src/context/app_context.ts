@@ -2,12 +2,12 @@ import { ethers, providers, Signer } from "ethers";
 import React, { Dispatch } from "react";
 import { BundleData } from "../application/insurance/bundle_data";
 
-export interface SignerContext {
-    data: SignerData;
-    dispatch: React.Dispatch<SignerAction>;
+export interface AppContext {
+    data: AppData;
+    dispatch: React.Dispatch<AppAction>;
 }
 
-export interface SignerData {
+export interface AppData {
     provider: providers.Web3Provider | undefined;
     signer: Signer | undefined;
     bundles: Array<BundleData>;
@@ -15,10 +15,10 @@ export interface SignerData {
     bundlesInitialized: boolean;
 }
 
-export const SignerContext = React.createContext<SignerContext>({ data: initialSignerData(), dispatch: () => {} });
-SignerContext.displayName = "SignerContext";
+export const AppContext = React.createContext<AppContext>({ data: initialAppData(), dispatch: () => {} });
+AppContext.displayName = "AppContext";
 
-export function initialSignerData(): SignerData {
+export function initialAppData(): AppData {
     return {
         provider: undefined,
         signer: undefined,
@@ -28,7 +28,7 @@ export function initialSignerData(): SignerData {
     };
 }
 
-export enum SignerActionType {
+export enum AppActionType {
     SET,
     UNSET,
     UPDATE_SIGNER,
@@ -38,50 +38,50 @@ export enum SignerActionType {
     BUNDLE_LOADING_FINISHED,
 }
 
-export interface SignerAction {
-    type: SignerActionType;
+export interface AppAction {
+    type: AppActionType;
     signer?: Signer;
     provider?: providers.Web3Provider;
     bundle?: BundleData;
     bundleLoading?: boolean;
 }
 
-export function signerReducer(state: SignerData, action: SignerAction): SignerData {
+export function signerReducer(state: AppData, action: AppAction): AppData {
     switch (action.type) {
-        case SignerActionType.SET:
+        case AppActionType.SET:
             return { 
                 ...state,
                 provider: action?.provider,
                 signer: action?.signer,
             };
-        case SignerActionType.UNSET:
+        case AppActionType.UNSET:
             return { 
                 ...state,
                 provider: undefined,
                 signer: undefined,
             };
-        case SignerActionType.UPDATE_SIGNER:
+        case AppActionType.UPDATE_SIGNER:
             return {
                 ...state,
                 signer: action?.signer,
             };
-        case SignerActionType.ADD_BUNDLE:
+        case AppActionType.ADD_BUNDLE:
             return {
                 ...state,
                 bundles: state.bundles.concat(action.bundle!!)
             };
-        case SignerActionType.RESET_BUNDLE:
+        case AppActionType.RESET_BUNDLE:
             return {
                 ...state,
                 bundles: new Array()
             };
-        case SignerActionType.BUNDLE_INITIALIZING:
+        case AppActionType.BUNDLE_INITIALIZING:
             return {
                 ...state, 
                 bundlesInitialized: true,
                 bundlesLoading: true
             }
-        case SignerActionType.BUNDLE_LOADING_FINISHED:
+        case AppActionType.BUNDLE_LOADING_FINISHED:
             return {
                 ...state,
                 bundlesLoading: false
@@ -91,20 +91,20 @@ export function signerReducer(state: SignerData, action: SignerAction): SignerDa
     }
 }
 
-export function setSigner(dispatch: Dispatch<SignerAction>, provider: ethers.providers.Web3Provider) {
+export function setSigner(dispatch: Dispatch<AppAction>, provider: ethers.providers.Web3Provider) {
     const signer = provider.getSigner();  
     console.log("set signer", signer);
-    dispatch({ type: SignerActionType.SET, signer: signer, provider: provider });
+    dispatch({ type: AppActionType.SET, signer: signer, provider: provider });
 }
 
-export function updateSigner(dispatch: Dispatch<SignerAction>, provider: ethers.providers.Web3Provider) {
+export function updateSigner(dispatch: Dispatch<AppAction>, provider: ethers.providers.Web3Provider) {
     const signer = provider.getSigner();  
     console.log("update signer", signer);
-    dispatch({ type: SignerActionType.UPDATE_SIGNER, signer: signer });
+    dispatch({ type: AppActionType.UPDATE_SIGNER, signer: signer });
 }
 
-export function removeSigner(dispatch: Dispatch<SignerAction>) {
-    dispatch({ type: SignerActionType.UNSET });
+export function removeSigner(dispatch: Dispatch<AppAction>) {
+    dispatch({ type: AppActionType.UNSET });
     console.log("unset signer");
     window.localStorage.clear();
 }

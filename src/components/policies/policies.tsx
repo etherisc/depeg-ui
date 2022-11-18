@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
 import { useContext, useEffect, useState } from "react";
-import { SignerContext } from "../../context/signer_context";
+import { AppContext } from "../../context/app_context";
 import { InsuranceApi } from "../../model/insurance_api";
 import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
 import { PolicyRowView } from "../../model/policy";
@@ -18,7 +18,7 @@ export interface PoliciesProps {
 
 export default function Policies(props: PoliciesProps) {
     const { t } = useTranslation(['policies']);
-    const signerContext = useContext(SignerContext);
+    const appContext = useContext(AppContext);
 
     const [ policies, setPolicies ] = useState<Array<PolicyRowView>>([]);
 
@@ -29,7 +29,7 @@ export default function Policies(props: PoliciesProps) {
 
     useEffect(() => {
         async function getPolicies() {
-            const walletAddress = await signerContext?.data.signer?.getAddress();
+            const walletAddress = await appContext?.data.signer?.getAddress();
             if (walletAddress !== undefined) {
                 setPolicies(await props.insurance.policies(walletAddress, showActivePoliciesOnly));
             } else {
@@ -37,7 +37,7 @@ export default function Policies(props: PoliciesProps) {
             }
         }
         getPolicies();
-    }, [signerContext?.data.signer, props.insurance, showActivePoliciesOnly]);
+    }, [appContext?.data.signer, props.insurance, showActivePoliciesOnly]);
 
     const columns: GridColDef[] = [
         // { field: 'id', headerName: t('table.header.id'), width: 150 },
