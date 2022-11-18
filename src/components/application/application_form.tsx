@@ -8,11 +8,10 @@ import TextField from '@mui/material/TextField'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment from 'moment';
 import { useTranslation } from 'next-i18next';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { BundleData } from '../../application/insurance/bundle_data';
 import { InsuranceApi } from '../../model/insurance_api';
 import { NoBundleFoundError } from '../../utils/error';
-import { formatCurrency } from '../../utils/numbers';
 import CurrencyTextField from '../shared/form/currency_text_field';
 import NumericTextField, { INPUT_VARIANT } from '../shared/form/numeric_text_field';
 import Premium from './premium';
@@ -88,47 +87,19 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ premiumError, setPremiumError ] = useState("");
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
 
-    // TODO: when premium cannot be calculated, show list of bundles
-
+    // check validity of form
     useEffect(() => {
-        async function calculatePremium() {
-            console.log("Calculating premium...");
-            try {
-                setPremiumCalculationInProgress(true);
-                setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles));
-                setPremiumError("");
-            } catch (e) {
-                if (e instanceof NoBundleFoundError) {
-                    console.log("No bundle found for this insurance.");
-                    setPremiumError(t('error_no_matching_bundle_found'));
-                } else {
-                    console.log("Error calculating premium: ", e);
-                }
-                setFormValid(false);
-                setPremium(0);
-            } finally {
-                setPremiumCalculationInProgress(false);
-            }
-        }
-
-        console.log("Checking form validity...");
-
         let valid = true;
         valid = walletAddressValid && valid;
         valid = insuredAmountValid && valid;
         valid = coverageDaysValid && valid;
-        if (valid && props.bundles.length > 0) {
-            console.log("Form is valid, calculating premium...");
-            // TODO: no parallel premium calculation
-            // TODO: recalculate premium on input onBlur not every keystroke (leads to intermediates error display while typing and data is incomplete invalid)
-            calculatePremium();
-        } else {
-            console.log("Form is invalid, not calculating premium...");
-            setPremium(0);
-        }
+        console.log(`Form valid ${valid}`);
         setFormValid(valid);
-    }, [walletAddressValid, insuredAmountValid, coverageDaysValid, props.insurance, walletAddress, insuredAmount, coverageDays, t]);
+    }, [walletAddressValid, insuredAmountValid, coverageDaysValid]);
 
+    // TODO: when premium cannot be calculated, show list of bundles
+
+    
     // terms accepted and validation
     const [ termsAccepted, setTermsAccepted ] = useState(false);
     function handleTermsAcceptedChange(x: ChangeEvent<any>) {
@@ -146,6 +117,34 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         props.formReadyForApply(!isBuyButtonDisabled);
     }, [formValid, termsAccepted, props.disabled, applicationInProgress, props]);  
 
+    // calculate premium via onchain call
+    // TODO: avoid parallel premium calculation
+    const calculatePremium = useCallback( async () => {
+        if (! formValid || props.bundles.length == 0) {
+            console.log("Form is invalid, not calculating premium...");
+            setPremium(0);
+            return;
+        }
+
+        console.log("Calculating premium...");
+        try {
+            setPremiumCalculationInProgress(true);
+            setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles));
+            setPremiumError("");
+        } catch (e) {
+            if (e instanceof NoBundleFoundError) {
+                console.log("No bundle found for this insurance.");
+                setPremiumError(t('error_no_matching_bundle_found'));
+            } else {
+                console.log("Error calculating premium: ", e);
+            }
+            setFormValid(false);
+            setPremium(0);
+        } finally {
+            setPremiumCalculationInProgress(false);
+        }
+        
+    }, [formValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.insurance, t]);
 
     async function buy() {
         setApplicationInProgress(true);
@@ -190,6 +189,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     value={insuredAmount}
                     currency={props.insurance.usd1}
                     onChange={setInsuredAmount}
+                    onBlur={calculatePremium}
                     minValue={props.insurance.insuredAmountMin}
                     maxValue={props.insurance.insuredAmountMax}
                     onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
@@ -212,6 +212,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         setCoverageDays(days);
                         setCoverageUntil(moment().add(days, 'days'));
                     }}
+                    onBlur={calculatePremium}
                     minValue={props.insurance.coverageDurationDaysMin}
                     maxValue={props.insurance.coverageDurationDaysMax}
                     onError={(errMsg) => setCoverageDaysValid(errMsg === "")}

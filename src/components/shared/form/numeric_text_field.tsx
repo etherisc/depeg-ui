@@ -1,13 +1,13 @@
 import { InputProps } from "@mui/material/Input";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "next-i18next";
-import { ChangeEvent, useState } from "react";
-import { formatCurrency } from "../../utils/numbers";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 export interface NumericTextFieldProps {
     value: number;
     unit: string;
     onChange: (value: number) => void;
+    onBlur?: () => void;
     disabled: boolean;
     required: boolean;
     fullWidth: boolean;
@@ -24,7 +24,8 @@ export const INPUT_VARIANT = 'outlined';
 
 export default function NumericTextField(props: NumericTextFieldProps) {
     const { t } = useTranslation('common');
-
+    const [ error, setError ] = useState("");
+    
     function handleValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         let val = (x.target as HTMLInputElement).value;
         if (val == "") {
@@ -34,8 +35,14 @@ export default function NumericTextField(props: NumericTextFieldProps) {
         props.onChange(parseInt(val));
     }
 
-    const [ error, setError ] = useState("");
-    function validateValue() {
+    const validateValue = useCallback(() => {
+        function handleError(error: string) {
+            setError(error);
+            if (props.onError) {
+                props.onError(error);
+            }
+        }
+        
         if (props.value < props.minValue) {
             handleError(t('error.numericTextFieldMinValue', { fieldName: props.label, value: props.minValue, unit: props.unit }));
             return;
@@ -52,14 +59,11 @@ export default function NumericTextField(props: NumericTextFieldProps) {
             }
         }
         handleError("");
-    }
+    }, [props, t]);
 
-    function handleError(error: string) {
-        setError(error);
-        if (props.onError) {
-            props.onError(error);
-        }
-    }
+    useEffect(() => {
+        validateValue();
+    }, [props.value, validateValue]);
 
     return (
         <TextField
@@ -73,7 +77,7 @@ export default function NumericTextField(props: NumericTextFieldProps) {
             InputProps={props.inputProps}
             value={props.value}
             onChange={handleValueChange}
-            onBlur={validateValue}
+            onBlur={() => { try { validateValue(); } finally { if (props.onBlur) props.onBlur(); } }}
             helperText={error}
             error={error != ""}
             />

@@ -1,7 +1,7 @@
 import { InputProps } from "@mui/material/Input";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "next-i18next";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { formatCurrency } from "../../../utils/numbers";
 import { INPUT_VARIANT } from "./numeric_text_field";
 
@@ -9,6 +9,7 @@ export interface CurrencyTextfieldProps {
     value: number;
     currency: string;
     onChange: (value: number) => void;
+    onBlur?: () => void;
     disabled: boolean;
     required: boolean;
     fullWidth: boolean;
@@ -23,10 +24,7 @@ export interface CurrencyTextfieldProps {
 
 export default function CurrencyTextField(props: CurrencyTextfieldProps) {
     const { t } = useTranslation('common');
-
-    useEffect(() => {
-        validateValue();
-    }, [props.value, validateValue]);
+    const [ error, setError ] = useState("");
 
     function handleValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         let val = (x.target as HTMLInputElement).value;
@@ -36,9 +34,15 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
         }
         props.onChange(parseInt(val.replaceAll(',', '')));
     }
-
-    const [ error, setError ] = useState("");
-    function validateValue() {
+    
+    const validateValue = useCallback(() => {
+        function handleError(error: string) {
+            setError(error);
+            if (props.onError) {
+                props.onError(error);
+            }
+        }
+    
         if (props.disabled) {
             handleError("");
             return;
@@ -59,14 +63,11 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             }
         }
         handleError("");
-    }
+    }, [props, t]);
 
-    function handleError(error: string) {
-        setError(error);
-        if (props.onError) {
-            props.onError(error);
-        }
-    }
+    useEffect(() => {
+        validateValue();
+    }, [props.value, validateValue]);
 
     return (
         <TextField
@@ -80,7 +81,7 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             InputProps={props.inputProps}
             value={formatCurrency(props.value)}
             onChange={handleValueChange}
-            onBlur={validateValue}
+            onBlur={() => { try { validateValue(); } finally { if (props.onBlur) props.onBlur(); } }}
             helperText={error}
             error={error != ""}
             />
