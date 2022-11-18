@@ -6,7 +6,7 @@ import { InsuranceApi } from "../../model/insurance_api";
 import { useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import ApplicationForm from "./application_form";
-import { VoidSigner } from "ethers";
+import { Signer, VoidSigner } from "ethers";
 import { useRouter } from 'next/router'
 
 export interface ApplicationProps {
@@ -55,12 +55,9 @@ export default function Application(props: ApplicationProps) {
         if (appContext?.data.signer === undefined) {
             setActiveStep(0);
             walletDisconnected();
-        } else if (activeStep < 1 && appContext?.data.signer !== undefined) {
+        } else if (activeStep < 1 && appContext.data.signer !== undefined) {
             setActiveStep(1);
-            appContext?.data.signer.getAddress().then((address) => {
-                // console.log("address: ", address);
-                setWalletAddress(address);
-            });
+            updateWalletAddress(appContext.data.signer);
         } else if (activeStep == 1 && readyToBuy) {
             setActiveStep(2);
         } else if (activeStep == 2 && !readyToBuy) { 
@@ -152,6 +149,14 @@ export default function Application(props: ApplicationProps) {
         setActiveStep(5);
         applicationSuccessful();
         return Promise.resolve(applicationSuccess);        
+    }
+
+    async function updateWalletAddress(signer: Signer) {
+        setWalletAddress(await signer.getAddress());
+    }
+
+    if (appContext.data.signer !== undefined) {
+        updateWalletAddress(appContext.data.signer);
     }
 
     return (
