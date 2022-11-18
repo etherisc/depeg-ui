@@ -1,7 +1,7 @@
 import { InputProps } from "@mui/material/Input";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "next-i18next";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { formatCurrency } from "../../../utils/numbers";
 import { INPUT_VARIANT } from "./numeric_text_field";
 
@@ -24,6 +24,11 @@ export interface CurrencyTextfieldProps {
 export default function CurrencyTextField(props: CurrencyTextfieldProps) {
     const { t } = useTranslation('common');
 
+    useEffect(() => {
+        console.log(props.value);
+        validateValue();
+    }, [props.value, validateValue]);
+
     function handleValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         let val = (x.target as HTMLInputElement).value;
         if (val == "") {
@@ -35,6 +40,10 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
 
     const [ error, setError ] = useState("");
     function validateValue() {
+        if (props.disabled) {
+            handleError("");
+            return;
+        }
         if (props.value < props.minValue) {
             handleError(t('error.currencyTextFieldMinValue', { fieldName: props.label, amount: formatCurrency(props.minValue), currency: props.currency }));
             return;

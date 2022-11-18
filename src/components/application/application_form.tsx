@@ -9,6 +9,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment from 'moment';
 import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { BundleData } from '../../application/insurance/bundle_data';
 import { InsuranceApi } from '../../model/insurance_api';
 import { NoBundleFoundError } from '../../utils/error';
 import { formatCurrency } from '../../utils/numbers';
@@ -21,6 +22,7 @@ export interface ApplicationFormProperties {
     disabled: boolean;
     walletAddress: string;
     insurance: InsuranceApi;
+    bundles: Array<BundleData>;
     formReadyForApply: (isFormReady: boolean) => void;
     applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => Promise<boolean>;
 }
@@ -57,13 +59,13 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }, [props.walletAddress]);
 
     // insured amount
-    const [ insuredAmount, setInsuredAmount ] = useState(props.insurance.insuredAmountMax);
-    const [ insuredAmountValid, setInsuredAmountValid ] = useState(true);
+    const [ insuredAmount, setInsuredAmount ] = useState(props.insurance.insuredAmountMin);
+    const [ insuredAmountValid, setInsuredAmountValid ] = useState(false);
 
     // coverage period (days and date)
 
     // coverage days
-    const [ coverageDays, setCoverageDays ] = useState(props.insurance.coverageDurationDaysMax);
+    const [ coverageDays, setCoverageDays ] = useState(props.insurance.coverageDurationDaysMin);
     const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
 
     // coverage until date
@@ -89,7 +91,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         async function calculatePremium() {
             console.log("Calculating premium...");
             try {
-                setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays));
+                setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles));
                 setPremiumError("");
             } catch (e) {
                 if (e instanceof NoBundleFoundError) {

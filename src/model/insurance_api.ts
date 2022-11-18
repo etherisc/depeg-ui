@@ -1,5 +1,6 @@
 import { ethers, Signer } from "ethers";
 import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
+import { BundleData } from "../application/insurance/bundle_data";
 import { insuranceApiMock } from "../application/insurance/insurance_api_mock";
 import { insuranceApiSmartContract } from "../application/insurance/insurance_api_smart_contract";
 import { PolicyRowView } from "./policy";
@@ -11,11 +12,14 @@ export interface InsuranceApi {
     insuredAmountMax: number;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
+    getRiskBundles: 
+        () => Promise<Array<BundleData>>,
     calculatePremium: 
         (
             walletAddress: string, 
             insuredAmount: number, 
-            coverageDurationDays: number
+            coverageDurationDays: number,
+            bundles: Array<BundleData>,
         ) => Promise<number>;
     createApproval: 
         (
@@ -64,7 +68,8 @@ export function getInsuranceApi(
         signer?: Signer,
         provider?: ethers.providers.Provider
         ): InsuranceApi {
-    const contractAddress = process.env.NEXT_PUBLIC_DEPECT_CONTRACT_ADDRESS;
+    
+    const contractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
     if (contractAddress == null) {
         console.log("Using mock insurance API");
         return insuranceApiMock(enqueueSnackbar);

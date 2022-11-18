@@ -1,11 +1,12 @@
 import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { SignerContext } from "../../context/signer_context";
+import { SignerActionType, SignerContext } from "../../context/signer_context";
 import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../model/insurance_api";
 import { useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import ApplicationForm from "./application_form";
+import { VoidSigner } from "ethers";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -27,12 +28,22 @@ export default function Application(props: ApplicationProps) {
         setWalletAddress("");
     }
 
-    if (signerContext?.data.signer !== undefined) {
-        signerContext?.data.signer.getAddress().then((address) => {
-            setWalletAddress(address);
-        });
-    }    
+    // get bundle data once the wallet is connected
+    useEffect(() => {
+        async function asyncGetBundles(dispatch: any) {
+            const bundles = await props.insurance.getRiskBundles();
+            bundles.forEach((bundle) => dispatch({ type: SignerActionType.ADD_BUNDLE, bundle: bundle}))
+            dispatch({ type: SignerActionType.BUNDLE_LOADING_FINISHED });
+        }
 
+        console.log("signer", signerContext.data.signer, "bundleDataInitialized", signerContext.data.bundlesInitialized);
+        if (signerContext.data.signer !== undefined && ! signerContext.data.bundlesInitialized && ! (signerContext.data.signer instanceof VoidSigner)) {
+            signerContext.dispatch({ type: SignerActionType.BUNDLE_INITIALIZING });
+            console.log("got a new signer ... getting bundles");
+            asyncGetBundles(signerContext.dispatch);
+        }    
+    }, [signerContext, props.insurance])
+    
     // change steps according to application state
     useEffect(() => {
         if (signerContext?.data.signer === undefined) {
@@ -98,8 +109,6 @@ export default function Application(props: ApplicationProps) {
         return Promise.resolve(true);        
     }
 
-
-
     return (
         <>
             <div>
@@ -123,6 +132,7 @@ export default function Application(props: ApplicationProps) {
                     disabled={formDisabled}
                     walletAddress={walletAddress}
                     insurance={props.insurance}
+                    bundles={signerContext.data.bundles}
                     formReadyForApply={formReadyForApply}
                     applyForPolicy={applyForPolicy}
                 />

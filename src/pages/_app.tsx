@@ -59,7 +59,7 @@ export function App({ Component, pageProps }: AppProps) {
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <CssBaseline enableColorScheme />
-      <SignerContext.Provider value={{ data, dispatch}}>
+      <SignerContext.Provider value={{ data, dispatch}} >
         <SnackbarProvider maxSnack={3}>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <Header />

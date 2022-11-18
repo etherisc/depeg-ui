@@ -2,15 +2,15 @@ import { Signer, VoidSigner } from "ethers";
 import moment from "moment";
 import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
 import { DepegProduct__factory } from "../../contracts/depeg-contracts";
-import { IERC20__factory } from "../../contracts/gif-interface";
 import { InsuranceApi } from "../../model/insurance_api";
 import { PolicyRowView, PolicyStatus } from "../../model/policy";
 import { delay } from "../../utils/delay";
 import { NoBundleFoundError } from "../../utils/error";
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { getBestQuote, getBundleData } from "./riskbundle";
-import DepegProductBuild from '@etherisc/depeg-contracts/build/contracts/DepegProduct.json';
-import { Coder } from "abi-coder";
+import { BundleData } from "./bundle_data";
+import { createApprovalForTreasury } from "./treasury";
+import { applyForDepegPolicy, extractProcessIdFromApplicationLogs } from "./depeg_product";
 
 export function insuranceApiSmartContract(
         signer: Signer,
@@ -24,7 +24,17 @@ export function insuranceApiSmartContract(
         insuredAmountMax: 20000,
         coverageDurationDaysMin: 10,
         coverageDurationDaysMax: 90,
-        async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number): Promise<number> {
+        async getRiskBundles() {
+            console.log("retrieving risk bundles from smart contract at " + contractAddress);
+            const product = DepegProduct__factory.connect(contractAddress, signer);
+            const riskpoolId = (await product.getRiskpoolId()).toNumber();
+            const registryAddress = await product.getRegistry();
+            const instanceService = await getInstanceService(registryAddress, signer);
+            const depegRiskpool = await getDepegRiskpool(instanceService, riskpoolId);
+            console.log(`riskpoolId: ${riskpoolId}, depegRiskpool: ${depegRiskpool}`);
+            return await getBundleData(instanceService, riskpoolId, depegRiskpool);
+        },
+        async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>): Promise<number> {
             if (signer instanceof VoidSigner) {
                 console.log('no chain connection, no premium calculation');
                 return Promise.resolve(0);
@@ -33,14 +43,8 @@ export function insuranceApiSmartContract(
             const durationSecs = coverageDurationDays * 24 * 60 * 60;
             console.log("calculatePremium", walletAddress, insuredAmount, coverageDurationDays);
             const product = DepegProduct__factory.connect(contractAddress, signer);
-            const riskpoolId = (await product.getRiskpoolId()).toNumber();
-            const registryAddress = await product.getRegistry();
-            const instanceService = await getInstanceService(registryAddress, signer);
-            const depegRiskpool = await getDepegRiskpool(instanceService, riskpoolId);
-            // TODO: retrieve bundle data on component load and not for every form update
-            const bundleData = await getBundleData(instanceService, riskpoolId, depegRiskpool);
-            console.log("bundleData", bundleData);
-            const bestBundle = getBestQuote(bundleData, insuredAmount, durationSecs);
+            console.log("bundleData", bundles);
+            const bestBundle = getBestQuote(bundles, insuredAmount, durationSecs);
             if (bestBundle.idx == -1) { 
                 throw new NoBundleFoundError();
             }
@@ -52,57 +56,22 @@ export function insuranceApiSmartContract(
             return Promise.resolve(premium);
         },
         async createApproval(walletAddress: string, premium: number) {
-            // enqueueSnackbar(`Approval mocked (${walletAddress}, ${premium}`,  { autoHideDuration: 3000, variant: 'info' });
             console.log("createApproval", walletAddress, premium);
+            // TODO: show instruction
             enqueueSnackbar(`Awaiting approval of ${premium} from ${walletAddress}`,  { autoHideDuration: 3000, variant: 'info' });
             const product = DepegProduct__factory.connect(contractAddress, signer);
-            // TODO: move getting erc20 address to own method
-            const usd1Addess = await product.getToken();
-            console.log(`creating approval for usd1 ${usd1Addess} for ${premium}`);
-            const usd1 = IERC20__factory.connect(usd1Addess, signer);
-            const registryAddress = await product.getRegistry();
-            const instanceService = await getInstanceService(registryAddress, signer);
-            const treasury = await instanceService.getTreasuryAddress();
-            console.log("treasury", treasury);
-            const tx = await usd1.approve(treasury, premium);
-            console.log("approval created");
-            const receipt = await tx.wait();
-            // TODO: handle error
-            console.log("approval mined");
+            const [tx, receipt] = await createApprovalForTreasury(await product.getToken(), signer, premium, await product.getRegistry());
+            console.log("tx", tx, "receipt", receipt);
             return Promise.resolve(true);
             
         },
         async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays, premium) {
-            // enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationDays})`,  { autoHideDuration: 3000, variant: 'info' });
             console.log("applyForPolicy", walletAddress, insuredAmount, coverageDurationDays, premium);
+            // TODO: show instruction
             enqueueSnackbar(`Awaiting payment ${premium}`,  { autoHideDuration: 3000, variant: 'info' });
-            const product = DepegProduct__factory.connect(contractAddress, signer);
-            const tx = await product.applyForPolicy(
-                insuredAmount, 
-                coverageDurationDays * 24 * 60 * 60,
-                premium);
-            const receipt = await tx.wait();
-            console.log(receipt);
-            
-            const productAbiCoder = new Coder(DepegProductBuild.abi);
-            let processId = '';
-    
-            receipt.logs.forEach(log => {
-                try {
-                    const evt = productAbiCoder.decodeEvent(log.topics, log.data);
-                    console.log(evt);
-                    if (evt.name === 'LogDepegPolicyCreated') {
-                        console.log(evt);
-                        // @ts-ignore
-                        processId = evt.values.policyId.toString();
-                    }
-                } catch (e) {
-                    console.log(e);
-                }
-            });
-            // TODO: handle error
+            const [tx, receipt] = await applyForDepegPolicy(contractAddress, signer, insuredAmount, coverageDurationDays, premium);
+            let processId = extractProcessIdFromApplicationLogs(receipt.logs);
             console.log(`processId: ${processId}`);
-
             return Promise.resolve(true);
         },
         async policies(walletAddress: string, onlyActive: boolean): Promise<Array<PolicyRowView>> {

@@ -3,6 +3,7 @@ import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
 import { delay } from "../../utils/delay";
 import { InsuranceApi } from "../../model/insurance_api";
 import { PolicyRowView, PolicyStatus } from "../../model/policy";
+import { BundleData } from "./bundle_data";
 
 export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
@@ -12,7 +13,10 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
         insuredAmountMax: 10000,
         coverageDurationDaysMin: 14,
         coverageDurationDaysMax: 45,
-        calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number) {
+        getRiskBundles() {
+            return Promise.resolve(new Array());
+        },
+        calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>) {
           return Promise.resolve(insuredAmount * 0.017 * coverageDurationDays / 365);
         },
         async createApproval(walletAddress: string, premium: number) {
