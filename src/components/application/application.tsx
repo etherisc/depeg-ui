@@ -23,6 +23,8 @@ export default function Application(props: ApplicationProps) {
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ walletAddress, setWalletAddress ] = useState("");
     const [ readyToBuy, setReadyToBuy ] = useState(false);
+    // const [ premiumTrxInProgress, setPremiumTrxInProgress ] = useState(false);
+    const [ premiumTrxText, setPremiumTrxText ] = useState(undefined);
 
     async function walletDisconnected() {
         setWalletAddress("");
@@ -34,11 +36,13 @@ export default function Application(props: ApplicationProps) {
             const bundles = await props.insurance.getRiskBundles();
             bundles.forEach((bundle) => dispatch({ type: AppActionType.ADD_BUNDLE, bundle: bundle}))
             dispatch({ type: AppActionType.BUNDLE_LOADING_FINISHED });
+            setPremiumTrxText(undefined);
         }
 
         console.log("signer", appContext.data.signer, "bundleDataInitialized", appContext.data.bundlesInitialized);
         if (appContext.data.signer !== undefined && ! appContext.data.bundlesInitialized && ! (appContext.data.signer instanceof VoidSigner)) {
             appContext.dispatch({ type: AppActionType.BUNDLE_INITIALIZING });
+            setPremiumTrxText(t('bundle_loading'));
             console.log("got a new signer ... getting bundles");
             asyncGetBundles(appContext.dispatch);
         }    
@@ -135,6 +139,7 @@ export default function Application(props: ApplicationProps) {
                     bundles={appContext.data.bundles}
                     formReadyForApply={formReadyForApply}
                     applyForPolicy={applyForPolicy}
+                    premiumTrxText={premiumTrxText}
                 />
             </div>
         </>

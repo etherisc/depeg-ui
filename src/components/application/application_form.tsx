@@ -15,6 +15,7 @@ import { NoBundleFoundError } from '../../utils/error';
 import { formatCurrency } from '../../utils/numbers';
 import CurrencyTextField from '../shared/form/currency_text_field';
 import NumericTextField, { INPUT_VARIANT } from '../shared/form/numeric_text_field';
+import Premium from './premium';
 
 const formInputVariant = 'outlined';
 
@@ -23,6 +24,7 @@ export interface ApplicationFormProperties {
     walletAddress: string;
     insurance: InsuranceApi;
     bundles: Array<BundleData>;
+    premiumTrxText: string|undefined;
     formReadyForApply: (isFormReady: boolean) => void;
     applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => Promise<boolean>;
 }
@@ -84,6 +86,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // premium
     const [ premium, setPremium ] = useState(0);
     const [ premiumError, setPremiumError ] = useState("");
+    const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
 
     // TODO: when premium cannot be calculated, show list of bundles
 
@@ -91,6 +94,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         async function calculatePremium() {
             console.log("Calculating premium...");
             try {
+                setPremiumCalculationInProgress(true);
                 setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles));
                 setPremiumError("");
             } catch (e) {
@@ -102,6 +106,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 }
                 setFormValid(false);
                 setPremium(0);
+            } finally {
+                setPremiumCalculationInProgress(false);
             }
         }
 
@@ -111,12 +117,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         valid = walletAddressValid && valid;
         valid = insuredAmountValid && valid;
         valid = coverageDaysValid && valid;
-        if (valid) {
+        if (valid && props.bundles.length > 0) {
             console.log("Form is valid, calculating premium...");
-            // TODO: calculate premium only once bundle data is loaded
             // TODO: no parallel premium calculation
             // TODO: recalculate premium on input onBlur not every keystroke (leads to intermediates error display while typing and data is incomplete invalid)
-            // TODO: show spinner while calculating premium
             calculatePremium();
         } else {
             console.log("Form is invalid, not calculating premium...");
@@ -228,22 +232,14 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 {/* TODO: mobile version */}
                 </Grid>
             <Grid item xs={12}>
-                <TextField
-                    required
-                    fullWidth
+                <Premium 
                     disabled={props.disabled}
-                    variant={formInputVariant}
-                    id="premiumAmount"
-                    label={t('premiumAmount')}
-                    type="text"
-                    value={formatCurrency(premium)}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">{props.insurance.usd2}</InputAdornment>,
-                        readOnly: true,
-                    }}
-                    error={premiumError != ""}
-                    helperText={premiumError}
-                />
+                    premium={premium}
+                    currency={props.insurance.usd2}
+                    error={premiumError}
+                    transactionInProgress={(props.premiumTrxText != undefined) || premiumCalculationInProgress}
+                    text={props.premiumTrxText || t('premium_calculation_in_progress')}
+                    />
             </Grid>
             <Grid item xs={12}>
                 <FormControlLabel 
