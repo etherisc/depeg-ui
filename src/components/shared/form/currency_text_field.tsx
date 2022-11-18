@@ -25,7 +25,6 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
     const { t } = useTranslation('common');
 
     useEffect(() => {
-        console.log(props.value);
         validateValue();
     }, [props.value, validateValue]);
 

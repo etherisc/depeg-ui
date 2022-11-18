@@ -55,21 +55,17 @@ export function insuranceApiSmartContract(
             console.log("premium", premium);
             return Promise.resolve(premium);
         },
-        async createApproval(walletAddress: string, premium: number) {
+        async createApproval(walletAddress: string, premium: number, beforeWaitCallback?) {
             console.log("createApproval", walletAddress, premium);
-            // TODO: show instruction
-            enqueueSnackbar(`Awaiting approval of ${premium} from ${walletAddress}`,  { autoHideDuration: 3000, variant: 'info' });
             const product = DepegProduct__factory.connect(contractAddress, signer);
-            const [tx, receipt] = await createApprovalForTreasury(await product.getToken(), signer, premium, await product.getRegistry());
+            const [tx, receipt] = await createApprovalForTreasury(await product.getToken(), signer, premium, await product.getRegistry(), beforeWaitCallback);
             console.log("tx", tx, "receipt", receipt);
             return Promise.resolve(true);
             
         },
-        async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays, premium) {
+        async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays, premium, beforeWaitCallback?) {
             console.log("applyForPolicy", walletAddress, insuredAmount, coverageDurationDays, premium);
-            // TODO: show instruction
-            enqueueSnackbar(`Awaiting payment ${premium}`,  { autoHideDuration: 3000, variant: 'info' });
-            const [tx, receipt] = await applyForDepegPolicy(contractAddress, signer, insuredAmount, coverageDurationDays, premium);
+            const [tx, receipt] = await applyForDepegPolicy(contractAddress, signer, insuredAmount, coverageDurationDays, premium, beforeWaitCallback);
             let processId = extractProcessIdFromApplicationLogs(receipt.logs);
             console.log(`processId: ${processId}`);
             return Promise.resolve(true);

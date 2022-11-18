@@ -7,6 +7,7 @@ import { useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import ApplicationForm from "./application_form";
 import { VoidSigner } from "ethers";
+import { useRouter } from 'next/router'
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -17,6 +18,7 @@ const steps = ['step0', 'step1', 'step2', 'step3', 'step4'];
 export default function Application(props: ApplicationProps) {
     const { t } = useTranslation(['application', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const router = useRouter();
 
     const appContext = useContext(AppContext);
     const [ activeStep, setActiveStep ] = useState(appContext.data.signer === undefined ? 0 : 1);
@@ -85,13 +87,8 @@ export default function Application(props: ApplicationProps) {
             t('application_success'),
             { 
                 variant: 'success', 
-                persist: true, 
+                autoHideDuration: 5000, 
                 preventDuplicate: true,
-                action: (key) => {
-                    return (
-                        <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                    );
-                }
             }
         );
         confetti({
@@ -99,18 +96,62 @@ export default function Application(props: ApplicationProps) {
             spread: 70,
             origin: { y: 0.6 }
         });
+        // redirect to policy list (/)
+        router.push("/");
+    }
+
+    async function doApproval(walletAddress: string, premium: number): Promise<Boolean> {
+        let snackbarId = enqueueSnackbar(
+            t('approval_info'),
+            { variant: "warning", persist: true }
+        );
+        let snackbarId2;
+        try {
+            return await props.insurance.createApproval(walletAddress, premium, () => {
+                snackbarId2 = enqueueSnackbar(
+                    t('approval_wait'),
+                    { variant: "info", persist: true }
+                );
+            });
+            // FIXME: handle error during approval
+        } finally {
+            closeSnackbar(snackbarId);
+            if (snackbarId2 !== undefined) {
+                closeSnackbar(snackbarId2);
+            }
+        }
+    }
+
+    async function doApplication(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<boolean> {
+        const snackbarId = enqueueSnackbar(
+            t('apply_info'),
+            { variant: "warning", persist: true }
+        );
+        let snackbarId2;
+        try {
+            return await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration, premium, () => {
+                snackbarId2 = enqueueSnackbar(
+                    t('apply_wait'),
+                    { variant: "info", persist: true }
+                );
+            });
+            // FIXME: handle error during apply for policy
+        } finally {
+            closeSnackbar(snackbarId);
+            if (snackbarId2 !== undefined) {
+                closeSnackbar(snackbarId2);
+            }
+        }
     }
 
     async function applyForPolicy(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<boolean> {
         setActiveStep(3);
-        await props.insurance.createApproval(walletAddress, premium);
-        // FIXME: handle error during approval
+        const approvalSuccess = await doApproval(walletAddress, premium);
         setActiveStep(4);
-        await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration, premium);
-        // FIXME: handle error during apply for policy
+        const applicationSuccess = await doApplication(walletAddress, insuredAmount, coverageDuration, premium);
         setActiveStep(5);
         applicationSuccessful();
-        return Promise.resolve(true);        
+        return Promise.resolve(applicationSuccess);        
     }
 
     return (

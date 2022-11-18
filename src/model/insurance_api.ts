@@ -24,14 +24,16 @@ export interface InsuranceApi {
     createApproval: 
         (
             walletAddress: string, 
-            premium: number
+            premium: number,
+            beforeWaitCallback?: () => void
         ) => Promise<boolean>;
     applyForPolicy: 
         (
             walletAddress: string, 
             insuredAmount: number, 
             coverageDurationDays: number,
-            premium: number
+            premium: number,
+            beforeWaitCallback?: () => void
         ) => Promise<boolean>;
     policies: 
         (

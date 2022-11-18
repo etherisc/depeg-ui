@@ -24,13 +24,22 @@ export function extractProcessIdFromApplicationLogs(logs: any[]): string|undefin
     return processId;
 }
 
-export async function applyForDepegPolicy(contractAddress: string, signer: Signer, insuredAmount: number, coverageDurationDays: number, premium: number):
-        Promise<[ContractTransaction, ContractReceipt]> {
+export async function applyForDepegPolicy(
+        contractAddress: string, 
+        signer: Signer, 
+        insuredAmount: number, 
+        coverageDurationDays: number, 
+        premium: number, 
+        beforeWaitCallback?: () => void
+        ): Promise<[ContractTransaction, ContractReceipt]> {
     const product = DepegProduct__factory.connect(contractAddress, signer);
     const tx = await product.applyForPolicy(
         insuredAmount, 
         coverageDurationDays * 24 * 60 * 60,
         premium);
+    if (beforeWaitCallback) {
+        beforeWaitCallback();
+    }
     const receipt = await tx.wait();
     // console.log(receipt);
     return [tx, receipt];
