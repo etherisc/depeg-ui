@@ -6,9 +6,6 @@ import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { IInstanceService } from "../../contracts/gif-interface";
 import { APPLICATION_STATE_APPLIED, APPLICATION_STATE_DECLINED, APPLICATION_STATE_REVOKED, APPLICATION_STATE_UNDERWRITTEN, PolicyData, POLICY_STATE_ACTIVE, POLICY_STATE_CLOSED, POLICY_STATE_EXPIRED } from "./policy_data";
 import moment, { Moment } from "moment";
-import { Policy } from "@mui/icons-material";
-
-
 
 export async function getInstanceFromProduct(depegProductContractAddress: string, signer: Signer): 
         Promise<[DepegProduct, DepegRiskpool, number, IInstanceService]>
@@ -83,7 +80,7 @@ export async function getPolicies(
     const policies = new Array();
     
     for (let i = 0; i < numPolicies; i++) {
-        const policy = await getPolicyForProduct(ownerWalletAddress, i, depegProductContractAddress, signer, product, riskpool, instanceService);
+        const policy = await getPolicyForProduct(ownerWalletAddress, i, product, riskpool, instanceService);
         policies.push(policy);
     }
 
@@ -98,14 +95,12 @@ export async function getPolicy(
         signer: Signer, 
         ): Promise<PolicyData> {
     const [ product, riskpool, _, instanceService ] = await getInstanceFromProduct(depegProductContractAddress, signer);
-    return getPolicyForProduct(ownerWalletAddress, idx, depegProductContractAddress, signer, product, riskpool, instanceService);
+    return getPolicyForProduct(ownerWalletAddress, idx, product, riskpool, instanceService);
 }
 
 async function getPolicyForProduct(
         ownerWalletAddress: string,
         idx: number,
-        depegProductContractAddress: string, 
-        signer: Signer, 
         product: DepegProduct,
         riskpool: DepegRiskpool,
         instanceService: IInstanceService,

@@ -1,8 +1,8 @@
 import moment from "moment";
-import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
-import { delay } from "../../utils/delay";
+import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import { ApplicationApi, InsuranceApi } from "../../model/insurance_api";
 import { PolicyRowView, PolicyStatus } from "../../model/policy";
+import { delay } from "../../utils/delay";
 import { BundleData } from "./bundle_data";
 
 export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {

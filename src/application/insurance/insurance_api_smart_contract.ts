@@ -10,7 +10,6 @@ import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
 import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState, PolicyState, getPoliciesCount, getPolicy } from "./depeg_product";
 import { hasBalance } from "./erc20";
-import { useTranslation } from "next-i18next";
 
 export function insuranceApiSmartContract(
         signer: Signer,
