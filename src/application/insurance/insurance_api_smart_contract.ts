@@ -5,12 +5,13 @@ import { DepegProduct__factory } from "../../contracts/depeg-contracts";
 import { InsuranceApi } from "../../model/insurance_api";
 import { PolicyRowView, PolicyStatus } from "../../model/policy";
 import { delay } from "../../utils/delay";
-import { NoBundleFoundError } from "../../utils/error";
+import { BalanceTooSmallError, NoBundleFoundError } from "../../utils/error";
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { getBestQuote, getBundleData } from "./riskbundle";
 import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
 import { applyForDepegPolicy, extractProcessIdFromApplicationLogs } from "./depeg_product";
+import { hasBalance } from "./erc20";
 
 export function insuranceApiSmartContract(
         signer: Signer,
@@ -53,6 +54,11 @@ export function insuranceApiSmartContract(
             console.log("netPremium", netPremium);
             const premium = (await product.calculatePremium(netPremium)).toNumber();
             console.log("premium", premium);
+
+            if (! await hasBalance(walletAddress, premium, await product.getToken(), signer)) {
+                throw new BalanceTooSmallError();
+            }
+
             return Promise.resolve(premium);
         },
         async createApproval(walletAddress: string, premium: number, beforeWaitCallback?) {

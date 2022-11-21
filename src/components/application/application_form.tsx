@@ -11,7 +11,7 @@ import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { BundleData } from '../../application/insurance/bundle_data';
 import { InsuranceApi } from '../../model/insurance_api';
-import { NoBundleFoundError } from '../../utils/error';
+import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
 import CurrencyTextField from '../shared/form/currency_text_field';
 import NumericTextField, { INPUT_VARIANT } from '../shared/form/numeric_text_field';
 import Premium from './premium';
@@ -134,6 +134,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             if (e instanceof NoBundleFoundError) {
                 console.log("No bundle found for this insurance.");
                 setPremiumError(t('error_no_matching_bundle_found'));
+            } else if (e instanceof BalanceTooSmallError) {
+                console.log("Wallet balance too low");
+                setPremiumError(t('error_wallet_balance_too_low', { currency: props.insurance.usd2}));
             } else {
                 console.log("Error calculating premium: ", e);
             }

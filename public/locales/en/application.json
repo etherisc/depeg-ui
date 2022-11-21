@@ -17,6 +17,7 @@
     "application_success": "Your application has been successful",
     "days": "Days",
     "error_no_matching_bundle_found": "No risk bundle matching your criteria was found",
+    "error_wallet_balance_too_low": "The wallet does not contain enough {{currency}} to pay for the premium",
     "bundle_loading": "Fetching risk bundle information from blockchain",
     "premium_calculation_in_progress": "Premium is being calculated",
     "approval_info": "Please approve the premium allowance transaction in your wallet",
