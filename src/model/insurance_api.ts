@@ -71,16 +71,16 @@ export function getInsuranceApi(
         provider?: ethers.providers.Provider
         ): InsuranceApi {
     
-    const contractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
-    if (contractAddress == null) {
+    const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
+    if (depegProductContractAddress == null) {
         console.log("Using mock insurance API");
         return insuranceApiMock(enqueueSnackbar);
     } else {
-        console.log("Using smart contract", contractAddress);
+        console.log("Using smart contract", depegProductContractAddress);
         if (signer === undefined || provider === undefined) {
-            return insuranceApiSmartContract(new ethers.VoidSigner(contractAddress, provider), contractAddress, enqueueSnackbar);
+            return insuranceApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress, enqueueSnackbar);
         } else {
-            return insuranceApiSmartContract(signer, contractAddress, enqueueSnackbar);
+            return insuranceApiSmartContract(signer, depegProductContractAddress, enqueueSnackbar);
         }
     }
 }

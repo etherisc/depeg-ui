@@ -15,7 +15,7 @@ import { hasBalance } from "./erc20";
 
 export function insuranceApiSmartContract(
         signer: Signer,
-        contractAddress: string,  // TODO: rename to depegProductContractAddress
+        depegProductContractAddress: string, 
         enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey,
         ): InsuranceApi {
     return {
@@ -26,8 +26,8 @@ export function insuranceApiSmartContract(
         coverageDurationDaysMin: 10,
         coverageDurationDaysMax: 90,
         async getRiskBundles() {
-            console.log("retrieving risk bundles from smart contract at " + contractAddress);
-            const product = DepegProduct__factory.connect(contractAddress, signer);
+            console.log("retrieving risk bundles from smart contract at " + depegProductContractAddress);
+            const product = DepegProduct__factory.connect(depegProductContractAddress, signer);
             const riskpoolId = (await product.getRiskpoolId()).toNumber();
             const registryAddress = await product.getRegistry();
             const instanceService = await getInstanceService(registryAddress, signer);
@@ -43,7 +43,7 @@ export function insuranceApiSmartContract(
 
             const durationSecs = coverageDurationDays * 24 * 60 * 60;
             console.log("calculatePremium", walletAddress, insuredAmount, coverageDurationDays);
-            const product = DepegProduct__factory.connect(contractAddress, signer);
+            const product = DepegProduct__factory.connect(depegProductContractAddress, signer);
             console.log("bundleData", bundles);
             const bestBundle = getBestQuote(bundles, insuredAmount, durationSecs);
             if (bestBundle.idx == -1) { 
@@ -63,7 +63,7 @@ export function insuranceApiSmartContract(
         },
         async createApproval(walletAddress: string, premium: number, beforeWaitCallback?) {
             console.log("createApproval", walletAddress, premium);
-            const product = DepegProduct__factory.connect(contractAddress, signer);
+            const product = DepegProduct__factory.connect(depegProductContractAddress, signer);
             const [tx, receipt] = await createApprovalForTreasury(await product.getToken(), signer, premium, await product.getRegistry(), beforeWaitCallback);
             console.log("tx", tx, "receipt", receipt);
             return Promise.resolve(true);
@@ -71,7 +71,7 @@ export function insuranceApiSmartContract(
         },
         async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays, premium, beforeWaitCallback?) {
             console.log("applyForPolicy", walletAddress, insuredAmount, coverageDurationDays, premium);
-            const [tx, receipt] = await applyForDepegPolicy(contractAddress, signer, insuredAmount, coverageDurationDays, premium, beforeWaitCallback);
+            const [tx, receipt] = await applyForDepegPolicy(depegProductContractAddress, signer, insuredAmount, coverageDurationDays, premium, beforeWaitCallback);
             let processId = extractProcessIdFromApplicationLogs(receipt.logs);
             console.log(`processId: ${processId}`);
             return Promise.resolve(true);
