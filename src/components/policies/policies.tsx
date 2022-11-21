@@ -44,7 +44,7 @@ export default function Policies(props: PoliciesProps) {
         { field: 'walletAddress', headerName: t('table.header.walletAddress'), flex: 1 },
         { field: 'insuredAmount', headerName: t('table.header.insuredAmount'), flex: 0.5 },
         { field: 'coverageUntil', headerName: t('table.header.coverageUntil'), flex: 0.5 },
-        { field: 'status', headerName: t('table.header.status'), flex: 0.5 },
+        { field: 'state', headerName: t('table.header.status'), flex: 0.5 },
     ];
 
 

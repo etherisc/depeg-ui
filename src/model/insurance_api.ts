@@ -8,12 +8,18 @@ import { PolicyRowView } from "./policy";
 export interface InsuranceApi {
     usd1: string;
     usd2: string;
-    application: ApplicationApi;
+    createTreasuryApproval: 
+        (
+            walletAddress: string, 
+            premium: number,
+            beforeWaitCallback?: () => void
+        ) => Promise<boolean>;
     policies: 
         (
             walletAddress: string, 
             onlyActive: boolean
         ) => Promise<Array<PolicyRowView>>;
+    application: ApplicationApi;
     invest: InvestApi;
 }
 
@@ -31,12 +37,6 @@ export interface ApplicationApi {
             coverageDurationDays: number,
             bundles: Array<BundleData>,
         ) => Promise<number>;
-    createApproval: 
-        (
-            walletAddress: string, 
-            premium: number,
-            beforeWaitCallback?: () => void
-        ) => Promise<boolean>;
     applyForPolicy: 
         (
             walletAddress: string, 

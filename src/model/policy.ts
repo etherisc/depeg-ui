@@ -1,5 +1,3 @@
-import { Moment } from "moment";
-
 export enum PolicyStatus {
     ACTIVE,
     APPLIED,
@@ -12,5 +10,5 @@ export interface PolicyRowView {
     walletAddress: string;
     insuredAmount: string;
     coverageUntil: string;
-    status: string;
+    state: string;
 }

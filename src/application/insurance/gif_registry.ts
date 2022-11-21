@@ -1,7 +1,7 @@
 import { Signer } from "ethers";
-import { formatBytes32String, parseBytes32String } from "ethers/lib/utils";
+import { formatBytes32String } from "ethers/lib/utils";
 import { DepegRiskpool, DepegRiskpool__factory } from "../../contracts/depeg-contracts";
-import { IComponent__factory, IInstanceService, IRiskpoolService, IRiskpoolService__factory } from "../../contracts/gif-interface";
+import { IInstanceService, IRiskpoolService, IRiskpoolService__factory } from "../../contracts/gif-interface";
 import { IInstanceService__factory } from "../../contracts/gif-interface/factories/IInstanceService__factory";
 import { IRegistry__factory } from "../../contracts/gif-interface/factories/IRegistry__factory";
 

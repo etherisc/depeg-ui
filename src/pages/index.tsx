@@ -3,13 +3,21 @@ import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
-import { insuranceApiMock } from "../application/insurance/insurance_api_mock";
 import Policies from '../components/policies/policies';
+import { useContext, useMemo } from 'react';
+import { getInsuranceApi } from '../model/insurance_api';
+import { AppContext } from '../context/app_context';
 
 export default function PoliciesPage() {
     const { enqueueSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
-    const insurance = insuranceApiMock(enqueueSnackbar);
+    const appContext = useContext(AppContext);
+
+    const insurance = useMemo(() => getInsuranceApi(
+        enqueueSnackbar,
+        appContext.data.signer,
+        appContext.data.provider,
+    ), [enqueueSnackbar, appContext]);
 
     return (
         <>

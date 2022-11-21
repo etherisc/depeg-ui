@@ -74,7 +74,7 @@ export default function Invest(props: InvestProps) {
     async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
         setActiveStep(3);
         const investorWalletAddress = await appContext!!.data.signer!!.getAddress();
-        await props.insurance.createApproval(investorWalletAddress, investedAmount);
+        await props.insurance.createTreasuryApproval(investorWalletAddress, investedAmount);
         // FIXME: handle error during approval
         setActiveStep(4);
         await props.insurance.invest.invest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
