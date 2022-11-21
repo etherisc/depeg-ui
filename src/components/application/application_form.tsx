@@ -10,7 +10,7 @@ import moment from 'moment';
 import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { BundleData } from '../../application/insurance/bundle_data';
-import { InsuranceApi } from '../../model/insurance_api';
+import { ApplicationApi } from '../../model/insurance_api';
 import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
 import CurrencyTextField from '../shared/form/currency_text_field';
 import NumericTextField, { INPUT_VARIANT } from '../shared/form/numeric_text_field';
@@ -21,7 +21,9 @@ const formInputVariant = 'outlined';
 export interface ApplicationFormProperties {
     disabled: boolean;
     walletAddress: string;
-    insurance: InsuranceApi;
+    usd1: string;
+    usd2: string;
+    applicationApi: ApplicationApi;
     bundles: Array<BundleData>;
     premiumTrxText: string|undefined;
     formReadyForApply: (isFormReady: boolean) => void;
@@ -60,19 +62,19 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }, [props.walletAddress]);
 
     // insured amount
-    const [ insuredAmount, setInsuredAmount ] = useState(props.insurance.insuredAmountMin);
+    const [ insuredAmount, setInsuredAmount ] = useState(props.applicationApi.insuredAmountMin);
     const [ insuredAmountValid, setInsuredAmountValid ] = useState(false);
 
     // coverage period (days and date)
 
     // coverage days
-    const [ coverageDays, setCoverageDays ] = useState(props.insurance.coverageDurationDaysMin);
+    const [ coverageDays, setCoverageDays ] = useState(props.applicationApi.coverageDurationDaysMin);
     const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
 
     // coverage until date
-    const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.insurance.coverageDurationDaysMax, 'days'));
-    const coverageUntilMin = moment().add(props.insurance.coverageDurationDaysMin, 'days');
-    const coverageUntilMax = moment().add(props.insurance.coverageDurationDaysMax, 'days');
+    const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.applicationApi.coverageDurationDaysMax, 'days'));
+    const coverageUntilMin = moment().add(props.applicationApi.coverageDurationDaysMin, 'days');
+    const coverageUntilMax = moment().add(props.applicationApi.coverageDurationDaysMax, 'days');
     function handleCoverageUntilChange(t: moment.Moment | null) {
         let date = t;
         if (date == null) {
@@ -128,7 +130,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         console.log("Calculating premium...");
         try {
             setPremiumCalculationInProgress(true);
-            setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles));
+            setPremium(await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles));
             setPremiumError("");
         } catch (e) {
             if (e instanceof NoBundleFoundError) {
@@ -136,7 +138,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 setPremiumError(t('error_no_matching_bundle_found'));
             } else if (e instanceof BalanceTooSmallError) {
                 console.log("Wallet balance too low");
-                setPremiumError(t('error_wallet_balance_too_low', { currency: props.insurance.usd2}));
+                setPremiumError(t('error_wallet_balance_too_low', { currency: props.usd2}));
             } else {
                 console.log("Error calculating premium: ", e);
             }
@@ -146,7 +148,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setPremiumCalculationInProgress(false);
         }
         
-    }, [formValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.insurance, t]);
+    }, [formValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.applicationApi, t]);
 
     async function buy() {
         setApplicationInProgress(true);
@@ -187,14 +189,14 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     id="insuredAmount"
                     label={t('insuredAmount')}
                     inputProps={{
-                        startAdornment: <InputAdornment position="start">{props.insurance.usd1}</InputAdornment>,
+                        startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
                     }}
                     value={insuredAmount}
-                    currency={props.insurance.usd1}
+                    currency={props.usd1}
                     onChange={setInsuredAmount}
                     onBlur={calculatePremium}
-                    minValue={props.insurance.insuredAmountMin}
-                    maxValue={props.insurance.insuredAmountMax}
+                    minValue={props.applicationApi.insuredAmountMin}
+                    maxValue={props.applicationApi.insuredAmountMax}
                     onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
                 />
             </Grid>
@@ -216,8 +218,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         setCoverageUntil(moment().add(days, 'days'));
                     }}
                     onBlur={calculatePremium}
-                    minValue={props.insurance.coverageDurationDaysMin}
-                    maxValue={props.insurance.coverageDurationDaysMax}
+                    minValue={props.applicationApi.coverageDurationDaysMin}
+                    maxValue={props.applicationApi.coverageDurationDaysMax}
                     onError={(errMsg) => setCoverageDaysValid(errMsg === "")}
                 />
             </Grid>
@@ -241,7 +243,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 <Premium 
                     disabled={props.disabled}
                     premium={premium}
-                    currency={props.insurance.usd2}
+                    currency={props.usd2}
                     error={premiumError}
                     transactionInProgress={(props.premiumTrxText != undefined) || premiumCalculationInProgress}
                     text={props.premiumTrxText || t('premium_calculation_in_progress')}

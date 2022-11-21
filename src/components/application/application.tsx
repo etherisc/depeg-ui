@@ -35,7 +35,7 @@ export default function Application(props: ApplicationProps) {
     // get bundle data once the wallet is connected
     useEffect(() => {
         async function asyncGetBundles(dispatch: any) {
-            const bundles = await props.insurance.getRiskBundles();
+            const bundles = await props.insurance.application.getRiskBundles();
             bundles.forEach((bundle) => dispatch({ type: AppActionType.ADD_BUNDLE, bundle: bundle}))
             dispatch({ type: AppActionType.BUNDLE_LOADING_FINISHED });
             setPremiumTrxText(undefined);
@@ -104,7 +104,7 @@ export default function Application(props: ApplicationProps) {
         );
         let snackbarId2;
         try {
-            return await props.insurance.createApproval(walletAddress, premium, () => {
+            return await props.insurance.application.createApproval(walletAddress, premium, () => {
                 closeSnackbar(snackbarId);
                 snackbarId2 = enqueueSnackbar(
                     t('approval_wait'),
@@ -126,7 +126,7 @@ export default function Application(props: ApplicationProps) {
         );
         let snackbarId2;
         try {
-            return await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration, premium, () => {
+            return await props.insurance.application.applyForPolicy(walletAddress, insuredAmount, coverageDuration, premium, () => {
                 closeSnackbar(snackbarId);
                 snackbarId2 = enqueueSnackbar(
                     t('apply_wait'),
@@ -181,7 +181,9 @@ export default function Application(props: ApplicationProps) {
                 <ApplicationForm 
                     disabled={formDisabled}
                     walletAddress={walletAddress}
-                    insurance={props.insurance}
+                    usd1={props.insurance.usd1}
+                    usd2={props.insurance.usd2}
+                    applicationApi={props.insurance.application}
                     bundles={appContext.data.bundles}
                     formReadyForApply={formReadyForApply}
                     applyForPolicy={applyForPolicy}

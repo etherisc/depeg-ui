@@ -2,7 +2,7 @@ import { Signer, VoidSigner } from "ethers";
 import moment from "moment";
 import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
 import { DepegProduct__factory } from "../../contracts/depeg-contracts";
-import { InsuranceApi } from "../../model/insurance_api";
+import { ApplicationApi, InsuranceApi } from "../../model/insurance_api";
 import { PolicyRowView, PolicyStatus } from "../../model/policy";
 import { delay } from "../../utils/delay";
 import { BalanceTooSmallError, NoBundleFoundError } from "../../utils/error";
@@ -21,6 +21,21 @@ export function insuranceApiSmartContract(
     return {
         usd1: 'USDC',
         usd2: 'USDT',
+        application: applicationApi(signer, depegProductContractAddress),
+        async policies(walletAddress: string, onlyActive: boolean): Promise<Array<PolicyRowView>> {
+            if (onlyActive) {
+                return Promise.resolve(mockPoliciesActive);
+            }
+            return Promise.resolve(mockPolicies);
+        },
+        invest: investMock(enqueueSnackbar)
+    } as InsuranceApi;
+}
+
+function applicationApi(signer: Signer,
+        depegProductContractAddress: string, 
+        ) {
+    return {
         insuredAmountMin: 1000,
         insuredAmountMax: 20000,
         coverageDurationDaysMin: 10,
@@ -76,14 +91,7 @@ export function insuranceApiSmartContract(
             console.log(`processId: ${processId}`);
             return Promise.resolve(true);
         },
-        async policies(walletAddress: string, onlyActive: boolean): Promise<Array<PolicyRowView>> {
-            if (onlyActive) {
-                return Promise.resolve(mockPoliciesActive);
-            }
-            return Promise.resolve(mockPolicies);
-        },
-        invest: investMock(enqueueSnackbar)
-    } as InsuranceApi;
+    } as ApplicationApi;
 }
 
 const mockPoliciesActive = [

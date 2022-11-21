@@ -8,6 +8,16 @@ import { PolicyRowView } from "./policy";
 export interface InsuranceApi {
     usd1: string;
     usd2: string;
+    application: ApplicationApi;
+    policies: 
+        (
+            walletAddress: string, 
+            onlyActive: boolean
+        ) => Promise<Array<PolicyRowView>>;
+    invest: InvestApi;
+}
+
+export interface ApplicationApi {
     insuredAmountMin: number;
     insuredAmountMax: number;
     coverageDurationDaysMin: number;
@@ -35,16 +45,9 @@ export interface InsuranceApi {
             premium: number,
             beforeWaitCallback?: () => void
         ) => Promise<boolean>;
-    policies: 
-        (
-            walletAddress: string, 
-            onlyActive: boolean
-        ) => Promise<Array<PolicyRowView>>;
-    invest: InvestApi;
 }
 
 export interface InvestApi {
-    usd1: string;
     minInvestedAmount: number;
     maxInvestedAmount: number;
     minSumInsured: number;

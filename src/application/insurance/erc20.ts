@@ -9,5 +9,5 @@ export function getErc20Token(address: string, signer: Signer): IERC20 {
 export async function hasBalance(walletAddress: string, expectedBalance: number, tokenAddress: string, signer: Signer): Promise<boolean> {
     const token = getErc20Token(tokenAddress, signer);
     const balance = await token.balanceOf(walletAddress);
-    return balance.toNumber() >= expectedBalance;
+    return balance.gte(expectedBalance);
 }
