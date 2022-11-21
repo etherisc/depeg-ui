@@ -8,7 +8,7 @@ import { BalanceTooSmallError, NoBundleFoundError } from "../../utils/error";
 import { getBestQuote, getBundleData } from "./riskbundle";
 import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
-import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState } from "./depeg_product";
+import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState, PolicyState } from "./depeg_product";
 import { hasBalance } from "./erc20";
 import { useTranslation } from "next-i18next";
 
@@ -18,7 +18,7 @@ export function insuranceApiSmartContract(
         enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey,
         t: (key: string) => string
         ): InsuranceApi {
-    // TODO get from smart contract
+    // TODO: get from smart contract
     const usd1 = 'USDC';
     const usd2 = 'USDT';
     return {
@@ -28,16 +28,18 @@ export function insuranceApiSmartContract(
         async policies(walletAddress: string, onlyActive: boolean): Promise<Array<PolicyRowView>> {
             const rawPolicies = await getPolicies(walletAddress, depegProductContractAddress, signer);
             // TODO filter active policies
-            return rawPolicies.map(policy => {
-                const state = getPolicyState(policy);
-                return {
-                    id: policy.processId,
-                    walletAddress: policy.owner,
-                    insuredAmount: `${usd1} ${policy.suminsured.toString()}`,
-                    coverageUntil: getPolicyEndDate(policy),
-                    state: t('application_state_' + state),
-                } as PolicyRowView;
-            });
+            return rawPolicies
+                .filter((policy => ! onlyActive || getPolicyState(policy) === PolicyState.ACTIVE))
+                .map(policy => {
+                    const state = getPolicyState(policy);
+                    return {
+                        id: policy.processId,
+                        walletAddress: policy.owner,
+                        insuredAmount: `${usd1} ${policy.suminsured.toString()}`,
+                        coverageUntil: getPolicyEndDate(policy),
+                        state: t('application_state_' + state),
+                    } as PolicyRowView;
+                });
         },
         invest: investMock(enqueueSnackbar),
         async createTreasuryApproval(walletAddress: string, premium: number, beforeWaitCallback?) {
