@@ -21,6 +21,7 @@ export default function Policies(props: PoliciesProps) {
     const appContext = useContext(AppContext);
 
     const [ policies, setPolicies ] = useState<Array<PolicyRowView>>([]);
+    const [ pageSize, setPageSize ] = useState(5);
 
     const [ showActivePoliciesOnly, setShowActivePoliciesOnly ] = useState<boolean>(false);
     function handleShowActivePoliciesOnlyChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -31,7 +32,11 @@ export default function Policies(props: PoliciesProps) {
         async function getPolicies() {
             const walletAddress = await appContext?.data.signer?.getAddress();
             if (walletAddress !== undefined) {
-                setPolicies(await props.insurance.policies(walletAddress, showActivePoliciesOnly));
+                const policiesCount = await props.insurance.policiesCount(walletAddress);
+                for (let i = 0; i < policiesCount; i++) {
+                    const policy = await props.insurance.policy(walletAddress, i);
+                    setPolicies(policies => [...policies, policy]);
+                }
             } else {
                 setPolicies([]);
             }
@@ -44,10 +49,8 @@ export default function Policies(props: PoliciesProps) {
         { field: 'walletAddress', headerName: t('table.header.walletAddress'), flex: 1 },
         { field: 'insuredAmount', headerName: t('table.header.insuredAmount'), flex: 0.5 },
         { field: 'coverageUntil', headerName: t('table.header.coverageUntil'), flex: 0.5 },
-        { field: 'status', headerName: t('table.header.status'), flex: 0.5 },
+        { field: 'state', headerName: t('table.header.status'), flex: 0.5 },
     ];
-
-
 
     function GridToolbar() {
         return (
@@ -85,6 +88,14 @@ export default function Policies(props: PoliciesProps) {
                 components={{
                     Toolbar: GridToolbar,
                 }}
+                initialState={{
+                    sorting: {
+                        sortModel: [{ field: 'coverageUntil', sort: 'asc' }],
+                    },
+                }}
+                pageSize={pageSize}
+                rowsPerPageOptions={[5, 10, 20, 50]}
+                onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
                 />
         </>
     );

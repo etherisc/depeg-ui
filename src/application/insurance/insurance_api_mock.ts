@@ -1,19 +1,27 @@
 import moment from "moment";
-import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
-import { delay } from "../../utils/delay";
+import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import { ApplicationApi, InsuranceApi } from "../../model/insurance_api";
 import { PolicyRowView, PolicyStatus } from "../../model/policy";
+import { delay } from "../../utils/delay";
 import { BundleData } from "./bundle_data";
 
 export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
         usd1: 'USDC',
         usd2: 'USDT',
-        async policies(walletAddress: string, onlyActive: boolean): Promise<Array<PolicyRowView>> {
-            if (onlyActive) {
-                return Promise.resolve(mockPoliciesActive);
-            }
+        async createTreasuryApproval(walletAddress: string, premium: number) {
+            enqueueSnackbar(`Approval mocked (${walletAddress}, ${premium}`,  { autoHideDuration: 3000, variant: 'info' });
+            await delay(2000);
+            return Promise.resolve(true);
+        },
+        async policy(walletAddress: string, idx: number): Promise<PolicyRowView> {
+            return Promise.resolve(mockPolicies[idx]);
+        },
+        async policies(walletAddress: string): Promise<Array<PolicyRowView>> {
             return Promise.resolve(mockPolicies);
+        },
+        async policiesCount(walletAddress: string): Promise<number> {
+            return Promise.resolve(mockPolicies.length);
         },
         application: applicationMock(enqueueSnackbar),
         invest: investMock(enqueueSnackbar),
@@ -27,14 +35,14 @@ const mockPoliciesActive = [
         insuredAmount: 'USDC 4,000.00',
         // 25 nov 2022
         coverageUntil: moment().add(14, 'days').format('DD MMM YYYY'),
-        status: PolicyStatus[PolicyStatus.ACTIVE]
+        state: PolicyStatus[PolicyStatus.ACTIVE]
     } as PolicyRowView,
     {
         id: '0x34e190322453300229d2be2a38450b8a8bd8cf66',
         walletAddress: '0xdCeC4C063Fef1074B0CD53022C3306A6FADb4729',
         insuredAmount: 'USDC 10,000.00',
         coverageUntil: moment().add(47, 'days').format('DD MMM YYYY'),
-        status: PolicyStatus[PolicyStatus.APPLIED]
+        state: PolicyStatus[PolicyStatus.APPLIED]
     } as PolicyRowView,
 ];
 
@@ -44,14 +52,14 @@ const mockPolicies = mockPoliciesActive.concat(
         walletAddress: '0xFEeC4C063Fef1074B0CD53022C3306A6FADb4729',
         insuredAmount: 'USDT 17,000.00',
         coverageUntil: moment().add(-3, 'days').format('DD MMM YYYY'),
-        status: PolicyStatus[PolicyStatus.EXPIRED]
+        state: PolicyStatus[PolicyStatus.EXPIRED]
     } as PolicyRowView,
     {
         id: '0xc23223453200229d2be2a38450b8a8bd8cf66',
         walletAddress: '0x821c4C063Fef1074B0CD53022C3306A6FADb4729',
         insuredAmount: 'USDN 7,352.00',
         coverageUntil: moment().add(-2, 'months').format('DD MMM YYYY'),
-        status: PolicyStatus[PolicyStatus.PAYED_OUT]
+        state: PolicyStatus[PolicyStatus.PAYED_OUT]
     } as PolicyRowView,
 );
 
@@ -66,11 +74,6 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         },
         calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>) {
             return Promise.resolve(insuredAmount * 0.017 * coverageDurationDays / 365);
-        },
-        async createApproval(walletAddress: string, premium: number) {
-            enqueueSnackbar(`Approval mocked (${walletAddress}, ${premium}`,  { autoHideDuration: 3000, variant: 'info' });
-            await delay(2000);
-            return Promise.resolve(true);
         },
         async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays, premium) {
             enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationDays})`,  { autoHideDuration: 3000, variant: 'info' });

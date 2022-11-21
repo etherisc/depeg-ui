@@ -8,12 +8,26 @@ import { PolicyRowView } from "./policy";
 export interface InsuranceApi {
     usd1: string;
     usd2: string;
-    application: ApplicationApi;
+    createTreasuryApproval: 
+        (
+            walletAddress: string, 
+            premium: number,
+            beforeWaitCallback?: () => void
+        ) => Promise<boolean>;
+    policy: 
+        (
+            walletAddress: string, 
+            index: number,
+        ) => Promise<PolicyRowView>;
     policies: 
         (
             walletAddress: string, 
-            onlyActive: boolean
         ) => Promise<Array<PolicyRowView>>;
+    policiesCount
+        (
+            walletAddress: string,
+        ): Promise<number>;
+    application: ApplicationApi;
     invest: InvestApi;
 }
 
@@ -31,12 +45,6 @@ export interface ApplicationApi {
             coverageDurationDays: number,
             bundles: Array<BundleData>,
         ) => Promise<number>;
-    createApproval: 
-        (
-            walletAddress: string, 
-            premium: number,
-            beforeWaitCallback?: () => void
-        ) => Promise<boolean>;
     applyForPolicy: 
         (
             walletAddress: string, 
@@ -70,6 +78,7 @@ export interface InvestApi {
 
 export function getInsuranceApi(
         enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey, 
+        t: (key: string) => string,
         signer?: Signer,
         provider?: ethers.providers.Provider
         ): InsuranceApi {
@@ -81,9 +90,9 @@ export function getInsuranceApi(
     } else {
         console.log("Using smart contract", depegProductContractAddress);
         if (signer === undefined || provider === undefined) {
-            return insuranceApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress, enqueueSnackbar);
+            return insuranceApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress, enqueueSnackbar, t);
         } else {
-            return insuranceApiSmartContract(signer, depegProductContractAddress, enqueueSnackbar);
+            return insuranceApiSmartContract(signer, depegProductContractAddress, enqueueSnackbar, t);
         }
     }
 }

@@ -22,5 +22,13 @@
         "currencyTextFieldMaxValue": "{{fieldName}} must be at most {{currency}} {{amount}}",
         "numericTextFieldMinValue": "{{fieldName}} must be at least {{value}} {{unit}}",
         "numericTextFieldMaxValue": "{{fieldName}} must be at most {{value}} {{unit}}"
-    }
+    },
+    "application_state_0": "Unknown",
+    "application_state_1": "Applied",
+    "application_state_2": "Revoked",
+    "application_state_3": "Underwritten",
+    "application_state_4": "Declined",
+    "application_state_5": "Active",
+    "application_state_6": "Expired",
+    "application_state_7": "Closed"
 }

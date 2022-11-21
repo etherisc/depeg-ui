@@ -104,7 +104,7 @@ export default function Application(props: ApplicationProps) {
         );
         let snackbarId2;
         try {
-            return await props.insurance.application.createApproval(walletAddress, premium, () => {
+            return await props.insurance.createTreasuryApproval(walletAddress, premium, () => {
                 closeSnackbar(snackbarId);
                 snackbarId2 = enqueueSnackbar(
                     t('approval_wait'),
