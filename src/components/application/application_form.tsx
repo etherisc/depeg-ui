@@ -181,6 +181,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     required={true}
                     fullWidth={true}
                     disabled={props.disabled}
+                    readOnly={premiumCalculationInProgress}
                     id="insuredAmount"
                     label={t('insuredAmount')}
                     inputProps={{
@@ -201,6 +202,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     fullWidth={true}
                     required={true}
                     disabled={props.disabled}
+                    readOnly={premiumCalculationInProgress}
                     id="coverageDurationDays"
                     label={t('coverageDurationDays')}
                     inputProps={{
@@ -221,12 +223,14 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             <Grid item xs={6}>
                 <DesktopDatePicker
                     disabled={props.disabled}
+                    readOnly={premiumCalculationInProgress}
                     label={t('coverageDurationUntil')}
                     inputFormat="MM/DD/YYYY"
                     renderInput={(params) => <TextField {...params} fullWidth />}
                     disablePast={true}
                     value={coverageUntil}
                     onChange={handleCoverageUntilChange}
+                    onAccept={calculatePremium}
                     minDate={coverageUntilMin}
                     maxDate={coverageUntilMax}
                     />

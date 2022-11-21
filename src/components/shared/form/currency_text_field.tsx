@@ -12,6 +12,7 @@ export interface CurrencyTextfieldProps {
     onBlur?: () => void;
     disabled: boolean;
     required: boolean;
+    readOnly?: boolean;
     fullWidth: boolean;
     id: string;
     label: string;
@@ -69,6 +70,13 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
         validateValue();
     }, [props.value, validateValue]);
 
+    let ip = props.inputProps;
+    if (props.inputProps === undefined) {
+        ip = { readOnly: true }
+    } else {
+        ip.readOnly = props.readOnly || false;
+    }
+
     return (
         <TextField
             fullWidth={props.fullWidth}
@@ -78,7 +86,7 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             id={props.id}
             label={props.label}
             type="text"
-            InputProps={props.inputProps}
+            InputProps={ip}
             value={formatCurrency(props.value)}
             onChange={handleValueChange}
             onBlur={() => { try { validateValue(); } finally { if (props.onBlur) props.onBlur(); } }}

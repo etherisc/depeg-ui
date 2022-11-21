@@ -9,6 +9,7 @@ export interface NumericTextFieldProps {
     onChange: (value: number) => void;
     onBlur?: () => void;
     disabled: boolean;
+    readOnly?: boolean;
     required: boolean;
     fullWidth: boolean;
     id: string;
@@ -65,6 +66,13 @@ export default function NumericTextField(props: NumericTextFieldProps) {
         validateValue();
     }, [props.value, validateValue]);
 
+    let ip = props.inputProps;
+    if (props.inputProps === undefined) {
+        ip = { readOnly: true }
+    } else {
+        ip.readOnly = props.readOnly || false;
+    }
+
     return (
         <TextField
             fullWidth={props.fullWidth}
@@ -74,7 +82,7 @@ export default function NumericTextField(props: NumericTextFieldProps) {
             id={props.id}
             label={props.label}
             type="text"
-            InputProps={props.inputProps}
+            InputProps={ip}
             value={props.value}
             onChange={handleValueChange}
             onBlur={() => { try { validateValue(); } finally { if (props.onBlur) props.onBlur(); } }}
