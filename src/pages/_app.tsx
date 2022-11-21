@@ -9,7 +9,7 @@ import React, { useReducer } from 'react';
 import Container from '@mui/material/Container';
 import Header from '../components/shared/header';
 import Head from 'next/head';
-import { initialSignerData, removeSigner, SignerContext, signerReducer } from '../context/signer_context';
+import { initialAppData, removeSigner, AppContext, signerReducer } from '../context/app_context';
 import Footer from '../components/shared/footer';
 import { SnackbarProvider } from 'notistack';
 import { appWithTranslation } from 'next-i18next';
@@ -19,7 +19,7 @@ import { getAndUpdateAccount } from '../utils/metamask';
 
 
 export function App({ Component, pageProps }: AppProps) {
-  const [ data, dispatch ] = useReducer(signerReducer, initialSignerData());
+  const [ data, dispatch ] = useReducer(signerReducer, initialAppData());
 
   if (data.provider != undefined) {
     data.provider.on('network', (newNetwork: any, oldNetwork: any) => {
@@ -59,7 +59,7 @@ export function App({ Component, pageProps }: AppProps) {
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <CssBaseline enableColorScheme />
-      <SignerContext.Provider value={{ data, dispatch}}>
+      <AppContext.Provider value={{ data, dispatch}} >
         <SnackbarProvider maxSnack={3}>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <Header />
@@ -69,7 +69,7 @@ export function App({ Component, pageProps }: AppProps) {
             <Footer />
           </LocalizationProvider>
         </SnackbarProvider>
-      </SignerContext.Provider>
+      </AppContext.Provider>
     </React.Fragment>
   );
 }

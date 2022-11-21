@@ -1,11 +1,13 @@
 import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { SignerContext } from "../../context/signer_context";
+import { AppActionType, AppContext } from "../../context/app_context";
 import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../model/insurance_api";
 import { useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import ApplicationForm from "./application_form";
+import { Signer, VoidSigner } from "ethers";
+import { useRouter } from 'next/router'
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -16,34 +18,46 @@ const steps = ['step0', 'step1', 'step2', 'step3', 'step4'];
 export default function Application(props: ApplicationProps) {
     const { t } = useTranslation(['application', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const router = useRouter();
 
-    const signerContext = useContext(SignerContext);
-    const [ activeStep, setActiveStep ] = useState(signerContext?.data.signer === undefined ? 0 : 1);
+    const appContext = useContext(AppContext);
+    const [ activeStep, setActiveStep ] = useState(appContext.data.signer === undefined ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ walletAddress, setWalletAddress ] = useState("");
     const [ readyToBuy, setReadyToBuy ] = useState(false);
+    // const [ premiumTrxInProgress, setPremiumTrxInProgress ] = useState(false);
+    const [ premiumTrxText, setPremiumTrxText ] = useState(undefined);
 
     async function walletDisconnected() {
         setWalletAddress("");
     }
 
-    if (signerContext?.data.signer !== undefined) {
-        signerContext?.data.signer.getAddress().then((address) => {
-            setWalletAddress(address);
-        });
-    }    
+    // get bundle data once the wallet is connected
+    useEffect(() => {
+        async function asyncGetBundles(dispatch: any) {
+            const bundles = await props.insurance.getRiskBundles();
+            bundles.forEach((bundle) => dispatch({ type: AppActionType.ADD_BUNDLE, bundle: bundle}))
+            dispatch({ type: AppActionType.BUNDLE_LOADING_FINISHED });
+            setPremiumTrxText(undefined);
+        }
 
+        console.log("signer", appContext.data.signer, "bundleDataInitialized", appContext.data.bundlesInitialized);
+        if (appContext.data.signer !== undefined && ! appContext.data.bundlesInitialized && ! (appContext.data.signer instanceof VoidSigner)) {
+            appContext.dispatch({ type: AppActionType.BUNDLE_INITIALIZING });
+            setPremiumTrxText(t('bundle_loading'));
+            console.log("got a new signer ... getting bundles");
+            asyncGetBundles(appContext.dispatch);
+        }    
+    }, [appContext, props.insurance])
+    
     // change steps according to application state
     useEffect(() => {
-        if (signerContext?.data.signer === undefined) {
+        if (appContext?.data.signer === undefined) {
             setActiveStep(0);
             walletDisconnected();
-        } else if (activeStep < 1 && signerContext?.data.signer !== undefined) {
+        } else if (activeStep < 1 && appContext.data.signer !== undefined) {
             setActiveStep(1);
-            signerContext?.data.signer.getAddress().then((address) => {
-                // console.log("address: ", address);
-                setWalletAddress(address);
-            });
+            updateWalletAddress(appContext.data.signer);
         } else if (activeStep == 1 && readyToBuy) {
             setActiveStep(2);
         } else if (activeStep == 2 && !readyToBuy) { 
@@ -51,7 +65,7 @@ export default function Application(props: ApplicationProps) {
         } else if (activeStep > 4) { // application completed
             setFormDisabled(true);
         }
-    }, [signerContext?.data.signer, activeStep, readyToBuy]);
+    }, [appContext?.data.signer, activeStep, readyToBuy]);
 
     useEffect(() => {
         if (activeStep < 1 || activeStep > 2) {
@@ -70,13 +84,8 @@ export default function Application(props: ApplicationProps) {
             t('application_success'),
             { 
                 variant: 'success', 
-                persist: true, 
+                autoHideDuration: 5000, 
                 preventDuplicate: true,
-                action: (key) => {
-                    return (
-                        <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                    );
-                }
             }
         );
         confetti({
@@ -84,21 +93,71 @@ export default function Application(props: ApplicationProps) {
             spread: 70,
             origin: { y: 0.6 }
         });
+        // redirect to policy list (/)
+        router.push("/");
+    }
+
+    async function doApproval(walletAddress: string, premium: number): Promise<Boolean> {
+        let snackbarId = enqueueSnackbar(
+            t('approval_info'),
+            { variant: "warning", persist: true }
+        );
+        let snackbarId2;
+        try {
+            return await props.insurance.createApproval(walletAddress, premium, () => {
+                closeSnackbar(snackbarId);
+                snackbarId2 = enqueueSnackbar(
+                    t('approval_wait'),
+                    { variant: "info", persist: true }
+                );
+            });
+            // FIXME: handle error during approval
+        } finally {
+            if (snackbarId2 !== undefined) {
+                closeSnackbar(snackbarId2);
+            }
+        }
+    }
+
+    async function doApplication(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<boolean> {
+        const snackbarId = enqueueSnackbar(
+            t('apply_info'),
+            { variant: "warning", persist: true }
+        );
+        let snackbarId2;
+        try {
+            return await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration, premium, () => {
+                closeSnackbar(snackbarId);
+                snackbarId2 = enqueueSnackbar(
+                    t('apply_wait'),
+                    { variant: "info", persist: true }
+                );
+            });
+            // FIXME: handle error during apply for policy
+        } finally {
+            if (snackbarId2 !== undefined) {
+                closeSnackbar(snackbarId2);
+            }
+        }
     }
 
     async function applyForPolicy(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<boolean> {
         setActiveStep(3);
-        await props.insurance.createApproval(walletAddress, premium);
-        // FIXME: handle error during approval
+        const approvalSuccess = await doApproval(walletAddress, premium);
         setActiveStep(4);
-        await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration);
-        // FIXME: handle error during apply for policy
+        const applicationSuccess = await doApplication(walletAddress, insuredAmount, coverageDuration, premium);
         setActiveStep(5);
         applicationSuccessful();
-        return Promise.resolve(true);        
+        return Promise.resolve(applicationSuccess);        
     }
 
+    async function updateWalletAddress(signer: Signer) {
+        setWalletAddress(await signer.getAddress());
+    }
 
+    if (appContext.data.signer !== undefined) {
+        updateWalletAddress(appContext.data.signer);
+    }
 
     return (
         <>
@@ -123,8 +182,10 @@ export default function Application(props: ApplicationProps) {
                     disabled={formDisabled}
                     walletAddress={walletAddress}
                     insurance={props.insurance}
+                    bundles={appContext.data.bundles}
                     formReadyForApply={formReadyForApply}
                     applyForPolicy={applyForPolicy}
+                    premiumTrxText={premiumTrxText}
                 />
             </div>
         </>

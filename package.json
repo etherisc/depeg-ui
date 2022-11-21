@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typechainGifContractTypes": "typechain --target ethers-v5 --out-dir src/contracts/gif-contracts './node_modules/@etherisc/gif-contracts/build/**/*json'",
+    "typechainGifInterfaceTypes": "typechain --target ethers-v5 --out-dir src/contracts/gif-interface './node_modules/@etherisc/gif-interface/build/**/*json'",
+    "typechainDepegTypes": "typechain --target ethers-v5 --out-dir src/contracts/depeg-contracts './node_modules/@etherisc/depeg-contracts/build/**/*json'",
     "typechainChainLinkAggregatorType": "typechain --target ethers-v5 --out-dir src/contracts/chainlink './node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json'"
   },
   "dependencies": {

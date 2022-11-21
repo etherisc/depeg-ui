@@ -1,6 +1,12 @@
 {
     "apptitle": "Etherisc depeg protection",
     "apptitle_short": "Depeg Protection",
+    "nav": {
+        "link": {
+            "protect": "Protect",
+            "invest": "Invest"
+        }
+    },
     "action": {
         "login_walletconnect": "Login with WalletConnect",
         "login_metamask": "Login with Metamask",

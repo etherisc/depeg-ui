@@ -6,5 +6,6 @@
 export const walletConnectConfig = {
     rpc: {
         "43113": "https://api.avax-test.network/ext/bc/C/rpc", // fuji
+        "1234": " http://127.0.0.1:7545", // ganache localhost
     },
 };

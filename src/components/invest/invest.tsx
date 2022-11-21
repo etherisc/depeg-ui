@@ -1,6 +1,6 @@
 import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { SignerContext } from "../../context/signer_context";
+import { AppContext } from "../../context/app_context";
 import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../model/insurance_api";
 import { useSnackbar } from "notistack";
@@ -17,17 +17,17 @@ export default function Invest(props: InvestProps) {
     const { t } = useTranslation(['invest', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    const signerContext = useContext(SignerContext);
-    const [ activeStep, setActiveStep ] = useState(signerContext?.data.signer === undefined ? 0 : 1);
+    const appContext = useContext(AppContext);
+    const [ activeStep, setActiveStep ] = useState(appContext?.data.signer === undefined ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ readyToInvest, setReadyToInvest ] = useState(false);
 
 
     // change steps according to application state
     useEffect(() => {
-        if (signerContext?.data.signer === undefined) {
+        if (appContext?.data.signer === undefined) {
             setActiveStep(0);
-        } else if (activeStep < 1 && signerContext?.data.signer !== undefined) {
+        } else if (activeStep < 1 && appContext?.data.signer !== undefined) {
             setActiveStep(1);
         } else if (activeStep == 1 && readyToInvest) {
             setActiveStep(2);
@@ -36,7 +36,7 @@ export default function Invest(props: InvestProps) {
         } else if (activeStep > 4) { // application completed
             setFormDisabled(true);
         }
-    }, [signerContext?.data.signer, activeStep, readyToInvest]);
+    }, [appContext?.data.signer, activeStep, readyToInvest]);
 
     useEffect(() => {
         if (activeStep < 1 || activeStep > 2) {
@@ -73,7 +73,7 @@ export default function Invest(props: InvestProps) {
 
     async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
         setActiveStep(3);
-        const investorWalletAddress = await signerContext!!.data.signer!!.getAddress();
+        const investorWalletAddress = await appContext!!.data.signer!!.getAddress();
         await props.insurance.createApproval(investorWalletAddress, investedAmount);
         // FIXME: handle error during approval
         setActiveStep(4);

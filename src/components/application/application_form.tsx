@@ -1,6 +1,5 @@
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
-import CircularProgress from '@mui/material/CircularProgress';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -9,11 +8,13 @@ import TextField from '@mui/material/TextField'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment from 'moment';
 import { useTranslation } from 'next-i18next';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { BundleData } from '../../application/insurance/bundle_data';
 import { InsuranceApi } from '../../model/insurance_api';
-import { formatCurrency } from '../../utils/numbers';
-import CurrencyTextField from '../shared/currency_text_field';
-import NumericTextField, { INPUT_VARIANT } from '../shared/numeric_text_field';
+import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
+import CurrencyTextField from '../shared/form/currency_text_field';
+import NumericTextField, { INPUT_VARIANT } from '../shared/form/numeric_text_field';
+import Premium from './premium';
 
 const formInputVariant = 'outlined';
 
@@ -21,6 +22,8 @@ export interface ApplicationFormProperties {
     disabled: boolean;
     walletAddress: string;
     insurance: InsuranceApi;
+    bundles: Array<BundleData>;
+    premiumTrxText: string|undefined;
     formReadyForApply: (isFormReady: boolean) => void;
     applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => Promise<boolean>;
 }
@@ -45,11 +48,11 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         return "";
     }
 
-    const [ walletAddressValid, setWalletAddressValid ] = useState(false);
+    const [ walletAddressValid, setWalletAddressValid ] = useState(true);
     function validateWalletAddressAndSetError() {
         const error = validateWalletAddress();
         setWalletAddressError(error);
-        setWalletAddressValid(error == "");
+        setWalletAddressValid(error === "");
     }
 
     useEffect(() => {
@@ -57,13 +60,13 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }, [props.walletAddress]);
 
     // insured amount
-    const [ insuredAmount, setInsuredAmount ] = useState(props.insurance.insuredAmountMax);
-    const [ insuredAmountValid, setInsuredAmountValid ] = useState(true);
+    const [ insuredAmount, setInsuredAmount ] = useState(props.insurance.insuredAmountMin);
+    const [ insuredAmountValid, setInsuredAmountValid ] = useState(false);
 
     // coverage period (days and date)
 
     // coverage days
-    const [ coverageDays, setCoverageDays ] = useState(props.insurance.coverageDurationDaysMax);
+    const [ coverageDays, setCoverageDays ] = useState(props.insurance.coverageDurationDaysMin);
     const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
 
     // coverage until date
@@ -81,24 +84,22 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     // premium
     const [ premium, setPremium ] = useState(0);
+    const [ premiumError, setPremiumError ] = useState("");
+    const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
 
+    // check validity of form
     useEffect(() => {
-        async function calculatePremium() {
-            setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays));
-        }
-
         let valid = true;
         valid = walletAddressValid && valid;
         valid = insuredAmountValid && valid;
         valid = coverageDaysValid && valid;
-        if (valid) {
-            calculatePremium();
-        } else {
-            setPremium(0);
-        }
+        console.log(`Form valid ${valid}`);
         setFormValid(valid);
-    }, [walletAddressValid, insuredAmountValid, coverageDaysValid, props.insurance, walletAddress, insuredAmount, coverageDays]);
+    }, [walletAddressValid, insuredAmountValid, coverageDaysValid]);
 
+    // TODO: when premium cannot be calculated, show list of bundles
+
+    
     // terms accepted and validation
     const [ termsAccepted, setTermsAccepted ] = useState(false);
     function handleTermsAcceptedChange(x: ChangeEvent<any>) {
@@ -116,6 +117,36 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         props.formReadyForApply(!isBuyButtonDisabled);
     }, [formValid, termsAccepted, props.disabled, applicationInProgress, props]);  
 
+    // calculate premium via onchain call
+    const calculatePremium = useCallback( async () => {
+        if (! formValid || props.bundles.length == 0) {
+            console.log("Form is invalid, not calculating premium...");
+            setPremium(0);
+            return;
+        }
+
+        console.log("Calculating premium...");
+        try {
+            setPremiumCalculationInProgress(true);
+            setPremium(await props.insurance.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles));
+            setPremiumError("");
+        } catch (e) {
+            if (e instanceof NoBundleFoundError) {
+                console.log("No bundle found for this insurance.");
+                setPremiumError(t('error_no_matching_bundle_found'));
+            } else if (e instanceof BalanceTooSmallError) {
+                console.log("Wallet balance too low");
+                setPremiumError(t('error_wallet_balance_too_low', { currency: props.insurance.usd2}));
+            } else {
+                console.log("Error calculating premium: ", e);
+            }
+            setFormValid(false);
+            setPremium(0);
+        } finally {
+            setPremiumCalculationInProgress(false);
+        }
+        
+    }, [formValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.insurance, t]);
 
     async function buy() {
         setApplicationInProgress(true);
@@ -152,6 +183,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     required={true}
                     fullWidth={true}
                     disabled={props.disabled}
+                    readOnly={premiumCalculationInProgress}
                     id="insuredAmount"
                     label={t('insuredAmount')}
                     inputProps={{
@@ -160,17 +192,18 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     value={insuredAmount}
                     currency={props.insurance.usd1}
                     onChange={setInsuredAmount}
+                    onBlur={calculatePremium}
                     minValue={props.insurance.insuredAmountMin}
                     maxValue={props.insurance.insuredAmountMax}
                     onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
                 />
-                {/* TODO: preload with wallet amount */}
             </Grid>
             <Grid item xs={6}>
                 <NumericTextField
                     fullWidth={true}
                     required={true}
                     disabled={props.disabled}
+                    readOnly={premiumCalculationInProgress}
                     id="coverageDurationDays"
                     label={t('coverageDurationDays')}
                     inputProps={{
@@ -182,6 +215,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         setCoverageDays(days);
                         setCoverageUntil(moment().add(days, 'days'));
                     }}
+                    onBlur={calculatePremium}
                     minValue={props.insurance.coverageDurationDaysMin}
                     maxValue={props.insurance.coverageDurationDaysMax}
                     onError={(errMsg) => setCoverageDaysValid(errMsg === "")}
@@ -190,32 +224,28 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             <Grid item xs={6}>
                 <DesktopDatePicker
                     disabled={props.disabled}
+                    readOnly={premiumCalculationInProgress}
                     label={t('coverageDurationUntil')}
                     inputFormat="MM/DD/YYYY"
                     renderInput={(params) => <TextField {...params} fullWidth />}
                     disablePast={true}
                     value={coverageUntil}
                     onChange={handleCoverageUntilChange}
+                    onAccept={calculatePremium}
                     minDate={coverageUntilMin}
                     maxDate={coverageUntilMax}
                     />
                 {/* TODO: mobile version */}
                 </Grid>
             <Grid item xs={12}>
-                <TextField
-                    required
-                    fullWidth
+                <Premium 
                     disabled={props.disabled}
-                    variant={formInputVariant}
-                    id="premiumAmount"
-                    label={t('premiumAmount')}
-                    type="text"
-                    value={formatCurrency(premium)}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">{props.insurance.usd2}</InputAdornment>,
-                        readOnly: true,
-                    }}
-                />
+                    premium={premium}
+                    currency={props.insurance.usd2}
+                    error={premiumError}
+                    transactionInProgress={(props.premiumTrxText != undefined) || premiumCalculationInProgress}
+                    text={props.premiumTrxText || t('premium_calculation_in_progress')}
+                    />
             </Grid>
             <Grid item xs={12}>
                 <FormControlLabel 

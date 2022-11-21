@@ -4,9 +4,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Account from './account';
-import LoginWithMetaMaskButton from './login_metamask';
-import LoginWithWalletConnectButton from './login_walletconnect';
-import Logout from './logout';
+import LoginWithMetaMaskButton from './form/login_metamask';
+import LoginWithWalletConnectButton from './form/login_walletconnect';
+import Logout from './form/logout';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import { Link } from '@mui/material';
@@ -36,8 +36,37 @@ export default function Header() {
                         </Typography>
                     </Link>
                     
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 1 }}>
+                        <Link component={LinkBehaviour} href="/">
+                            <Typography
+                                variant="subtitle1"
+                                noWrap
+                                sx={{
+                                    ml: 2,
+                                    mr: 2,
+                                    display: { xs: 'none', md: 'flex' },
+                                    color: '#fff',
+                                    textDecoration: 'none',
+                                }}
+                            >
+                                {t('nav.link.protect')}
+                            </Typography>
+                        </Link>
+                        <Link component={LinkBehaviour} href="/invest">
+                            <Typography
+                                variant="subtitle1"
+                                noWrap
+                                sx={{
+                                    ml: 2,
+                                    mr: 2,
+                                    display: { xs: 'none', md: 'flex' },
+                                    color: '#fff',
+                                    textDecoration: 'none',
+                                }}
+                            >
+                                {t('nav.link.invest')}
+                            </Typography>
+                        </Link>
                     </Box>
 
                     <Box sx={{ flexGrow: 0, display: 'inline-flex' }}>
