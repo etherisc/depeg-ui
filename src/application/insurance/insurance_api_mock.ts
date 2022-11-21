@@ -14,10 +14,10 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
             await delay(2000);
             return Promise.resolve(true);
         },
-        async policies(walletAddress: string, onlyActive: boolean): Promise<Array<PolicyRowView>> {
-            if (onlyActive) {
-                return Promise.resolve(mockPoliciesActive);
-            }
+        async policy(walletAddress: string, idx: number): Promise<PolicyRowView> {
+            return Promise.resolve(mockPolicies[idx]);
+        },
+        async policies(walletAddress: string): Promise<Array<PolicyRowView>> {
             return Promise.resolve(mockPolicies);
         },
         async policiesCount(walletAddress: string): Promise<number> {

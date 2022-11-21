@@ -32,7 +32,11 @@ export default function Policies(props: PoliciesProps) {
         async function getPolicies() {
             const walletAddress = await appContext?.data.signer?.getAddress();
             if (walletAddress !== undefined) {
-                setPolicies(await props.insurance.policies(walletAddress, showActivePoliciesOnly));
+                const policiesCount = await props.insurance.policiesCount(walletAddress);
+                for (let i = 0; i < policiesCount; i++) {
+                    const policy = await props.insurance.policy(walletAddress, i);
+                    setPolicies(policies => [...policies, policy]);
+                }
             } else {
                 setPolicies([]);
             }

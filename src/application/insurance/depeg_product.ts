@@ -83,29 +83,54 @@ export async function getPolicies(
     const policies = new Array();
     
     for (let i = 0; i < numPolicies; i++) {
-        const processId = await product.getProcessId(ownerWalletAddress, i);
-        const application = await instanceService.getApplication(processId);
-        const [ applicationState, premium, suminsured, appdata, createdAt ] = application;
-        let policyState = undefined;
-        if ( applicationState == APPLICATION_STATE_UNDERWRITTEN ) {
-            const policy = await instanceService.getPolicy(processId);
-            [ policyState ] = policy;
-        }
-        const [ duration ] = await riskpool.decodeApplicationParameterFromData(appdata);
-        policies.push({
-            owner: ownerWalletAddress,
-            processId: processId,
-            applicationState: applicationState,
-            policyState: policyState,
-            createdAt: createdAt,
-            premium: premium,
-            suminsured: suminsured,
-            duration: duration,
-        } as PolicyData);
+        const policy = await getPolicyForProduct(ownerWalletAddress, i, depegProductContractAddress, signer, product, riskpool, instanceService);
+        policies.push(policy);
     }
 
     return policies;
 }
+
+
+export async function getPolicy(
+        ownerWalletAddress: string,
+        idx: number,
+        depegProductContractAddress: string, 
+        signer: Signer, 
+        ): Promise<PolicyData> {
+    const [ product, riskpool, _, instanceService ] = await getInstanceFromProduct(depegProductContractAddress, signer);
+    return getPolicyForProduct(ownerWalletAddress, idx, depegProductContractAddress, signer, product, riskpool, instanceService);
+}
+
+async function getPolicyForProduct(
+        ownerWalletAddress: string,
+        idx: number,
+        depegProductContractAddress: string, 
+        signer: Signer, 
+        product: DepegProduct,
+        riskpool: DepegRiskpool,
+        instanceService: IInstanceService,
+        ): Promise<PolicyData> {
+    const processId = await product.getProcessId(ownerWalletAddress, idx);
+    const application = await instanceService.getApplication(processId);
+    const [ applicationState, premium, suminsured, appdata, createdAt ] = application;
+    let policyState = undefined;
+    if ( applicationState == APPLICATION_STATE_UNDERWRITTEN ) {
+        const policy = await instanceService.getPolicy(processId);
+        [ policyState ] = policy;
+    }
+    const [ duration ] = await riskpool.decodeApplicationParameterFromData(appdata);
+    return {
+        owner: ownerWalletAddress,
+        processId: processId,
+        applicationState: applicationState,
+        policyState: policyState,
+        createdAt: createdAt,
+        premium: premium,
+        suminsured: suminsured,
+        duration: duration,
+    } as PolicyData;
+}
+
 
 export enum PolicyState {
     UNKNOWN, APPLIED, REVOKED, UNDERWRITTEN, DECLINED,

@@ -14,14 +14,18 @@ export interface InsuranceApi {
             premium: number,
             beforeWaitCallback?: () => void
         ) => Promise<boolean>;
+    policy: 
+        (
+            walletAddress: string, 
+            index: number,
+        ) => Promise<PolicyRowView>;
     policies: 
         (
             walletAddress: string, 
-            onlyActive: boolean
         ) => Promise<Array<PolicyRowView>>;
     policiesCount
         (
-            walletAddress: string
+            walletAddress: string,
         ): Promise<number>;
     application: ApplicationApi;
     invest: InvestApi;

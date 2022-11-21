@@ -8,7 +8,7 @@ import { BalanceTooSmallError, NoBundleFoundError } from "../../utils/error";
 import { getBestQuote, getBundleData } from "./riskbundle";
 import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
-import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState, PolicyState, getPoliciesCount } from "./depeg_product";
+import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState, PolicyState, getPoliciesCount, getPolicy } from "./depeg_product";
 import { hasBalance } from "./erc20";
 import { useTranslation } from "next-i18next";
 
@@ -25,11 +25,20 @@ export function insuranceApiSmartContract(
         usd1: usd1,
         usd2: usd2,
         application: applicationApi(signer, depegProductContractAddress),
-        async policies(walletAddress: string, onlyActive: boolean): Promise<Array<PolicyRowView>> {
+        async policy(walletAddress: string, idx: number): Promise<PolicyRowView> {
+            const rawPolicy = await getPolicy(walletAddress, idx, depegProductContractAddress, signer);
+            const state = getPolicyState(rawPolicy);
+            return {
+                id: rawPolicy.processId,
+                walletAddress: rawPolicy.owner,
+                insuredAmount: `${usd1} ${rawPolicy.suminsured.toString()}`,
+                coverageUntil: getPolicyEndDate(rawPolicy),
+                state: t('application_state_' + state),
+            } as PolicyRowView;
+        },
+        async policies(walletAddress: string): Promise<Array<PolicyRowView>> {
             const rawPolicies = await getPolicies(walletAddress, depegProductContractAddress, signer);
-            // TODO filter active policies
             return rawPolicies
-                .filter((policy => ! onlyActive || getPolicyState(policy) === PolicyState.ACTIVE))
                 .map(policy => {
                     const state = getPolicyState(policy);
                     return {
