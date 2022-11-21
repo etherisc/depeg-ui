@@ -15,6 +15,7 @@ export default function ApplicationPage() {
 
   const insurance = useMemo(() => getInsuranceApi(
     enqueueSnackbar,
+    t,
     appContext.data.signer,
     appContext.data.provider,
   ), [enqueueSnackbar, appContext]);

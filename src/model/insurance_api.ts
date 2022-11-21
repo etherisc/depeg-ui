@@ -70,6 +70,7 @@ export interface InvestApi {
 
 export function getInsuranceApi(
         enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey, 
+        t: (key: string) => string,
         signer?: Signer,
         provider?: ethers.providers.Provider
         ): InsuranceApi {
@@ -81,9 +82,9 @@ export function getInsuranceApi(
     } else {
         console.log("Using smart contract", depegProductContractAddress);
         if (signer === undefined || provider === undefined) {
-            return insuranceApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress, enqueueSnackbar);
+            return insuranceApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress, enqueueSnackbar, t);
         } else {
-            return insuranceApiSmartContract(signer, depegProductContractAddress, enqueueSnackbar);
+            return insuranceApiSmartContract(signer, depegProductContractAddress, enqueueSnackbar, t);
         }
     }
 }

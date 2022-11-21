@@ -10,11 +10,13 @@ import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
 import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState } from "./depeg_product";
 import { hasBalance } from "./erc20";
+import { useTranslation } from "next-i18next";
 
 export function insuranceApiSmartContract(
         signer: Signer,
         depegProductContractAddress: string, 
         enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey,
+        t: (key: string) => string
         ): InsuranceApi {
     // TODO get from smart contract
     const usd1 = 'USDC';
@@ -33,7 +35,7 @@ export function insuranceApiSmartContract(
                     walletAddress: policy.owner,
                     insuredAmount: `${usd1} ${policy.suminsured.toString()}`,
                     coverageUntil: getPolicyEndDate(policy),
-                    state: state,
+                    state: t('application_state_' + state),
                 } as PolicyRowView;
             });
         },

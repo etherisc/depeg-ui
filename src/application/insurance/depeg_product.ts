@@ -4,8 +4,11 @@ import { ContractReceipt, ContractTransaction, Signer } from "ethers";
 import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../../contracts/depeg-contracts";
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { IInstanceService } from "../../contracts/gif-interface";
-import { PolicyData } from "./policy_data";
+import { APPLICATION_STATE_APPLIED, APPLICATION_STATE_DECLINED, APPLICATION_STATE_REVOKED, APPLICATION_STATE_UNDERWRITTEN, PolicyData, POLICY_STATE_ACTIVE, POLICY_STATE_CLOSED, POLICY_STATE_EXPIRED } from "./policy_data";
 import moment from "moment";
+import { Policy } from "@mui/icons-material";
+
+
 
 export async function getInstanceFromProduct(depegProductContractAddress: string, signer: Signer): 
         Promise<[DepegProduct, DepegRiskpool, number, IInstanceService]>
@@ -73,35 +76,56 @@ export async function getPolicies(
     for (let i = 0; i < numPolicies; i++) {
         const processId = await product.getProcessId(ownerWalletAddress, i);
         const application = await instanceService.getApplication(processId);
-        const [ state, premium, suminsured, appdata, createdAt ] = application;
-        const [ duration, maxpremium ] = await riskpool.decodeApplicationParameterFromData(appdata);
+        const [ applicationState, premium, suminsured, appdata, createdAt ] = application;
+        let policyState = undefined;
+        if ( applicationState == APPLICATION_STATE_UNDERWRITTEN ) {
+            const policy = await instanceService.getPolicy(processId);
+            [ policyState ] = policy;
+        }
+        const [ duration ] = await riskpool.decodeApplicationParameterFromData(appdata);
         policies.push({
             owner: ownerWalletAddress,
             processId: processId,
-            state: state,
+            applicationState: applicationState,
+            policyState: policyState,
             createdAt: createdAt,
             premium: premium,
             suminsured: suminsured,
             duration: duration,
-            maxpremium: maxpremium,
         } as PolicyData);
     }
 
     return policies;
 }
 
-export function getPolicyState(policy: PolicyData): string {
-    switch (policy.state) {
-        // TODO correct states
-        case 0: return "Pending";
-        case 1: return "Approved";
-        case 2: return "Rejected";
-        case 3: return "Cancelled";
-        case 4: return "Expired";
-        case 5: return "Claimed";
-        case 6: return "Paid";
-        default: return "Unknown";
+export enum PolicyState {
+    UNKNOWN, APPLIED, REVOKED, UNDERWRITTEN, DECLINED,
+    ACTIVE, EXPIRED, CLOSED,
+}
+
+export function getPolicyState(policy: PolicyData): PolicyState {
+    switch (policy.applicationState) {
+        case APPLICATION_STATE_APPLIED:
+            return PolicyState.APPLIED;
+        case APPLICATION_STATE_REVOKED:
+            return PolicyState.REVOKED;
+        case APPLICATION_STATE_UNDERWRITTEN:
+            switch (policy.policyState) {
+                case POLICY_STATE_ACTIVE:
+                    return PolicyState.ACTIVE;
+                case POLICY_STATE_EXPIRED:
+                    return PolicyState.EXPIRED;
+                case POLICY_STATE_CLOSED:
+                    return PolicyState.CLOSED;
+                default:
+                    return PolicyState.UNKNOWN;
+            }
+        case APPLICATION_STATE_DECLINED:
+            return PolicyState.DECLINED;
+        default:
+            return PolicyState.UNKNOWN;
     }
+    // TODO: payout states
 }
 
 export function getPolicyEndDate(policy: PolicyData): string {
