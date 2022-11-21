@@ -14,6 +14,8 @@ const formInputVariant = 'outlined';
 
 export interface InvestFormProperties {
     disabled: boolean;
+    usd1: string;
+    usd2: string;
     insurance: InsuranceApi;
     formReadyForInvest: (isFormReady: boolean) => void;
     invest: (investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) => Promise<boolean>;
@@ -113,10 +115,10 @@ export default function InvestForm(props: InvestFormProperties) {
                     id="investedAmount"
                     label={t('investedAmount')}
                     inputProps={{
-                        startAdornment: <InputAdornment position="start">{investProps.usd1}</InputAdornment>,
+                        startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
                     }}
                     value={investedAmount}
-                    currency={investProps.usd1}
+                    currency={props.usd1}
                     onChange={setInvestedAmount}
                     minValue={investProps.minInvestedAmount}
                     maxValue={investProps.maxInvestedAmount}
@@ -131,10 +133,10 @@ export default function InvestForm(props: InvestFormProperties) {
                     id="minSumInsured"
                     label={t('minSumInsured')}
                     inputProps={{
-                        startAdornment: <InputAdornment position="start">{investProps.usd1}</InputAdornment>
+                        startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>
                     }}
                     value={minSumInsured}
-                    currency={investProps.usd1}
+                    currency={props.usd1}
                     onChange={setMinSumInsured}
                     minValue={investProps.minSumInsured}
                     maxValue={investProps.maxSumInsured}
@@ -150,10 +152,10 @@ export default function InvestForm(props: InvestFormProperties) {
                     id="maxSumInsured"
                     label={t('maxSumInsured')}
                     inputProps={{
-                        startAdornment: <InputAdornment position="start">{investProps.usd1}</InputAdornment>
+                        startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>
                     }}
                     value={maxSumInsured}
-                    currency={investProps.usd1}
+                    currency={props.usd1}
                     onChange={setMaxSumInsured}
                     minValue={investProps.minSumInsured}
                     maxValue={investProps.maxSumInsured}
