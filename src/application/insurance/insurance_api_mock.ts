@@ -20,6 +20,9 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
             }
             return Promise.resolve(mockPolicies);
         },
+        async policiesCount(walletAddress: string): Promise<number> {
+            return Promise.resolve(mockPolicies.length);
+        },
         application: applicationMock(enqueueSnackbar),
         invest: investMock(enqueueSnackbar),
     } as InsuranceApi;

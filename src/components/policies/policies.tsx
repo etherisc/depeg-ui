@@ -48,8 +48,6 @@ export default function Policies(props: PoliciesProps) {
         { field: 'state', headerName: t('table.header.status'), flex: 0.5 },
     ];
 
-
-
     function GridToolbar() {
         return (
             <GridToolbarContainer >

@@ -63,6 +63,15 @@ export async function applyForDepegPolicy(
     return [tx, receipt];
 }
 
+export async function getPoliciesCount(
+        ownerWalletAddress: string,
+        depegProductContractAddress: string, 
+        signer: Signer, 
+        ): Promise<number> {
+    const product = DepegProduct__factory.connect(depegProductContractAddress, signer);
+    return (await product.processIds(ownerWalletAddress)).toNumber();        
+}
+
 export async function getPolicies(
         ownerWalletAddress: string,
         depegProductContractAddress: string, 

@@ -8,7 +8,7 @@ import { BalanceTooSmallError, NoBundleFoundError } from "../../utils/error";
 import { getBestQuote, getBundleData } from "./riskbundle";
 import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
-import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState, PolicyState } from "./depeg_product";
+import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState, PolicyState, getPoliciesCount } from "./depeg_product";
 import { hasBalance } from "./erc20";
 import { useTranslation } from "next-i18next";
 
@@ -40,6 +40,9 @@ export function insuranceApiSmartContract(
                         state: t('application_state_' + state),
                     } as PolicyRowView;
                 });
+        },
+        async policiesCount(walletAddress: string): Promise<number> {
+            return await getPoliciesCount(walletAddress, depegProductContractAddress, signer);
         },
         invest: investMock(enqueueSnackbar),
         async createTreasuryApproval(walletAddress: string, premium: number, beforeWaitCallback?) {

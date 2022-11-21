@@ -19,6 +19,10 @@ export interface InsuranceApi {
             walletAddress: string, 
             onlyActive: boolean
         ) => Promise<Array<PolicyRowView>>;
+    policiesCount
+        (
+            walletAddress: string
+        ): Promise<number>;
     application: ApplicationApi;
     invest: InvestApi;
 }
