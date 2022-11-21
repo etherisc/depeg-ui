@@ -118,7 +118,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }, [formValid, termsAccepted, props.disabled, applicationInProgress, props]);  
 
     // calculate premium via onchain call
-    // TODO: avoid parallel premium calculation
     const calculatePremium = useCallback( async () => {
         if (! formValid || props.bundles.length == 0) {
             console.log("Form is invalid, not calculating premium...");
@@ -195,7 +194,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     maxValue={props.insurance.insuredAmountMax}
                     onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
                 />
-                {/* TODO: preload with wallet amount */}
             </Grid>
             <Grid item xs={6}>
                 <NumericTextField
