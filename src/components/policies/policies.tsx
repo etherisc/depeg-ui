@@ -21,6 +21,7 @@ export default function Policies(props: PoliciesProps) {
     const appContext = useContext(AppContext);
 
     const [ policies, setPolicies ] = useState<Array<PolicyRowView>>([]);
+    const [ pageSize, setPageSize ] = useState(5);
 
     const [ showActivePoliciesOnly, setShowActivePoliciesOnly ] = useState<boolean>(false);
     function handleShowActivePoliciesOnlyChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -85,6 +86,14 @@ export default function Policies(props: PoliciesProps) {
                 components={{
                     Toolbar: GridToolbar,
                 }}
+                initialState={{
+                    sorting: {
+                        sortModel: [{ field: 'coverageUntil', sort: 'asc' }],
+                    },
+                }}
+                pageSize={pageSize}
+                rowsPerPageOptions={[5, 10, 20, 50]}
+                onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
                 />
         </>
     );

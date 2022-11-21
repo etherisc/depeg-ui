@@ -8,7 +8,7 @@ import { BalanceTooSmallError, NoBundleFoundError } from "../../utils/error";
 import { getBestQuote, getBundleData } from "./riskbundle";
 import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
-import { applyForDepegPolicy, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState } from "./depeg_product";
+import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState } from "./depeg_product";
 import { hasBalance } from "./erc20";
 
 export function insuranceApiSmartContract(
@@ -32,7 +32,7 @@ export function insuranceApiSmartContract(
                     id: policy.processId,
                     walletAddress: policy.owner,
                     insuredAmount: `${usd1} ${policy.suminsured.toString()}`,
-                    coverageUntil: policy.duration.toString(),
+                    coverageUntil: getPolicyEndDate(policy),
                     state: state,
                 } as PolicyRowView;
             });
@@ -44,7 +44,6 @@ export function insuranceApiSmartContract(
             const [tx, receipt] = await createApprovalForTreasury(await product.getToken(), signer, premium, await product.getRegistry(), beforeWaitCallback);
             console.log("tx", tx, "receipt", receipt);
             return Promise.resolve(true);
-            
         },
     } as InsuranceApi;
 }

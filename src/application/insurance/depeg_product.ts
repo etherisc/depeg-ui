@@ -5,6 +5,7 @@ import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../../contra
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { IInstanceService } from "../../contracts/gif-interface";
 import { PolicyData } from "./policy_data";
+import moment from "moment";
 
 export async function getInstanceFromProduct(depegProductContractAddress: string, signer: Signer): 
         Promise<[DepegProduct, DepegRiskpool, number, IInstanceService]>
@@ -72,12 +73,13 @@ export async function getPolicies(
     for (let i = 0; i < numPolicies; i++) {
         const processId = await product.getProcessId(ownerWalletAddress, i);
         const application = await instanceService.getApplication(processId);
-        const [ state, premium, suminsured, appdata ] = application;
+        const [ state, premium, suminsured, appdata, createdAt ] = application;
         const [ duration, maxpremium ] = await riskpool.decodeApplicationParameterFromData(appdata);
         policies.push({
             owner: ownerWalletAddress,
             processId: processId,
             state: state,
+            createdAt: createdAt,
             premium: premium,
             suminsured: suminsured,
             duration: duration,
@@ -100,4 +102,9 @@ export function getPolicyState(policy: PolicyData): string {
         case 6: return "Paid";
         default: return "Unknown";
     }
+}
+
+export function getPolicyEndDate(policy: PolicyData): string {
+    const endtimestamp = policy.createdAt.toNumber() + policy.duration.toNumber();
+    return moment.unix(endtimestamp).startOf("day").format("YYYY-MM-DD");
 }

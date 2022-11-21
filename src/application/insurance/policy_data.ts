@@ -5,6 +5,7 @@ export interface PolicyData {
     owner: string
     processId: string;
     state: number;
+    createdAt: BigNumber;
     premium: BigNumber;
     suminsured: BigNumber;
     duration: BigNumber;
