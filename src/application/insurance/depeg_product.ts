@@ -5,7 +5,7 @@ import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../../contra
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { IInstanceService } from "../../contracts/gif-interface";
 import { APPLICATION_STATE_APPLIED, APPLICATION_STATE_DECLINED, APPLICATION_STATE_REVOKED, APPLICATION_STATE_UNDERWRITTEN, PolicyData, POLICY_STATE_ACTIVE, POLICY_STATE_CLOSED, POLICY_STATE_EXPIRED } from "./policy_data";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import { Policy } from "@mui/icons-material";
 
 
@@ -112,6 +112,9 @@ export function getPolicyState(policy: PolicyData): PolicyState {
         case APPLICATION_STATE_UNDERWRITTEN:
             switch (policy.policyState) {
                 case POLICY_STATE_ACTIVE:
+                    if (moment().isAfter(getPolicyExpiration(policy))) {
+                        return PolicyState.EXPIRED;
+                    }
                     return PolicyState.ACTIVE;
                 case POLICY_STATE_EXPIRED:
                     return PolicyState.EXPIRED;
@@ -128,7 +131,10 @@ export function getPolicyState(policy: PolicyData): PolicyState {
     // TODO: payout states
 }
 
+function getPolicyExpiration(policy: PolicyData): Moment {
+    return moment.unix(policy.createdAt.toNumber() + policy.duration.toNumber());
+}
+
 export function getPolicyEndDate(policy: PolicyData): string {
-    const endtimestamp = policy.createdAt.toNumber() + policy.duration.toNumber();
-    return moment.unix(endtimestamp).startOf("day").format("YYYY-MM-DD");
+    return getPolicyExpiration(policy).startOf("day").format("YYYY-MM-DD");
 }
