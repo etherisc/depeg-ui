@@ -105,6 +105,7 @@ export default function Application(props: ApplicationProps) {
         let snackbarId2;
         try {
             return await props.insurance.createApproval(walletAddress, premium, () => {
+                closeSnackbar(snackbarId);
                 snackbarId2 = enqueueSnackbar(
                     t('approval_wait'),
                     { variant: "info", persist: true }
@@ -112,7 +113,6 @@ export default function Application(props: ApplicationProps) {
             });
             // FIXME: handle error during approval
         } finally {
-            closeSnackbar(snackbarId);
             if (snackbarId2 !== undefined) {
                 closeSnackbar(snackbarId2);
             }
@@ -127,6 +127,7 @@ export default function Application(props: ApplicationProps) {
         let snackbarId2;
         try {
             return await props.insurance.applyForPolicy(walletAddress, insuredAmount, coverageDuration, premium, () => {
+                closeSnackbar(snackbarId);
                 snackbarId2 = enqueueSnackbar(
                     t('apply_wait'),
                     { variant: "info", persist: true }
@@ -134,7 +135,6 @@ export default function Application(props: ApplicationProps) {
             });
             // FIXME: handle error during apply for policy
         } finally {
-            closeSnackbar(snackbarId);
             if (snackbarId2 !== undefined) {
                 closeSnackbar(snackbarId2);
             }
