@@ -24,5 +24,13 @@
     "approval_info": "Please approve the premium allowance transaction in your wallet",
     "approval_wait": "Allowance created, waiting for onchain confirmation",
     "apply_info": "Please confirm execution of the policy application transaction in your wallet",
-    "apply_wait": "Transaction created, waiting for onchain confirmation"
+    "apply_wait": "Transaction created, waiting for onchain confirmation",
+    "bundles": {
+        "title": "Available risk pool bundles",
+        "bundle": "Bundle",
+        "suminsured": "Min / max insured amount",
+        "duration": "Min / max coverage duration",
+        "apr": "APR (%)",
+        "capacity": "Capacity"
+    }
 }

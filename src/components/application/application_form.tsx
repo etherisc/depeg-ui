@@ -92,6 +92,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ premium, setPremium ] = useState(undefined as FormNumber);
     const [ premiumError, setPremiumError ] = useState("");
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
+    const [ showAvailableBundles, setShowAvailableBundles ] = useState(false);
 
     // check validity of form
     useEffect(() => {
@@ -150,6 +151,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setInsuredAmountMax(maxSumInsured);
             setCoverageDaysMin(minCoverageDays / 86400);
             setCoverageDaysMax(maxCoverageDays / 86400);
+            setCoverageDays(minCoverageDays / 86400);
+            setCoverageUntil(moment().add(minCoverageDays / 86400, 'days'));
         }
     }, [props.bundles]);
 
@@ -165,12 +168,14 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         console.log("Calculating premium...");
         try {
             setPremiumCalculationInProgress(true);
+            setShowAvailableBundles(false);
             setPremium(await props.applicationApi.calculatePremium(walletAddress, insuredAmount || 0, coverageDays || 0, props.bundles));
             setPremiumError("");
         } catch (e) {
             if (e instanceof NoBundleFoundError) {
                 console.log("No bundle found for this insurance.");
                 setPremiumError(t('error_no_matching_bundle_found'));
+                setShowAvailableBundles(true);
             } else if (e instanceof BalanceTooSmallError) {
                 console.log("Wallet balance too low");
                 setPremiumError(t('error_wallet_balance_too_low', { currency: props.usd2}));
@@ -283,6 +288,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     error={premiumError}
                     transactionInProgress={(props.premiumTrxText != undefined) || premiumCalculationInProgress}
                     text={props.premiumTrxText || t('premium_calculation_in_progress')}
+                    bundles={props.bundles}
+                    showBundles={showAvailableBundles}
                     />
             </Grid>
             <Grid item xs={12}>

@@ -1,8 +1,10 @@
 import { TextField, InputAdornment, LinearProgress, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
+import { BundleData } from "../../application/insurance/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
 import { FormNumber } from "../../utils/types";
 import { INPUT_VARIANT } from "../shared/form/numeric_text_field";
+import { BundleList } from "./bundle_list";
 
 export interface PremiumProps {
     disabled: boolean;
@@ -11,10 +13,20 @@ export interface PremiumProps {
     error?: string;
     text?: string;
     transactionInProgress?: boolean;
+    bundles: Array<BundleData>;
+    showBundles: boolean;
 }
 
 export default function Premium(props: PremiumProps) {
     const { t } = useTranslation('application');
+
+    let bundles = undefined;
+
+    if (props.showBundles) {
+        bundles = (<BundleList 
+            usd1={props.currency}
+            bundles={props.bundles} />);
+    }
 
     const wait = props.transactionInProgress ? 
         (<><LinearProgress />{props.text}</>) 
@@ -37,6 +49,7 @@ export default function Premium(props: PremiumProps) {
             error={props.error !== ""}
             helperText={props.error}
             />
-            <Typography variant="body2">{wait}</Typography>
+        <Typography variant="body2">{wait}</Typography>
+        {bundles}
     </>);
 }
