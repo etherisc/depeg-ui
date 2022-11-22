@@ -9,6 +9,7 @@ import { INPUT_VARIANT } from "./numeric_text_field";
 export interface CurrencyTextfieldProps {
     value: FormNumber;
     currency: string;
+    initialEmptyAllowed?: boolean;
     onChange: (value: FormNumber) => void;
     onBlur?: () => void;
     disabled: boolean;
@@ -27,8 +28,11 @@ export interface CurrencyTextfieldProps {
 export default function CurrencyTextField(props: CurrencyTextfieldProps) {
     const { t } = useTranslation('common');
     const [ error, setError ] = useState("");
+    const [ isInitialValue, setIsInitialValue ] = useState(true);
 
     function handleValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        setIsInitialValue(false);
+
         let val = (x.target as HTMLInputElement).value;
         if (val == "") {
             props.onChange(undefined);
@@ -43,6 +47,11 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             if (props.onError) {
                 props.onError(error);
             }
+        }
+
+        if (isInitialValue && props.initialEmptyAllowed) {
+            handleError("");
+            return;
         }
     
         if (props.disabled) {

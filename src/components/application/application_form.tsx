@@ -194,6 +194,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
                     }}
                     value={insuredAmount}
+                    initialEmptyAllowed={true}
                     currency={props.usd1}
                     onChange={setInsuredAmount}
                     onBlur={calculatePremium}
