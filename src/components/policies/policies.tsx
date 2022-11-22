@@ -45,9 +45,11 @@ export default function Policies(props: PoliciesProps) {
     }, [appContext?.data.signer, props.insurance, showActivePoliciesOnly]);
 
     const columns: GridColDef[] = [
-        // { field: 'id', headerName: t('table.header.id'), width: 150 },
+        // { field: 'id', headerName: t('table.header.id'), flex: 1 },
+        // TODO: add copy button to field and shorten content
         { field: 'walletAddress', headerName: t('table.header.walletAddress'), flex: 1 },
         { field: 'insuredAmount', headerName: t('table.header.insuredAmount'), flex: 0.5 },
+        // TODO: add date created
         { field: 'coverageUntil', headerName: t('table.header.coverageUntil'), flex: 0.5 },
         { field: 'state', headerName: t('table.header.status'), flex: 0.5 },
     ];
