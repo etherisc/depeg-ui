@@ -26,5 +26,5 @@ Then run the application in dev mode with `npm run dev`.
 
 ## Deployment
 
-TODO
+TODO:
 
