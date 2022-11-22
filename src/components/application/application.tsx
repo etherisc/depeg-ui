@@ -48,7 +48,7 @@ export default function Application(props: ApplicationProps) {
             console.log("got a new signer ... getting bundles");
             asyncGetBundles(appContext.dispatch);
         }    
-    }, [appContext, props.insurance])
+    }, [appContext, props.insurance, t]);
     
     // change steps according to application state
     useEffect(() => {
