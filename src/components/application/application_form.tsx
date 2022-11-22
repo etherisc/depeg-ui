@@ -64,12 +64,16 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // insured amount
     const [ insuredAmount, setInsuredAmount ] = useState(undefined as FormNumber);
     const [ insuredAmountValid, setInsuredAmountValid ] = useState(false);
+    const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin);
+    const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax);
 
     // coverage period (days and date)
 
     // coverage days
     const [ coverageDays, setCoverageDays ] = useState(props.applicationApi.coverageDurationDaysMin  as FormNumber);
     const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
+    const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
+    const [ coverageDaysMax, setCoverageDaysMax ] = useState(props.applicationApi.coverageDurationDaysMax);
 
     // coverage until date
     const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.applicationApi.coverageDurationDaysMax, 'days'));
@@ -113,12 +117,43 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ buyButtonDisabled, setBuyButtonDisabled ] = useState(true);
     const [ applicationInProgress, setApplicationInProgress ] = useState(false);
 
+
     useEffect(() => {
         let isBuyButtonDisabled = !formValid || !termsAccepted || props.disabled || applicationInProgress;
         setBuyButtonDisabled(isBuyButtonDisabled);
         props.formReadyForApply(!isBuyButtonDisabled);
     }, [formValid, termsAccepted, props.disabled, applicationInProgress, props]);  
 
+    //-------------------------------------------------------------------------
+    // update min/max sum insured and coverage period when bundles are available
+    useEffect(() => {
+        if (props.bundles.length > 0) {
+            let minSumInsured = Number.MAX_SAFE_INTEGER;
+            let maxSumInsured = 0;
+            let minCoverageDays = Number.MAX_SAFE_INTEGER;
+            let maxCoverageDays = 0;
+            for( let b of props.bundles) {
+                if (b.minSumInsured < minSumInsured) {
+                    minSumInsured = b.minSumInsured;
+                }
+                if (b.maxSumInsured > maxSumInsured) {
+                    maxSumInsured = b.maxSumInsured;
+                }
+                if (b.minDuration < minCoverageDays) {
+                    minCoverageDays = b.minDuration;
+                }
+                if (b.maxDuration > maxCoverageDays) {
+                    maxCoverageDays = b.maxDuration;
+                }
+            }
+            setInsuredAmountMin(minSumInsured);
+            setInsuredAmountMax(maxSumInsured);
+            setCoverageDaysMin(minCoverageDays / 86400);
+            setCoverageDaysMax(maxCoverageDays / 86400);
+        }
+    }, [props.bundles]);
+
+    //-------------------------------------------------------------------------
     // calculate premium via onchain call
     const calculatePremium = useCallback( async () => {
         if (! formValid || props.bundles.length == 0) {
@@ -160,7 +195,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
     }
 
-    const waitForApply = applicationInProgress ? <LinearProgress /> : null;
+    const loadingBar = applicationInProgress ? <LinearProgress /> : null;
     
     return (
         <Grid container maxWidth="md" spacing={4} mt={2} sx={{ p: 1, ml: 'auto', mr: 'auto' }} >
@@ -196,8 +231,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     currency={props.usd1}
                     onChange={setInsuredAmount}
                     onBlur={calculatePremium}
-                    minValue={props.applicationApi.insuredAmountMin}
-                    maxValue={props.applicationApi.insuredAmountMax}
+                    minValue={insuredAmountMin}
+                    maxValue={insuredAmountMax}
                     onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
                 />
             </Grid>
@@ -219,8 +254,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         setCoverageUntil(moment().add(days, 'days'));
                     }}
                     onBlur={calculatePremium}
-                    minValue={props.applicationApi.coverageDurationDaysMin}
-                    maxValue={props.applicationApi.coverageDurationDaysMax}
+                    minValue={coverageDaysMin}
+                    maxValue={coverageDaysMax}
                     onError={(errMsg) => setCoverageDaysValid(errMsg === "")}
                 />
             </Grid>
@@ -271,7 +306,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 >
                     {t('button_buy')}
                 </Button>
-                {waitForApply}
+                {loadingBar}
             </Grid>
         </Grid>
     );
