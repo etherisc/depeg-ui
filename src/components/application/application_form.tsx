@@ -47,7 +47,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         if (walletAddress.length != 42) {
             return t('insuredWalletInvalid');
         }
-        // TODO check if wallet address is externally owned account
         return "";
     }
 
@@ -178,9 +177,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     onBlur={validateWalletAddressAndSetError}
                     required
                     error={walletAddressError != ""}
-                    helperText={walletAddressError}
+                    helperText={walletAddressError || t('insuredWalletHelper')}
                 />
-                {/* TODO: note about owner access to wallet for payout */}
             </Grid>
             <Grid item xs={12}>
                 <CurrencyTextField
