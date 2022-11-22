@@ -7,6 +7,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { InsuranceApi } from '../../model/insurance_api';
+import { FormNumber } from '../../utils/types';
 import CurrencyTextField from '../shared/form/currency_text_field';
 import NumericTextField from '../shared/form/numeric_text_field';
 
@@ -26,15 +27,15 @@ export default function InvestForm(props: InvestFormProperties) {
     const investProps = props.insurance.invest;
 
     // invested amount
-    const [ investedAmount, setInvestedAmount ] = useState(investProps.maxInvestedAmount);
+    const [ investedAmount, setInvestedAmount ] = useState(investProps.maxInvestedAmount as FormNumber);
     const [ investedAmountValid, setInvestedAmountValid ] = useState(true);
 
     // minimum sum insured
-    const [ minSumInsured, setMinSumInsured ] = useState(investProps.minSumInsured);
+    const [ minSumInsured, setMinSumInsured ] = useState(investProps.minSumInsured as FormNumber);
     const [ minSumInsuredValid, setMinSumInsuredValid ] = useState(true);
 
     function validateMinSumInsured(minSumInsured: number): string {
-        if (minSumInsured > maxSumInsured) {
+        if (minSumInsured > maxSumInsured!) {
             return t('minSumInsuredMaxError');
         }
 
@@ -42,26 +43,26 @@ export default function InvestForm(props: InvestFormProperties) {
     }
 
     // maximum sum insured
-    const [ maxSumInsured, setMaxSumInsured ] = useState(investProps.maxSumInsured);
+    const [ maxSumInsured, setMaxSumInsured ] = useState(investProps.maxSumInsured as FormNumber);
     const [ maxSumInsuredValid, setMaxSumInsuredValid ] = useState(true);
 
     // minimum coverage duration
-    const [ minDuration, setMinDuration ] = useState(investProps.minCoverageDuration);
+    const [ minDuration, setMinDuration ] = useState(investProps.minCoverageDuration as FormNumber);
     const [ minDurationValid, setMinDurationValid ] = useState(true);
 
     function validateMinDuration() {
-        if (minDuration > maxDuration) {
+        if (minDuration! > maxDuration!) {
             return t('minDurationMaxError');
         }
         return "";
     }
 
     // maxmium coverage duration
-    const [ maxDuration, setMaxDuration ] = useState(investProps.maxCoverageDuration);
+    const [ maxDuration, setMaxDuration ] = useState(investProps.maxCoverageDuration as FormNumber);
     const [ maxDurationValid, setMaxDurationValid ] = useState(true);
 
     // annual percentage return
-    const [ annualPctReturn, setAnnualPctReturn ] = useState(investProps.annualPctReturn);
+    const [ annualPctReturn, setAnnualPctReturn ] = useState(investProps.annualPctReturn as FormNumber);
     const [ annualPctReturnValid, setAnnualPctReturnValid ] = useState(true);
 
     useEffect(() => {
@@ -97,7 +98,7 @@ export default function InvestForm(props: InvestFormProperties) {
         setPaymentInProgress(true);
 
         try {
-            await props.invest(investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+            await props.invest(investedAmount!, minSumInsured!, maxSumInsured!, minDuration!, maxDuration!, annualPctReturn!);
         } finally {
             setPaymentInProgress(false);
         }

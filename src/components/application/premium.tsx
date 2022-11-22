@@ -1,11 +1,12 @@
 import { TextField, InputAdornment, LinearProgress, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { formatCurrency } from "../../utils/numbers";
+import { FormNumber } from "../../utils/types";
 import { INPUT_VARIANT } from "../shared/form/numeric_text_field";
 
 export interface PremiumProps {
     disabled: boolean;
-    premium: number;
+    premium: FormNumber;
     currency: string;
     error?: string;
     text?: string;

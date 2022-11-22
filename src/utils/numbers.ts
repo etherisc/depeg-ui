@@ -1,3 +1,8 @@
-export function formatCurrency(value: number): string {
+import { FormNumber } from "./types";
+
+export function formatCurrency(value: FormNumber): string {
+    if (value === undefined) {
+        return "";
+    }
     return value.toLocaleString();
 }

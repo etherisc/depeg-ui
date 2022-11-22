@@ -21,7 +21,8 @@
         "currencyTextFieldMinValue": "{{fieldName}} must be at least {{currency}} {{amount}}",
         "currencyTextFieldMaxValue": "{{fieldName}} must be at most {{currency}} {{amount}}",
         "numericTextFieldMinValue": "{{fieldName}} must be at least {{value}} {{unit}}",
-        "numericTextFieldMaxValue": "{{fieldName}} must be at most {{value}} {{unit}}"
+        "numericTextFieldMaxValue": "{{fieldName}} must be at most {{value}} {{unit}}",
+        "valueRequired": "{{fieldName}} cannot be empty"
     },
     "application_state_0": "Unknown",
     "application_state_1": "Applied",
