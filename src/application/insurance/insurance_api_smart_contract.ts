@@ -18,7 +18,9 @@ export class InsuranceApiSmartContract implements InsuranceApi {
     application: ApplicationApiSmartContract;
     invest: InvestApiSmartContract;
     usd1: string;
+    usd1Decimals: number;
     usd2: string;
+    usd2Decimals: number;
 
     constructor(
         signer: Signer,
@@ -27,7 +29,9 @@ export class InsuranceApiSmartContract implements InsuranceApi {
         this.signer = signer;
         this.depegProductContractAddress = depegProductContractAddress;
         this.usd1 = process.env.NEXT_PUBLIC_DEPEG_USD1 || "";
+        this.usd1Decimals = parseInt(process.env.NEXT_PUBLIC_DEPEG_USD1_DECIMALS || '6');
         this.usd2 = process.env.NEXT_PUBLIC_DEPEG_USD2 || "";
+        this.usd2Decimals = parseInt(process.env.NEXT_PUBLIC_DEPEG_USD2_DECIMALS || '6');
         const insuredAmountMin = parseInt(process.env.NEXT_PUBLIC_DEPEG_SUMINSURED_MINIMUM || "0");
         const insuredAmountMax = parseInt(process.env.NEXT_PUBLIC_DEPEG_SUMINSURED_MAXIMUM || "0");
         const coverageDurationDaysMin = parseInt(process.env.NEXT_PUBLIC_DEPEG_COVERAGE_DURATION_DAYS_MINIMUM || "0");

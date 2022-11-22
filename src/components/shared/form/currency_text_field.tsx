@@ -9,6 +9,7 @@ import { INPUT_VARIANT } from "./numeric_text_field";
 export interface CurrencyTextfieldProps {
     value: FormNumber;
     currency: string;
+    currencyDecimals: number;
     initialEmptyAllowed?: boolean;
     onChange: (value: FormNumber) => void;
     onBlur?: () => void;
@@ -38,7 +39,7 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             props.onChange(undefined);
             return;
         }
-        props.onChange(parseInt(val.replaceAll(',', '')));
+        props.onChange(parseInt(val.replaceAll(',', '')) * Math.pow(10,props.currencyDecimals));
     }
     
     const validateValue = useCallback(() => {
@@ -63,11 +64,11 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             return;
         }
         if (props.value < props.minValue) {
-            handleError(t('error.currencyTextFieldMinValue', { fieldName: props.label, amount: formatCurrency(props.minValue), currency: props.currency }));
+            handleError(t('error.currencyTextFieldMinValue', { fieldName: props.label, amount: formatCurrency(props.minValue, props.currencyDecimals), currency: props.currency }));
             return;
         } 
         if (props.value > props.maxValue) {
-            handleError(t('error.currencyTextFieldMaxValue', { fieldName: props.label, amount: formatCurrency(props.maxValue), currency: props.currency }));
+            handleError(t('error.currencyTextFieldMaxValue', { fieldName: props.label, amount: formatCurrency(props.maxValue, props.currencyDecimals), currency: props.currency }));
             return;
         }
         if (props.extraValidation) {
@@ -101,7 +102,7 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             label={props.label}
             type="text"
             InputProps={ip}
-            value={formatCurrency(props.value)}
+            value={formatCurrency(props.value, props.currencyDecimals)}
             onChange={handleValueChange}
             onBlur={() => { try { validateValue(); } finally { if (props.onBlur) props.onBlur(); } }}
             helperText={error}
