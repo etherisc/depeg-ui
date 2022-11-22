@@ -1,8 +1,6 @@
 import { Signer, VoidSigner } from "ethers";
-import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
 import { DepegProduct__factory } from "../../contracts/depeg-contracts";
 import { ApplicationApi, InsuranceApi, InvestApi } from "../../model/insurance_api";
-import { PolicyRowView } from "../../model/policy";
 import { delay } from "../../utils/delay";
 import { BalanceTooSmallError, NoBundleFoundError } from "../../utils/error";
 import { getBestQuote, getBundleData } from "./riskbundle";
@@ -10,12 +8,12 @@ import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
 import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState, PolicyState, getPoliciesCount, getPolicy } from "./depeg_product";
 import { hasBalance } from "./erc20";
+import { PolicyData } from "./policy_data";
 
 export class InsuranceApiSmartContract implements InsuranceApi {
 
     private signer: Signer;
     private depegProductContractAddress: string;
-    private t: (key: string) => string;
     
     application: ApplicationApiSmartContract;
     invest: InvestApiSmartContract;
@@ -25,11 +23,9 @@ export class InsuranceApiSmartContract implements InsuranceApi {
     constructor(
         signer: Signer,
         depegProductContractAddress: string, 
-        t: (key: string) => string
     ) {
         this.signer = signer;
         this.depegProductContractAddress = depegProductContractAddress;
-        this.t = t;
         this.usd1 = process.env.NEXT_PUBLIC_DEPEG_USD1 || "";
         this.usd2 = process.env.NEXT_PUBLIC_DEPEG_USD2 || "";
         const insuredAmountMin = parseInt(process.env.NEXT_PUBLIC_DEPEG_SUMINSURED_MINIMUM || "0");
@@ -45,32 +41,12 @@ export class InsuranceApiSmartContract implements InsuranceApi {
         this.invest = new InvestApiSmartContract(signer, depegProductContractAddress, investedAmountMin, investedAmountMax, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, annualPctReturn, annualPctReturnMax);
     }
 
-    async policy(walletAddress: string, idx: number): Promise<PolicyRowView> {
-        const rawPolicy = await getPolicy(walletAddress, idx, this.depegProductContractAddress, this.signer);
-        const state = getPolicyState(rawPolicy);
-        return {
-            id: rawPolicy.processId,
-            walletAddress: rawPolicy.owner,
-            insuredAmount: `${this.usd1} ${rawPolicy.suminsured.toString()}`,
-            coverageUntil: getPolicyEndDate(rawPolicy),
-            state: this.t('application_state_' + state),
-        } as PolicyRowView;
+    async policy(walletAddress: string, idx: number): Promise<PolicyData> {
+        return await getPolicy(walletAddress, idx, this.depegProductContractAddress, this.signer);
     }
 
-    async policies(walletAddress: string): Promise<Array<PolicyRowView>> {
-        const rawPolicies = await getPolicies(walletAddress, this.depegProductContractAddress, this.signer);
-        return rawPolicies
-            // TODO: move this mapping to ui
-            .map(policy => {
-                const state = getPolicyState(policy);
-                return {
-                    id: policy.processId,
-                    walletAddress: policy.owner,
-                    insuredAmount: `${this.usd1} ${policy.suminsured.toString()}`,
-                    coverageUntil: getPolicyEndDate(policy),
-                    state: this.t('application_state_' + state),
-                } as PolicyRowView;
-            });
+    async policies(walletAddress: string): Promise<Array<PolicyData>> {
+        return await getPolicies(walletAddress, this.depegProductContractAddress, this.signer);
     }
 
     async policiesCount(walletAddress: string): Promise<number> {

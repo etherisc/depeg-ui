@@ -1,9 +1,10 @@
+import { BigNumber } from "ethers/lib/ethers";
 import moment from "moment";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import { ApplicationApi, InsuranceApi } from "../../model/insurance_api";
-import { PolicyRowView, PolicyStatus } from "../../model/policy";
 import { delay } from "../../utils/delay";
 import { BundleData } from "./bundle_data";
+import { PolicyData } from "./policy_data";
 
 export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
@@ -14,10 +15,10 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
             await delay(2000);
             return Promise.resolve(true);
         },
-        async policy(walletAddress: string, idx: number): Promise<PolicyRowView> {
+        async policy(walletAddress: string, idx: number): Promise<PolicyData> {
             return Promise.resolve(mockPolicies[idx]);
         },
-        async policies(walletAddress: string): Promise<Array<PolicyRowView>> {
+        async policies(walletAddress: string): Promise<Array<PolicyData>> {
             return Promise.resolve(mockPolicies);
         },
         async policiesCount(walletAddress: string): Promise<number> {
@@ -30,37 +31,47 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
 
 const mockPoliciesActive = [
     {
-        id: '0x54E190322453300229D2BE2A38450B8A8BD8CF66',
-        walletAddress: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
-        insuredAmount: 'USDC 4,000.00',
-        // 25 nov 2022
-        coverageUntil: moment().add(14, 'days').format('DD MMM YYYY'),
-        state: PolicyStatus[PolicyStatus.ACTIVE]
-    } as PolicyRowView,
+        processId: '0x54E190322453300229D2BE2A38450B8A8BD8CF66',
+        owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        applicationState: 2,
+        policyState: 0,
+        createdAt: BigNumber.from(moment().add('-2', 'days').unix()),
+        duration: BigNumber.from(14 * 24 * 60 * 60),
+        premium: BigNumber.from(17),
+        suminsured: BigNumber.from(10000)
+    } as PolicyData,
     {
-        id: '0x34e190322453300229d2be2a38450b8a8bd8cf66',
-        walletAddress: '0xdCeC4C063Fef1074B0CD53022C3306A6FADb4729',
-        insuredAmount: 'USDC 10,000.00',
-        coverageUntil: moment().add(47, 'days').format('DD MMM YYYY'),
-        state: PolicyStatus[PolicyStatus.APPLIED]
-    } as PolicyRowView,
+        processId: '0x34e190322453300229d2be2a38450b8a8bd8cf66',
+        owner: '0xdCeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        applicationState: 0,
+        createdAt: BigNumber.from(moment().add('-1', 'days').unix()),
+        duration: BigNumber.from(47 * 24 * 60 * 60),
+        premium: BigNumber.from(27),
+        suminsured: BigNumber.from(15000)
+    } as PolicyData,
 ];
 
 const mockPolicies = mockPoliciesActive.concat(
     {
-        id: '0x23e190322453300229d2be2a38450b8a8bd8cf66',
-        walletAddress: '0xFEeC4C063Fef1074B0CD53022C3306A6FADb4729',
-        insuredAmount: 'USDT 17,000.00',
-        coverageUntil: moment().add(-3, 'days').format('DD MMM YYYY'),
-        state: PolicyStatus[PolicyStatus.EXPIRED]
-    } as PolicyRowView,
+        processId: '0x23e190322453300229d2be2a38450b8a8bd8cf66',
+        owner: '0xFEeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        applicationState: 2,
+        policyState: 1,
+        createdAt: BigNumber.from(moment().add(-20, 'days').unix()),
+        duration: BigNumber.from(14 * 24 * 60 * 60),
+        premium: BigNumber.from(100),
+        suminsured: BigNumber.from(35000)
+    } as PolicyData,
     {
-        id: '0xc23223453200229d2be2a38450b8a8bd8cf66',
-        walletAddress: '0x821c4C063Fef1074B0CD53022C3306A6FADb4729',
-        insuredAmount: 'USDN 7,352.00',
-        coverageUntil: moment().add(-2, 'months').format('DD MMM YYYY'),
-        state: PolicyStatus[PolicyStatus.PAYED_OUT]
-    } as PolicyRowView,
+        processId: '0xc23223453200229d2be2a38450b8a8bd8cf66',
+        owner: '0x821c4C063Fef1074B0CD53022C3306A6FADb4729',
+        applicationState: 2,
+        policyState: 2,
+        createdAt: BigNumber.from(moment().add(-3, 'months').unix()),
+        duration: BigNumber.from(28 * 24 * 60 * 60),
+        premium: BigNumber.from(67),
+        suminsured: BigNumber.from(36000)
+    } as PolicyData,
 );
 
 function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {

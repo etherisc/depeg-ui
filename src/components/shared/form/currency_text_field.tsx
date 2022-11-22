@@ -78,7 +78,7 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             }
         }
         handleError("");
-    }, [props, t]);
+    }, [props, t, isInitialValue]);
 
     useEffect(() => {
         validateValue();
