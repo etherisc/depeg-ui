@@ -13,6 +13,7 @@ import { LinkBehaviour } from "../shared/link_behaviour";
 import Link from "@mui/material/Link";
 import { getPolicyEndDate, getPolicyState } from "../../application/insurance/depeg_product";
 import { PolicyData } from "../../application/insurance/policy_data";
+import LinearProgress from "@mui/material/LinearProgress";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -23,6 +24,7 @@ export default function Policies(props: PoliciesProps) {
     const appContext = useContext(AppContext);
 
     const [ policies, setPolicies ] = useState<Array<PolicyRowView>>([]);
+    const [ policyRetrievalInProgess , setPolicyRetrievalInProgess ] = useState(false);
     const [ pageSize, setPageSize ] = useState(5);
 
     const [ showActivePoliciesOnly, setShowActivePoliciesOnly ] = useState<boolean>(false);
@@ -45,6 +47,7 @@ export default function Policies(props: PoliciesProps) {
         async function getPolicies() {
             const walletAddress = await appContext?.data.signer?.getAddress();
             if (walletAddress !== undefined) {
+                setPolicyRetrievalInProgess(true);
                 setPolicies([]);
                 const policiesCount = await props.insurance.policiesCount(walletAddress);
                 for (let i = 0; i < policiesCount; i++) {
@@ -55,6 +58,7 @@ export default function Policies(props: PoliciesProps) {
                     const rowView = convertPolicyDataToRowView(policy);
                     setPolicies(policies => [...policies, rowView]);
                 }
+                setPolicyRetrievalInProgess(false);
             } else {
                 setPolicies([]);
             }
@@ -96,9 +100,13 @@ export default function Policies(props: PoliciesProps) {
         );
     }
 
+    const loadingBar = policyRetrievalInProgess ? <LinearProgress /> : null;
+
     return (
         <>
             <Typography variant="h5" mb={2}>{t('title')}</Typography>
+
+            {loadingBar}
 
             <DataGrid 
                 autoHeight
