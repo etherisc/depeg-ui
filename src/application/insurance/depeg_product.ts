@@ -4,7 +4,7 @@ import { ContractReceipt, ContractTransaction, Signer } from "ethers";
 import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../../contracts/depeg-contracts";
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { IInstanceService } from "../../contracts/gif-interface";
-import { APPLICATION_STATE_APPLIED, APPLICATION_STATE_DECLINED, APPLICATION_STATE_REVOKED, APPLICATION_STATE_UNDERWRITTEN, PolicyData, POLICY_STATE_ACTIVE, POLICY_STATE_CLOSED, POLICY_STATE_EXPIRED } from "./policy_data";
+import { APPLICATION_STATE_APPLIED, APPLICATION_STATE_DECLINED, APPLICATION_STATE_REVOKED, APPLICATION_STATE_UNDERWRITTEN, PAYOUT_STATE_EXPECTED, PAYOUT_STATE_PAIDOUT, PolicyData, POLICY_STATE_ACTIVE, POLICY_STATE_CLOSED, POLICY_STATE_EXPIRED } from "./policy_data";
 import moment, { Moment } from "moment";
 
 export async function getInstanceFromProduct(depegProductContractAddress: string, signer: Signer): 
@@ -109,9 +109,16 @@ async function getPolicyForProduct(
     const application = await instanceService.getApplication(processId);
     const [ applicationState, premium, suminsured, appdata, createdAt ] = application;
     let policyState = undefined;
+    let payoutState = undefined;
     if ( applicationState == APPLICATION_STATE_UNDERWRITTEN ) {
         const policy = await instanceService.getPolicy(processId);
         [ policyState ] = policy;
+        const payoutsCount = (await instanceService.payouts(processId)).toNumber();
+        if (payoutsCount > 0) {
+            // this is a simplification as Depeg insureance can only have 0 or 1 payouts
+            const payout = await instanceService.getPayout(processId, 0);
+            [ payoutState ] = payout;
+        }
     }
     const [ duration ] = await riskpool.decodeApplicationParameterFromData(appdata);
     return {
@@ -119,6 +126,7 @@ async function getPolicyForProduct(
         processId: processId,
         applicationState: applicationState,
         policyState: policyState,
+        payoutState: payoutState,
         createdAt: createdAt,
         premium: premium,
         suminsured: suminsured,
@@ -129,7 +137,7 @@ async function getPolicyForProduct(
 
 export enum PolicyState {
     UNKNOWN, APPLIED, REVOKED, UNDERWRITTEN, DECLINED,
-    ACTIVE, EXPIRED, CLOSED,
+    ACTIVE, EXPIRED, CLOSED, PAYOUT_EXPECTED, PAIDOUT
 }
 
 export function getPolicyState(policy: PolicyData): PolicyState {
@@ -139,25 +147,43 @@ export function getPolicyState(policy: PolicyData): PolicyState {
         case APPLICATION_STATE_REVOKED:
             return PolicyState.REVOKED;
         case APPLICATION_STATE_UNDERWRITTEN:
-            switch (policy.policyState) {
-                case POLICY_STATE_ACTIVE:
-                    if (moment().isAfter(getPolicyExpiration(policy))) {
-                        return PolicyState.EXPIRED;
-                    }
-                    return PolicyState.ACTIVE;
-                case POLICY_STATE_EXPIRED:
-                    return PolicyState.EXPIRED;
-                case POLICY_STATE_CLOSED:
-                    return PolicyState.CLOSED;
-                default:
-                    return PolicyState.UNKNOWN;
-            }
+            return getPolicyStateForActivePolicy(policy);
         case APPLICATION_STATE_DECLINED:
             return PolicyState.DECLINED;
         default:
             return PolicyState.UNKNOWN;
     }
-    // TODO: payout states
+}
+
+function getPolicyStateForActivePolicy(policy: PolicyData): PolicyState {
+    switch (policy.policyState) {
+        case POLICY_STATE_ACTIVE:
+            if (moment().isAfter(getPolicyExpiration(policy))) {
+                return PolicyState.EXPIRED;
+            }
+            if (policy.payoutState !== undefined) {
+                return getPolicyStateForPaidoutPolicy(policy);
+            }           
+            return PolicyState.ACTIVE;
+        case POLICY_STATE_EXPIRED:
+            return PolicyState.EXPIRED;
+        case POLICY_STATE_CLOSED:
+            return PolicyState.CLOSED;
+        default:
+            return PolicyState.UNKNOWN;
+    }
+}
+
+
+function getPolicyStateForPaidoutPolicy(policy: PolicyData): PolicyState {
+    switch (policy.payoutState) {
+        case PAYOUT_STATE_EXPECTED:
+            return PolicyState.PAYOUT_EXPECTED;
+        case PAYOUT_STATE_PAIDOUT:
+            return PolicyState.PAIDOUT;
+        default:
+            return PolicyState.UNKNOWN;
+    }
 }
 
 function getPolicyExpiration(policy: PolicyData): Moment {
@@ -167,3 +193,4 @@ function getPolicyExpiration(policy: PolicyData): Moment {
 export function getPolicyEndDate(policy: PolicyData): string {
     return getPolicyExpiration(policy).startOf("day").format("YYYY-MM-DD");
 }
+

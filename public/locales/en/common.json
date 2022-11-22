@@ -31,5 +31,7 @@
     "application_state_4": "Declined",
     "application_state_5": "Active",
     "application_state_6": "Expired",
-    "application_state_7": "Closed"
+    "application_state_7": "Closed",
+    "application_state_8": "Payout expected",
+    "application_state_9": "Paid out"
 }

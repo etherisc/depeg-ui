@@ -31,7 +31,7 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
 
 const mockPoliciesActive = [
     {
-        processId: '0x54E190322453300229D2BE2A38450B8A8BD8CF66',
+        processId: '0x54E190322453300229D2BE2A38450B8A8BD8CF61',
         owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 0,
@@ -41,7 +41,29 @@ const mockPoliciesActive = [
         suminsured: BigNumber.from(10000)
     } as PolicyData,
     {
-        processId: '0x34e190322453300229d2be2a38450b8a8bd8cf66',
+        processId: '0x54E190322453300229D2BE2A38450B8A8BD8CF62',
+        owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        applicationState: 2,
+        policyState: 0,
+        payoutState: 0,
+        createdAt: BigNumber.from(moment().add('-2', 'days').unix()),
+        duration: BigNumber.from(14 * 24 * 60 * 60),
+        premium: BigNumber.from(17),
+        suminsured: BigNumber.from(11000)
+    } as PolicyData,
+    {
+        processId: '0x54E190322453300229D2BE2A38450B8A8BD8CF63',
+        owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        applicationState: 2,
+        policyState: 0,
+        payoutState: 1,
+        createdAt: BigNumber.from(moment().add('-2', 'days').unix()),
+        duration: BigNumber.from(14 * 24 * 60 * 60),
+        premium: BigNumber.from(17),
+        suminsured: BigNumber.from(12000)
+    } as PolicyData,
+    {
+        processId: '0x34e190322453300229d2be2a38450b8a8bd8cf64',
         owner: '0xdCeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 0,
         createdAt: BigNumber.from(moment().add('-1', 'days').unix()),
@@ -53,7 +75,7 @@ const mockPoliciesActive = [
 
 const mockPolicies = mockPoliciesActive.concat(
     {
-        processId: '0x23e190322453300229d2be2a38450b8a8bd8cf66',
+        processId: '0x23e190322453300229d2be2a38450b8a8bd8cf71',
         owner: '0xFEeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 1,
@@ -63,7 +85,7 @@ const mockPolicies = mockPoliciesActive.concat(
         suminsured: BigNumber.from(35000)
     } as PolicyData,
     {
-        processId: '0xc23223453200229d2be2a38450b8a8bd8cf66',
+        processId: '0xc23223453200229d2be2a38450b8a8bd8cf72',
         owner: '0x821c4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 2,

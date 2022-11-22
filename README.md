@@ -1,34 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Depeg-ui 
 
-## Getting Started
+This repository contains the source code for web application to the Etherisc [depeg-contracts](https://github.com/etherisc/depeg-contracts).
 
-First, run the development server:
+## Development 
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+The repository includes a vscode _devcontainer_ that installs all the necessary dependencies to run the application.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create a `.env.local` file in the root directory of the project. Have a look a the `.env.example_local` file for the required environment variables of a setup running again a local ganache chain. 
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+The minimum required variables are 
+- `NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS` the address of the deployed depeg product contract
+- `NEXT_PUBLIC_DEPEG_USD1` the name of the USD1 token
+- `NEXT_PUBLIC_DEPEG_USD2` the name of the USD2 token
+- `NEXT_PUBLIC_DEPEG_SUMINSURED_MINIMUM` the minimum allowed sum insured
+- `NEXT_PUBLIC_DEPEG_SUMINSURED_MAXIMUM` the maximum allowed sum insured
+- `NEXT_PUBLIC_DEPEG_COVERAGE_DURATION_DAYS_MINIMUM` the minimum allowed coverage duration in days
+- `NEXT_PUBLIC_DEPEG_COVERAGE_DURATION_DAYS_MAXIMUM` the maximum allowed coverage duration in days
+- `NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MINIMUM` the minimum allowed invested amount
+- `NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MAXIMUM` the maximum allowed invested amount
+- `NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN` the annual percentage return of the investment
+- `NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN_MAXIMUM` the maximum allowed annual percentage return of the investment
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Then run the application in dev mode with `npm run dev`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+TODO
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
