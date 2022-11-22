@@ -2,11 +2,12 @@ import { InputProps } from "@mui/material/Input";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "next-i18next";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { FormNumber } from "../../../utils/types";
 
 export interface NumericTextFieldProps {
-    value: number;
+    value: FormNumber;
     unit: string;
-    onChange: (value: number) => void;
+    onChange: (value: FormNumber) => void;
     onBlur?: () => void;
     disabled: boolean;
     readOnly?: boolean;
@@ -30,7 +31,7 @@ export default function NumericTextField(props: NumericTextFieldProps) {
     function handleValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         let val = (x.target as HTMLInputElement).value;
         if (val == "") {
-            props.onChange(0);
+            props.onChange(undefined);
             return;
         }
         props.onChange(parseInt(val));
@@ -43,7 +44,10 @@ export default function NumericTextField(props: NumericTextFieldProps) {
                 props.onError(error);
             }
         }
-        
+        if (props.value === undefined) {
+            handleError(t('error.valueRequired', { fieldName: props.label }));
+            return;
+        }
         if (props.value < props.minValue) {
             handleError(t('error.numericTextFieldMinValue', { fieldName: props.label, value: props.minValue, unit: props.unit }));
             return;

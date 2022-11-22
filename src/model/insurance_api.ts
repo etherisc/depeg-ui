@@ -2,8 +2,8 @@ import { ethers, Signer } from "ethers";
 import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
 import { BundleData } from "../application/insurance/bundle_data";
 import { insuranceApiMock } from "../application/insurance/insurance_api_mock";
-import { insuranceApiSmartContract } from "../application/insurance/insurance_api_smart_contract";
-import { PolicyRowView } from "./policy";
+import { InsuranceApiSmartContract } from "../application/insurance/insurance_api_smart_contract";
+import { PolicyData } from "../application/insurance/policy_data";
 
 export interface InsuranceApi {
     usd1: string;
@@ -18,11 +18,11 @@ export interface InsuranceApi {
         (
             walletAddress: string, 
             index: number,
-        ) => Promise<PolicyRowView>;
+        ) => Promise<PolicyData>;
     policies: 
         (
             walletAddress: string, 
-        ) => Promise<Array<PolicyRowView>>;
+        ) => Promise<Array<PolicyData>>;
     policiesCount
         (
             walletAddress: string,
@@ -90,9 +90,9 @@ export function getInsuranceApi(
     } else {
         console.log("Using smart contract", depegProductContractAddress);
         if (signer === undefined || provider === undefined) {
-            return insuranceApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress, enqueueSnackbar, t);
+            return new InsuranceApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress);
         } else {
-            return insuranceApiSmartContract(signer, depegProductContractAddress, enqueueSnackbar, t);
+            return new InsuranceApiSmartContract(signer, depegProductContractAddress);
         }
     }
 }

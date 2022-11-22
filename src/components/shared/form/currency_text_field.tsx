@@ -3,12 +3,14 @@ import TextField from "@mui/material/TextField";
 import { useTranslation } from "next-i18next";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { formatCurrency } from "../../../utils/numbers";
+import { FormNumber } from "../../../utils/types";
 import { INPUT_VARIANT } from "./numeric_text_field";
 
 export interface CurrencyTextfieldProps {
-    value: number;
+    value: FormNumber;
     currency: string;
-    onChange: (value: number) => void;
+    initialEmptyAllowed?: boolean;
+    onChange: (value: FormNumber) => void;
     onBlur?: () => void;
     disabled: boolean;
     required: boolean;
@@ -26,11 +28,14 @@ export interface CurrencyTextfieldProps {
 export default function CurrencyTextField(props: CurrencyTextfieldProps) {
     const { t } = useTranslation('common');
     const [ error, setError ] = useState("");
+    const [ isInitialValue, setIsInitialValue ] = useState(true);
 
     function handleValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        setIsInitialValue(false);
+
         let val = (x.target as HTMLInputElement).value;
         if (val == "") {
-            props.onChange(0);
+            props.onChange(undefined);
             return;
         }
         props.onChange(parseInt(val.replaceAll(',', '')));
@@ -43,9 +48,18 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
                 props.onError(error);
             }
         }
+
+        if (isInitialValue && props.initialEmptyAllowed) {
+            handleError("");
+            return;
+        }
     
         if (props.disabled) {
             handleError("");
+            return;
+        }
+        if (props.value === undefined) {
+            handleError(t('error.valueRequired', { fieldName: props.label }));
             return;
         }
         if (props.value < props.minValue) {
@@ -64,7 +78,7 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             }
         }
         handleError("");
-    }, [props, t]);
+    }, [props, t, isInitialValue]);
 
     useEffect(() => {
         validateValue();

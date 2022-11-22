@@ -6,6 +6,7 @@
     "step3": "Confirm premium allowance",
     "step4": "Confirm payment",
     "insuredWallet": "Insured wallet",
+    "insuredWalletHelper": "Important: Ensure you own the private keys to this wallet as full access will required to claim the payout",
     "insuredWalletRequired": "Insured wallet is required",
     "insuredWalletInvalid": "Insured wallet is not valid address",
     "insuredAmount": "Insured amount",

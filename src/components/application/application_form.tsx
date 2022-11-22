@@ -12,6 +12,7 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { BundleData } from '../../application/insurance/bundle_data';
 import { ApplicationApi } from '../../model/insurance_api';
 import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
+import { FormNumber } from '../../utils/types';
 import CurrencyTextField from '../shared/form/currency_text_field';
 import NumericTextField, { INPUT_VARIANT } from '../shared/form/numeric_text_field';
 import Premium from './premium';
@@ -46,7 +47,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         if (walletAddress.length != 42) {
             return t('insuredWalletInvalid');
         }
-        // TODO check if wallet address is externally owned account
         return "";
     }
 
@@ -62,13 +62,13 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }, [props.walletAddress]);
 
     // insured amount
-    const [ insuredAmount, setInsuredAmount ] = useState(props.applicationApi.insuredAmountMin);
+    const [ insuredAmount, setInsuredAmount ] = useState(undefined as FormNumber);
     const [ insuredAmountValid, setInsuredAmountValid ] = useState(false);
 
     // coverage period (days and date)
 
     // coverage days
-    const [ coverageDays, setCoverageDays ] = useState(props.applicationApi.coverageDurationDaysMin);
+    const [ coverageDays, setCoverageDays ] = useState(props.applicationApi.coverageDurationDaysMin  as FormNumber);
     const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
 
     // coverage until date
@@ -85,7 +85,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     };
 
     // premium
-    const [ premium, setPremium ] = useState(0);
+    const [ premium, setPremium ] = useState(undefined as FormNumber);
     const [ premiumError, setPremiumError ] = useState("");
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
 
@@ -130,7 +130,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         console.log("Calculating premium...");
         try {
             setPremiumCalculationInProgress(true);
-            setPremium(await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles));
+            setPremium(await props.applicationApi.calculatePremium(walletAddress, insuredAmount || 0, coverageDays || 0, props.bundles));
             setPremiumError("");
         } catch (e) {
             if (e instanceof NoBundleFoundError) {
@@ -143,18 +143,18 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 console.log("Error calculating premium: ", e);
             }
             setFormValid(false);
-            setPremium(0);
+            setPremium(undefined);
         } finally {
             setPremiumCalculationInProgress(false);
         }
         
-    }, [formValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.applicationApi, t]);
+    }, [formValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.applicationApi, props.usd2, t]);
 
     async function buy() {
         setApplicationInProgress(true);
 
         try {
-            await props.applyForPolicy(walletAddress, insuredAmount, coverageDays, premium);
+            await props.applyForPolicy(walletAddress, insuredAmount!, coverageDays!, premium!);
         } finally {
             setApplicationInProgress(false);
         }
@@ -177,7 +177,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     onBlur={validateWalletAddressAndSetError}
                     required
                     error={walletAddressError != ""}
-                    helperText={walletAddressError}
+                    helperText={walletAddressError || t('insuredWalletHelper')}
                 />
             </Grid>
             <Grid item xs={12}>
@@ -192,6 +192,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
                     }}
                     value={insuredAmount}
+                    initialEmptyAllowed={true}
                     currency={props.usd1}
                     onChange={setInsuredAmount}
                     onBlur={calculatePremium}

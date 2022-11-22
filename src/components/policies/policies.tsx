@@ -11,13 +11,15 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { LinkBehaviour } from "../shared/link_behaviour";
 import Link from "@mui/material/Link";
+import { getPolicyEndDate, getPolicyState } from "../../application/insurance/depeg_product";
+import { PolicyData } from "../../application/insurance/policy_data";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
 }
 
 export default function Policies(props: PoliciesProps) {
-    const { t } = useTranslation(['policies']);
+    const { t } = useTranslation(['policies', 'common']);
     const appContext = useContext(AppContext);
 
     const [ policies, setPolicies ] = useState<Array<PolicyRowView>>([]);
@@ -29,25 +31,43 @@ export default function Policies(props: PoliciesProps) {
     }
 
     useEffect(() => {
+        function convertPolicyDataToRowView(policy: PolicyData) {
+            const state = getPolicyState(policy);
+            return {
+                id: policy.processId,
+                walletAddress: policy.owner,
+                insuredAmount: `${props.insurance.usd1} ${policy.suminsured.toString()}`,
+                coverageUntil: getPolicyEndDate(policy),
+                state: t('application_state_' + state, { ns: 'common'}),
+            } as PolicyRowView;
+        }
+
         async function getPolicies() {
             const walletAddress = await appContext?.data.signer?.getAddress();
             if (walletAddress !== undefined) {
+                setPolicies([]);
                 const policiesCount = await props.insurance.policiesCount(walletAddress);
                 for (let i = 0; i < policiesCount; i++) {
                     const policy = await props.insurance.policy(walletAddress, i);
-                    setPolicies(policies => [...policies, policy]);
+                    if (showActivePoliciesOnly && (policy.applicationState !== 2 || policy.policyState !== 0)) {
+                        continue;
+                    }
+                    const rowView = convertPolicyDataToRowView(policy);
+                    setPolicies(policies => [...policies, rowView]);
                 }
             } else {
                 setPolicies([]);
             }
         }
         getPolicies();
-    }, [appContext?.data.signer, props.insurance, showActivePoliciesOnly]);
+    }, [appContext?.data.signer, props.insurance, showActivePoliciesOnly, t]);
 
     const columns: GridColDef[] = [
-        // { field: 'id', headerName: t('table.header.id'), width: 150 },
+        // { field: 'id', headerName: t('table.header.id'), flex: 1 },
+        // TODO: add copy button to field and shorten content
         { field: 'walletAddress', headerName: t('table.header.walletAddress'), flex: 1 },
         { field: 'insuredAmount', headerName: t('table.header.insuredAmount'), flex: 0.5 },
+        // TODO: add date created
         { field: 'coverageUntil', headerName: t('table.header.coverageUntil'), flex: 0.5 },
         { field: 'state', headerName: t('table.header.status'), flex: 0.5 },
     ];
