@@ -40,6 +40,7 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
     const maxValue = props.maxValue;
     const extraValidation = props.extraValidation;
     const onError = props.onError;
+    const onChange = props.onChange;
 
     function handleDisplayValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         let val = (x.target as HTMLInputElement).value;
@@ -50,7 +51,7 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
         console.log("changeValue");
         let val = parseDisplayValue(displayValue);
         console.log("val", val);
-        props.onChange(val);
+        onChange(val);
         const error = validateValue(val);
         console.log("error", error);
         handleError(error);
@@ -66,19 +67,18 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
 
     // call onBlur AFTER value update has been propagated
     useEffect(() => {
+        // console.log("useEffect", "onBlur", props.value, displayValue);
+        setDisplayValue(formatCurrency(props.value, currencyDecimals));
         // call onBlue when value due to user input (the displayValue matches with the incoming value)
         // otherwise update the displayValue to match the incoming value (update from outside of component)
-        if (value === parseDisplayValue(displayValue) && onBlur !== undefined) {
+        if (onBlur !== undefined) {
             onBlur();
-        } else {
-            setDisplayValue(formatCurrency(value, currencyDecimals));
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [onBlur, value]); // do not react to displayValue change on purpose
+    }, [onBlur, props.value, currencyDecimals]); // do not react to displayValue change on purpose
 
     function handleError(error: string) {
         setError(error);
-        if (onError) {
+        if (onError !== undefined) {
             onError(error);
         }
     }

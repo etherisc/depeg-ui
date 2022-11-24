@@ -96,15 +96,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
     const [ showAvailableBundles, setShowAvailableBundles ] = useState(false);
 
-    // check validity of form
-    useEffect(() => {
-        console.log("walletAddressValid", walletAddressValid, "insuredAmountValid", insuredAmountValid, "coverageDaysValid", coverageDaysValid);
-        let valid = true;
-        valid = walletAddressValid && valid;
-        valid = insuredAmountValid && valid;
-        valid = coverageDaysValid && valid;
-        console.log(`Form valid ${valid}`);
-        setFormValid(valid);
+    const isFormValid = useCallback(() => {
+        return walletAddressValid && insuredAmountValid && coverageDaysValid;
     }, [walletAddressValid, insuredAmountValid, coverageDaysValid]);
 
     // TODO: when premium cannot be calculated, show list of bundles
@@ -117,16 +110,15 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }
 
     // buy button
-    const [ formValid, setFormValid ] = useState(true);
     const [ buyButtonDisabled, setBuyButtonDisabled ] = useState(true);
     const [ applicationInProgress, setApplicationInProgress ] = useState(false);
 
 
     useEffect(() => {
-        let isBuyButtonDisabled = !formValid || !termsAccepted || props.disabled || applicationInProgress;
+        let isBuyButtonDisabled = !isFormValid() || !termsAccepted || props.disabled || applicationInProgress;
         setBuyButtonDisabled(isBuyButtonDisabled);
         props.formReadyForApply(!isBuyButtonDisabled);
-    }, [formValid, termsAccepted, props.disabled, applicationInProgress, props]);  
+    }, [isFormValid, termsAccepted, props.disabled, applicationInProgress, props]);  
 
     //-------------------------------------------------------------------------
     // update min/max sum insured and coverage period when bundles are available
@@ -162,11 +154,17 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     //-------------------------------------------------------------------------
     // calculate premium via onchain call
     const calculatePremium = useCallback( async () => {
-        if (! formValid || props.bundles.length == 0) {
+        if (! isFormValid()) {
             console.log("Form is invalid, not calculating premium...");
             setPremium(0);
             return;
         }
+        if (props.bundles.length == 0) {
+            console.log("No bundles, not calculating premium...");
+            setPremium(0);
+            return;
+        }
+
 
         console.log("Calculating premium...");
         try {
@@ -185,13 +183,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             } else {
                 console.log("Error calculating premium: ", e);
             }
-            setFormValid(false);
             setPremium(undefined);
         } finally {
             setPremiumCalculationInProgress(false);
         }
         
-    }, [formValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.applicationApi, props.usd2, t]);
+    }, [isFormValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.applicationApi, props.usd2, t]);
 
     async function buy() {
         setApplicationInProgress(true);
