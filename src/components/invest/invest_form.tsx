@@ -16,7 +16,7 @@ const formInputVariant = 'outlined';
 export interface InvestFormProperties {
     disabled: boolean;
     usd1: string;
-    usd2: string;
+    usd1Decimals: number;
     insurance: InsuranceApi;
     formReadyForInvest: (isFormReady: boolean) => void;
     invest: (investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) => Promise<boolean>;
@@ -120,6 +120,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     }}
                     value={investedAmount}
                     currency={props.usd1}
+                    currencyDecimals={props.usd1Decimals}
                     onChange={setInvestedAmount}
                     minValue={investProps.minInvestedAmount}
                     maxValue={investProps.maxInvestedAmount}
@@ -138,6 +139,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     }}
                     value={minSumInsured}
                     currency={props.usd1}
+                    currencyDecimals={props.usd1Decimals}
                     onChange={setMinSumInsured}
                     minValue={investProps.minSumInsured}
                     maxValue={investProps.maxSumInsured}
@@ -157,6 +159,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     }}
                     value={maxSumInsured}
                     currency={props.usd1}
+                    currencyDecimals={props.usd1Decimals}
                     onChange={setMaxSumInsured}
                     minValue={investProps.minSumInsured}
                     maxValue={investProps.maxSumInsured}
