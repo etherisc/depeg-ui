@@ -10,7 +10,6 @@ export interface CurrencyTextfieldProps {
     value: FormNumber;
     currency: string;
     currencyDecimals: number;
-    initialEmptyAllowed?: boolean;
     onChange: (value: FormNumber) => void;
     onBlur?: () => void;
     disabled: boolean;
@@ -28,62 +27,80 @@ export interface CurrencyTextfieldProps {
 
 export default function CurrencyTextField(props: CurrencyTextfieldProps) {
     const { t } = useTranslation('common');
+    const [ displayValue, setDisplayValue ] = useState<string>(formatCurrency(props.value, props.currencyDecimals));
     const [ error, setError ] = useState("");
-    const [ isInitialValue, setIsInitialValue ] = useState(true);
+    
+    const value = props.value;
+    const onBlur = props.onBlur;
+    const currency = props.currency;
+    const currencyDecimals = props.currencyDecimals;
+    const label = props.label;
+    const disabled = props.disabled;
+    const minValue = props.minValue;
+    const maxValue = props.maxValue;
+    const extraValidation = props.extraValidation;
+    const onError = props.onError;
 
-    function handleValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        setIsInitialValue(false);
-
+    function handleDisplayValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         let val = (x.target as HTMLInputElement).value;
-        if (val == "") {
-            props.onChange(undefined);
-            return;
-        }
-        props.onChange(parseInt(val.replaceAll(',', '')) * Math.pow(10,props.currencyDecimals));
+        setDisplayValue(val);
     }
-    
-    const validateValue = useCallback(() => {
-        function handleError(error: string) {
-            setError(error);
-            if (props.onError) {
-                props.onError(error);
-            }
-        }
 
-        if (isInitialValue && props.initialEmptyAllowed) {
-            handleError("");
-            return;
+    function changeValue() {
+        console.log("changeValue");
+        let val;
+        if (displayValue !== undefined && displayValue !== "") {
+            val = parseFloat(displayValue.replaceAll(',', '')) * Math.pow(10,props.currencyDecimals)
+        } else {
+            val = undefined;
         }
-    
-        if (props.disabled) {
-            handleError("");
-            return;
-        }
-        if (props.value === undefined) {
-            handleError(t('error.valueRequired', { fieldName: props.label }));
-            return;
-        }
-        if (props.value < props.minValue) {
-            handleError(t('error.currencyTextFieldMinValue', { fieldName: props.label, amount: formatCurrency(props.minValue, props.currencyDecimals), currency: props.currency }));
-            return;
-        } 
-        if (props.value > props.maxValue) {
-            handleError(t('error.currencyTextFieldMaxValue', { fieldName: props.label, amount: formatCurrency(props.maxValue, props.currencyDecimals), currency: props.currency }));
-            return;
-        }
-        if (props.extraValidation) {
-            const errorMsg = props.extraValidation(props.value);
-            if (errorMsg && errorMsg !== "") {
-                handleError(errorMsg);
-                return;
-            }
-        }
-        handleError("");
-    }, [props, t, isInitialValue]);
+        console.log("val", val);
+        props.onChange(val);
+        const error = validateValue(val);
+        console.log("error", error);
+        handleError(error);
+    }
 
+    // call onBlur AFTER value update has been propagated
     useEffect(() => {
-        validateValue();
-    }, [props.value, validateValue]);
+        if (onBlur !== undefined) {
+            onBlur();
+        }
+    }, [onBlur, value]);
+
+    function handleError(error: string) {
+        setError(error);
+        if (onError) {
+            onError(error);
+        }
+    }
+
+    const validateValue = useCallback((valueToValidate: number | undefined): string => {
+        console.log("validateValue", valueToValidate);
+
+        if (disabled) {
+            return "";
+        }
+        if (valueToValidate === undefined) {
+            return t('error.valueRequired', { fieldName: label });
+        }
+        if (Number.isNaN(valueToValidate)) {
+            return t('error.notANumber', { fieldName: label });
+        }
+        if (valueToValidate < minValue) {
+            return t('error.currencyTextFieldMinValue', { fieldName: label, amount: formatCurrency(minValue, currencyDecimals), currency: currency });
+        } 
+        if (valueToValidate > maxValue) {
+            return t('error.currencyTextFieldMaxValue', { fieldName: label, amount: formatCurrency(maxValue, currencyDecimals), currency: currency });
+        }
+        if (extraValidation !== undefined) {
+            const errorMsg = extraValidation(valueToValidate);
+            if (errorMsg && errorMsg !== "") {
+                return errorMsg;
+            }
+        }
+        return "";
+    }, [disabled, label, currency, currencyDecimals, minValue, maxValue, extraValidation, t]);
 
     let ip = props.inputProps;
     if (props.inputProps === undefined) {
@@ -102,9 +119,9 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
             label={props.label}
             type="text"
             InputProps={ip}
-            value={formatCurrency(props.value, props.currencyDecimals)}
-            onChange={handleValueChange}
-            onBlur={() => { try { validateValue(); } finally { if (props.onBlur) props.onBlur(); } }}
+            value={displayValue}
+            onChange={handleDisplayValueChange}
+            onBlur={changeValue}
             helperText={error}
             error={error != ""}
             />
