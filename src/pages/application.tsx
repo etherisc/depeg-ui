@@ -18,7 +18,7 @@ export default function ApplicationPage() {
     t,
     appContext.data.signer,
     appContext.data.provider,
-  ), [enqueueSnackbar, appContext]);
+  ), [enqueueSnackbar, appContext, t]);
   
   return (
     <>

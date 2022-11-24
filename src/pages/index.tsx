@@ -21,7 +21,7 @@ export default function PoliciesPage() {
         t,
         appContext.data.signer,
         appContext.data.provider,
-    ), [enqueueSnackbar, appContext]);
+    ), [enqueueSnackbar, appContext, t]);
 
     
     // if wallet has no policies, redirect to application page

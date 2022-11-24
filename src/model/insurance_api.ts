@@ -74,7 +74,8 @@ export interface InvestApi {
             maxSumInsured: number, 
             minDuration: number, 
             maxDuration: number, 
-            annualPctReturn: number
+            annualPctReturn: number,
+            beforeWaitCallback?: () => void,
         ) => Promise<boolean>;
 }
 

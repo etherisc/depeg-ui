@@ -69,16 +69,61 @@ export default function Invest(props: InvestProps) {
             spread: 70,
             origin: { y: 0.6 }
         });
+        // TODO: enable
+        // redirect to policy list (/)
+        // router.push("/");
+    }
+
+    async function doApproval(walletAddress: string, investedAmount: number): Promise<Boolean> {
+        let snackbarId = enqueueSnackbar(
+            t('approval_info'),
+            { variant: "warning", persist: true }
+        );
+        let snackbarId2;
+        try {
+            return await props.insurance.createTreasuryApproval(walletAddress, investedAmount, () => {
+                closeSnackbar(snackbarId);
+                snackbarId2 = enqueueSnackbar(
+                    t('approval_wait'),
+                    { variant: "info", persist: true }
+                );
+            });
+            // FIXME: handle error during approval
+        } finally {
+            if (snackbarId2 !== undefined) {
+                closeSnackbar(snackbarId2);
+            }
+        }
+    }
+
+    async function doInvest(investorWalletAddress: string, investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
+        const snackbarId = enqueueSnackbar(
+            t('invest_info'),
+            { variant: "warning", persist: true }
+        );
+        let snackbarId2;
+        try {
+            return await props.insurance.invest.invest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn, () => {
+                closeSnackbar(snackbarId);
+                snackbarId2 = enqueueSnackbar(
+                    t('invest_wait'),
+                    { variant: "info", persist: true }
+                );
+            });
+            // FIXME: handle error during invest
+        } finally {
+            if (snackbarId2 !== undefined) {
+                closeSnackbar(snackbarId2);
+            }
+        }
     }
 
     async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
         setActiveStep(3);
         const investorWalletAddress = await appContext!!.data.signer!!.getAddress();
-        await props.insurance.createTreasuryApproval(investorWalletAddress, investedAmount);
-        // FIXME: handle error during approval
+        const approvalSuccess = await doApproval(investorWalletAddress, investedAmount);
         setActiveStep(4);
-        await props.insurance.invest.invest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
-        // FIXME: handle error during investment
+        const investSuccess = await doInvest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         setActiveStep(5);
         applicationSuccessful();
         return Promise.resolve(true);        

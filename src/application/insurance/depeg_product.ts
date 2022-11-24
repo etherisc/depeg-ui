@@ -40,13 +40,13 @@ export function extractProcessIdFromApplicationLogs(logs: any[]): string|undefin
 }
 
 export async function applyForDepegPolicy(
-        contractAddress: string, 
-        signer: Signer, 
-        insuredAmount: number, 
-        coverageDurationDays: number, 
-        premium: number, 
-        beforeWaitCallback?: () => void
-        ): Promise<[ContractTransaction, ContractReceipt]> {
+    contractAddress: string, 
+    signer: Signer, 
+    insuredAmount: number, 
+    coverageDurationDays: number, 
+    premium: number, 
+    beforeWaitCallback?: () => void
+): Promise<[ContractTransaction, ContractReceipt]> {
     const product = DepegProduct__factory.connect(contractAddress, signer);
     const tx = await product.applyForPolicy(
         insuredAmount, 
@@ -61,19 +61,19 @@ export async function applyForDepegPolicy(
 }
 
 export async function getPoliciesCount(
-        ownerWalletAddress: string,
-        depegProductContractAddress: string, 
-        signer: Signer, 
-        ): Promise<number> {
+    ownerWalletAddress: string,
+    depegProductContractAddress: string, 
+    signer: Signer, 
+): Promise<number> {
     const product = DepegProduct__factory.connect(depegProductContractAddress, signer);
     return (await product.processIds(ownerWalletAddress)).toNumber();        
 }
 
 export async function getPolicies(
-        ownerWalletAddress: string,
-        depegProductContractAddress: string, 
-        signer: Signer, 
-        ): Promise<Array<PolicyData>> {
+    ownerWalletAddress: string,
+    depegProductContractAddress: string, 
+    signer: Signer, 
+): Promise<Array<PolicyData>> {
     const [ product, riskpool, _, instanceService ] = await getInstanceFromProduct(depegProductContractAddress, signer);
     const numPolicies = (await product.processIds(ownerWalletAddress)).toNumber();
 
@@ -89,11 +89,11 @@ export async function getPolicies(
 
 
 export async function getPolicy(
-        ownerWalletAddress: string,
-        idx: number,
-        depegProductContractAddress: string, 
-        signer: Signer, 
-        ): Promise<PolicyData> {
+    ownerWalletAddress: string,
+    idx: number,
+    depegProductContractAddress: string, 
+    signer: Signer, 
+): Promise<PolicyData> {
     const [ product, riskpool, _, instanceService ] = await getInstanceFromProduct(depegProductContractAddress, signer);
     return getPolicyForProduct(ownerWalletAddress, idx, product, riskpool, instanceService);
 }

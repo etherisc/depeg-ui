@@ -20,5 +20,9 @@
     "checkbox_t_and_c_label": "By checking this box, I confirm that I have read and agree to the Terms and Conditions.",
     "button_invest": "Invest",
     "application_success": "Your risk bundle investment has been successful",
-    "days": "Days"
+    "days": "Days",
+    "approval_info": "Please approve the investment allowance transaction in your wallet",
+    "approval_wait": "Allowance created, waiting for onchain confirmation",
+    "invest_info": "Please confirm execution of the investment transaction in your wallet",
+    "invest_wait": "Transaction created, waiting for onchain confirmation"
 }

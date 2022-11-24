@@ -3,7 +3,7 @@ import { DepegProduct__factory } from "../../contracts/depeg-contracts";
 import { ApplicationApi, InsuranceApi, InvestApi } from "../../model/insurance_api";
 import { delay } from "../../utils/delay";
 import { BalanceTooSmallError, NoBundleFoundError } from "../../utils/error";
-import { getBestQuote, getBundleData } from "./riskbundle";
+import { createBundle, getBestQuote, getBundleData } from "./riskbundle";
 import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
 import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState, PolicyState, getPoliciesCount, getPolicy } from "./depeg_product";
@@ -62,6 +62,7 @@ export class InsuranceApiSmartContract implements InsuranceApi {
         const product = DepegProduct__factory.connect(this.depegProductContractAddress, this.signer);
         const [tx, receipt] = await createApprovalForTreasury(await product.getToken(), this.signer, premium, await product.getRegistry(), beforeWaitCallback);
         console.log("tx", tx, "receipt", receipt);
+        // TODO: return real result
         return Promise.resolve(true);
     }
 }
@@ -129,6 +130,7 @@ class ApplicationApiSmartContract implements ApplicationApi {
         const [tx, receipt] = await applyForDepegPolicy(this.depegProductContractAddress, this.signer, insuredAmount, coverageDurationDays, premium, beforeWaitCallback);
         let processId = extractProcessIdFromApplicationLogs(receipt.logs);
         console.log(`processId: ${processId}`);
+        // TODO: return real result
         return Promise.resolve(true);
     }
 }
@@ -167,13 +169,12 @@ export class InvestApiSmartContract implements InvestApi {
         maxSumInsured: number, 
         minDuration: number, 
         maxDuration: number, 
-        annualPctReturn: number
+        annualPctReturn: number,
+        beforeWaitCallback?: () => void
     ): Promise<boolean> {
-        // enqueueSnackbar(
-        //     `Riskpool mocked ($investorWalletAddress, $investedAmount, $minSumInsured, $maxSumInsured, $minDuration, $maxDuration, $annualPctReturn)`,
-        //     { autoHideDuration: 3000, variant: 'info' }
-        // );
-        await delay(2000);
+        console.log("invest", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+        const [tx, receipt] = await createBundle(this.depegProductContractAddress, this.signer, investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn, beforeWaitCallback);
+        
         return Promise.resolve(true);
     }
 }

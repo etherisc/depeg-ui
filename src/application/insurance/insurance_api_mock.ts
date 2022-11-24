@@ -51,7 +51,7 @@ const mockPoliciesActive = [
         createdAt: BigNumber.from(moment().add('-2', 'days').unix()),
         duration: BigNumber.from(14 * 24 * 60 * 60),
         premium: BigNumber.from(17),
-        suminsured: BigNumber.from(11000)
+        suminsured: BigNumber.from(11000000000)
     } as PolicyData,
     {
         processId: '0x54E190322453300229D2BE2A38450B8A8BD8CF63',
@@ -62,7 +62,7 @@ const mockPoliciesActive = [
         createdAt: BigNumber.from(moment().add('-2', 'days').unix()),
         duration: BigNumber.from(14 * 24 * 60 * 60),
         premium: BigNumber.from(17),
-        suminsured: BigNumber.from(12000)
+        suminsured: BigNumber.from(12000000000)
     } as PolicyData,
     {
         processId: '0x34e190322453300229d2be2a38450b8a8bd8cf64',
@@ -71,7 +71,7 @@ const mockPoliciesActive = [
         createdAt: BigNumber.from(moment().add('-1', 'days').unix()),
         duration: BigNumber.from(47 * 24 * 60 * 60),
         premium: BigNumber.from(27),
-        suminsured: BigNumber.from(15000)
+        suminsured: BigNumber.from(15000000000)
     } as PolicyData,
 ];
 
@@ -94,14 +94,14 @@ const mockPolicies = mockPoliciesActive.concat(
         createdAt: BigNumber.from(moment().add(-3, 'months').unix()),
         duration: BigNumber.from(28 * 24 * 60 * 60),
         premium: BigNumber.from(67),
-        suminsured: BigNumber.from(36000)
+        suminsured: BigNumber.from(36000000000)
     } as PolicyData,
 );
 
 function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
-        insuredAmountMin: 3000,
-        insuredAmountMax: 10000,
+        insuredAmountMin: 3000000000,
+        insuredAmountMax: 10000000000,
         coverageDurationDaysMin: 14,
         coverageDurationDaysMax: 45,
         getRiskBundles() {
@@ -121,10 +121,10 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
 function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
         usd1: 'USDC',
-        minInvestedAmount: 25000,
-        maxInvestedAmount: 100000,
-        minSumInsured: 1000,
-        maxSumInsured: 25000,
+        minInvestedAmount: 25000000000,
+        maxInvestedAmount: 100000000000,
+        minSumInsured: 1000000000,
+        maxSumInsured: 25000000000,
         minCoverageDuration: 14,
         maxCoverageDuration: 90,
         annualPctReturn: 5,
