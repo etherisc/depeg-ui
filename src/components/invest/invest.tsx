@@ -6,6 +6,7 @@ import { InsuranceApi } from "../../model/insurance_api";
 import { useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import InvestForm from "./invest_form";
+import { useRouter } from "next/router";
 
 export interface InvestProps {
     insurance: InsuranceApi;
@@ -16,6 +17,7 @@ const steps = ['step0', 'step1', 'step2', 'step3', 'step4'];
 export default function Invest(props: InvestProps) {
     const { t } = useTranslation(['invest', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const router = useRouter();
 
     const appContext = useContext(AppContext);
     const [ activeStep, setActiveStep ] = useState(appContext?.data.signer === undefined ? 0 : 1);
@@ -69,9 +71,8 @@ export default function Invest(props: InvestProps) {
             spread: 70,
             origin: { y: 0.6 }
         });
-        // TODO: enable
-        // redirect to policy list (/)
-        // router.push("/");
+        // redirect to bundle list (/bundles)
+        router.push("/bundles");
     }
 
     async function doApproval(walletAddress: string, investedAmount: number): Promise<Boolean> {

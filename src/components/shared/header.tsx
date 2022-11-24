@@ -52,7 +52,7 @@ export default function Header() {
                                 {t('nav.link.protect')}
                             </Typography>
                         </Link>
-                        <Link component={LinkBehaviour} href="/invest">
+                        <Link component={LinkBehaviour} href="/bundles">
                             <Typography
                                 variant="subtitle1"
                                 noWrap

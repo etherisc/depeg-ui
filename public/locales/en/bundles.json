@@ -1,0 +1,14 @@
+{
+    "title": "Bundles",
+    "table": {
+        "header": {
+            "id": "Bundle Id",
+            "capital": "Invested / remaining capital",
+            "policies": "Policies",
+            "state": "State"
+        }
+    },  
+    "action": {
+        "create_bundle": "Create new risk bundle"
+    }
+}

@@ -77,6 +77,9 @@ export interface InvestApi {
             annualPctReturn: number,
             beforeWaitCallback?: () => void,
         ) => Promise<boolean>;
+    bundleTokenAddress(): Promise<string>;
+    bundleCount(): Promise<number>;
+    bundle(walletAddress: string, bundleTokenAddress: string, i: number): Promise<BundleData|undefined>;
 }
 
 export function getInsuranceApi(
