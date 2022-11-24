@@ -182,7 +182,9 @@ export default function Application(props: ApplicationProps) {
                     disabled={formDisabled}
                     walletAddress={walletAddress}
                     usd1={props.insurance.usd1}
+                    usd1Decimals={props.insurance.usd1Decimals}
                     usd2={props.insurance.usd2}
+                    usd2Decimals={props.insurance.usd2Decimals}
                     applicationApi={props.insurance.application}
                     bundles={appContext.data.bundles}
                     formReadyForApply={formReadyForApply}

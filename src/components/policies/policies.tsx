@@ -14,6 +14,7 @@ import Link from "@mui/material/Link";
 import { getPolicyEndDate, getPolicyState } from "../../application/insurance/depeg_product";
 import { PolicyData } from "../../application/insurance/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
+import { formatCurrency } from "../../utils/numbers";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -38,7 +39,7 @@ export default function Policies(props: PoliciesProps) {
             return {
                 id: policy.processId,
                 walletAddress: policy.owner,
-                insuredAmount: `${props.insurance.usd1} ${policy.suminsured.toString()}`,
+                insuredAmount: `${props.insurance.usd1} ${formatCurrency(policy.suminsured.toNumber(), props.insurance.usd1Decimals)}`,
                 coverageUntil: getPolicyEndDate(policy),
                 state: t('application_state_' + state, { ns: 'common'}),
             } as PolicyRowView;

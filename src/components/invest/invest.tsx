@@ -108,7 +108,7 @@ export default function Invest(props: InvestProps) {
                 <InvestForm 
                     disabled={formDisabled}
                     usd1={props.insurance.usd1}
-                    usd2={props.insurance.usd2}
+                    usd1Decimals={props.insurance.usd1Decimals}
                     insurance={props.insurance}
                     formReadyForInvest={formReadyForInvest}
                     invest={invest}

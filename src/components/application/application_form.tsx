@@ -23,7 +23,9 @@ export interface ApplicationFormProperties {
     disabled: boolean;
     walletAddress: string;
     usd1: string;
+    usd1Decimals: number;
     usd2: string;
+    usd2Decimals: number;
     applicationApi: ApplicationApi;
     bundles: Array<BundleData>;
     premiumTrxText: string|undefined;
@@ -232,8 +234,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
                     }}
                     value={insuredAmount}
-                    initialEmptyAllowed={true}
                     currency={props.usd1}
+                    currencyDecimals={props.usd1Decimals}
                     onChange={setInsuredAmount}
                     onBlur={calculatePremium}
                     minValue={insuredAmountMin}
@@ -285,6 +287,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     disabled={props.disabled}
                     premium={premium}
                     currency={props.usd2}
+                    currencyDecimals={props.usd2Decimals}
                     error={premiumError}
                     transactionInProgress={(props.premiumTrxText != undefined) || premiumCalculationInProgress}
                     text={props.premiumTrxText || t('premium_calculation_in_progress')}

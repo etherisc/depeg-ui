@@ -9,7 +9,9 @@ import { PolicyData } from "./policy_data";
 export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
         usd1: 'USDC',
+        usd1Decimals: 6,
         usd2: 'USDT',
+        usd2Decimals: 6,
         async createTreasuryApproval(walletAddress: string, premium: number) {
             enqueueSnackbar(`Approval mocked (${walletAddress}, ${premium}`,  { autoHideDuration: 3000, variant: 'info' });
             await delay(2000);

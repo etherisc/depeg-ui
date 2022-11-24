@@ -26,49 +26,86 @@ export const INPUT_VARIANT = 'outlined';
 
 export default function NumericTextField(props: NumericTextFieldProps) {
     const { t } = useTranslation('common');
+    const [ displayValue, setDisplayValue ] = useState<string>(props.value?.toString() ?? "");
     const [ error, setError ] = useState("");
     
-    function handleValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const value = props.value;
+    const onBlur = props.onBlur;
+    const label = props.label;
+    const unit = props.unit;
+    const disabled = props.disabled;
+    const minValue = props.minValue;
+    const maxValue = props.maxValue;
+    const extraValidation = props.extraValidation;
+    const onError = props.onError;
+
+
+    function handleDisplayValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         let val = (x.target as HTMLInputElement).value;
-        if (val == "") {
-            props.onChange(undefined);
-            return;
-        }
-        props.onChange(parseInt(val));
+        setDisplayValue(val);
     }
 
-    const validateValue = useCallback(() => {
-        function handleError(error: string) {
-            setError(error);
-            if (props.onError) {
-                props.onError(error);
-            }
-        }
-        if (props.value === undefined) {
-            handleError(t('error.valueRequired', { fieldName: props.label }));
-            return;
-        }
-        if (props.value < props.minValue) {
-            handleError(t('error.numericTextFieldMinValue', { fieldName: props.label, value: props.minValue, unit: props.unit }));
-            return;
-        } 
-        if (props.value > props.maxValue) {
-            handleError(t('error.numericTextFieldMaxValue', { fieldName: props.label, value: props.maxValue, unit: props.unit }));
-            return;
-        }
-        if (props.extraValidation) {
-            const errorMsg = props.extraValidation(props.value);
-            if (errorMsg && errorMsg !== "") {
-                handleError(errorMsg);
-                return;
-            }
-        }
-        handleError("");
-    }, [props, t]);
+    function changeValue() {
+        console.log("changeValue");
+        let val = parseDisplayValue(displayValue);
+        console.log("val", val);
+        props.onChange(val);
+        const error = validateValue(val);
+        console.log("error", error);
+        handleError(error);
+    }
 
+    function parseDisplayValue(toParse: string) {
+        if (toParse !== undefined && toParse !== "") {
+            return parseFloat(toParse);
+        } else {
+            return undefined;
+        }
+    }
+
+    // call onBlur AFTER value update has been propagated
     useEffect(() => {
-        validateValue();
-    }, [props.value, validateValue]);
+        // call onBlue when value due to user input (the displayValue matches with the incoming value)
+        // otherwise update the displayValue to match the incoming value (update from outside of component)
+        if (value === parseDisplayValue(displayValue) && onBlur !== undefined) {
+            onBlur();
+        } else {
+            setDisplayValue(value?.toString() ?? "");
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [onBlur, value]); // do not react to displayValue change on purpose
+
+    function handleError(error: string) {
+        setError(error);
+        if (onError) {
+            onError(error);
+        }
+    }
+
+    const validateValue = useCallback((valueToValidate: number | undefined): string => {
+        console.log("validateValue", valueToValidate);
+    
+        if (disabled) {
+            return "";
+        }
+        if (valueToValidate === undefined) {
+            return t('error.valueRequired', { fieldName: label });
+        }
+        if (valueToValidate < minValue) {
+            return t('error.numericTextFieldMinValue', { fieldName: label, value: minValue, unit: unit });
+        } 
+        if (valueToValidate > maxValue) {
+            return t('error.numericTextFieldMaxValue', { fieldName: label, value: maxValue, unit: unit });
+        }
+        if (extraValidation !== undefined) {
+            const errorMsg = extraValidation(valueToValidate);
+            if (errorMsg && errorMsg !== "") {
+                return errorMsg;
+            }
+        }
+        return "";
+    }, [disabled, extraValidation, label, minValue, maxValue, unit, t]);
+
 
     let ip = props.inputProps;
     if (props.inputProps === undefined) {
@@ -87,9 +124,9 @@ export default function NumericTextField(props: NumericTextFieldProps) {
             label={props.label}
             type="text"
             InputProps={ip}
-            value={props.value}
-            onChange={handleValueChange}
-            onBlur={() => { try { validateValue(); } finally { if (props.onBlur) props.onBlur(); } }}
+            value={displayValue}
+            onChange={handleDisplayValueChange}
+            onBlur={changeValue}
             helperText={error}
             error={error != ""}
             />

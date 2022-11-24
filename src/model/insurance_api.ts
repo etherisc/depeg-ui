@@ -7,7 +7,9 @@ import { PolicyData } from "../application/insurance/policy_data";
 
 export interface InsuranceApi {
     usd1: string;
+    usd1Decimals: number;
     usd2: string;
+    usd2Decimals: number;
     createTreasuryApproval: 
         (
             walletAddress: string, 

@@ -10,6 +10,7 @@ export interface PremiumProps {
     disabled: boolean;
     premium: FormNumber;
     currency: string;
+    currencyDecimals: number;
     error?: string;
     text?: string;
     transactionInProgress?: boolean;
@@ -25,6 +26,7 @@ export default function Premium(props: PremiumProps) {
     if (props.showBundles) {
         bundles = (<BundleList 
             usd1={props.currency}
+            usd1Decimals={props.currencyDecimals}
             bundles={props.bundles} />);
     }
 
@@ -41,7 +43,7 @@ export default function Premium(props: PremiumProps) {
             id="premiumAmount"
             label={t('premiumAmount')}
             type="text"
-            value={formatCurrency(props.premium)}
+            value={formatCurrency(props.premium, props.currencyDecimals)}
             InputProps={{
                 startAdornment: <InputAdornment position="start">{props.currency}</InputAdornment>,
                 readOnly: true,
