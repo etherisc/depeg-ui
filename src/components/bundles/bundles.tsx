@@ -3,11 +3,17 @@ import { useTranslation } from "next-i18next";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { InsuranceApi } from "../../model/insurance_api";
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleRowView } from "../../model/bundle";
 import { BundleData } from "../../application/insurance/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
+import { LinkBehaviour } from "../shared/link_behaviour";
+import Link from "@mui/material/Link";
+import Button from "@mui/material/Button";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Box from "@mui/material/Box";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -66,6 +72,21 @@ export default function Bundles(props: BundlesProps) {
         { field: 'state', headerName: t('table.header.state'), flex: 1 },
     ];
 
+    function GridToolbar() {
+        return (
+            <GridToolbarContainer >
+                <Box sx={{ flexGrow: 1 }}>
+                </Box>
+                {/* aligned right beyond here */}
+                <Link component={LinkBehaviour} href="/invest" passHref style={{ textDecoration: 'none' }}>
+                    <Button variant="text" color="secondary">
+                        {t('action.create_bundle')}
+                    </Button>
+                </Link>
+            </GridToolbarContainer>
+        );
+    }
+
     const loadingBar = bundleRetrievalInProgess ? <LinearProgress /> : null;
 
     return (
@@ -79,6 +100,9 @@ export default function Bundles(props: BundlesProps) {
                 rows={bundles} 
                 columns={columns} 
                 getRowId={(row) => row.id}
+                components={{
+                    Toolbar: GridToolbar,
+                }}
                 initialState={{
                     sorting: {
                         sortModel: [{ field: 'coverageUntil', sort: 'asc' }],
