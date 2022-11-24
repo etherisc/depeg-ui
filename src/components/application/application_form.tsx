@@ -98,6 +98,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     // check validity of form
     useEffect(() => {
+        console.log("walletAddressValid", walletAddressValid, "insuredAmountValid", insuredAmountValid, "coverageDaysValid", coverageDaysValid);
         let valid = true;
         valid = walletAddressValid && valid;
         valid = insuredAmountValid && valid;
@@ -218,7 +219,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     onChange={handleWalletAddressChange}
                     onBlur={validateWalletAddressAndSetError}
                     required
-                    error={walletAddressError != ""}
+                    error={walletAddressError !== ""}
                     helperText={walletAddressError || t('insuredWalletHelper')}
                 />
             </Grid>

@@ -2,7 +2,10 @@
     "title": "Bundles",
     "table": {
         "header": {
-            "id": "ID"
+            "id": "Bundle Id",
+            "capital": "Invested / remaining capital",
+            "policies": "Policies",
+            "state": "State"
         }
     },  
     "action": {

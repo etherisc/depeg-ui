@@ -4,12 +4,15 @@ import { BundleData } from "./bundle_data";
 import { getInstanceFromProduct } from "./depeg_product";
 import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json'
 import { Coder } from "abi-coder";
+import { IERC721__factory } from "../../contracts/gif-interface";
 
+const IDX_RISKPOOL_ID = 1;
+const IDX_TOKEN_ID = 2;
+const IDX_STATE = 3;
 const IDX_APPLICATION_FILTER = 4;
 
 export async function getBundleData(
     instanceService: IInstanceService, 
-    riskpoolId: number, // this could be retrieved from the IRiskpool contract, but that would require an additonal chain call which we can avoid
     riskpool: DepegRiskpool
 ): Promise<Array<BundleData>> {
     const activeBundleIds = await riskpool.getActiveBundleIds();
@@ -17,31 +20,40 @@ export async function getBundleData(
     let bundleData = new Array<BundleData>();
 
     for (let i = 0; i < activeBundleIds.length; i++) {
-        const bundleId = activeBundleIds[i];
-        console.log('bundleId', bundleId.toNumber());
-        const bundle = await instanceService.getBundle(bundleId);
-        const applicationFilter = bundle[IDX_APPLICATION_FILTER];
-        const [ minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn ] = await riskpool.decodeBundleParamsFromFilter(applicationFilter);
-        const apr = 100 * annualPercentageReturn.toNumber() / (await riskpool.getApr100PercentLevel()).toNumber();
-        const policies = await riskpool.getActivePolicies(bundleId);
-
-        bundleData.push({
-            idx: i,
-            riskpoolId: riskpoolId,
-            bundleId: bundleId.toNumber(),
-            apr: apr,
-            minSumInsured: minSumInsured.toNumber(),
-            maxSumInsured: maxSumInsured.toNumber(),
-            minDuration: minDuration.toNumber(),
-            maxDuration: maxDuration.toNumber(),
-            capital: bundle[5].toNumber(),
-            locked: bundle[6].toNumber(),
-            capacity: bundle[5].toNumber() - bundle[6].toNumber(),
-            policies: policies.toNumber()
-        });
+        const bundleId = activeBundleIds[i].toNumber();
+        console.log('bundleId', bundleId);
+        const bundle = await getBundleDataByBundleId(bundleId, instanceService, riskpool);
+        bundleData.push(bundle);
     }
 
     return Promise.resolve(bundleData);
+}
+
+export async function getBundleDataByBundleId(bundleId: number, instanceService: IInstanceService, riskpool: DepegRiskpool): Promise<BundleData> {
+    const bundle = await instanceService.getBundle(bundleId);
+    const riskpoolId = bundle[IDX_RISKPOOL_ID];
+    const tokenId = bundle[IDX_TOKEN_ID];
+    const applicationFilter = bundle[IDX_APPLICATION_FILTER];
+    const [ minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn ] = await riskpool.decodeBundleParamsFromFilter(applicationFilter);
+    const apr = 100 * annualPercentageReturn.toNumber() / (await riskpool.getApr100PercentLevel()).toNumber();
+    const policies = await riskpool.getActivePolicies(bundleId);
+    const state = bundle[IDX_STATE];
+
+    return {
+        riskpoolId: riskpoolId.toNumber(),
+        bundleId: bundleId,
+        apr: apr,
+        minSumInsured: minSumInsured.toNumber(),
+        maxSumInsured: maxSumInsured.toNumber(),
+        minDuration: minDuration.toNumber(),
+        maxDuration: maxDuration.toNumber(),
+        capital: bundle[5].toNumber(),
+        locked: bundle[6].toNumber(),
+        capacity: bundle[5].toNumber() - bundle[6].toNumber(),
+        policies: policies.toNumber(),
+        state: state,
+        tokenId: tokenId.toNumber()
+    } as BundleData;
 }
 
 export function getBestQuote(
@@ -69,7 +81,7 @@ export function getBestQuote(
             return best;
         }
         return bundle;
-    }, { idx: -1, apr: 100, minDuration: Number.MAX_VALUE, maxDuration: Number.MIN_VALUE, minSumInsured: Number.MAX_VALUE, maxSumInsured: Number.MIN_VALUE } as BundleData);
+    }, { apr: 100, minDuration: Number.MAX_VALUE, maxDuration: Number.MIN_VALUE, minSumInsured: Number.MAX_VALUE, maxSumInsured: Number.MIN_VALUE } as BundleData);
 }
 
 export async function createBundle(
@@ -123,4 +135,48 @@ export function extractBundleIdFromApplicationLogs(logs: any[]): string|undefine
     });
 
     return bundleId;
+}
+
+export async function getBundleTokenAddress(depegProductAddress: string, signer: Signer): Promise<string> {
+    console.log("getBundleTokenAddress", depegProductAddress);
+    const [ _, _1, _2, instanceService ] = await getInstanceFromProduct(depegProductAddress, signer);
+    return await instanceService.getBundleToken();
+}
+
+export async function getBundleCount(depegProductContractAddress: string, signer: Signer): Promise<number> {
+    console.log("getBundleCount", depegProductContractAddress);
+    const [ _, _3, _2, instanceService ] = await getInstanceFromProduct(depegProductContractAddress, signer);
+    return (await instanceService.bundles()).toNumber();
+}
+
+/**
+ * Get the bundle data for a given bundle id from the blockchain. 
+ * Attention workaround: 
+ * This implementation is not very efficient, as it iterates over all bundles
+ * and checks if riskpool and token owner are a match. This is due to the fact 
+ * that the framework currently does not privide a way to retvieve a list of 
+ * nft tokens for a given owner.
+ */
+export async function getBundle(
+    walletAddress: string, 
+    depegProductContractAddress: string, 
+    bundleTokenAddress: string, 
+    signer: Signer, 
+    i: number
+): Promise<BundleData|undefined> {
+    console.log("getBundle", walletAddress, depegProductContractAddress, bundleTokenAddress, i);
+    const [ _, depegRiskpool, riskpoolId, instanceService ] = await getInstanceFromProduct(depegProductContractAddress, signer);
+    const bundle = await getBundleDataByBundleId(i, instanceService, depegRiskpool);
+    if (riskpoolId !== bundle.riskpoolId) {
+        // bundle does not belong to our riskpool
+        return undefined;
+    }
+    const tokenId = bundle.tokenId;
+    const bundleToken = IERC721__factory.connect(bundleTokenAddress, signer);
+    const owner = await bundleToken.ownerOf(tokenId);
+    if (owner !== walletAddress) {
+        // owner mismatch
+        return undefined;
+    }
+    return bundle;
 }

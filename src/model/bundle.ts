@@ -7,5 +7,7 @@ export enum PolicyStatus {
 
 export interface BundleRowView {
     id: string;
-    
+    capital: string;
+    policies: string;
+    state: string;
 }

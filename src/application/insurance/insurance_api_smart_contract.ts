@@ -3,7 +3,7 @@ import { DepegProduct__factory } from "../../contracts/depeg-contracts";
 import { ApplicationApi, InsuranceApi, InvestApi } from "../../model/insurance_api";
 import { delay } from "../../utils/delay";
 import { BalanceTooSmallError, NoBundleFoundError } from "../../utils/error";
-import { createBundle, getBestQuote, getBundleData } from "./riskbundle";
+import { createBundle, getBestQuote, getBundle, getBundleCount, getBundleData, getBundleTokenAddress } from "./riskbundle";
 import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
 import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState, PolicyState, getPoliciesCount, getPolicy } from "./depeg_product";
@@ -89,7 +89,7 @@ class ApplicationApiSmartContract implements ApplicationApi {
         console.log("retrieving risk bundles from smart contract at " + this.depegProductContractAddress);
         const [ product, riskpool, riskpoolId, instanceService ] = await getInstanceFromProduct(this.depegProductContractAddress, this.signer);
         console.log(`riskpoolId: ${riskpoolId}, depegRiskpool: ${riskpool}`);
-        return await getBundleData(instanceService, riskpoolId, riskpool);
+        return await getBundleData(instanceService, riskpool);
     }
 
     async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>): Promise<number> {
@@ -103,7 +103,7 @@ class ApplicationApiSmartContract implements ApplicationApi {
         const product = DepegProduct__factory.connect(this.depegProductContractAddress, this.signer);
         console.log("bundleData", bundles);
         const bestBundle = getBestQuote(bundles, insuredAmount, durationSecs);
-        if (bestBundle.idx == -1) { 
+        if (bestBundle.minDuration == Number.MAX_VALUE) { 
             throw new NoBundleFoundError();
         }
         console.log("bestBundle", bestBundle);
@@ -177,4 +177,17 @@ export class InvestApiSmartContract implements InvestApi {
         
         return Promise.resolve(true);
     }
+
+    async bundleTokenAddress(): Promise<string> {
+        return await getBundleTokenAddress(this.depegProductContractAddress, this.signer);
+    }
+
+    async bundleCount(): Promise<number> {
+        return await getBundleCount(this.depegProductContractAddress, this.signer);
+    }    
+
+    async bundle(walletAddress: string, bundleTokenAddress: string, i: number): Promise<BundleData|undefined> {
+        return await getBundle(walletAddress, this.depegProductContractAddress, bundleTokenAddress, this.signer, i);
+    }
+
 }

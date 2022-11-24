@@ -7,6 +7,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleRowView } from "../../model/bundle";
 import { BundleData } from "../../application/insurance/bundle_data";
+import { formatCurrency } from "../../utils/numbers";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -22,46 +23,47 @@ export default function Bundles(props: BundlesProps) {
 
     useEffect(() => {
         function convertBundleDataToRowView(bundle: BundleData) {
-            // const state = getPolicyState(policy);
-            // return {
-            //     id: policy.processId,
-            //     walletAddress: policy.owner,
-            //     insuredAmount: `${props.insurance.usd1} ${formatCurrency(policy.suminsured.toNumber(), props.insurance.usd1Decimals)}`,
-            //     coverageUntil: getPolicyEndDate(policy),
-            //     state: t('application_state_' + state, { ns: 'common'}),
-            // } as PolicyRowView;
+            const capital = formatCurrency(bundle.capital, props.insurance.usd1Decimals);
+            const capitalRemaining = formatCurrency(bundle.capital - bundle.locked, props.insurance.usd1Decimals);
             return {
-                id: "1",
+                id: `${bundle.bundleId}`,
+                capital: `${props.insurance.usd1} ${capital} / ${capitalRemaining}`,
+                policies: `${bundle.policies}`,
+                state: t('bundle_state_' + bundle.state, { ns: 'common'}),
             } as BundleRowView;
         }
 
-        async function getPolicies() {
+        async function getBundles() {
             const walletAddress = await appContext?.data.signer?.getAddress();
-            if (walletAddress !== undefined) {
+            if (walletAddress !== undefined && ! bundleRetrievalInProgess) {
                 setBundleRetrievalInProgess(true);
                 setBundles([]);
-                // const policiesCount = await props.insurance.policiesCount(walletAddress);
-                // for (let i = 0; i < policiesCount; i++) {
-                //     const bundle = await props.insurance.bundle(walletAddress, i);
-                //     const rowView = convertBundleDataToRowView(bundle);
-                //     setBundles(bundles => [...bundles, rowView]);
-                // }
+                // this will return the count for all bundles in the system (right now this is the only way to get to bundles)
+                const bundlesCount = await props.insurance.invest.bundleCount();
+                const bundleTokenAddress = await props.insurance.invest.bundleTokenAddress();
+                for (let i = 1; i <= bundlesCount; i++) { // bundle id starts at 1
+                    const bundle = await props.insurance.invest.bundle(walletAddress, bundleTokenAddress, i);
+                    // bundle() will return undefined if bundles is not owned by the wallet address
+                    if (bundle === undefined ) {
+                        continue;
+                    }
+                    console.log("bundle: ", bundle);
+                    const rowView = convertBundleDataToRowView(bundle);
+                    setBundles(bundles => [...bundles, rowView]);
+                }
                 setBundleRetrievalInProgess(false);
             } else {
                 setBundles([]);
             }
         }
-        getPolicies();
+        getBundles();
     }, [appContext?.data.signer, props.insurance, t]);
 
     const columns: GridColDef[] = [
-        // { field: 'id', headerName: t('table.header.id'), flex: 1 },
-        // TODO: add copy button to field and shorten content
-        { field: 'walletAddress', headerName: t('table.header.walletAddress'), flex: 1 },
-        { field: 'insuredAmount', headerName: t('table.header.insuredAmount'), flex: 0.5 },
-        // TODO: add date created
-        { field: 'coverageUntil', headerName: t('table.header.coverageUntil'), flex: 0.5 },
-        { field: 'state', headerName: t('table.header.status'), flex: 0.5 },
+        { field: 'id', headerName: t('table.header.id'), flex: 1 },
+        { field: 'capital', headerName: t('table.header.capital'), flex: 1.5 },
+        { field: 'policies', headerName: t('table.header.policies'), flex: 1 },
+        { field: 'state', headerName: t('table.header.state'), flex: 1 },
     ];
 
     const loadingBar = bundleRetrievalInProgess ? <LinearProgress /> : null;

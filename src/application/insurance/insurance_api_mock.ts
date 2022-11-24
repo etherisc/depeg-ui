@@ -1,7 +1,7 @@
-import { BigNumber } from "ethers/lib/ethers";
+import { BigNumber, Signer } from "ethers/lib/ethers";
 import moment from "moment";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
-import { ApplicationApi, InsuranceApi } from "../../model/insurance_api";
+import { ApplicationApi, InsuranceApi, InvestApi } from "../../model/insurance_api";
 import { delay } from "../../utils/delay";
 import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
@@ -144,6 +144,16 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
             );
             await delay(2000);
             return Promise.resolve(true);
+        },
+        bundleTokenAddress(): Promise<string> {
+            return Promise.resolve("0x0000000000000000000000000000000000000000");
+        },
+        bundleCount(): Promise<number> {
+            return Promise.resolve(2);
+        },
+        bundle(walletAddress: string, bundleTokenAddress: string, i: number): Promise<BundleData|undefined> {
+            // TODO: return mock
+            return Promise.resolve(undefined);
         }
-    };
+    } as InvestApi;
 };
