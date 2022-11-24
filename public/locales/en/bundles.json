@@ -1,0 +1,11 @@
+{
+    "title": "Bundles",
+    "table": {
+        "header": {
+            "id": "ID"
+        }
+    },  
+    "action": {
+        "create_bundle": "Create new risk bundle"
+    }
+}
