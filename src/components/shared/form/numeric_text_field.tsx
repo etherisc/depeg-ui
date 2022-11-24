@@ -47,12 +47,7 @@ export default function NumericTextField(props: NumericTextFieldProps) {
 
     function changeValue() {
         console.log("changeValue");
-        let val;
-        if (displayValue !== undefined && displayValue !== "") {
-            val = parseFloat(displayValue);
-        } else {
-            val = undefined;
-        }
+        let val = parseDisplayValue(displayValue);
         console.log("val", val);
         props.onChange(val);
         const error = validateValue(val);
@@ -60,12 +55,25 @@ export default function NumericTextField(props: NumericTextFieldProps) {
         handleError(error);
     }
 
+    function parseDisplayValue(toParse: string) {
+        if (toParse !== undefined && toParse !== "") {
+            return parseFloat(toParse);
+        } else {
+            return undefined;
+        }
+    }
+
     // call onBlur AFTER value update has been propagated
     useEffect(() => {
-        if (onBlur !== undefined) {
+        // call onBlue when value due to user input (the displayValue matches with the incoming value)
+        // otherwise update the displayValue to match the incoming value (update from outside of component)
+        if (value === parseDisplayValue(displayValue) && onBlur !== undefined) {
             onBlur();
+        } else {
+            setDisplayValue(value?.toString() ?? "");
         }
-    }, [onBlur, value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [onBlur, value]); // do not react to displayValue change on purpose
 
     function handleError(error: string) {
         setError(error);
