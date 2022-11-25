@@ -5,7 +5,7 @@ import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
 import Policies from '../components/policies/policies';
 import { useContext, useEffect, useMemo } from 'react';
-import { getInsuranceApi } from '../model/insurance_api';
+import { getInsuranceApi } from '../backend/insurance_api';
 import { AppContext } from '../context/app_context';
 import { useRouter } from 'next/router';
 import { Signer } from 'ethers/lib/ethers';

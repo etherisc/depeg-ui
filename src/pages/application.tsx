@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
-import { getInsuranceApi } from "../model/insurance_api";
+import { getInsuranceApi } from "../backend/insurance_api";
 import { AppContext } from "../context/app_context";
 import { useContext, useMemo } from "react";
 

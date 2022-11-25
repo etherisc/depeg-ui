@@ -1,8 +1,7 @@
 import { Signer, VoidSigner } from "ethers";
-import { DepegProduct__factory } from "../../contracts/depeg-contracts";
-import { ApplicationApi, InsuranceApi, InvestApi } from "../../model/insurance_api";
-import { delay } from "../../utils/delay";
-import { BalanceTooSmallError, NoBundleFoundError } from "../../utils/error";
+import { DepegProduct__factory } from "../contracts/depeg-contracts";
+import { ApplicationApi, InsuranceApi, InvestApi } from "./insurance_api";
+import { BalanceTooSmallError, NoBundleFoundError } from "../utils/error";
 import { createBundle, getBestQuote, getBundle, getBundleCount, getBundleData, getBundleTokenAddress } from "./riskbundle";
 import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";

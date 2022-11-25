@@ -1,6 +1,6 @@
 import { ethers, providers, Signer } from "ethers";
 import React, { Dispatch } from "react";
-import { BundleData } from "../application/insurance/bundle_data";
+import { BundleData } from "../backend/bundle_data";
 
 export interface AppContext {
     data: AppData;

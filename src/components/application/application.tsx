@@ -2,7 +2,7 @@ import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { AppActionType, AppContext } from "../../context/app_context";
 import { useTranslation } from 'next-i18next';
-import { InsuranceApi } from "../../model/insurance_api";
+import { InsuranceApi } from "../../backend/insurance_api";
 import { useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import ApplicationForm from "./application_form";

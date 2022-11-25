@@ -1,10 +1,10 @@
 import { BigNumber, ContractReceipt, ContractTransaction, Signer } from "ethers";
-import { DepegRiskpool, IInstanceService, IRiskpool } from "../../contracts/depeg-contracts";
+import { DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
 import { BundleData } from "./bundle_data";
 import { getInstanceFromProduct } from "./depeg_product";
 import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json'
 import { Coder } from "abi-coder";
-import { IERC721__factory } from "../../contracts/gif-interface";
+import { IERC721__factory } from "../contracts/gif-interface";
 
 const IDX_RISKPOOL_ID = 1;
 const IDX_TOKEN_ID = 2;

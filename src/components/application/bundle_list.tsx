@@ -2,7 +2,7 @@ import { Table, TableHead, TableRow, TableCell, TableBody, Typography } from "@m
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import { useTranslation } from "next-i18next";
-import { BundleData } from "../../application/insurance/bundle_data";
+import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
 
 interface BundleListProps {

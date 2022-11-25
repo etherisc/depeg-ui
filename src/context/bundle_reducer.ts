@@ -1,8 +1,4 @@
-import { ethers, providers, Signer } from "ethers";
-import React, { Dispatch } from "react";
-import { BundleData } from "../application/insurance/bundle_data";
-import Bundles from "../components/bundles/bundles";
-import { InsuranceApi } from "../model/insurance_api";
+import { BundleData } from "../backend/bundle_data";
 
 export type BundleState = {
     bundles: Array<BundleData>,

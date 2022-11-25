@@ -1,8 +1,8 @@
-import { BigNumber, Signer } from "ethers/lib/ethers";
+import { BigNumber } from "ethers/lib/ethers";
 import moment from "moment";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
-import { ApplicationApi, InsuranceApi, InvestApi } from "../../model/insurance_api";
-import { delay } from "../../utils/delay";
+import { ApplicationApi, InsuranceApi, InvestApi } from "./insurance_api";
+import { delay } from "../utils/delay";
 import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
 

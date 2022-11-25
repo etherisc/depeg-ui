@@ -1,5 +1,4 @@
 import { BigNumber } from "ethers/lib/ethers";
-import { Bundle } from "typescript";
 
 export interface PolicyData {
     owner: string

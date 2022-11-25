@@ -6,7 +6,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useTranslation } from 'next-i18next';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { InsuranceApi } from '../../model/insurance_api';
+import { InsuranceApi } from '../../backend/insurance_api';
 import { FormNumber } from '../../utils/types';
 import CurrencyTextField from '../shared/form/currency_text_field';
 import NumericTextField from '../shared/form/numeric_text_field';

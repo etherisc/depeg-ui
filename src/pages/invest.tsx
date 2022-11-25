@@ -5,7 +5,7 @@ import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
 import Invest from '../components/invest/invest';
 import { useContext, useMemo } from 'react';
-import { getInsuranceApi } from '../model/insurance_api';
+import { getInsuranceApi } from '../backend/insurance_api';
 import { AppContext } from '../context/app_context';
 
 export default function InvestPage() {

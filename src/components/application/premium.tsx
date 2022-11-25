@@ -1,6 +1,6 @@
 import { TextField, InputAdornment, LinearProgress, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
-import { BundleData } from "../../application/insurance/bundle_data";
+import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
 import { FormNumber } from "../../utils/types";
 import { INPUT_VARIANT } from "../shared/form/numeric_text_field";

@@ -1,9 +1,9 @@
 import { ethers, Signer } from "ethers";
 import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
-import { BundleData } from "../application/insurance/bundle_data";
-import { insuranceApiMock } from "../application/insurance/insurance_api_mock";
-import { InsuranceApiSmartContract } from "../application/insurance/insurance_api_smart_contract";
-import { PolicyData } from "../application/insurance/policy_data";
+import { BundleData } from "./bundle_data";
+import { insuranceApiMock } from "./insurance_api_mock";
+import { InsuranceApiSmartContract } from "./insurance_api_smart_contract";
+import { PolicyData } from "./policy_data";
 
 export interface InsuranceApi {
     usd1: string;
