@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useReducer, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { InsuranceApi } from "../../model/insurance_api";
 import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
@@ -14,6 +14,7 @@ import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Box from "@mui/material/Box";
+import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -23,27 +24,27 @@ export default function Bundles(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
     const appContext = useContext(AppContext);
 
-    const [ bundles, setBundles ] = useState<Array<BundleRowView>>([]);
-    const [ bundleRetrievalInProgess , setBundleRetrievalInProgess ] = useState(false);
+    // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
+    const [ bundleState, dispatch ] = useReducer(bundleReducer, { bundles: [], loading: false });
     const [ pageSize, setPageSize ] = useState(5);
 
-    useEffect(() => {
-        function convertBundleDataToRowView(bundle: BundleData) {
-            const capital = formatCurrency(bundle.capital, props.insurance.usd1Decimals);
-            const capitalRemaining = formatCurrency(bundle.capital - bundle.locked, props.insurance.usd1Decimals);
-            return {
-                id: `${bundle.bundleId}`,
-                capital: `${props.insurance.usd1} ${capital} / ${capitalRemaining}`,
-                policies: `${bundle.policies}`,
-                state: t('bundle_state_' + bundle.state, { ns: 'common'}),
-            } as BundleRowView;
-        }
+    function convertBundleDataToRowView(bundle: BundleData) {
+        const capital = formatCurrency(bundle.capital, props.insurance.usd1Decimals);
+        const capitalRemaining = formatCurrency(bundle.capital - bundle.locked, props.insurance.usd1Decimals);
+        return {
+            id: `${bundle.bundleId}`,
+            capital: `${props.insurance.usd1} ${capital} / ${capitalRemaining}`,
+            policies: `${bundle.policies}`,
+            state: t('bundle_state_' + bundle.state, { ns: 'common'}),
+        } as BundleRowView;
+    }
 
+    useEffect(() => {
         async function getBundles() {
             const walletAddress = await appContext?.data.signer?.getAddress();
-            if (walletAddress !== undefined && ! bundleRetrievalInProgess) {
-                setBundleRetrievalInProgess(true);
-                setBundles([]);
+            if (walletAddress !== undefined && ! bundleState.loading) {
+                dispatch({ type: BundleActionType.START_LOADING });
+                dispatch({ type: BundleActionType.RESET });
                 // this will return the count for all bundles in the system (right now this is the only way to get to bundles)
                 const bundlesCount = await props.insurance.invest.bundleCount();
                 const bundleTokenAddress = await props.insurance.invest.bundleTokenAddress();
@@ -54,12 +55,13 @@ export default function Bundles(props: BundlesProps) {
                         continue;
                     }
                     console.log("bundle: ", bundle);
-                    const rowView = convertBundleDataToRowView(bundle);
-                    setBundles(bundles => [...bundles, rowView]);
+                    dispatch({ type: BundleActionType.ADD, bundle: bundle });
                 }
-                setBundleRetrievalInProgess(false);
+                dispatch({ type: BundleActionType.STOP_LOADING });
+            } else if (bundleState.loading) {
+                console.log("bundle retrieval already in progress");
             } else {
-                setBundles([]);
+                dispatch({ type: BundleActionType.RESET });
             }
         }
         getBundles();
@@ -87,7 +89,7 @@ export default function Bundles(props: BundlesProps) {
         );
     }
 
-    const loadingBar = bundleRetrievalInProgess ? <LinearProgress /> : null;
+    const loadingBar = bundleState.loading ? <LinearProgress /> : null;
 
     return (
         <>
@@ -97,7 +99,7 @@ export default function Bundles(props: BundlesProps) {
 
             <DataGrid 
                 autoHeight
-                rows={bundles} 
+                rows={bundleState.bundles.map(convertBundleDataToRowView)} 
                 columns={columns} 
                 getRowId={(row) => row.id}
                 components={{
