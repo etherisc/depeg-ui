@@ -58,13 +58,8 @@ export default function Invest(props: InvestProps) {
             t('application_success'),
             { 
                 variant: 'success', 
-                persist: true, 
+                autoHideDuration: 5000, 
                 preventDuplicate: true,
-                action: (key) => {
-                    return (
-                        <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                    );
-                }
             }
         );
         confetti({
