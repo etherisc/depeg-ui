@@ -3,8 +3,10 @@
     "apptitle_short": "Depeg Protection",
     "nav": {
         "link": {
-            "protect": "Protect",
-            "invest": "Invest"
+            "invest": "Invest",
+            "policies": "Policies",
+            "bundles": "Bundles",
+            "apply": "Apply"
         }
     },
     "action": {
