@@ -21,7 +21,7 @@
     "error_wallet_balance_too_low": "The wallet does not contain enough {{currency}} to pay for the premium",
     "bundle_loading": "Fetching risk bundle information from blockchain",
     "premium_calculation_in_progress": "Premium is being calculated",
-    "approval_info": "Please approve the premium allowance transaction in your wallet",
+    "approval_info": "To issue a policy, the GIF treasury contract at {{address}} needs permission to transfer {{currency}} {{amount}} to the depeg insurance. Please confirm this allowance in your wallet app.",
     "approval_wait": "Allowance created, waiting for onchain confirmation",
     "apply_info": "Please confirm execution of the policy application transaction in your wallet",
     "apply_wait": "Transaction created, waiting for onchain confirmation",

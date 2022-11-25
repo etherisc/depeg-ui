@@ -3,11 +3,12 @@ import { useContext, useEffect, useState } from "react";
 import { AppActionType, AppContext } from "../../context/app_context";
 import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../backend/insurance_api";
-import { useSnackbar } from "notistack";
+import { SnackbarKey, useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
-import ApplicationForm from "./application_form";
 import { Signer, VoidSigner } from "ethers";
 import { useRouter } from 'next/router'
+import { formatCurrency } from "../../utils/numbers";
+import ApplicationForm from "./application_form";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -98,23 +99,31 @@ export default function Application(props: ApplicationProps) {
     }
 
     async function doApproval(walletAddress: string, premium: number): Promise<Boolean> {
-        let snackbarId = enqueueSnackbar(
-            t('approval_info'),
-            { variant: "warning", persist: true }
-        );
-        let snackbarId2;
+        let snackbar: SnackbarKey | undefined = undefined;
         try {
-            return await props.insurance.createTreasuryApproval(walletAddress, premium, () => {
-                closeSnackbar(snackbarId);
-                snackbarId2 = enqueueSnackbar(
-                    t('approval_wait'),
-                    { variant: "info", persist: true }
-                );
-            });
+            return await props.insurance.createTreasuryApproval(
+                walletAddress, 
+                premium, 
+                (address, currency, amount) => {
+                    snackbar = enqueueSnackbar(
+                        t('approval_info', { address, currency, amount: formatCurrency(amount, props.insurance.usd1Decimals) }),
+                        { variant: "warning", persist: true }
+                    );
+                },
+                (address, currency, amount) => {
+                    if (snackbar !== undefined) {
+                        closeSnackbar(snackbar);
+                    }
+                    snackbar = enqueueSnackbar(
+                        t('approval_wait'),
+                        { variant: "info", persist: true }
+                    );
+                }
+            );
             // FIXME: handle error during approval
         } finally {
-            if (snackbarId2 !== undefined) {
-                closeSnackbar(snackbarId2);
+            if (snackbar !== undefined) {
+                closeSnackbar(snackbar);
             }
         }
     }

@@ -14,7 +14,8 @@ export interface InsuranceApi {
         (
             walletAddress: string, 
             premium: number,
-            beforeWaitCallback?: () => void
+            beforeApprovalCallback?: (address: string, currency: string, amount: number) => void,
+            beforeWaitCallback?: (address: string, currency: string, amount: number) => void
         ) => Promise<boolean>;
     policy: 
         (

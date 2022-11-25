@@ -56,10 +56,15 @@ export class InsuranceApiSmartContract implements InsuranceApi {
         return await getPoliciesCount(walletAddress, this.depegProductContractAddress, this.signer);
     }
 
-    async createTreasuryApproval(walletAddress: string, premium: number, beforeWaitCallback?: () => void) {
+    async createTreasuryApproval(
+        walletAddress: string, 
+        premium: number, 
+        beforeApprovalCallback?: (address: string, currency: string, amount: number) => void,
+        beforeWaitCallback?: (address: string, currency: string, amount: number) => void,
+    ) {
         console.log("createApproval", walletAddress, premium);
         const product = DepegProduct__factory.connect(this.depegProductContractAddress, this.signer);
-        const [tx, receipt] = await createApprovalForTreasury(await product.getToken(), this.signer, premium, await product.getRegistry(), beforeWaitCallback);
+        const [tx, receipt] = await createApprovalForTreasury(await product.getToken(), this.signer, premium, await product.getRegistry(), beforeApprovalCallback, beforeWaitCallback);
         console.log("tx", tx, "receipt", receipt);
         // TODO: return real result
         return Promise.resolve(true);
