@@ -128,10 +128,11 @@ class ApplicationApiSmartContract implements ApplicationApi {
             insuredAmount: number, 
             coverageDurationDays: number,
             premium: number,
-            beforeWaitCallback?: () => void
+            beforeApplyCallback?: (address: string) => void,
+            beforeWaitCallback?: (address: string) => void,
         ) {
         console.log("applyForPolicy", walletAddress, insuredAmount, coverageDurationDays, premium);
-        const [tx, receipt] = await applyForDepegPolicy(this.depegProductContractAddress, this.signer, insuredAmount, coverageDurationDays, premium, beforeWaitCallback);
+        const [tx, receipt] = await applyForDepegPolicy(this.depegProductContractAddress, this.signer, insuredAmount, coverageDurationDays, premium, beforeApplyCallback, beforeWaitCallback);
         let processId = extractProcessIdFromApplicationLogs(receipt.logs);
         console.log(`processId: ${processId}`);
         // TODO: return real result
@@ -174,10 +175,22 @@ export class InvestApiSmartContract implements InvestApi {
         minDuration: number, 
         maxDuration: number, 
         annualPctReturn: number,
-        beforeWaitCallback?: () => void
+        beforeInvestCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void
     ): Promise<boolean> {
         console.log("invest", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
-        const [tx, receipt] = await createBundle(this.depegProductContractAddress, this.signer, investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn, beforeWaitCallback);
+        const [tx, receipt] = await createBundle(
+            this.depegProductContractAddress, 
+            this.signer, 
+            investorWalletAddress, 
+            investedAmount, 
+            minSumInsured, 
+            maxSumInsured, 
+            minDuration, 
+            maxDuration, 
+            annualPctReturn, 
+            beforeInvestCallback, 
+            beforeWaitCallback);
         
         return Promise.resolve(true);
     }

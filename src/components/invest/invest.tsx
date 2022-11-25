@@ -107,23 +107,35 @@ export default function Invest(props: InvestProps) {
     }
 
     async function doInvest(investorWalletAddress: string, investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
-        const snackbarId = enqueueSnackbar(
-            t('invest_info'),
-            { variant: "warning", persist: true }
-        );
-        let snackbarId2;
+        let snackbar: SnackbarKey | undefined = undefined; 
         try {
-            return await props.insurance.invest.invest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn, () => {
-                closeSnackbar(snackbarId);
-                snackbarId2 = enqueueSnackbar(
-                    t('invest_wait'),
-                    { variant: "info", persist: true }
-                );
-            });
+            return await props.insurance.invest.invest(
+                investorWalletAddress, 
+                investedAmount, 
+                minSumInsured, 
+                maxSumInsured, 
+                minDuration, 
+                maxDuration, 
+                annualPctReturn, 
+                (address: string) => {
+                    snackbar = enqueueSnackbar(
+                        t('invest_info', { address }),
+                        { variant: "warning", persist: true }
+                    );
+                },
+                (address: string) => {
+                    if (snackbar !== undefined) {
+                        closeSnackbar(snackbar);
+                    }
+                    snackbar = enqueueSnackbar(
+                        t('invest_wait'),
+                        { variant: "info", persist: true }
+                    );
+                });
             // FIXME: handle error during invest
         } finally {
-            if (snackbarId2 !== undefined) {
-                closeSnackbar(snackbarId2);
+            if (snackbar !== undefined) {
+                closeSnackbar(snackbar);
             }
         }
     }

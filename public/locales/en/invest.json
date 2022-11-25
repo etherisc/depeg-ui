@@ -19,10 +19,10 @@
     "annualPctReturnMaxError": "Annual percentage return must be at most {{pct}}%",
     "checkbox_t_and_c_label": "By checking this box, I confirm that I have read and agree to the Terms and Conditions.",
     "button_invest": "Invest",
-    "application_success": "Your risk bundle investment has been successful",
+    "application_success": "Congratulations, your riskpool bundle investment has been successful!",
     "days": "Days",
     "approval_info": "To fund the risk pool bundle, the GIF treasury contract at {{address}} needs permission to transfer {{currency}} {{amount}} to the depeg insurance riskpool. Please confirm this allowance in your wallet app.",
-    "approval_wait": "Allowance created, waiting for onchain confirmation",
-    "invest_info": "Please confirm execution of the investment transaction in your wallet",
+    "approval_wait": "Treasury allowance created, waiting for onchain confirmation",
+    "invest_info": "Please confirm execution of the riskpool investment transaction on contract {{address}} in your wallet app",
     "invest_wait": "Transaction created, waiting for onchain confirmation"
 }

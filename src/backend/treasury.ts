@@ -15,11 +15,11 @@ export async function createApprovalForTreasury(
     const instanceService = await getInstanceService(registryAddress, signer);
     const treasury = await instanceService.getTreasuryAddress();
     console.log("treasury", treasury);
-    if (beforeApprovalCallback) {
+    if (beforeApprovalCallback !== undefined) {
         beforeApprovalCallback(treasury, "", amount); // TODO: currency symbol
     }
     const tx = await usd1.approve(treasury, amount);
-    if (beforeWaitCallback) {
+    if (beforeWaitCallback !== undefined) {
         beforeWaitCallback(treasury, "", amount); // TODO: currency symbol
     }
     const receipt = await tx.wait();

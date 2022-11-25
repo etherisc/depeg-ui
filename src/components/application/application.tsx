@@ -94,8 +94,8 @@ export default function Application(props: ApplicationProps) {
             spread: 70,
             origin: { y: 0.6 }
         });
-        // redirect to policy list (/)
-        router.push("/");
+        // redirect to policy list
+        router.push("/policies");
     }
 
     async function doApproval(walletAddress: string, premium: number): Promise<Boolean> {
@@ -129,23 +129,32 @@ export default function Application(props: ApplicationProps) {
     }
 
     async function doApplication(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<boolean> {
-        const snackbarId = enqueueSnackbar(
-            t('apply_info'),
-            { variant: "warning", persist: true }
-        );
-        let snackbarId2;
+        let snackbar: SnackbarKey | undefined = undefined;
         try {
-            return await props.insurance.application.applyForPolicy(walletAddress, insuredAmount, coverageDuration, premium, () => {
-                closeSnackbar(snackbarId);
-                snackbarId2 = enqueueSnackbar(
-                    t('apply_wait'),
-                    { variant: "info", persist: true }
-                );
-            });
+            return await props.insurance.application.applyForPolicy(
+                walletAddress, 
+                insuredAmount, 
+                coverageDuration, 
+                premium, 
+                (address: string) => {
+                    snackbar = enqueueSnackbar(
+                        t('apply_info', { address }),
+                        { variant: "warning", persist: true }
+                    );
+                },
+                () => {
+                    if (snackbar !== undefined) {
+                        closeSnackbar(snackbar);
+                    }
+                    snackbar = enqueueSnackbar(
+                        t('apply_wait'),
+                        { variant: "info", persist: true }
+                    );
+                });
             // FIXME: handle error during apply for policy
         } finally {
-            if (snackbarId2 !== undefined) {
-                closeSnackbar(snackbarId2);
+            if (snackbar !== undefined) {
+                closeSnackbar(snackbar);
             }
         }
     }

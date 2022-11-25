@@ -45,15 +45,19 @@ export async function applyForDepegPolicy(
     insuredAmount: number, 
     coverageDurationDays: number, 
     premium: number, 
-    beforeWaitCallback?: () => void
+    beforeApplyCallback?: (address: string) => void,
+    beforeWaitCallback?: (address: string) => void
 ): Promise<[ContractTransaction, ContractReceipt]> {
     const product = DepegProduct__factory.connect(contractAddress, signer);
+    if (beforeApplyCallback !== undefined) {
+        beforeApplyCallback(contractAddress);
+    }
     const tx = await product.applyForPolicy(
         insuredAmount, 
         coverageDurationDays * 24 * 60 * 60,
         premium);
-    if (beforeWaitCallback) {
-        beforeWaitCallback();
+    if (beforeWaitCallback !== undefined) {
+        beforeWaitCallback(contractAddress);
     }
     const receipt = await tx.wait();
     // console.log(receipt);

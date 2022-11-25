@@ -54,7 +54,8 @@ export interface ApplicationApi {
             insuredAmount: number, 
             coverageDurationDays: number,
             premium: number,
-            beforeWaitCallback?: () => void
+            beforeApplyCallback?: (address: string) => void,
+            beforeWaitCallback?: (address: string) => void
         ) => Promise<boolean>;
 }
 
@@ -76,7 +77,8 @@ export interface InvestApi {
             minDuration: number, 
             maxDuration: number, 
             annualPctReturn: number,
-            beforeWaitCallback?: () => void,
+            beforeInvestCallback?: (address: string) => void,
+            beforeWaitCallback?: (address: string) => void,
         ) => Promise<boolean>;
     bundleTokenAddress(): Promise<string>;
     bundleCount(): Promise<number>;

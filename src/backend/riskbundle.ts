@@ -94,12 +94,17 @@ export async function createBundle(
     minDuration: number, 
     maxDuration: number, 
     annualPctReturn: number,
-    beforeWaitCallback?: () => void
+    beforeInvestCallback?: (address: string) => void,
+    beforeWaitCallback?: (address: string) => void
 ): Promise<[ContractTransaction, ContractReceipt]> {
     console.log("createBundle", depegProductAddress, investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
-    const [ depegProduct, depegRiskpool, riskpoolId, instanceService ] = await getInstanceFromProduct(depegProductAddress, signer);
+    const [ _p, depegRiskpool, _rId, _iS ] = await getInstanceFromProduct(depegProductAddress, signer);
+    const riskpoolAddress = depegRiskpool.address;
     const apr100Level = await depegRiskpool.getApr100PercentLevel();
     const apr = annualPctReturn * apr100Level.toNumber() / 100;
+    if (beforeInvestCallback) {
+        beforeInvestCallback(riskpoolAddress);
+    }
     const tx = await depegRiskpool["createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"](
         minSumInsured, 
         maxSumInsured, 
@@ -107,8 +112,8 @@ export async function createBundle(
         maxDuration * 86400, 
         apr, 
         investedAmount);
-    if (beforeWaitCallback) {
-        beforeWaitCallback();
+    if (beforeWaitCallback !== undefined) {
+        beforeWaitCallback(riskpoolAddress);
     }
     const receipt = await tx.wait();
     const bundleId = extractBundleIdFromApplicationLogs(receipt.logs);
