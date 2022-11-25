@@ -1,8 +1,8 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
-import { useContext, useEffect, useReducer, useState } from "react";
+import { useCallback, useContext, useEffect, useReducer, useState } from "react";
 import { AppContext } from "../../context/app_context";
-import { InsuranceApi } from "../../model/insurance_api";
+import { getInsuranceApi, InsuranceApi } from "../../model/insurance_api";
 import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleRowView } from "../../model/bundle";
@@ -15,6 +15,7 @@ import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Box from "@mui/material/Box";
 import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
+import { useSnackbar } from "notistack";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -23,6 +24,7 @@ export interface BundlesProps {
 export default function Bundles(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
     const appContext = useContext(AppContext);
+    const { enqueueSnackbar } = useSnackbar();
 
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [ bundleState, dispatch ] = useReducer(bundleReducer, { bundles: [], loading: false });
@@ -38,34 +40,41 @@ export default function Bundles(props: BundlesProps) {
             state: t('bundle_state_' + bundle.state, { ns: 'common'}),
         } as BundleRowView;
     }
+    
+
+    const getBundles = useCallback(async () => {
+        if (bundleState.loading) {
+            return;
+        }
+
+        dispatch({ type: BundleActionType.START_LOADING });
+
+        const walletAddress = await appContext?.data.signer?.getAddress();
+        if (walletAddress === undefined ) {
+            dispatch({ type: BundleActionType.RESET });
+            return;
+        }
+
+        dispatch({ type: BundleActionType.RESET });
+        // this will return the count for all bundles in the system (right now this is the only way to get to bundles)
+        const iapi = await getInsuranceApi(enqueueSnackbar, t, appContext.data.signer, appContext.data.provider).invest;
+        const bundlesCount = await iapi.bundleCount();
+        const bundleTokenAddress = await iapi.bundleTokenAddress();
+        for (let i = 1; i <= bundlesCount; i++) { // bundle id starts at 1
+            const bundle = await iapi.bundle(walletAddress, bundleTokenAddress, i);
+            // bundle() will return undefined if bundles is not owned by the wallet address
+            if (bundle === undefined ) {
+                continue;
+            }
+            console.log("bundle: ", bundle);
+            dispatch({ type: BundleActionType.ADD, bundle: bundle });
+        }
+        dispatch({ type: BundleActionType.STOP_LOADING });
+    }, [appContext.data.provider, appContext.data.signer, bundleState.loading, enqueueSnackbar, t]);
 
     useEffect(() => {
-        async function getBundles() {
-            const walletAddress = await appContext?.data.signer?.getAddress();
-            if (walletAddress !== undefined && ! bundleState.loading) {
-                dispatch({ type: BundleActionType.START_LOADING });
-                dispatch({ type: BundleActionType.RESET });
-                // this will return the count for all bundles in the system (right now this is the only way to get to bundles)
-                const bundlesCount = await props.insurance.invest.bundleCount();
-                const bundleTokenAddress = await props.insurance.invest.bundleTokenAddress();
-                for (let i = 1; i <= bundlesCount; i++) { // bundle id starts at 1
-                    const bundle = await props.insurance.invest.bundle(walletAddress, bundleTokenAddress, i);
-                    // bundle() will return undefined if bundles is not owned by the wallet address
-                    if (bundle === undefined ) {
-                        continue;
-                    }
-                    console.log("bundle: ", bundle);
-                    dispatch({ type: BundleActionType.ADD, bundle: bundle });
-                }
-                dispatch({ type: BundleActionType.STOP_LOADING });
-            } else if (bundleState.loading) {
-                console.log("bundle retrieval already in progress");
-            } else {
-                dispatch({ type: BundleActionType.RESET });
-            }
-        }
         getBundles();
-    }, [appContext?.data.signer, props.insurance, t]);
+    }, [appContext.data.signer]);
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: t('table.header.id'), flex: 1 },

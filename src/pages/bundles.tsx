@@ -25,20 +25,20 @@ export default function BundlesPage() {
     ), [enqueueSnackbar, appContext, t]);
 
     
-    // if wallet has no policies, redirect to application page
-    async function redirectToInvest(signer: Signer | undefined) {
-        // TODO: implement redirect when not owning bundle 
-        // if ( appContext.data.signer !== undefined && await insurance.policiesCount(await signer!!.getAddress()) === 0 ) {
-        //     router.push('/application');
-        //     return;
-        // }
-    }
+    // TODO: reenable this once we can get a bundle count quickly
+    // // if wallet has no policies, redirect to application page
+    // async function redirectToInvest(signer: Signer | undefined) {
+    //     if ( appContext.data.signer !== undefined && await insurance.policiesCount(await signer!!.getAddress()) === 0 ) {
+    //         router.push('/invest');
+    //         return;
+    //     }
+    // }
 
-    redirectToInvest(appContext.data.signer);
+    // redirectToInvest(appContext.data.signer);
 
-    useEffect(() => {
-        redirectToInvest(appContext.data.signer);
-    }, [appContext.data.signer]);
+    // useEffect(() => {
+        // redirectToInvest(appContext.data.signer);
+    // }, [appContext.data.signer]);
 
     return (
         <>
