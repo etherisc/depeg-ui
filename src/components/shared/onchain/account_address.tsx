@@ -27,8 +27,6 @@ export default function AccountAddress(props: AccountAddressProps) {
         }
     }, [props]);
     
-    let message = (<></>);
-
     async function copyAddressToClipboard() {
         await navigator.clipboard.writeText(address);
         enqueueSnackbar(t('action.address_copied'),  { autoHideDuration: 2000, variant: 'info' });
@@ -36,7 +34,7 @@ export default function AccountAddress(props: AccountAddressProps) {
     
     return (
         <>
-            {address} 
+            {address.substring(0, 6)}...{address.substring(address.length - 4)}
             {NBSP}
             <ContentCopy onClick={copyAddressToClipboard} sx={{ fontSize: 14 }} />
         </>
