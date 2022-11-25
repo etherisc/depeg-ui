@@ -5,7 +5,8 @@
             "id": "Bundle Id",
             "capital": "Invested / remaining capital",
             "policies": "Policies",
-            "state": "State"
+            "state": "State",
+            "createdDate": "Created Date"
         }
     },  
     "action": {

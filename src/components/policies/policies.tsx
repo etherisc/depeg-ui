@@ -11,10 +11,12 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { LinkBehaviour } from "../shared/link_behaviour";
 import Link from "@mui/material/Link";
-import { getPolicyEndDate, getPolicyState } from "../../backend/depeg_product";
+import { getPolicyEnd, getPolicyState } from "../../backend/depeg_product";
 import { PolicyData } from "../../backend/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
 import { formatCurrency } from "../../utils/numbers";
+import moment from "moment";
+import { formatDate } from "../../utils/date";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -40,7 +42,8 @@ export default function Policies(props: PoliciesProps) {
                 id: policy.processId,
                 walletAddress: policy.owner,
                 insuredAmount: `${props.insurance.usd1} ${formatCurrency(policy.suminsured.toNumber(), props.insurance.usd1Decimals)}`,
-                coverageUntil: getPolicyEndDate(policy),
+                created: formatDate(moment.unix(policy.createdAt.toNumber())),
+                coverageUntil: formatDate(getPolicyEnd(policy)),
                 state: t('application_state_' + state, { ns: 'common'}),
             } as PolicyRowView;
         }
@@ -72,7 +75,7 @@ export default function Policies(props: PoliciesProps) {
         // TODO: add copy button to field and shorten content
         { field: 'walletAddress', headerName: t('table.header.walletAddress'), flex: 1 },
         { field: 'insuredAmount', headerName: t('table.header.insuredAmount'), flex: 0.5 },
-        // TODO: add date created
+        { field: 'created', headerName: t('table.header.createdDate'), flex: 0.5 },
         { field: 'coverageUntil', headerName: t('table.header.coverageUntil'), flex: 0.5 },
         { field: 'state', headerName: t('table.header.status'), flex: 0.5 },
     ];

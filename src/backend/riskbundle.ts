@@ -10,6 +10,7 @@ const IDX_RISKPOOL_ID = 1;
 const IDX_TOKEN_ID = 2;
 const IDX_STATE = 3;
 const IDX_APPLICATION_FILTER = 4;
+const IDX_CREATED_AT = 8;
 
 export async function getBundleData(
     instanceService: IInstanceService, 
@@ -52,7 +53,8 @@ export async function getBundleDataByBundleId(bundleId: number, instanceService:
         capacity: bundle[5].toNumber() - bundle[6].toNumber(),
         policies: policies.toNumber(),
         state: state,
-        tokenId: tokenId.toNumber()
+        tokenId: tokenId.toNumber(),
+        createdAt: bundle[IDX_CREATED_AT].toNumber(),
     } as BundleData;
 }
 

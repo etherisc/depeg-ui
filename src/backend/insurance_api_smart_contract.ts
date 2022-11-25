@@ -5,7 +5,7 @@ import { BalanceTooSmallError, NoBundleFoundError } from "../utils/error";
 import { createBundle, getBestQuote, getBundle, getBundleCount, getBundleData, getBundleTokenAddress } from "./riskbundle";
 import { BundleData } from "./bundle_data";
 import { createApprovalForTreasury } from "./treasury";
-import { applyForDepegPolicy, getPolicyEndDate, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPolicyState, PolicyState, getPoliciesCount, getPolicy } from "./depeg_product";
+import { applyForDepegPolicy, extractProcessIdFromApplicationLogs, getInstanceFromProduct, getPolicies, getPoliciesCount, getPolicy } from "./depeg_product";
 import { hasBalance } from "./erc20";
 import { PolicyData } from "./policy_data";
 

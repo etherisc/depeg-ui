@@ -9,6 +9,7 @@ export interface PolicyRowView {
     id: string;
     walletAddress: string;
     insuredAmount: string;
+    created: string;
     coverageUntil: string;
     state: string;
 }

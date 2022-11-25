@@ -11,11 +11,11 @@ import { formatCurrency } from "../../utils/numbers";
 import { LinkBehaviour } from "../shared/link_behaviour";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Box from "@mui/material/Box";
 import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
+import { formatDate } from "../../utils/date";
+import moment from "moment";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -36,6 +36,7 @@ export default function Bundles(props: BundlesProps) {
         return {
             id: `${bundle.bundleId}`,
             capital: `${props.insurance.usd1} ${capital} / ${capitalRemaining}`,
+            created: formatDate(moment.unix(bundle.createdAt)),
             policies: `${bundle.policies}`,
             state: t('bundle_state_' + bundle.state, { ns: 'common'}),
         } as BundleRowView;
@@ -79,6 +80,7 @@ export default function Bundles(props: BundlesProps) {
     const columns: GridColDef[] = [
         { field: 'id', headerName: t('table.header.id'), flex: 1 },
         { field: 'capital', headerName: t('table.header.capital'), flex: 1.5 },
+        { field: 'created', headerName: t('table.header.created'), flex: 1 },
         { field: 'policies', headerName: t('table.header.policies'), flex: 1 },
         { field: 'state', headerName: t('table.header.state'), flex: 1 },
     ];

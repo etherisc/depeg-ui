@@ -12,4 +12,5 @@ export type BundleData = {
     capacity: number;
     policies: number;
     state: number;
+    createdAt: number;
 }

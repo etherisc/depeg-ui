@@ -6,7 +6,8 @@
             "walletAddress": "Wallet Address",
             "insuredAmount": "Insured Amount",
             "coverageUntil": "Coverage Until",
-            "status": "Status"
+            "status": "Status",
+            "createdDate": "Created Date"   
         }
     },  
     "action": {

@@ -6,6 +6,7 @@ import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { IInstanceService } from "../contracts/gif-interface";
 import { APPLICATION_STATE_APPLIED, APPLICATION_STATE_DECLINED, APPLICATION_STATE_REVOKED, APPLICATION_STATE_UNDERWRITTEN, PAYOUT_STATE_EXPECTED, PAYOUT_STATE_PAIDOUT, PolicyData, POLICY_STATE_ACTIVE, POLICY_STATE_CLOSED, POLICY_STATE_EXPIRED } from "./policy_data";
 import moment, { Moment } from "moment";
+import { formatDate } from "../utils/date";
 
 export async function getInstanceFromProduct(depegProductContractAddress: string, signer: Signer): 
         Promise<[DepegProduct, DepegRiskpool, number, IInstanceService]>
@@ -194,7 +195,8 @@ function getPolicyExpiration(policy: PolicyData): Moment {
     return moment.unix(policy.createdAt.toNumber() + policy.duration.toNumber());
 }
 
-export function getPolicyEndDate(policy: PolicyData): string {
-    return getPolicyExpiration(policy).startOf("day").format("YYYY-MM-DD");
+export function getPolicyEnd(policy: PolicyData): Moment {
+    return getPolicyExpiration(policy).startOf("day");
 }
+
 
