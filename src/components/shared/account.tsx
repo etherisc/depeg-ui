@@ -10,6 +10,7 @@ export default function Account() {
     const appContext = useContext(AppContext);
 
     const [ address, setAddress ] = useState("");
+    const tokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL ?? "ETH";
 
     useEffect(() => {
         console.log("signer changed");
@@ -35,7 +36,7 @@ export default function Account() {
                     {NBSP} {DOT} {NBSP}
                     <Balance
                         signer={appContext?.data.signer}
-                        currency="AVAX"
+                        currency={tokenSymbol}
                         usdAggregatorAddress={process.env.NEXT_PUBLIC_CHAINLINK_AGGREGATOR_AVAX_USD_ADDRESS!}
                         />
                 </Box>
