@@ -46,12 +46,12 @@ export default function NumericTextField(props: NumericTextFieldProps) {
     }
 
     function changeValue() {
-        console.log("changeValue");
+        // console.log("changeValue");
         let val = parseDisplayValue(displayValue);
-        console.log("val", val);
+        // console.log("val", val);
         props.onChange(val);
         const error = validateValue(val);
-        console.log("error", error);
+        // console.log("error", error);
         handleError(error);
     }
 
@@ -83,7 +83,7 @@ export default function NumericTextField(props: NumericTextFieldProps) {
     }
 
     const validateValue = useCallback((valueToValidate: number | undefined): string => {
-        console.log("validateValue", valueToValidate);
+        // console.log("validateValue", valueToValidate);
     
         if (disabled) {
             return "";
