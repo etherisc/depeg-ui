@@ -8,6 +8,7 @@ import AccountAddress from "../onchain/account_address";
 import LoginWithMetaMaskButton from "./login_metamask";
 import LoginWithWalletConnectButton from "./login_walletconnect";
 import Logout from "./logout";
+import { reconnectWallets } from "./wallet";
 
 export default function Account() {
     const appContext = useContext(AppContext);
@@ -29,6 +30,11 @@ export default function Account() {
             setLoggedIn(false);
         }
     }, [appContext?.data.signer]);
+
+    useEffect(() => {
+        reconnectWallets(appContext);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     
     if (! loggedIn) {
         return (

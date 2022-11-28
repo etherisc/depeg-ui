@@ -15,7 +15,7 @@ import { SnackbarProvider } from 'notistack';
 import { appWithTranslation } from 'next-i18next';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { getAndUpdateAccount } from '../utils/metamask';
+import { getAndUpdateWalletAccount } from '../components/shared/account/wallet';
 
 
 export function App({ Component, pageProps }: AppProps) {
@@ -34,7 +34,7 @@ export function App({ Component, pageProps }: AppProps) {
         if (accounts.length == 0) {
           removeSigner(dispatch);
         } else {
-          getAndUpdateAccount(dispatch);
+          getAndUpdateWalletAccount(dispatch);
         }
       });
       // @ts-ignore
