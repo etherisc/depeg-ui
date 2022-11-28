@@ -8,5 +8,7 @@ export function formatCurrency(value: FormNumber, decimals: number, displayPreci
     if (value === undefined) {
         return "";
     }
-    return (value / Math.pow(10, decimals)).toFixed(displayPrecision || DISPLAY_PRECISION);
+    return (value / Math.pow(10, decimals)).toLocaleString(undefined, { useGrouping: true, 
+        minimumFractionDigits: displayPrecision || DISPLAY_PRECISION,
+        maximumFractionDigits: displayPrecision || DISPLAY_PRECISION });
 }

@@ -95,7 +95,7 @@ export default function Policies(props: PoliciesProps) {
                         label={t('action.filter_active')} />   
                 </Box>
                 {/* aligned right beyond here */}
-                <Link component={LinkBehaviour} href="/application" passHref style={{ textDecoration: 'none' }}>
+                <Link component={LinkBehaviour} href="/" passHref style={{ textDecoration: 'none' }}>
                     <Button variant="text" color="secondary">
                         {t('action.create_application')}
                     </Button>
