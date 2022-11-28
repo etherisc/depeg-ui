@@ -1,5 +1,5 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";import { ethers } from "ethers";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { walletConnectConfig } from "../../../config/appConfig";
 import { AppContext, setSigner, removeSigner, updateSigner } from "../../../context/app_context";
 import Button from '@mui/material/Button'
@@ -51,6 +51,12 @@ export default function LoginWithWalletConnectButton() {
         const provider = new ethers.providers.Web3Provider(wcProvider);
         setSigner(appContext!!.dispatch, provider);
     }
+
+    // useEffect(() => {
+    //     console.log("wc reconnect");
+    //     const wcProvider = new WalletConnectProvider(walletConnectConfig);
+    //     console.log("wcProvider", wcProvider.wc.accounts);
+    // }, []);
 
     let button = (<></>);
     
