@@ -6,7 +6,7 @@
             "capital": "Invested / remaining capital",
             "policies": "Policies",
             "state": "State",
-            "createdDate": "Created Date"
+            "created": "Created Date"
         }
     },  
     "action": {

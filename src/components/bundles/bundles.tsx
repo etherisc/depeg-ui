@@ -49,14 +49,14 @@ export default function Bundles(props: BundlesProps) {
         }
 
         dispatch({ type: BundleActionType.START_LOADING });
+        dispatch({ type: BundleActionType.RESET });
 
         const walletAddress = await appContext?.data.signer?.getAddress();
         if (walletAddress === undefined ) {
-            dispatch({ type: BundleActionType.RESET });
+            dispatch({ type: BundleActionType.STOP_LOADING });
             return;
         }
 
-        dispatch({ type: BundleActionType.RESET });
         // this will return the count for all bundles in the system (right now this is the only way to get to bundles)
         const iapi = await getInsuranceApi(enqueueSnackbar, t, appContext.data.signer, appContext.data.provider).invest;
         const bundlesCount = await iapi.bundleCount();
@@ -75,7 +75,8 @@ export default function Bundles(props: BundlesProps) {
 
     useEffect(() => {
         getBundles();
-    }, [appContext.data.signer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps 
+    }, [appContext.data.signer]); // update bundles when signer changes
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: t('table.header.id'), flex: 1 },
