@@ -20,7 +20,7 @@
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.13",
     "@mui/x-data-grid": "^5.17.11",
-    "@mui/x-date-pickers": "^5.0.8",
+    "@mui/x-date-pickers": "^5.0.9",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-blockies": "^1.4.1",
