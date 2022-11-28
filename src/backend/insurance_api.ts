@@ -98,10 +98,12 @@ export function getInsuranceApi(
         return insuranceApiMock(enqueueSnackbar);
     } else {
         console.log("Using smart contract", depegProductContractAddress);
+        let api: InsuranceApiSmartContract;
         if (signer === undefined || provider === undefined) {
-            return new InsuranceApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress);
+            api = new InsuranceApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress);
         } else {
-            return new InsuranceApiSmartContract(signer, depegProductContractAddress);
+            api = new InsuranceApiSmartContract(signer, depegProductContractAddress);
         }
+        return api;
     }
 }

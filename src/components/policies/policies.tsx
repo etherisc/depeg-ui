@@ -11,12 +11,12 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { LinkBehaviour } from "../shared/link_behaviour";
 import Link from "@mui/material/Link";
-import { getPolicyEnd, getPolicyState } from "../../backend/depeg_product";
 import { PolicyData } from "../../backend/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
 import { formatCurrency } from "../../utils/numbers";
 import moment from "moment";
 import { formatDate } from "../../utils/date";
+import { getPolicyEnd, getPolicyState } from "../../utils/product_formatter";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;

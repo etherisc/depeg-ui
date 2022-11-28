@@ -12,6 +12,13 @@ export interface PolicyData {
     suminsured: BigNumber;
 }
 
+export enum PolicyState {
+    UNKNOWN, 
+    APPLIED, REVOKED, UNDERWRITTEN, DECLINED,
+    ACTIVE, EXPIRED, CLOSED, 
+    PAYOUT_EXPECTED, PAIDOUT,
+}
+
 export const APPLICATION_STATE_APPLIED = 0;
 export const APPLICATION_STATE_REVOKED = 1;
 export const APPLICATION_STATE_UNDERWRITTEN = 2;
@@ -23,3 +30,5 @@ export const POLICY_STATE_CLOSED = 2;
 
 export const PAYOUT_STATE_EXPECTED = 0;
 export const PAYOUT_STATE_PAIDOUT = 1;
+
+
