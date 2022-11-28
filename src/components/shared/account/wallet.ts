@@ -1,6 +1,8 @@
 import { AppContext } from "../../../context/app_context";
 import { setSigner, updateSigner } from "../../../context/app_context";
 import { ethers } from "ethers";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { walletConnectConfig } from "../../../config/appConfig";
 
 
 export async function reconnectWallets(appContext?: AppContext) {
@@ -11,8 +13,21 @@ export async function reconnectWallets(appContext?: AppContext) {
     const hasAccounts = (await provider.send("eth_accounts", [])).length > 0;
     console.log("hasAccounts", hasAccounts);
     if (hasAccounts) {
-        console.log("reconnect wallet");
+        console.log("reconnect browser wallet");
         getAndSetWalletAccount(appContext?.dispatch);
+        return;
+    }
+
+    // try walletconnect reconnection
+    console.log("check if walletconnect reconnection is possible");
+    const wcProvider = new WalletConnectProvider(walletConnectConfig);
+    const hasWcAccounts = wcProvider.wc.accounts.length > 0;
+    console.log("hasWcAccounts", hasWcAccounts);
+    if (hasWcAccounts) {
+        console.log("reconnect walletconnect");
+        await wcProvider.enable();
+        const provider = new ethers.providers.Web3Provider(wcProvider);
+        setSigner(appContext!!.dispatch, provider);
     }
 }
 
