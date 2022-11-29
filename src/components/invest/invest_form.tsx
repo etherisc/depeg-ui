@@ -19,7 +19,7 @@ export interface InvestFormProperties {
     usd1Decimals: number;
     insurance: InsuranceApi;
     formReadyForInvest: (isFormReady: boolean) => void;
-    invest: (investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) => Promise<boolean>;
+    invest: (investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) => void;
 }
 
 export default function InvestForm(props: InvestFormProperties) {

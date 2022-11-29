@@ -8,6 +8,7 @@ import confetti from "canvas-confetti";
 import InvestForm from "./invest_form";
 import { useRouter } from "next/router";
 import { formatCurrency } from "../../utils/numbers";
+import { ApprovalFailedError } from "../../utils/error";
 
 export interface InvestProps {
     insurance: InsuranceApi;
@@ -94,6 +95,29 @@ export default function Invest(props: InvestProps) {
                 },
             );
             // FIXME: handle error during approval
+        } catch(e) { 
+            if ( e instanceof ApprovalFailedError) {
+                console.log("approval failed", e);
+                if (snackbar !== undefined) {
+                    closeSnackbar(snackbar);
+                }
+
+                enqueueSnackbar(
+                    t('error.approval_failed', { ns: 'common', error: e.code }),
+                    { 
+                        variant: "error", 
+                        persist: true,
+                        action: (key) => {
+                            return (
+                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                            );
+                        }
+                    }
+                );
+                return Promise.resolve(false);
+            } else {
+                throw e;
+            }
         } finally {
             if (snackbar !== undefined) {
                 closeSnackbar(snackbar);
@@ -135,15 +159,18 @@ export default function Invest(props: InvestProps) {
         }
     }
 
-    async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
+    async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) {
         setActiveStep(3);
         const investorWalletAddress = await appContext!!.data.signer!!.getAddress();
         const approvalSuccess = await doApproval(investorWalletAddress, investedAmount);
+        if ( ! approvalSuccess) {
+            setActiveStep(2);
+            return;
+        }
         setActiveStep(4);
         const investSuccess = await doInvest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         setActiveStep(5);
         applicationSuccessful();
-        return Promise.resolve(true);        
     }
 
 
