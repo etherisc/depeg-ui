@@ -9,3 +9,14 @@ export class BalanceTooSmallError extends Error {
         super("Wallet balance too low");
     }
 }
+
+export class ApprovalFailedError extends Error {
+    code;
+    reason;
+    
+    constructor(code: string, cause: any) {
+        super(`Approval failed with code '${code}' and cause ${cause}`);
+        this.code = code;
+        this.reason = cause;
+    }
+}
