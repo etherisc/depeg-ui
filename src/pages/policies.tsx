@@ -27,7 +27,7 @@ export default function PoliciesPage() {
     // if wallet has no policies, redirect to application page
     async function redirectToApplication(signer: Signer | undefined) {
         if ( appContext.data.signer !== undefined && await insurance.policiesCount(await signer!!.getAddress()) === 0 ) {
-            router.push('/application');
+            router.push('/');
             return;
         }
     }
