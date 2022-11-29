@@ -20,3 +20,15 @@ export class ApprovalFailedError extends Error {
         this.reason = cause;
     }
 }
+
+export class TransactionFailedError extends Error {
+    code;
+    reason;
+    
+    constructor(code: string, cause: any) {
+        super(`Transaction failed with code '${code}' and cause ${cause}`);
+        this.code = code;
+        this.reason = cause;
+    }
+}
+

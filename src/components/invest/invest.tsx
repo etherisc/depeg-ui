@@ -8,7 +8,7 @@ import confetti from "canvas-confetti";
 import InvestForm from "./invest_form";
 import { useRouter } from "next/router";
 import { formatCurrency } from "../../utils/numbers";
-import { ApprovalFailedError } from "../../utils/error";
+import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 
 export interface InvestProps {
     insurance: InsuranceApi;
@@ -94,7 +94,6 @@ export default function Invest(props: InvestProps) {
                     );
                 },
             );
-            // FIXME: handle error during approval
         } catch(e) { 
             if ( e instanceof ApprovalFailedError) {
                 console.log("approval failed", e);
@@ -151,7 +150,29 @@ export default function Invest(props: InvestProps) {
                         { variant: "info", persist: true }
                     );
                 });
-            // FIXME: handle error during invest
+        } catch(e) { 
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                if (snackbar !== undefined) {
+                    closeSnackbar(snackbar);
+                }
+
+                enqueueSnackbar(
+                    t('error.transaction_failed', { ns: 'common', error: e.code }),
+                    { 
+                        variant: "error", 
+                        persist: true,
+                        action: (key) => {
+                            return (
+                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                            );
+                        }
+                    }
+                );
+                return Promise.resolve(false);
+            } else {
+                throw e;
+            }
         } finally {
             if (snackbar !== undefined) {
                 closeSnackbar(snackbar);
@@ -169,6 +190,10 @@ export default function Invest(props: InvestProps) {
         }
         setActiveStep(4);
         const investSuccess = await doInvest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+        if ( ! investSuccess) {
+            setActiveStep(2);
+            return;
+        }
         setActiveStep(5);
         applicationSuccessful();
     }

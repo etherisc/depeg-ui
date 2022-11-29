@@ -74,8 +74,8 @@ export class InvestApiSmartContract implements InvestApi {
             annualPctReturn, 
             beforeInvestCallback, 
             beforeWaitCallback);
-        
-        return Promise.resolve(true);
+        console.log("tx", tx, "receipt", receipt);
+        return Promise.resolve(receipt.status === 1);
     }
 
     async bundleTokenAddress(): Promise<string> {
