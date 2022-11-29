@@ -28,7 +28,7 @@ export interface ApplicationFormProperties {
     usd2Decimals: number;
     applicationApi: ApplicationApi;
     bundles: Array<BundleData>;
-    premiumTrxText: string|undefined;
+    premiumTrxTextKey: string|undefined;
     formReadyForApply: (isFormReady: boolean) => void;
     applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => Promise<boolean>;
 }
@@ -287,8 +287,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     currency={props.usd2}
                     currencyDecimals={props.usd2Decimals}
                     error={premiumError}
-                    transactionInProgress={(props.premiumTrxText != undefined) || premiumCalculationInProgress}
-                    text={props.premiumTrxText || t('premium_calculation_in_progress')}
+                    transactionInProgress={(props.premiumTrxTextKey != "") || premiumCalculationInProgress}
+                    textKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
                     bundles={props.bundles}
                     showBundles={showAvailableBundles}
                     />

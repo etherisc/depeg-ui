@@ -12,7 +12,7 @@ export interface PremiumProps {
     currency: string;
     currencyDecimals: number;
     error?: string;
-    text?: string;
+    textKey: string;
     transactionInProgress?: boolean;
     bundles: Array<BundleData>;
     showBundles: boolean;
@@ -31,7 +31,7 @@ export default function Premium(props: PremiumProps) {
     }
 
     const wait = props.transactionInProgress ? 
-        (<><LinearProgress />{props.text}</>) 
+        (<><LinearProgress />{t(props.textKey)}</>) 
         : null;
 
     return (<>
