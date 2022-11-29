@@ -3,6 +3,7 @@
 /* eslint-disable */
 export type { Component } from "./Component";
 export type { IAccess } from "./IAccess";
+export type { IBundle } from "./IBundle";
 export type { IBundleToken } from "./IBundleToken";
 export type { IComponent } from "./IComponent";
 export type { IComponentEvents } from "./IComponentEvents";
@@ -10,6 +11,8 @@ export type { IComponentOwnerService } from "./IComponentOwnerService";
 export type { IInstanceOperatorService } from "./IInstanceOperatorService";
 export type { IInstanceService } from "./IInstanceService";
 export type { IOracleService } from "./IOracleService";
+export type { IPolicy } from "./IPolicy";
+export type { IPool } from "./IPool";
 export type { IProduct } from "./IProduct";
 export type { IProductService } from "./IProductService";
 export type { IRegistry } from "./IRegistry";

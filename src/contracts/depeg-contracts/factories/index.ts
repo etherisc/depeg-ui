@@ -4,10 +4,11 @@
 export * as dependencies from "./dependencies";
 export { BasicRiskpool2__factory } from "./BasicRiskpool2__factory";
 export { BasicRiskpool2b__factory } from "./BasicRiskpool2b__factory";
-export { ChainlinkOperator__factory } from "./ChainlinkOperator__factory";
-export { ChainlinkToken__factory } from "./ChainlinkToken__factory";
+export { DIP__factory } from "./DIP__factory";
 export { DepegProduct__factory } from "./DepegProduct__factory";
 export { DepegRiskpool__factory } from "./DepegRiskpool__factory";
-export { ERC677Receiver__factory } from "./ERC677Receiver__factory";
-export { Migrations__factory } from "./Migrations__factory";
+export { GifStaking__factory } from "./GifStaking__factory";
 export { Riskpool2__factory } from "./Riskpool2__factory";
+export { USD1__factory } from "./USD1__factory";
+export { USD2__factory } from "./USD2__factory";
+export { USD3__factory } from "./USD3__factory";

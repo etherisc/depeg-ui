@@ -47,30 +47,26 @@ export class DepegRiskpoolApi {
     }
     
     async getBundleDataByBundleId(bundleId: number): Promise<BundleData> {
-        const bundle = await this.instanceService.getBundle(bundleId);
-        const riskpoolId = bundle[IDX_RISKPOOL_ID];
-        const tokenId = bundle[IDX_TOKEN_ID];
-        const applicationFilter = bundle[IDX_APPLICATION_FILTER];
-        const [ minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn ] = await this.depegRiskpool.decodeBundleParamsFromFilter(applicationFilter);
+        const [state, tokenId, owner, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn, capital, lockedCapital, balance, createdAt ] = await this.depegRiskpool.getBundleInfo(bundleId);
         const apr = 100 * annualPercentageReturn.toNumber() / (await this.depegRiskpool.getApr100PercentLevel()).toNumber();
         const policies = await this.depegRiskpool.getActivePolicies(bundleId);
-        const state = bundle[IDX_STATE];
     
         return {
-            riskpoolId: riskpoolId.toNumber(),
+            riskpoolId: this.riskpoolId,
+            owner: owner,
             bundleId: bundleId,
             apr: apr,
             minSumInsured: minSumInsured.toNumber(),
             maxSumInsured: maxSumInsured.toNumber(),
             minDuration: minDuration.toNumber(),
             maxDuration: maxDuration.toNumber(),
-            capital: bundle[5].toNumber(),
-            locked: bundle[6].toNumber(),
-            capacity: bundle[5].toNumber() - bundle[6].toNumber(),
+            capital: capital.toNumber(),
+            locked: lockedCapital.toNumber(),
+            capacity: capital.toNumber() - lockedCapital.toNumber(),
             policies: policies.toNumber(),
             state: state,
             tokenId: tokenId.toNumber(),
-            createdAt: bundle[IDX_CREATED_AT].toNumber(),
+            createdAt: createdAt.toNumber(),
         } as BundleData;
     }
     
@@ -164,7 +160,12 @@ export class DepegRiskpoolApi {
     
     async getBundleCount(): Promise<number> {
         console.log("getBundleCount");
-        return (await this.instanceService.bundles()).toNumber();
+        return (await this.depegRiskpool.bundles()).toNumber();
+    }
+    
+    async getBundleId(idx: number): Promise<number> {
+        console.log("getBundleId");
+        return (await this.depegRiskpool.getBundleId(idx)).toNumber();
     }
     
     /**
@@ -178,20 +179,12 @@ export class DepegRiskpoolApi {
     async getBundle(
         walletAddress: string, 
         bundleTokenAddress: string, 
-        i: number
+        bundleId: number
     ): Promise<BundleData|undefined> {
-        console.log("getBundle", walletAddress, bundleTokenAddress, i);
-        const bundle = await this.getBundleDataByBundleId(i);
+        console.log("getBundle", bundleId);
+        const bundle = await this.getBundleDataByBundleId(bundleId);
         console.log(bundle);
-        if (this.riskpoolId !== bundle.riskpoolId) {
-            console.log("riskpoolId mismatch");
-            // bundle does not belong to our riskpool
-            return undefined;
-        }
-        const tokenId = bundle.tokenId;
-        const bundleToken = IERC721__factory.connect(bundleTokenAddress, this.signer!);
-        const owner = await bundleToken.ownerOf(tokenId);
-        if (owner !== walletAddress) {
+        if (bundle.owner !== walletAddress) {
             // owner mismatch
             console.log("owner mismatch");
             return undefined;

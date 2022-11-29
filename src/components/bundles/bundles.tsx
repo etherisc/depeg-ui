@@ -61,8 +61,9 @@ export default function Bundles(props: BundlesProps) {
         const iapi = await getInsuranceApi(enqueueSnackbar, t, appContext.data.signer, appContext.data.provider).invest;
         const bundlesCount = await iapi.bundleCount();
         const bundleTokenAddress = await iapi.bundleTokenAddress();
-        for (let i = 1; i <= bundlesCount; i++) { // bundle id starts at 1
-            const bundle = await iapi.bundle(walletAddress, bundleTokenAddress, i);
+        for (let i = 0; i < bundlesCount; i++) {
+            const bundleId = await iapi.bundleId(i);
+            const bundle = await iapi.bundle(walletAddress, bundleTokenAddress, bundleId);
             // bundle() will return undefined if bundles is not owned by the wallet address
             if (bundle === undefined ) {
                 continue;

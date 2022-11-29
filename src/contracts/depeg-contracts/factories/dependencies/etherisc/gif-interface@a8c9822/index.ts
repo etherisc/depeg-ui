@@ -3,6 +3,7 @@
 /* eslint-disable */
 export { Component__factory } from "./Component__factory";
 export { IAccess__factory } from "./IAccess__factory";
+export { IBundle__factory } from "./IBundle__factory";
 export { IBundleToken__factory } from "./IBundleToken__factory";
 export { IComponent__factory } from "./IComponent__factory";
 export { IComponentEvents__factory } from "./IComponentEvents__factory";
@@ -10,6 +11,8 @@ export { IComponentOwnerService__factory } from "./IComponentOwnerService__facto
 export { IInstanceOperatorService__factory } from "./IInstanceOperatorService__factory";
 export { IInstanceService__factory } from "./IInstanceService__factory";
 export { IOracleService__factory } from "./IOracleService__factory";
+export { IPolicy__factory } from "./IPolicy__factory";
+export { IPool__factory } from "./IPool__factory";
 export { IProduct__factory } from "./IProduct__factory";
 export { IProductService__factory } from "./IProductService__factory";
 export { IRegistry__factory } from "./IRegistry__factory";

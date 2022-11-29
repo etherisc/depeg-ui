@@ -84,10 +84,14 @@ export class InvestApiSmartContract implements InvestApi {
 
     async bundleCount(): Promise<number> {
         return await(await this.riskpoolApi()).getBundleCount();
-    }    
+    }
 
-    async bundle(walletAddress: string, bundleTokenAddress: string, i: number): Promise<BundleData|undefined> {
-        return await(await this.riskpoolApi()).getBundle(walletAddress, bundleTokenAddress, i);
+    async bundleId(idx: number): Promise<number> {
+        return await(await this.riskpoolApi()).getBundleId(idx);
+    }
+
+    async bundle(walletAddress: string, bundleTokenAddress: string, bundleId: number): Promise<BundleData|undefined> {
+        return await(await this.riskpoolApi()).getBundle(walletAddress, bundleTokenAddress, bundleId);
     }
 
 }

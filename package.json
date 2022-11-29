@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.5.1",
-    "@etherisc/depeg-contracts": "0.0.2-df401e6",
+    "@etherisc/depeg-contracts": "0.0.2-09c8f61",
     "@etherisc/gif-interface": "2.0.0-a8c9822",
     "@typechain/ethers-v5": "^10.1.1",
     "@types/canvas-confetti": "^1.6.0",

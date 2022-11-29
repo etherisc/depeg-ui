@@ -1,5 +1,6 @@
 export type BundleData = {
     riskpoolId: number;
+    owner: string;
     bundleId: number;
     tokenId: number;
     apr: number;

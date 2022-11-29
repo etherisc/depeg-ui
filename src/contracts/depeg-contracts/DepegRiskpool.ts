@@ -99,7 +99,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "DEFAULT_FILTER_DATA_STRUCTURE()": FunctionFragment;
     "FULL_COLLATERALIZATION_LEVEL()": FunctionFragment;
     "MAX_APR()": FunctionFragment;
-    "MAX_BUNDLE_DURATION()": FunctionFragment;
+    "MAX_BUNDLE_LIFETIME()": FunctionFragment;
     "MAX_POLICY_DURATION()": FunctionFragment;
     "ONE_YEAR_DURATION()": FunctionFragment;
     "USD_RISK_CAPITAL_CAP()": FunctionFragment;
@@ -129,6 +129,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "getBalance()": FunctionFragment;
     "getBundleFilter(uint256)": FunctionFragment;
     "getBundleId(uint256)": FunctionFragment;
+    "getBundleInfo(uint256)": FunctionFragment;
     "getBundleRiskCapitalCap()": FunctionFragment;
     "getCapacity()": FunctionFragment;
     "getCapital()": FunctionFragment;
@@ -137,6 +138,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "getFilterDataStructure()": FunctionFragment;
     "getFullCollateralizationLevel()": FunctionFragment;
     "getId()": FunctionFragment;
+    "getMaxBundleLifetime()": FunctionFragment;
     "getMaximumNumberOfActiveBundles()": FunctionFragment;
     "getName()": FunctionFragment;
     "getOneYearDuration()": FunctionFragment;
@@ -174,7 +176,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "DEFAULT_FILTER_DATA_STRUCTURE"
       | "FULL_COLLATERALIZATION_LEVEL"
       | "MAX_APR"
-      | "MAX_BUNDLE_DURATION"
+      | "MAX_BUNDLE_LIFETIME"
       | "MAX_POLICY_DURATION"
       | "ONE_YEAR_DURATION"
       | "USD_RISK_CAPITAL_CAP"
@@ -204,6 +206,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "getBalance"
       | "getBundleFilter"
       | "getBundleId"
+      | "getBundleInfo"
       | "getBundleRiskCapitalCap"
       | "getCapacity"
       | "getCapital"
@@ -212,6 +215,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "getFilterDataStructure"
       | "getFullCollateralizationLevel"
       | "getId"
+      | "getMaxBundleLifetime"
       | "getMaximumNumberOfActiveBundles"
       | "getName"
       | "getOneYearDuration"
@@ -257,7 +261,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "MAX_APR", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "MAX_BUNDLE_DURATION",
+    functionFragment: "MAX_BUNDLE_LIFETIME",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -391,6 +395,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getBundleInfo",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getBundleRiskCapitalCap",
     values?: undefined
   ): string;
@@ -419,6 +427,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getId", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getMaxBundleLifetime",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getMaximumNumberOfActiveBundles",
     values?: undefined
@@ -526,7 +538,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "MAX_APR", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "MAX_BUNDLE_DURATION",
+    functionFragment: "MAX_BUNDLE_LIFETIME",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -634,6 +646,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getBundleInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getBundleRiskCapitalCap",
     data: BytesLike
   ): Result;
@@ -659,6 +675,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getId", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getMaxBundleLifetime",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getMaximumNumberOfActiveBundles",
     data: BytesLike
@@ -1229,7 +1249,7 @@ export interface DepegRiskpool extends BaseContract {
 
     MAX_APR(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    MAX_BUNDLE_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
+    MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1381,6 +1401,39 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { bundleId: BigNumber }>;
 
+    getBundleInfo(
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        number,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        state: number;
+        tokenId: BigNumber;
+        owner: string;
+        minSumInsured: BigNumber;
+        maxSumInsured: BigNumber;
+        minDuration: BigNumber;
+        maxDuration: BigNumber;
+        annualPercentageReturn: BigNumber;
+        capital: BigNumber;
+        lockedCapital: BigNumber;
+        balance: BigNumber;
+        createdAt: BigNumber;
+      }
+    >;
+
     getBundleRiskCapitalCap(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { bundleRiskCapitalCap: BigNumber }>;
@@ -1401,6 +1454,10 @@ export interface DepegRiskpool extends BaseContract {
 
     getId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getMaxBundleLifetime(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { maxBundleLifetime: BigNumber }>;
+
     getMaximumNumberOfActiveBundles(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { maximumNumberOfActiveBundles: BigNumber }>;
@@ -1409,7 +1466,7 @@ export interface DepegRiskpool extends BaseContract {
 
     getOneYearDuration(
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { apr100PercentLevel: BigNumber }>;
+    ): Promise<[BigNumber] & { yearDuration: BigNumber }>;
 
     getOwner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -1514,7 +1571,7 @@ export interface DepegRiskpool extends BaseContract {
 
   MAX_APR(overrides?: CallOverrides): Promise<BigNumber>;
 
-  MAX_BUNDLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+  MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
   MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1662,6 +1719,39 @@ export interface DepegRiskpool extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getBundleInfo(
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      number,
+      BigNumber,
+      string,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      state: number;
+      tokenId: BigNumber;
+      owner: string;
+      minSumInsured: BigNumber;
+      maxSumInsured: BigNumber;
+      minDuration: BigNumber;
+      maxDuration: BigNumber;
+      annualPercentageReturn: BigNumber;
+      capital: BigNumber;
+      lockedCapital: BigNumber;
+      balance: BigNumber;
+      createdAt: BigNumber;
+    }
+  >;
+
   getBundleRiskCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
 
   getCapacity(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1677,6 +1767,8 @@ export interface DepegRiskpool extends BaseContract {
   getFullCollateralizationLevel(overrides?: CallOverrides): Promise<BigNumber>;
 
   getId(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getMaxBundleLifetime(overrides?: CallOverrides): Promise<BigNumber>;
 
   getMaximumNumberOfActiveBundles(
     overrides?: CallOverrides
@@ -1789,7 +1881,7 @@ export interface DepegRiskpool extends BaseContract {
 
     MAX_APR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    MAX_BUNDLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+    MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1931,6 +2023,39 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getBundleInfo(
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        number,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        state: number;
+        tokenId: BigNumber;
+        owner: string;
+        minSumInsured: BigNumber;
+        maxSumInsured: BigNumber;
+        minDuration: BigNumber;
+        maxDuration: BigNumber;
+        annualPercentageReturn: BigNumber;
+        capital: BigNumber;
+        lockedCapital: BigNumber;
+        balance: BigNumber;
+        createdAt: BigNumber;
+      }
+    >;
+
     getBundleRiskCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCapacity(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1948,6 +2073,8 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<BigNumber>;
 
     getId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMaxBundleLifetime(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMaximumNumberOfActiveBundles(
       overrides?: CallOverrides
@@ -2280,7 +2407,7 @@ export interface DepegRiskpool extends BaseContract {
 
     MAX_APR(overrides?: CallOverrides): Promise<BigNumber>;
 
-    MAX_BUNDLE_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+    MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2418,6 +2545,11 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getBundleInfo(
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBundleRiskCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCapacity(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2435,6 +2567,8 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<BigNumber>;
 
     getId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMaxBundleLifetime(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMaximumNumberOfActiveBundles(
       overrides?: CallOverrides
@@ -2554,7 +2688,7 @@ export interface DepegRiskpool extends BaseContract {
 
     MAX_APR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    MAX_BUNDLE_DURATION(
+    MAX_BUNDLE_LIFETIME(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2702,6 +2836,11 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getBundleInfo(
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getBundleRiskCapitalCap(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2725,6 +2864,10 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getMaxBundleLifetime(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getMaximumNumberOfActiveBundles(
       overrides?: CallOverrides

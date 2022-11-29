@@ -27,6 +27,33 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export declare namespace ITreasury {
+  export type FeeSpecificationStruct = {
+    componentId: PromiseOrValue<BigNumberish>;
+    fixedFee: PromiseOrValue<BigNumberish>;
+    fractionalFee: PromiseOrValue<BigNumberish>;
+    feeCalculationData: PromiseOrValue<BytesLike>;
+    createdAt: PromiseOrValue<BigNumberish>;
+    updatedAt: PromiseOrValue<BigNumberish>;
+  };
+
+  export type FeeSpecificationStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber
+  ] & {
+    componentId: BigNumber;
+    fixedFee: BigNumber;
+    fractionalFee: BigNumber;
+    feeCalculationData: string;
+    createdAt: BigNumber;
+    updatedAt: BigNumber;
+  };
+}
+
 export interface DepegProductInterface extends utils.Interface {
   functions: {
     "DEFAULT_DATA_STRUCTURE()": FunctionFragment;
@@ -37,12 +64,15 @@ export interface DepegProductInterface extends utils.Interface {
     "applyForPolicy(uint256,uint256,uint256)": FunctionFragment;
     "approvalCallback()": FunctionFragment;
     "archiveCallback()": FunctionFragment;
+    "calculateFee(uint256)": FunctionFragment;
     "calculateNetPremium(uint256,uint256,uint256)": FunctionFragment;
     "calculatePremium(uint256)": FunctionFragment;
     "declineCallback()": FunctionFragment;
     "getApplicationDataStructure()": FunctionFragment;
     "getApplicationId(uint256)": FunctionFragment;
     "getClaimDataStructure()": FunctionFragment;
+    "getFeeFractionFullUnit()": FunctionFragment;
+    "getFeeSpecification()": FunctionFragment;
     "getId()": FunctionFragment;
     "getName()": FunctionFragment;
     "getOwner()": FunctionFragment;
@@ -84,12 +114,15 @@ export interface DepegProductInterface extends utils.Interface {
       | "applyForPolicy"
       | "approvalCallback"
       | "archiveCallback"
+      | "calculateFee"
       | "calculateNetPremium"
       | "calculatePremium"
       | "declineCallback"
       | "getApplicationDataStructure"
       | "getApplicationId"
       | "getClaimDataStructure"
+      | "getFeeFractionFullUnit"
+      | "getFeeSpecification"
       | "getId"
       | "getName"
       | "getOwner"
@@ -152,6 +185,10 @@ export interface DepegProductInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "calculateFee",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "calculateNetPremium",
     values: [
       PromiseOrValue<BigNumberish>,
@@ -177,6 +214,14 @@ export interface DepegProductInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getClaimDataStructure",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFeeFractionFullUnit",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFeeSpecification",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getId", values?: undefined): string;
@@ -293,6 +338,10 @@ export interface DepegProductInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "calculateFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "calculateNetPremium",
     data: BytesLike
   ): Result;
@@ -314,6 +363,14 @@ export interface DepegProductInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getClaimDataStructure",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getFeeFractionFullUnit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getFeeSpecification",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getId", data: BytesLike): Result;
@@ -405,7 +462,7 @@ export interface DepegProductInterface extends utils.Interface {
     "LogComponentStateChanged(uint256,uint8,uint8)": EventFragment;
     "LogComponentSuspended(uint256)": EventFragment;
     "LogComponentUnpaused(uint256)": EventFragment;
-    "LogDepegApplicationCreated(bytes32,address,uint256,uint256)": EventFragment;
+    "LogDepegApplicationCreated(bytes32,address,uint256,uint256,uint256)": EventFragment;
     "LogDepegOracleTriggered(uint256)": EventFragment;
     "LogDepegPolicyCreated(bytes32,address,uint256,uint256)": EventFragment;
     "LogDepegPolicyProcessed(bytes32)": EventFragment;
@@ -559,10 +616,11 @@ export interface LogDepegApplicationCreatedEventObject {
   policyId: string;
   policyHolder: string;
   premiumAmount: BigNumber;
+  netPremiumAmount: BigNumber;
   sumInsuredAmount: BigNumber;
 }
 export type LogDepegApplicationCreatedEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber],
+  [string, string, BigNumber, BigNumber, BigNumber],
   LogDepegApplicationCreatedEventObject
 >;
 
@@ -715,6 +773,13 @@ export interface DepegProduct extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    calculateFee(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { feeAmount: BigNumber; totalAmount: BigNumber }
+    >;
+
     calculateNetPremium(
       sumInsured: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
@@ -743,6 +808,18 @@ export interface DepegProduct extends BaseContract {
     getClaimDataStructure(
       overrides?: CallOverrides
     ): Promise<[string] & { dataStructure: string }>;
+
+    getFeeFractionFullUnit(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { fractionFullUnit: BigNumber }>;
+
+    getFeeSpecification(
+      overrides?: CallOverrides
+    ): Promise<
+      [ITreasury.FeeSpecificationStructOutput] & {
+        feeSpecification: ITreasury.FeeSpecificationStructOutput;
+      }
+    >;
 
     getId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -868,6 +945,13 @@ export interface DepegProduct extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  calculateFee(
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { feeAmount: BigNumber; totalAmount: BigNumber }
+  >;
+
   calculateNetPremium(
     sumInsured: PromiseOrValue<BigNumberish>,
     duration: PromiseOrValue<BigNumberish>,
@@ -892,6 +976,12 @@ export interface DepegProduct extends BaseContract {
   ): Promise<string>;
 
   getClaimDataStructure(overrides?: CallOverrides): Promise<string>;
+
+  getFeeFractionFullUnit(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getFeeSpecification(
+    overrides?: CallOverrides
+  ): Promise<ITreasury.FeeSpecificationStructOutput>;
 
   getId(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1009,6 +1099,13 @@ export interface DepegProduct extends BaseContract {
 
     archiveCallback(overrides?: CallOverrides): Promise<void>;
 
+    calculateFee(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { feeAmount: BigNumber; totalAmount: BigNumber }
+    >;
+
     calculateNetPremium(
       sumInsured: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
@@ -1031,6 +1128,12 @@ export interface DepegProduct extends BaseContract {
     ): Promise<string>;
 
     getClaimDataStructure(overrides?: CallOverrides): Promise<string>;
+
+    getFeeFractionFullUnit(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getFeeSpecification(
+      overrides?: CallOverrides
+    ): Promise<ITreasury.FeeSpecificationStructOutput>;
 
     getId(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1174,16 +1277,18 @@ export interface DepegProduct extends BaseContract {
     "LogComponentUnpaused(uint256)"(id?: null): LogComponentUnpausedEventFilter;
     LogComponentUnpaused(id?: null): LogComponentUnpausedEventFilter;
 
-    "LogDepegApplicationCreated(bytes32,address,uint256,uint256)"(
+    "LogDepegApplicationCreated(bytes32,address,uint256,uint256,uint256)"(
       policyId?: null,
       policyHolder?: null,
       premiumAmount?: null,
+      netPremiumAmount?: null,
       sumInsuredAmount?: null
     ): LogDepegApplicationCreatedEventFilter;
     LogDepegApplicationCreated(
       policyId?: null,
       policyHolder?: null,
       premiumAmount?: null,
+      netPremiumAmount?: null,
       sumInsuredAmount?: null
     ): LogDepegApplicationCreatedEventFilter;
 
@@ -1270,6 +1375,11 @@ export interface DepegProduct extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    calculateFee(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     calculateNetPremium(
       sumInsured: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
@@ -1294,6 +1404,10 @@ export interface DepegProduct extends BaseContract {
     ): Promise<BigNumber>;
 
     getClaimDataStructure(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getFeeFractionFullUnit(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getFeeSpecification(overrides?: CallOverrides): Promise<BigNumber>;
 
     getId(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1418,6 +1532,11 @@ export interface DepegProduct extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    calculateFee(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     calculateNetPremium(
       sumInsured: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
@@ -1444,6 +1563,14 @@ export interface DepegProduct extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getClaimDataStructure(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getFeeFractionFullUnit(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getFeeSpecification(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

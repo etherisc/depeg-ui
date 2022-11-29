@@ -27,8 +27,12 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface ChainlinkTokenInterface extends utils.Interface {
+export interface USD2Interface extends utils.Interface {
   functions: {
+    "DECIMALS()": FunctionFragment;
+    "INITIAL_SUPPLY()": FunctionFragment;
+    "NAME()": FunctionFragment;
+    "SYMBOL()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -39,12 +43,15 @@ export interface ChainlinkTokenInterface extends utils.Interface {
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
-    "transferAndCall(address,uint256,bytes)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "DECIMALS"
+      | "INITIAL_SUPPLY"
+      | "NAME"
+      | "SYMBOL"
       | "allowance"
       | "approve"
       | "balanceOf"
@@ -55,10 +62,16 @@ export interface ChainlinkTokenInterface extends utils.Interface {
       | "symbol"
       | "totalSupply"
       | "transfer"
-      | "transferAndCall"
       | "transferFrom"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "DECIMALS", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "INITIAL_SUPPLY",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "NAME", values?: undefined): string;
+  encodeFunctionData(functionFragment: "SYMBOL", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -91,14 +104,6 @@ export interface ChainlinkTokenInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "transferAndCall",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "transferFrom",
     values: [
       PromiseOrValue<string>,
@@ -107,6 +112,13 @@ export interface ChainlinkTokenInterface extends utils.Interface {
     ]
   ): string;
 
+  decodeFunctionResult(functionFragment: "DECIMALS", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "INITIAL_SUPPLY",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "NAME", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "SYMBOL", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -126,10 +138,6 @@ export interface ChainlinkTokenInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "transferAndCall",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
     data: BytesLike
@@ -168,12 +176,12 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface ChainlinkToken extends BaseContract {
+export interface USD2 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ChainlinkTokenInterface;
+  interface: USD2Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -195,6 +203,14 @@ export interface ChainlinkToken extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    DECIMALS(overrides?: CallOverrides): Promise<[number]>;
+
+    INITIAL_SUPPLY(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    NAME(overrides?: CallOverrides): Promise<[string]>;
+
+    SYMBOL(overrides?: CallOverrides): Promise<[string]>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -238,13 +254,6 @@ export interface ChainlinkToken extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    transferAndCall(
-      _to: PromiseOrValue<string>,
-      _value: PromiseOrValue<BigNumberish>,
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -252,6 +261,14 @@ export interface ChainlinkToken extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  DECIMALS(overrides?: CallOverrides): Promise<number>;
+
+  INITIAL_SUPPLY(overrides?: CallOverrides): Promise<BigNumber>;
+
+  NAME(overrides?: CallOverrides): Promise<string>;
+
+  SYMBOL(overrides?: CallOverrides): Promise<string>;
 
   allowance(
     owner: PromiseOrValue<string>,
@@ -296,13 +313,6 @@ export interface ChainlinkToken extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  transferAndCall(
-    _to: PromiseOrValue<string>,
-    _value: PromiseOrValue<BigNumberish>,
-    _data: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   transferFrom(
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
@@ -311,6 +321,14 @@ export interface ChainlinkToken extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    DECIMALS(overrides?: CallOverrides): Promise<number>;
+
+    INITIAL_SUPPLY(overrides?: CallOverrides): Promise<BigNumber>;
+
+    NAME(overrides?: CallOverrides): Promise<string>;
+
+    SYMBOL(overrides?: CallOverrides): Promise<string>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -354,13 +372,6 @@ export interface ChainlinkToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    transferAndCall(
-      _to: PromiseOrValue<string>,
-      _value: PromiseOrValue<BigNumberish>,
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -394,6 +405,14 @@ export interface ChainlinkToken extends BaseContract {
   };
 
   estimateGas: {
+    DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    INITIAL_SUPPLY(overrides?: CallOverrides): Promise<BigNumber>;
+
+    NAME(overrides?: CallOverrides): Promise<BigNumber>;
+
+    SYMBOL(overrides?: CallOverrides): Promise<BigNumber>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -437,13 +456,6 @@ export interface ChainlinkToken extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    transferAndCall(
-      _to: PromiseOrValue<string>,
-      _value: PromiseOrValue<BigNumberish>,
-      _data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -453,6 +465,14 @@ export interface ChainlinkToken extends BaseContract {
   };
 
   populateTransaction: {
+    DECIMALS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    INITIAL_SUPPLY(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    SYMBOL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     allowance(
       owner: PromiseOrValue<string>,
       spender: PromiseOrValue<string>,
@@ -493,13 +513,6 @@ export interface ChainlinkToken extends BaseContract {
     transfer(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferAndCall(
-      _to: PromiseOrValue<string>,
-      _value: PromiseOrValue<BigNumberish>,
-      _data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
