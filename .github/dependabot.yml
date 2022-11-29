@@ -24,8 +24,8 @@ updates:
     ignore:
     - dependency-name: "@types/node" 
       versions: ["19.x"]
-    - depengency-name: "@etherisc/gif-interface"
+    - dependency-name: "@etherisc/gif-interface"
       # ignore all updates to this dependency 
-    - depengency-name: "@etherisc/depeg-contracts"
+    - dependency-name: "@etherisc/depeg-contracts"
       # ignore all updates to this dependency
   
