@@ -4,7 +4,7 @@
 // export const fujiEthProvider = new StaticJsonRpcProvider('https://api.avax-test.network/ext/bc/C/rpc');
 
 const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
-const chainUrl = process.env.NEXT_PUBLIC_CHAIN_URL;
+const chainUrl = process.env.NEXT_PUBLIC_CHAIN_RPC_URL;
 
 console.log("wallet connect config", "chainid", chainId, "chainUrl", chainUrl);
 

@@ -37,7 +37,7 @@ export default function ChainData() {
 
     if (lastBlock > 0) {
         chainData = (
-            <Typography variant="body2" sx={{ fontSize: '10px' }}>
+            <Typography variant="body2" sx={{ fontSize: '10px', ml: 1 }}>
                 {gasPrice} gwei {DOT} {lastBlock}
             </Typography>
         );
