@@ -11,7 +11,7 @@ export interface PremiumProps {
     premium: FormNumber;
     currency: string;
     currencyDecimals: number;
-    error?: string;
+    error: string;
     textKey: string;
     transactionInProgress?: boolean;
     bundles: Array<BundleData>;

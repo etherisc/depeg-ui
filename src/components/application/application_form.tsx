@@ -17,8 +17,6 @@ import CurrencyTextField from '../shared/form/currency_text_field';
 import NumericTextField, { INPUT_VARIANT } from '../shared/form/numeric_text_field';
 import Premium from './premium';
 
-const formInputVariant = 'outlined';
-
 export interface ApplicationFormProperties {
     disabled: boolean;
     walletAddress: string;
@@ -41,7 +39,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     function handleWalletAddressChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setWalletAddress((x.target as HTMLInputElement).value);
     }
-    const [ walletAddressError, setWalletAddressError ] = useState("");
+    const [ walletAddressErrorKey, setWalletAddressErrorKey ] = useState("");
     function validateWalletAddress() {
         if (walletAddress == "") {
             return t('insuredWalletRequired');
@@ -55,7 +53,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ walletAddressValid, setWalletAddressValid ] = useState(true);
     function validateWalletAddressAndSetError() {
         const error = validateWalletAddress();
-        setWalletAddressError(error);
+        setWalletAddressErrorKey(error);
         setWalletAddressValid(error === "");
     }
 
@@ -92,7 +90,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     // premium
     const [ premium, setPremium ] = useState(undefined as FormNumber);
-    const [ premiumError, setPremiumError ] = useState("");
+    const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
     const [ showAvailableBundles, setShowAvailableBundles ] = useState(false);
 
@@ -171,15 +169,15 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setPremiumCalculationInProgress(true);
             setShowAvailableBundles(false);
             setPremium(await props.applicationApi.calculatePremium(walletAddress, insuredAmount || 0, coverageDays || 0, props.bundles));
-            setPremiumError("");
+            setPremiumErrorKey("");
         } catch (e) {
             if (e instanceof NoBundleFoundError) {
                 console.log("No bundle found for this insurance.");
-                setPremiumError(t('error_no_matching_bundle_found'));
+                setPremiumErrorKey('error_no_matching_bundle_found');
                 setShowAvailableBundles(true);
             } else if (e instanceof BalanceTooSmallError) {
                 console.log("Wallet balance too low");
-                setPremiumError(t('error_wallet_balance_too_low', { currency: props.usd2}));
+                setPremiumErrorKey('error_wallet_balance_too_low');
             } else {
                 console.log("Error calculating premium: ", e);
             }
@@ -188,7 +186,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setPremiumCalculationInProgress(false);
         }
         
-    }, [isFormValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.applicationApi, props.usd2, t]);
+    }, [isFormValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.applicationApi]);
 
     async function buy() {
         setApplicationInProgress(true);
@@ -216,8 +214,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     onChange={handleWalletAddressChange}
                     onBlur={validateWalletAddressAndSetError}
                     required
-                    error={walletAddressError !== ""}
-                    helperText={walletAddressError || t('insuredWalletHelper')}
+                    error={walletAddressErrorKey !== ""}
+                    helperText={t(walletAddressErrorKey || 'insuredWalletHelper')}
                 />
             </Grid>
             <Grid item xs={12}>
@@ -286,7 +284,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     premium={premium}
                     currency={props.usd2}
                     currencyDecimals={props.usd2Decimals}
-                    error={premiumError}
+                    error={t(premiumErrorKey, { currency: props.usd2 })}
                     transactionInProgress={(props.premiumTrxTextKey != "") || premiumCalculationInProgress}
                     textKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
                     bundles={props.bundles}
