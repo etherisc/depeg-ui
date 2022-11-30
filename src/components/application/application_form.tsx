@@ -28,7 +28,7 @@ export interface ApplicationFormProperties {
     bundles: Array<BundleData>;
     premiumTrxTextKey: string|undefined;
     formReadyForApply: (isFormReady: boolean) => void;
-    applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => Promise<boolean>;
+    applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => void;
 }
 
 export default function ApplicationForm(props: ApplicationFormProperties) {

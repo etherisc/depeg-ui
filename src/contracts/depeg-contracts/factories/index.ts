@@ -7,7 +7,6 @@ export { BasicRiskpool2b__factory } from "./BasicRiskpool2b__factory";
 export { DIP__factory } from "./DIP__factory";
 export { DepegProduct__factory } from "./DepegProduct__factory";
 export { DepegRiskpool__factory } from "./DepegRiskpool__factory";
-export { GifStaking__factory } from "./GifStaking__factory";
 export { Riskpool2__factory } from "./Riskpool2__factory";
 export { USD1__factory } from "./USD1__factory";
 export { USD2__factory } from "./USD2__factory";

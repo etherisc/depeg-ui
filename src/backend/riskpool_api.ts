@@ -3,13 +3,7 @@ import { DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
 import { BundleData } from "./bundle_data";
 import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json'
 import { Coder } from "abi-coder";
-import { IERC721__factory } from "../contracts/gif-interface";
-
-const IDX_RISKPOOL_ID = 1;
-const IDX_TOKEN_ID = 2;
-const IDX_STATE = 3;
-const IDX_APPLICATION_FILTER = 4;
-const IDX_CREATED_AT = 8;
+import { TransactionFailedError } from "../utils/error";
 
 export class DepegRiskpoolApi {
 
@@ -116,20 +110,26 @@ export class DepegRiskpoolApi {
         if (beforeInvestCallback) {
             beforeInvestCallback(riskpoolAddress);
         }
-        const tx = await this.depegRiskpool["createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"](
-            minSumInsured, 
-            maxSumInsured, 
-            minDuration * 86400, 
-            maxDuration * 86400, 
-            apr, 
-            investedAmount);
-        if (beforeWaitCallback !== undefined) {
-            beforeWaitCallback(riskpoolAddress);
+        try {
+            const tx = await this.depegRiskpool["createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"](
+                minSumInsured, 
+                maxSumInsured, 
+                minDuration * 86400, 
+                maxDuration * 86400, 
+                apr, 
+                investedAmount);
+            if (beforeWaitCallback !== undefined) {
+                beforeWaitCallback(riskpoolAddress);
+            }
+            const receipt = await tx.wait();
+            const bundleId = this.extractBundleIdFromApplicationLogs(receipt.logs);
+            console.log("bundleId", bundleId);
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while creating bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
         }
-        const receipt = await tx.wait();
-        const bundleId = this.extractBundleIdFromApplicationLogs(receipt.logs);
-        console.log("bundleId", bundleId);
-        return Promise.resolve([tx, receipt]);
     }
     
     extractBundleIdFromApplicationLogs(logs: any[]): string|undefined {

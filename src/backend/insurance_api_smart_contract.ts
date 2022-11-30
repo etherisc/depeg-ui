@@ -76,14 +76,13 @@ export class InsuranceApiSmartContract implements InsuranceApi {
         premium: number, 
         beforeApprovalCallback?: (address: string, currency: string, amount: number) => void,
         beforeWaitCallback?: (address: string, currency: string, amount: number) => void,
-    ) {
+    ): Promise<boolean> {
         console.log("createApproval", walletAddress, premium);
         // TODO: avoid this
         const depegProduct = (await this.getProductApi()).getDepegProduct();
         const [tx, receipt] = await createApprovalForTreasury(await depegProduct.getToken(), this.signer, premium, await depegProduct.getRegistry(), beforeApprovalCallback, beforeWaitCallback);
         console.log("tx", tx, "receipt", receipt);
-        // TODO: return real result
-        return Promise.resolve(true);
+        return Promise.resolve(receipt.status === 1);
     }
 }
 

@@ -1,4 +1,5 @@
-import { ContractReceipt, ContractTransaction, Signer } from "ethers";
+import { ContractReceipt, ContractTransaction, ethers, Signer } from "ethers";
+import { ApprovalFailedError } from "../utils/error";
 import { getErc20Token } from "./erc20";
 import { getInstanceService } from "./gif_registry";
 
@@ -18,10 +19,18 @@ export async function createApprovalForTreasury(
     if (beforeApprovalCallback !== undefined) {
         beforeApprovalCallback(treasury, "", amount); // TODO: currency symbol
     }
-    const tx = await usd1.approve(treasury, amount);
-    if (beforeWaitCallback !== undefined) {
-        beforeWaitCallback(treasury, "", amount); // TODO: currency symbol
+    try {
+        const tx = await usd1.approve(treasury, amount);
+        console.log("tx done", tx)
+        if (beforeWaitCallback !== undefined) {
+            beforeWaitCallback(treasury, "", amount); // TODO: currency symbol
+        }
+        const receipt = await tx.wait();
+        console.log("wait done", receipt, tx)
+        return [tx, receipt];
+    } catch (e) {
+        console.log("caught error during approval: ", e);
+        // @ts-ignore e.code
+        throw new ApprovalFailedError(e.code, e);
     }
-    const receipt = await tx.wait();
-    return [tx, receipt];
 }

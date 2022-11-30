@@ -5,6 +5,7 @@ import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../contracts
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { IInstanceService } from "../contracts/gif-interface";
 import { APPLICATION_STATE_UNDERWRITTEN, PolicyData } from "./policy_data";
+import { TransactionFailedError } from "../utils/error";
 
 export class DepegProductApi {
 
@@ -90,16 +91,22 @@ export class DepegProductApi {
         if (beforeApplyCallback !== undefined) {
             beforeApplyCallback(this.depegProduct!.address);
         }
-        const tx = await this.depegProduct!.applyForPolicy(
-            insuredAmount, 
-            coverageDurationDays * 24 * 60 * 60,
-            premium);
-        if (beforeWaitCallback !== undefined) {
-            beforeWaitCallback(this.depegProduct!.address);
+        try {
+            const tx = await this.depegProduct!.applyForPolicy(
+                insuredAmount, 
+                coverageDurationDays * 24 * 60 * 60,
+                premium);
+            if (beforeWaitCallback !== undefined) {
+                beforeWaitCallback(this.depegProduct!.address);
+            }
+            const receipt = await tx.wait();
+            // console.log(receipt);
+            return [tx, receipt];
+        } catch (e) {
+            console.log("caught error while applying for policy: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
         }
-        const receipt = await tx.wait();
-        // console.log(receipt);
-        return [tx, receipt];
     }
     
     async getPoliciesCount(

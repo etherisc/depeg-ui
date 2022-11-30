@@ -9,6 +9,7 @@ import { Signer, VoidSigner } from "ethers";
 import { useRouter } from 'next/router'
 import { formatCurrency } from "../../utils/numbers";
 import ApplicationForm from "./application_form";
+import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -120,7 +121,29 @@ export default function Application(props: ApplicationProps) {
                     );
                 }
             );
-            // FIXME: handle error during approval
+        } catch(e) { 
+            if ( e instanceof ApprovalFailedError) {
+                console.log("approval failed", e);
+                if (snackbar !== undefined) {
+                    closeSnackbar(snackbar);
+                }
+
+                enqueueSnackbar(
+                    t('error.approval_failed', { ns: 'common', error: e.code }),
+                    { 
+                        variant: "error", 
+                        persist: true,
+                        action: (key) => {
+                            return (
+                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                            );
+                        }
+                    }
+                );
+                return Promise.resolve(false);
+            } else {
+                throw e;
+            }
         } finally {
             if (snackbar !== undefined) {
                 closeSnackbar(snackbar);
@@ -151,7 +174,29 @@ export default function Application(props: ApplicationProps) {
                         { variant: "info", persist: true }
                     );
                 });
-            // FIXME: handle error during apply for policy
+        } catch(e) { 
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                if (snackbar !== undefined) {
+                    closeSnackbar(snackbar);
+                }
+
+                enqueueSnackbar(
+                    t('error.transaction_failed', { ns: 'common', error: e.code }),
+                    { 
+                        variant: "error", 
+                        persist: true,
+                        action: (key) => {
+                            return (
+                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                            );
+                        }
+                    }
+                );
+                return Promise.resolve(false);
+            } else {
+                throw e;
+            }
         } finally {
             if (snackbar !== undefined) {
                 closeSnackbar(snackbar);
@@ -159,14 +204,21 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function applyForPolicy(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<boolean> {
+    async function applyForPolicy(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) {
         setActiveStep(3);
         const approvalSuccess = await doApproval(walletAddress, premium);
+        if ( ! approvalSuccess) {
+            setActiveStep(2);
+            return;
+        }
         setActiveStep(4);
         const applicationSuccess = await doApplication(walletAddress, insuredAmount, coverageDuration, premium);
+        if ( ! applicationSuccess) {
+            setActiveStep(2);
+            return;
+        }
         setActiveStep(5);
         applicationSuccessful();
-        return Promise.resolve(applicationSuccess);        
     }
 
     async function updateWalletAddress(signer: Signer) {
