@@ -3,7 +3,7 @@ import Container from '@mui/material/Container';
 import React from 'react';
 import ChainData from './onchain/chain_data';
 import CustomChain from './onchain/custom_chain';
-
+import Faucet from './faucet/faucet';
 
 export default function Footer() {
 
@@ -18,6 +18,7 @@ export default function Footer() {
             }}>
                 <Box sx={{ py: 1 }} display="flex" flexWrap="wrap" justifyContent="right" >
                     <CustomChain />
+                    <Faucet />
                     <ChainData />
                 </Box>
             </Container>
