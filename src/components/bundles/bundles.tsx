@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useCallback, useContext, useEffect, useReducer, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { getInsuranceApi, InsuranceApi } from "../../backend/insurance_api";
-import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridRowParams, GridToolbarContainer, MuiEvent } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleRowView } from "../../model/bundle";
 import { BundleData } from "../../backend/bundle_data";
@@ -16,6 +16,7 @@ import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
 import { formatDate } from "../../utils/date";
 import moment from "moment";
+import { useRouter } from "next/router";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -25,6 +26,7 @@ export default function Bundles(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
     const appContext = useContext(AppContext);
     const { enqueueSnackbar } = useSnackbar();
+    const router = useRouter();
 
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [ bundleState, dispatch ] = useReducer(bundleReducer, { bundles: [], loading: false });
@@ -79,6 +81,12 @@ export default function Bundles(props: BundlesProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [appContext.data.signer]); // update bundles when signer changes
 
+    function rowClicked(params: GridRowParams, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails): void {
+        console.log(params.id)
+        router.push('/bundle/' + params.id);
+    }
+
+
     const columns: GridColDef[] = [
         { field: 'id', headerName: t('table.header.id'), flex: 1 },
         { field: 'capital', headerName: t('table.header.capital'), flex: 1.5 },
@@ -126,6 +134,7 @@ export default function Bundles(props: BundlesProps) {
                 pageSize={pageSize}
                 rowsPerPageOptions={[5, 10, 20, 50]}
                 onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
+                onRowClick={rowClicked}
                 />
         </>
     );
