@@ -16,6 +16,7 @@ export interface ApplicationProps {
 }
 
 const steps = ['step0', 'step1', 'step2', 'step3', 'step4'];
+export const REVOKE_INFO_URL = "https://metamask.zendesk.com/hc/en-us/articles/4446106184731-How-to-revoke-smart-contract-allowances-token-approvals";
 
 export default function Application(props: ApplicationProps) {
     const { t } = useTranslation(['application', 'common']);
@@ -204,17 +205,37 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
+    function showAllowanceNotice() {
+        enqueueSnackbar(
+            (<>
+                {t('error.allowance_revoke_notice', { ns: 'common' })}&nbsp;
+                <a href={REVOKE_INFO_URL} target="_blank" rel="noreferrer">here</a>
+            </>),
+            { 
+                variant: "info", 
+                persist: true,
+                action: (key) => {
+                    return (
+                        <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                    );
+                }
+            }
+        );
+    }
+
     async function applyForPolicy(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) {
         setActiveStep(3);
         const approvalSuccess = await doApproval(walletAddress, premium);
         if ( ! approvalSuccess) {
             setActiveStep(2);
+            showAllowanceNotice();
             return;
         }
         setActiveStep(4);
         const applicationSuccess = await doApplication(walletAddress, insuredAmount, coverageDuration, premium);
         if ( ! applicationSuccess) {
             setActiveStep(2);
+            showAllowanceNotice();
             return;
         }
         setActiveStep(5);

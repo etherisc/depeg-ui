@@ -9,6 +9,7 @@ import InvestForm from "./invest_form";
 import { useRouter } from "next/router";
 import { formatCurrency } from "../../utils/numbers";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
+import { REVOKE_INFO_URL } from "../application/application";
 
 export interface InvestProps {
     insurance: InsuranceApi;
@@ -180,25 +181,43 @@ export default function Invest(props: InvestProps) {
         }
     }
 
+    function showAllowanceNotice() {
+        enqueueSnackbar(
+            (<>
+                {t('error.allowance_revoke_notice', { ns: 'common' })}&nbsp;
+                <a href={REVOKE_INFO_URL} target="_blank" rel="noreferrer">here</a>
+            </>),
+            { 
+                variant: "info", 
+                persist: true,
+                action: (key) => {
+                    return (
+                        <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                    );
+                }
+            }
+        );
+    }
+
     async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) {
         setActiveStep(3);
         const investorWalletAddress = await appContext!!.data.signer!!.getAddress();
         const approvalSuccess = await doApproval(investorWalletAddress, investedAmount);
         if ( ! approvalSuccess) {
             setActiveStep(2);
+            showAllowanceNotice();
             return;
         }
         setActiveStep(4);
         const investSuccess = await doInvest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         if ( ! investSuccess) {
             setActiveStep(2);
+            showAllowanceNotice();
             return;
         }
         setActiveStep(5);
         applicationSuccessful();
     }
-
-
 
     return (
         <>
