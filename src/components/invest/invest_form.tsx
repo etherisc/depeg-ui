@@ -34,8 +34,8 @@ export default function InvestForm(props: InvestFormProperties) {
     const [ minSumInsured, setMinSumInsured ] = useState(investProps.minSumInsured as FormNumber);
     const [ minSumInsuredValid, setMinSumInsuredValid ] = useState(true);
 
-    function validateMinSumInsured(minSumInsured: number): string {
-        if (minSumInsured > maxSumInsured!) {
+    function validateMinSumInsured(minSumInsuredVal: number): string {
+        if (maxSumInsured !== undefined && minSumInsuredVal > maxSumInsured) {
             return t('minSumInsuredMaxError');
         }
 
@@ -46,12 +46,20 @@ export default function InvestForm(props: InvestFormProperties) {
     const [ maxSumInsured, setMaxSumInsured ] = useState(investProps.maxSumInsured as FormNumber);
     const [ maxSumInsuredValid, setMaxSumInsuredValid ] = useState(true);
 
+    function validateMaxSumInsured(maxSumInsuredVal: number): string {
+        if (minSumInsured !== undefined && maxSumInsuredVal < minSumInsured) {
+            return t('maxSumInsuredMinError');
+        }
+
+        return "";
+    }
+
     // minimum coverage duration
     const [ minDuration, setMinDuration ] = useState(investProps.minCoverageDuration as FormNumber);
     const [ minDurationValid, setMinDurationValid ] = useState(true);
 
-    function validateMinDuration() {
-        if (minDuration! > maxDuration!) {
+    function validateMinDuration(minDurationVal: number) {
+        if (maxDuration !== undefined && minDurationVal > maxDuration) {
             return t('minDurationMaxError');
         }
         return "";
@@ -60,6 +68,13 @@ export default function InvestForm(props: InvestFormProperties) {
     // maxmium coverage duration
     const [ maxDuration, setMaxDuration ] = useState(investProps.maxCoverageDuration as FormNumber);
     const [ maxDurationValid, setMaxDurationValid ] = useState(true);
+
+    function validateMaxDuration(maxDurationVal: number): string {
+        if (minDuration !== undefined && maxDurationVal < minDuration) {
+            return t('maxDurationMinError');
+        }
+        return "";
+    }
 
     // annual percentage return
     const [ annualPctReturn, setAnnualPctReturn ] = useState(investProps.annualPctReturn as FormNumber);
@@ -163,6 +178,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     onChange={setMaxSumInsured}
                     minValue={investProps.minSumInsured}
                     maxValue={investProps.maxSumInsured}
+                    extraValidation={validateMaxSumInsured}
                     onError={(errMsg) => setMaxSumInsuredValid(errMsg === "")}
                     />
             </Grid>
@@ -200,6 +216,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     onChange={setMaxDuration}
                     minValue={investProps.minCoverageDuration}
                     maxValue={investProps.maxCoverageDuration}
+                    extraValidation={validateMaxDuration}
                     onError={(errMsg) => setMaxDurationValid(errMsg === "")}
                     />
             </Grid>
