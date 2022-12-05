@@ -3,16 +3,22 @@
 /* eslint-disable */
 import type * as dependencies from "./dependencies";
 export type { dependencies };
+export type { AggregatorDataProvider } from "./AggregatorDataProvider";
 export type { BasicRiskpool2 } from "./BasicRiskpool2";
 export type { BasicRiskpool2b } from "./BasicRiskpool2b";
 export type { DIP } from "./DIP";
 export type { DepegProduct } from "./DepegProduct";
 export type { DepegRiskpool } from "./DepegRiskpool";
+export type { GifStaking } from "./GifStaking";
+export type { IPriceDataProvider } from "./IPriceDataProvider";
+export type { IStakingDataProvider } from "./IStakingDataProvider";
 export type { Riskpool2 } from "./Riskpool2";
 export type { USD1 } from "./USD1";
 export type { USD2 } from "./USD2";
 export type { USD3 } from "./USD3";
+export type { UsdcPriceDataProvider } from "./UsdcPriceDataProvider";
 export * as factories from "./factories";
+export { AggregatorDataProvider__factory } from "./factories/AggregatorDataProvider__factory";
 export { BasicRiskpool2__factory } from "./factories/BasicRiskpool2__factory";
 export { BasicRiskpool2b__factory } from "./factories/BasicRiskpool2b__factory";
 export { DepegProduct__factory } from "./factories/DepegProduct__factory";
@@ -95,8 +101,14 @@ export type { Ownable } from "./dependencies/OpenZeppelin/openzeppelin-contracts
 export { Ownable__factory } from "./factories/dependencies/OpenZeppelin/openzeppelin-contracts@4.7.3/Ownable__factory";
 export type { Pausable } from "./dependencies/OpenZeppelin/openzeppelin-contracts@4.7.3/Pausable";
 export { Pausable__factory } from "./factories/dependencies/OpenZeppelin/openzeppelin-contracts@4.7.3/Pausable__factory";
+export type { AggregatorV3Interface } from "./dependencies/smartcontractkit/chainlink@1.10.0/AggregatorV3Interface";
+export { AggregatorV3Interface__factory } from "./factories/dependencies/smartcontractkit/chainlink@1.10.0/AggregatorV3Interface__factory";
 export { DIP__factory } from "./factories/DIP__factory";
+export { GifStaking__factory } from "./factories/GifStaking__factory";
+export { IPriceDataProvider__factory } from "./factories/IPriceDataProvider__factory";
+export { IStakingDataProvider__factory } from "./factories/IStakingDataProvider__factory";
 export { Riskpool2__factory } from "./factories/Riskpool2__factory";
 export { USD1__factory } from "./factories/USD1__factory";
 export { USD2__factory } from "./factories/USD2__factory";
 export { USD3__factory } from "./factories/USD3__factory";
+export { UsdcPriceDataProvider__factory } from "./factories/UsdcPriceDataProvider__factory";

@@ -3,3 +3,4 @@
 /* eslint-disable */
 export * as openZeppelin from "./OpenZeppelin";
 export * as etherisc from "./etherisc";
+export * as smartcontractkit from "./smartcontractkit";

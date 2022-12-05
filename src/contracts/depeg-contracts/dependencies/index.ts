@@ -5,3 +5,5 @@ import type * as openZeppelin from "./OpenZeppelin";
 export type { openZeppelin };
 import type * as etherisc from "./etherisc";
 export type { etherisc };
+import type * as smartcontractkit from "./smartcontractkit";
+export type { smartcontractkit };
