@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # dump all env variables for next.js to .env.production file
 env | grep '^NEXT_PUBLIC' > .env.production

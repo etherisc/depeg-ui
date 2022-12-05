@@ -20,7 +20,7 @@ COPY . .
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 
 # RUN yarn build
 
@@ -37,6 +37,7 @@ ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+USER nextjs
 
 COPY --from=builder /app/public ./public
 
@@ -44,12 +45,10 @@ COPY --from=builder /app/public ./public
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY bin/entrypoint.sh ./
-
-USER nextjs
+COPY bin/entrypoint.sh /app/entrypoint.sh
 
 EXPOSE 3000
 
 ENV PORT 3000
 
-CMD ["entrypoint.sh"]
+CMD ["/app/entrypoint.sh"]
