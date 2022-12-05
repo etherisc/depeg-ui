@@ -21,9 +21,9 @@ export function BundleList(props: BundleListProps) {
                     <TableHead>
                     <TableRow>
                         <TableCell>{t('bundles.bundle')}</TableCell>
+                        <TableCell align="right">{t('bundles.apr')}</TableCell>
                         <TableCell align="right">{t('bundles.suminsured', { currency: props.usd1 })}</TableCell>
                         <TableCell align="right">{t('bundles.duration')}</TableCell>
-                        <TableCell align="right">{t('bundles.apr')}</TableCell>
                         <TableCell align="right">{t('bundles.capacity', { currency: props.usd1 })}</TableCell>
                     </TableRow>
                     </TableHead>
@@ -36,9 +36,9 @@ export function BundleList(props: BundleListProps) {
                         <TableCell component="th" scope="row">
                             {bundle.bundleId}
                         </TableCell>
+                        <TableCell align="right">{bundle.apr}</TableCell>
                         <TableCell align="right">{formatCurrency(bundle.minSumInsured, props.usd1Decimals)} / {formatCurrency(bundle.maxSumInsured, props.usd1Decimals)} {props.usd1}</TableCell>
                         <TableCell align="right">{bundle.minDuration / 86400 } / {bundle.maxDuration / 86400 } {t('days')}</TableCell>
-                        <TableCell align="right">{bundle.apr}</TableCell>
                         <TableCell align="right">{formatCurrency(bundle.capacity, props.usd1Decimals)} {props.usd1}</TableCell>
                         </TableRow>
                     ))}
