@@ -19,7 +19,7 @@ export default function CustomChain() {
         }]);
     }
 
-    if (process.env.NEXT_PUBLIC_CHAIN_RPC_URL === undefined) {
+    if (process.env.NEXT_PUBLIC_SHOW_ADD_CUSTOM_CHAIN === undefined) {
         return (<></>);
     }
 
@@ -27,7 +27,7 @@ export default function CustomChain() {
     <>
         <Button variant="text" sx={{ p: 0 }} onClick={() => addCustomChain()}>
             <Typography variant="body2" sx={{ fontSize: '10px' }}>
-                    Add testing chain
+                    Add custom chain
             </Typography>
         </Button>
     </>);
