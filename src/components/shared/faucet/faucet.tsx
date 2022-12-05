@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../../context/app_context";
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography'
-import { Signer } from 'ethers';
+import { ethers, Signer } from 'ethers';
 import { transferAmount } from "../../../backend/erc20";
 import { DepegProduct__factory } from "../../../contracts/depeg-contracts";
 import { useSnackbar } from 'notistack';
@@ -46,8 +46,7 @@ export default function Faucet() {
 
     async function useFaucet() {
         // TODO: init coin source account (and do not allow undefined)
-        const coinSource = "0x0000";
-        const coinSourceSigner: Signer | undefined = undefined;
+        const coinSourceSigner: Signer | undefined = ethers.Wallet.fromMnemonic(process.env.NEXT_PUBLIC_FAUCET_MNEMONIC ?? "").connect(appContext.data.provider!);
 
         // transfer some eth to pay for trx
         let ethTx = {
