@@ -41,7 +41,8 @@ export class DepegRiskpoolApi {
     }
     
     async getBundleDataByBundleId(bundleId: number): Promise<BundleData> {
-        const [state, tokenId, owner, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn, capital, lockedCapital, balance, createdAt ] = await this.depegRiskpool.getBundleInfo(bundleId);
+        const bundleInfo = await this.depegRiskpool.getBundleInfo(bundleId);
+        const [ _bId, state, tokenId, owner, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn, capitalSupportedByStaking, capital, lockedCapital, balance, createdAt ] = bundleInfo;
         const apr = 100 * annualPercentageReturn.toNumber() / (await this.depegRiskpool.getApr100PercentLevel()).toNumber();
         const policies = await this.depegRiskpool.getActivePolicies(bundleId);
     
