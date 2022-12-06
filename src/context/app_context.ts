@@ -8,6 +8,7 @@ export interface AppContext {
 }
 
 export interface AppData {
+    chainId: number;
     provider: providers.Web3Provider | undefined;
     signer: Signer | undefined;
     bundles: Array<BundleData>;
@@ -20,6 +21,7 @@ AppContext.displayName = "AppContext";
 
 export function initialAppData(): AppData {
     return {
+        chainId: 0,
         provider: undefined,
         signer: undefined,
         bundles: new Array<BundleData>(),
@@ -51,12 +53,14 @@ export function signerReducer(state: AppData, action: AppAction): AppData {
         case AppActionType.SET:
             return { 
                 ...state,
+                chainId: action?.provider?.network !== undefined ? action?.provider?.network.chainId : 0,
                 provider: action?.provider,
                 signer: action?.signer,
             };
         case AppActionType.UNSET:
             return { 
                 ...state,
+                chainId: 0,
                 provider: undefined,
                 signer: undefined,
             };

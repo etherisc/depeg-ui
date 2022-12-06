@@ -1,5 +1,5 @@
 import '../../styles/globals.css'
-import type { AppProps } from 'next/app'
+import type { AppProps } from 'next/app';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -16,6 +16,8 @@ import { appWithTranslation } from 'next-i18next';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { getAndUpdateWalletAccount } from '../components/shared/account/wallet';
+import { toHexString } from '../utils/numbers';
+import { expectedChainIdHex } from '../utils/const';
 
 
 export function App({ Component, pageProps }: AppProps) {
@@ -40,8 +42,8 @@ export function App({ Component, pageProps }: AppProps) {
       // @ts-ignore
       window.ethereum.on('chainChanged', function (chain: any) {
         console.log('chainChanged', chain);
-        if (chain != "0xa869") {
-          console.log('not fuji');
+        if (chain !== expectedChainIdHex) {
+          console.log('invalid chain');
           removeSigner(dispatch);
         }
       });

@@ -6,10 +6,11 @@ import { InsuranceApi } from "../../backend/insurance_api";
 import { SnackbarKey, useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import { Signer, VoidSigner } from "ethers";
-import { useRouter } from 'next/router'
-import { formatCurrency } from "../../utils/numbers";
+import { useRouter } from "next/router";
+import { formatCurrency, toHex, toHexString } from "../../utils/numbers";
 import ApplicationForm from "./application_form";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
+import { expectedChainIdHex } from "../../utils/const";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -44,8 +45,15 @@ export default function Application(props: ApplicationProps) {
             setPremiumTrxTextKey("");
         }
 
+        function chainIsConnectedAndValid(): boolean {
+            return toHex(appContext.data.chainId) === expectedChainIdHex
+                && appContext.data.signer !== undefined 
+                && ! appContext.data.bundlesInitialized 
+                && ! (appContext.data.signer instanceof VoidSigner);
+        }
+
         console.log("signer", appContext.data.signer, "bundleDataInitialized", appContext.data.bundlesInitialized);
-        if (appContext.data.signer !== undefined && ! appContext.data.bundlesInitialized && ! (appContext.data.signer instanceof VoidSigner)) {
+        if ( chainIsConnectedAndValid() ) {
             appContext.dispatch({ type: AppActionType.BUNDLE_INITIALIZING });
             setPremiumTrxTextKey('bundle_loading');
             console.log("got a new signer ... getting bundles");

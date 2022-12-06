@@ -9,10 +9,15 @@ import LoginWithMetaMaskButton from "./login_metamask";
 import LoginWithWalletConnectButton from "./login_walletconnect";
 import Logout from "./logout";
 import { reconnectWallets } from "./wallet";
+import { toHex, toHexString } from "../../../utils/numbers";
+import { expectedChainIdHex } from "../../../utils/const";
 
 export default function Account() {
     const appContext = useContext(AppContext);
 
+    const chainIdHex = expectedChainIdHex;
+
+    const [ correctChain, setCorrectChain ] = useState(toHex(appContext.data.chainId) === chainIdHex);
     const [ loggedIn, setLoggedIn ] = useState(false);
     const [ address, setAddress ] = useState("");
     const tokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL ?? "ETH";
@@ -32,6 +37,10 @@ export default function Account() {
     }, [appContext?.data.signer]);
 
     useEffect(() => {
+        setCorrectChain(toHex(appContext.data.chainId) === chainIdHex);
+    }, [appContext.data.chainId, chainIdHex]);
+
+    useEffect(() => {
         reconnectWallets(appContext);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -47,9 +56,16 @@ export default function Account() {
     
     let account = (<></>);
 
+    let wrongChain = "";
+
+    if (! correctChain) {
+        wrongChain = "Wrong chain. Please switch to the correct chain.";
+    }
+
     if (appContext?.data.signer != undefined && address !== undefined && address !== "") {
         account = (
             <>
+            {wrongChain}
                 <Box sx={{ display: 'inline-flex', alignItems: 'center' }}>
                     <Avatar sx={{ mr: 1 }} >
                         <Blockies seed={address} size={10} scale={4} />
