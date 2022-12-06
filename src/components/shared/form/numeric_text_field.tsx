@@ -22,7 +22,7 @@ export interface NumericTextFieldProps {
     onError?: (errorMsg: string) => void;
 }
 
-export const INPUT_VARIANT = 'outlined';
+export const INPUT_VARIANT = 'filled';
 
 export default function NumericTextField(props: NumericTextFieldProps) {
     const { t } = useTranslation('common');

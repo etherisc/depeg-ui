@@ -12,7 +12,8 @@ import red from '@mui/material/colors/red';
 export const etheriscTheme = createTheme({
     palette: {
         background: {
-            default: 'hsl(222,74%,96%)'
+            default: 'hsl(222,74%,96%)',
+            paper: 'hsl(222,74%,96%)'
         },
         primary: {
             // light: will be calculated from palette.primary.main,
