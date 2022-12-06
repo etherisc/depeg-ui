@@ -22,7 +22,7 @@
     "@mui/x-data-grid": "^5.17.14",
     "@mui/x-date-pickers": "^5.0.9",
     "@types/node": "^18.11.10",
-    "@types/react": "^18.0.25",
+    "@types/react": "^18.0.26",
     "@types/react-blockies": "^1.4.1",
     "@types/react-dom": "^18.0.9",
     "@walletconnect/web3-provider": "^1.8.0",
