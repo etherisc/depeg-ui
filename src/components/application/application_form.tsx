@@ -70,7 +70,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // coverage period (days and date)
 
     // coverage days
-    const [ coverageDays, setCoverageDays ] = useState(props.applicationApi.coverageDurationDaysMin  as FormNumber);
+    const [ coverageDays, setCoverageDays ] = useState(props.applicationApi.coverageDurationDaysMax  as FormNumber);
     const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
     const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
     const [ coverageDaysMax, setCoverageDaysMax ] = useState(props.applicationApi.coverageDurationDaysMax);
@@ -124,8 +124,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         if (props.bundles.length > 0) {
             let minSumInsured = Number.MAX_SAFE_INTEGER;
             let maxSumInsured = 0;
-            let minCoverageDays = Number.MAX_SAFE_INTEGER;
-            let maxCoverageDays = 0;
+            let minCoverageSecs = Number.MAX_SAFE_INTEGER;
+            let maxCoverageSecs = 0;
             for( let b of props.bundles) {
                 if (b.minSumInsured < minSumInsured) {
                     minSumInsured = b.minSumInsured;
@@ -133,19 +133,22 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 if (b.maxSumInsured > maxSumInsured) {
                     maxSumInsured = b.maxSumInsured;
                 }
-                if (b.minDuration < minCoverageDays) {
-                    minCoverageDays = b.minDuration;
+                if (b.minDuration < minCoverageSecs) {
+                    minCoverageSecs = b.minDuration;
                 }
-                if (b.maxDuration > maxCoverageDays) {
-                    maxCoverageDays = b.maxDuration;
+                if (b.maxDuration > maxCoverageSecs) {
+                    maxCoverageSecs = b.maxDuration;
                 }
             }
             setInsuredAmountMin(minSumInsured);
             setInsuredAmountMax(maxSumInsured);
-            setCoverageDaysMin(minCoverageDays / 86400);
-            setCoverageDaysMax(maxCoverageDays / 86400);
-            setCoverageDays(minCoverageDays / 86400);
-            setCoverageUntil(moment().add(minCoverageDays / 86400, 'days'));
+            const minCoverageDays = minCoverageSecs / 86400;
+            const maxCoverageDays = maxCoverageSecs / 86400;
+            setCoverageDaysMin(minCoverageDays);
+            setCoverageDaysMax(maxCoverageDays);
+            const coverageDays = maxCoverageDays < 30 ? maxCoverageDays : 30;
+            setCoverageDays(coverageDays);
+            setCoverageUntil(moment().add(coverageDays, 'days'));
         }
     }, [props.bundles]);
 
@@ -268,7 +271,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     
                     readOnly={premiumCalculationInProgress}
                     label={t('coverageDurationUntil')}
-                    inputFormat="MM/DD/YYYY"
+                    inputFormat="DD.MM.YYYY"
                     renderInput={(params) => 
                         <TextField {...params} fullWidth variant={INPUT_VARIANT} />
                     }
