@@ -265,10 +265,13 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             <Grid item xs={6}>
                 <DesktopDatePicker
                     disabled={props.disabled}
+                    
                     readOnly={premiumCalculationInProgress}
                     label={t('coverageDurationUntil')}
                     inputFormat="MM/DD/YYYY"
-                    renderInput={(params) => <TextField {...params} fullWidth />}
+                    renderInput={(params) => 
+                        <TextField {...params} fullWidth variant={INPUT_VARIANT} />
+                    }
                     disablePast={true}
                     value={coverageUntil}
                     onChange={handleCoverageUntilChange}
