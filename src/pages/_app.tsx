@@ -16,6 +16,8 @@ import { appWithTranslation } from 'next-i18next';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { getAndUpdateWalletAccount } from '../components/shared/account/wallet';
+import { ThemeProvider } from '@mui/material/styles';
+import { etheriscTheme } from '../config/theme';
 
 
 export function App({ Component, pageProps }: AppProps) {
@@ -58,18 +60,20 @@ export function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
-      <CssBaseline enableColorScheme />
-      <AppContext.Provider value={{ data, dispatch}} >
-        <SnackbarProvider maxSnack={3}>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <Header />
-            <Container maxWidth="lg" sx={{ p: 1 }}>
-              <Component {...pageProps} />
-            </Container>
-            <Footer />
-          </LocalizationProvider>
-        </SnackbarProvider>
-      </AppContext.Provider>
+      <ThemeProvider theme={etheriscTheme}>
+        <CssBaseline enableColorScheme />
+        <AppContext.Provider value={{ data, dispatch}} >
+          <SnackbarProvider maxSnack={3}>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <Header />
+              <Container maxWidth="lg" sx={{ p: 1 }}>
+                <Component {...pageProps} />
+              </Container>
+              <Footer />
+            </LocalizationProvider>
+          </SnackbarProvider>
+        </AppContext.Provider>
+      </ThemeProvider>
     </React.Fragment>
   );
 }

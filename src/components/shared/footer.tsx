@@ -14,7 +14,7 @@ export default function Footer() {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                bgcolor: "#f9f9f9",
+                bgcolor: "#C5D0DE",
             }}>
                 <Box sx={{ py: 1 }} display="flex" flexWrap="wrap" justifyContent="right" >
                     <CustomChain />
