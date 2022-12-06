@@ -60,7 +60,7 @@ export default function Account() {
                         <Balance
                             signer={appContext?.data.signer}
                             currency={tokenSymbol}
-                            usdAggregatorAddress={process.env.NEXT_PUBLIC_CHAINLINK_AGGREGATOR_AVAX_USD_ADDRESS!}
+                            usdAggregatorAddress={process.env.NEXT_PUBLIC_CHAINLINK_AGGREGATOR_ETH_USD_ADDRESS!}
                             />
                     </Box>
                 </Box>

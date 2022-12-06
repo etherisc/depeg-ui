@@ -19,7 +19,7 @@ export default function CustomChain() {
         }]);
     }
 
-    if (process.env.NEXT_PUBLIC_SHOW_ADD_CUSTOM_CHAIN === undefined) {
+    if (process.env.NEXT_PUBLIC_SHOW_ADD_CUSTOM_CHAIN !== 'true') {
         return (<></>);
     }
 

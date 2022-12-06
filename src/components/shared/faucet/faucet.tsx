@@ -29,7 +29,7 @@ export default function Faucet() {
         }
     }, [appContext?.data.signer]);
 
-    if (process.env.NEXT_PUBLIC_CHAIN_RPC_URL === undefined) {
+    if (process.env.NEXT_PUBLIC_SHOW_FAUCET !== 'true') {
         return (<></>);
     }
 
@@ -46,29 +46,12 @@ export default function Faucet() {
     }
 
     async function useFaucet() {
-        // TODO: init coin source account (and do not allow undefined)
-        const coinSourceSigner: Signer | undefined = ethers.Wallet.fromMnemonic(process.env.NEXT_PUBLIC_FAUCET_MNEMONIC ?? "").connect(appContext.data.provider!);
-
         const snackbarId = enqueueSnackbar(t('wait_for_coins'),  { persist: true, variant: 'info' });
 
-        if (process.env.NEXT_PUBLIC_FAUCET_SEND_ETHERS === "true") {
-        // transfer some eth to pay for trx
-            let ethTx = {
-                to: address!,
-                gasLimit: 50000,
-                value: parseEther("10.0") // 10 ETH
-            };
-            console.log("sending eth to", ethTx.to);
-            const tx = await coinSourceSigner!.sendTransaction(ethTx);
-            await tx.wait();
-        }
+        console.log("calling faucet api...");
+        await fetch("/api/faucet?address=" + address!);
+        console.log("faucet api called");
 
-        if (process.env.NEXT_PUBLIC_FAUCET_SEND_TESTCOIN === "true") {
-            // transfer some testcoin
-            const tokenAddress = await getTokenAddress();
-            transferAmount(address!, 1000000000000, tokenAddress, coinSourceSigner!);  // 1'000'000 DEP
-        }
-        
         closeSnackbar(snackbarId);
         enqueueSnackbar(t('coins_sent'),  { autoHideDuration: 3000, variant: 'success' });
     }
