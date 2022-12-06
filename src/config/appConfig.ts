@@ -12,6 +12,7 @@ export const walletConnectConfig = {
     projectId: '6cf24be37dc19d58bc113806ab03aded',
     rpc: {
         "43113": "https://api.avax-test.network/ext/bc/C/rpc", // fuji
+        "80001": "https://polygon-testnet-rpc.allthatnode.com:8545", // mumbai
         chainId: chainUrl, // main chain connection
     },
 };
