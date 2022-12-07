@@ -5,6 +5,7 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { formatCurrency } from "../../../utils/numbers";
 import { FormNumber } from "../../../utils/types";
 import { INPUT_VARIANT } from "./numeric_text_field";
+import { parseNumber } from '@brightspace-ui/intl/lib/number.js';
 
 export interface CurrencyTextfieldProps {
     value: FormNumber;
@@ -59,7 +60,7 @@ export default function CurrencyTextField(props: CurrencyTextfieldProps) {
 
     function parseDisplayValue(toParse: string) {
         if (toParse !== undefined && toParse !== "") {
-            return parseFloat(toParse.replaceAll(',', '')) * Math.pow(10, currencyDecimals)
+            return parseNumber(toParse) * Math.pow(10, currencyDecimals)
         } else {
             return undefined;
         }

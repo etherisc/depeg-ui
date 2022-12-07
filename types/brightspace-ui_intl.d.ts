@@ -1,0 +1,1 @@
+declare module '@brightspace-ui/intl/lib/number.js';
