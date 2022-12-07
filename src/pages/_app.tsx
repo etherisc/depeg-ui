@@ -9,7 +9,7 @@ import React, { useReducer } from 'react';
 import Container from '@mui/material/Container';
 import Header from '../components/shared/header';
 import Head from 'next/head';
-import { initialAppData, removeSigner, AppContext, signerReducer } from '../context/app_context';
+import { initialAppData, removeSigner, AppContext, signerReducer, AppActionType } from '../context/app_context';
 import Footer from '../components/shared/footer';
 import { SnackbarProvider } from 'notistack';
 import { appWithTranslation } from 'next-i18next';
@@ -26,6 +26,7 @@ export function App({ Component, pageProps }: AppProps) {
   if (data.provider != undefined) {
     data.provider.on('network', (newNetwork: any, oldNetwork: any) => {
       console.log('network', newNetwork, oldNetwork);
+      dispatch({ type: AppActionType.CHAIN_CHANGED, chainId: newNetwork.chainId });
     });
 
     // @ts-ignore
@@ -42,14 +43,12 @@ export function App({ Component, pageProps }: AppProps) {
       // @ts-ignore
       window.ethereum.on('chainChanged', function (chain: any) {
         console.log('chainChanged', chain);
-        if (chain != "0xa869") {
-          console.log('not fuji');
-          removeSigner(dispatch);
-        }
+        dispatch({ type: AppActionType.CHAIN_CHANGED, chainId: chain });
       });
       // @ts-ignore
       window.ethereum.on('network', (newNetwork: any, oldNetwork: any) => {
         console.log('network', newNetwork, oldNetwork);
+        dispatch({ type: AppActionType.CHAIN_CHANGED, chainId: newNetwork.chainId });
       });
     }
   }

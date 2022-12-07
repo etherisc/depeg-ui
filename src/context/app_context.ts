@@ -1,6 +1,8 @@
 import { ethers, providers, Signer } from "ethers";
 import React, { Dispatch } from "react";
 import { BundleData } from "../backend/bundle_data";
+import { expectedChain } from "../utils/const";
+import { toHex } from "../utils/numbers";
 
 export interface AppContext {
     data: AppData;
@@ -8,6 +10,8 @@ export interface AppContext {
 }
 
 export interface AppData {
+    chainId: string;
+    isExpectedChain: boolean;
     provider: providers.Web3Provider | undefined;
     signer: Signer | undefined;
     bundles: Array<BundleData>;
@@ -20,6 +24,8 @@ AppContext.displayName = "AppContext";
 
 export function initialAppData(): AppData {
     return {
+        chainId: "0x0",
+        isExpectedChain: false,
         provider: undefined,
         signer: undefined,
         bundles: new Array<BundleData>(),
@@ -36,6 +42,7 @@ export enum AppActionType {
     RESET_BUNDLE,
     BUNDLE_INITIALIZING,
     BUNDLE_LOADING_FINISHED,
+    CHAIN_CHANGED,
 }
 
 export interface AppAction {
@@ -44,6 +51,7 @@ export interface AppAction {
     provider?: providers.Web3Provider;
     bundle?: BundleData;
     bundleLoading?: boolean;
+    chainId?: string;
 }
 
 export function signerReducer(state: AppData, action: AppAction): AppData {
@@ -51,12 +59,16 @@ export function signerReducer(state: AppData, action: AppAction): AppData {
         case AppActionType.SET:
             return { 
                 ...state,
+                chainId: action.chainId ?? "0x0",
+                isExpectedChain: action.chainId === expectedChain,
                 provider: action?.provider,
                 signer: action?.signer,
             };
         case AppActionType.UNSET:
             return { 
                 ...state,
+                chainId: "0x0",
+                isExpectedChain: false,
                 provider: undefined,
                 signer: undefined,
             };
@@ -86,15 +98,25 @@ export function signerReducer(state: AppData, action: AppAction): AppData {
                 ...state,
                 bundlesLoading: false
             };
+        case AppActionType.CHAIN_CHANGED:
+            const isExpectedChain = action.chainId === expectedChain;
+            console.log("AppActionType.CHAIN_CHANGED", action.chainId, isExpectedChain);
+            return {
+                ...state,
+                chainId: action.chainId ?? "0x0",
+                isExpectedChain: isExpectedChain,
+            }
         default:
             throw Error("unxpected action type " + action.type);
     }
 }
 
-export function setSigner(dispatch: Dispatch<AppAction>, provider: ethers.providers.Web3Provider) {
-    const signer = provider.getSigner();  
-    console.log("set signer", signer);
-    dispatch({ type: AppActionType.SET, signer: signer, provider: provider });
+export async function setSigner(dispatch: Dispatch<AppAction>, provider: ethers.providers.Web3Provider) {
+    const signer = provider.getSigner(); 
+    const network = await provider.getNetwork();
+    const chainId = network.chainId;
+    console.log("set signer", signer, chainId);
+    dispatch({ type: AppActionType.SET, signer: signer, provider: provider, chainId: toHex(chainId) });
 }
 
 export function updateSigner(dispatch: Dispatch<AppAction>, provider: ethers.providers.Web3Provider) {
