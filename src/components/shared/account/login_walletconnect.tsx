@@ -44,7 +44,7 @@ export default function LoginWithWalletConnectButton() {
                 wcProvider.disconnect();
                 removeSigner(appContext!!.dispatch);
             }
-            appContext!!.dispatch({ type: AppActionType.CHAIN_CHANGED, chainId: toHex(chainId) });
+            location.reload();
         });
 
         // A Web3Provider wraps a standard Web3 provider, which is

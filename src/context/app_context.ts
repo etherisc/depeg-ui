@@ -25,7 +25,7 @@ AppContext.displayName = "AppContext";
 export function initialAppData(): AppData {
     return {
         chainId: "0x0",
-        isExpectedChain: false,
+        isExpectedChain: true,
         provider: undefined,
         signer: undefined,
         bundles: new Array<BundleData>(),
@@ -42,7 +42,6 @@ export enum AppActionType {
     RESET_BUNDLE,
     BUNDLE_INITIALIZING,
     BUNDLE_LOADING_FINISHED,
-    CHAIN_CHANGED,
 }
 
 export interface AppAction {
@@ -68,7 +67,7 @@ export function signerReducer(state: AppData, action: AppAction): AppData {
             return { 
                 ...state,
                 chainId: "0x0",
-                isExpectedChain: false,
+                isExpectedChain: true,
                 provider: undefined,
                 signer: undefined,
             };
@@ -98,14 +97,6 @@ export function signerReducer(state: AppData, action: AppAction): AppData {
                 ...state,
                 bundlesLoading: false
             };
-        case AppActionType.CHAIN_CHANGED:
-            const isExpectedChain = action.chainId === expectedChain;
-            console.log("AppActionType.CHAIN_CHANGED", action.chainId, isExpectedChain);
-            return {
-                ...state,
-                chainId: action.chainId ?? "0x0",
-                isExpectedChain: isExpectedChain,
-            }
         default:
             throw Error("unxpected action type " + action.type);
     }

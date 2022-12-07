@@ -5,11 +5,11 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import CssBaseline from '@mui/material/CssBaseline';
-import React, { useReducer } from 'react';
+import React, { useCallback, useReducer } from 'react';
 import Container from '@mui/material/Container';
 import Header from '../components/shared/header';
 import Head from 'next/head';
-import { initialAppData, removeSigner, AppContext, signerReducer, AppActionType } from '../context/app_context';
+import { initialAppData, removeSigner, AppContext, signerReducer } from '../context/app_context';
 import Footer from '../components/shared/footer';
 import { SnackbarProvider } from 'notistack';
 import { appWithTranslation } from 'next-i18next';
@@ -18,6 +18,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { getAndUpdateWalletAccount } from '../components/shared/account/wallet';
 import { ThemeProvider } from '@mui/material/styles';
 import { etheriscTheme } from '../config/theme';
+import UnexpectedChain from '../components/shared/unexpected_chain';
 
 
 export function App({ Component, pageProps }: AppProps) {
@@ -26,7 +27,7 @@ export function App({ Component, pageProps }: AppProps) {
   if (data.provider != undefined) {
     data.provider.on('network', (newNetwork: any, oldNetwork: any) => {
       console.log('network', newNetwork, oldNetwork);
-      dispatch({ type: AppActionType.CHAIN_CHANGED, chainId: newNetwork.chainId });
+      location.reload();
     });
 
     // @ts-ignore
@@ -43,15 +44,23 @@ export function App({ Component, pageProps }: AppProps) {
       // @ts-ignore
       window.ethereum.on('chainChanged', function (chain: any) {
         console.log('chainChanged', chain);
-        dispatch({ type: AppActionType.CHAIN_CHANGED, chainId: chain });
+        location.reload();
       });
       // @ts-ignore
       window.ethereum.on('network', (newNetwork: any, oldNetwork: any) => {
         console.log('network', newNetwork, oldNetwork);
-        dispatch({ type: AppActionType.CHAIN_CHANGED, chainId: newNetwork.chainId });
+        location.reload();
       });
     }
   }
+
+  const content = useCallback(() => {
+    if (data.isExpectedChain) {
+      return (<Component {...pageProps} />);
+    } else {
+      return (<UnexpectedChain />);
+    }
+  }, [data.isExpectedChain, Component, pageProps]);
 
   return (
     <React.Fragment>
@@ -66,7 +75,7 @@ export function App({ Component, pageProps }: AppProps) {
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Header />
               <Container maxWidth="lg" sx={{ p: 1 }}>
-                <Component {...pageProps} />
+                {content()}
               </Container>
               <Footer />
             </LocalizationProvider>

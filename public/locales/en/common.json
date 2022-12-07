@@ -18,6 +18,8 @@
         "address_copied": "Address copied to clipboard"
     },
     "error": {
+        "unexpected_network_title": "Error - Unexpected network",
+        "unexpected_network": "Please connect your wallet to the network '{{network}}'",
         "metamask_not_found": "Missing metamask plugin - get it from",
         "wallet_connect_failed": "WalletConnect login failed or cancelled",
         "currencyTextFieldMinValue": "{{fieldName}} must be at least {{currency}} {{amount}}",
