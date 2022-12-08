@@ -2,17 +2,15 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../../context/app_context";
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography'
-import { ethers, Signer } from 'ethers';
-import { transferAmount } from "../../../backend/erc20";
 import { DepegProduct__factory } from "../../../contracts/depeg-contracts";
 import { useSnackbar } from 'notistack';
 import { useTranslation } from "next-i18next";
-import { parseEther } from "ethers/lib/utils";
 
 export default function Faucet() {
     const appContext = useContext(AppContext);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
+    const currency = process.env.NEXT_PUBLIC_DEPEG_USD2;
 
     const [ address, setAddress ] = useState<string|undefined>(undefined);
 
@@ -59,7 +57,7 @@ export default function Faucet() {
     return (<>
         <Button variant="text" sx={{ p: 0 }} onClick={useFaucet}>
             <Typography variant="body2" sx={{ fontSize: '10px' }}>
-                    Coin faucet
+                    {currency} faucet
             </Typography>
         </Button>
     </>);

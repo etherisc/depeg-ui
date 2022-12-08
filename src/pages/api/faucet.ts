@@ -16,28 +16,30 @@ export default async function handler(
     const address = req.query.address as string;
 
     console.log("faucet called for", address);
+    const currency = process.env.NEXT_PUBLIC_DEPEG_USD2;
+    const currencyDecimals = parseInt(process.env.NEXT_PUBLIC_DEPEG_USD2_DECIMALS ?? '6');
     const provider = new StaticJsonRpcProvider(process.env.NEXT_PUBLIC_CHAIN_RPC_URL);
     const coinSourceSigner: Signer = ethers.Wallet.fromMnemonic(process.env.NEXT_FAUCET_MNEMONIC ?? "").connect(provider);
 
     if (process.env.NEXT_FAUCET_SEND_ETHERS === "true") {
-        console.log("sending ethers to", address);
         // transfer 10 eth to pay for trx
         let ethTx = {
             to: address!,
             gasLimit: 50000,
             value: parseEther("10.0") // 10 ETH
         };
-        console.log("sending eth to", ethTx.to);
+        console.log("sending 10 eth to", ethTx.to);
         const tx = await coinSourceSigner!.sendTransaction(ethTx);
         await tx.wait();
         console.log("done");
     }
 
     if (process.env.NEXT_FAUCET_SEND_TESTCOIN === "true") {
-        console.log("sending testcoin to", address);
+        const amount = 1000000 * Math.pow(10, currencyDecimals); // 1'000'000 USD2
+        console.log("sending", currency, address);
         // transfer 1'000'000 testcoin
         const tokenAddress = process.env.NEXT_FAUCET_COIN_ADDRESS ?? "";
-        await transferAmount(address!, 1000000000000, tokenAddress, coinSourceSigner!); 
+        await transferAmount(address!, amount, tokenAddress, coinSourceSigner!); 
         console.log("done");
     }
 
