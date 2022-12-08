@@ -1,6 +1,6 @@
-import { Alert, AlertTitle, Button } from "@mui/material";
+
+import { Alert, AlertTitle, Button, Paper } from "@mui/material";
 import Box from "@mui/system/Box";
-import { t } from "i18next";
 import { useTranslation } from "next-i18next";
 import { toHexString } from "../../utils/numbers";
 
@@ -52,16 +52,17 @@ export default function UnexpectedChain() {
 
     return (
         <div>
-            <Alert severity="warning">
-                <AlertTitle>{t('error.unexpected_network_title')}</AlertTitle>
-                {t('error.unexpected_network', { network: chainName})}
-                <br/>
-            </Alert>
-            <Box sx={{ pt: 2 }} >
-                <Button variant="contained" color="primary" onClick={switchNetwork}>
-                    {t('action.switch_network', { network: chainName})}
-                </Button>
-            </Box>
+            <Paper elevation={1} >
+                <Alert severity="warning">
+                    <AlertTitle>{t('error.unexpected_network_title')}</AlertTitle>
+                    {t('error.unexpected_network', { network: chainName})}
+                    <Box sx={{ pt: 2 }}>
+                        <Button variant="contained" color="secondary" onClick={switchNetwork}>
+                            {t('action.switch_network', { network: chainName})}
+                        </Button>
+                    </Box>
+                </Alert>
+            </Paper>
         </div>
     );
 }
