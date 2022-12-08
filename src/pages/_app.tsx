@@ -5,12 +5,9 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import CssBaseline from '@mui/material/CssBaseline';
-import React, { useCallback, useReducer } from 'react';
-import Container from '@mui/material/Container';
-import Header from '../components/shared/header';
+import React, { useReducer } from 'react';
 import Head from 'next/head';
 import { initialAppData, removeSigner, AppContext, signerReducer } from '../context/app_context';
-import Footer from '../components/shared/footer';
 import { SnackbarProvider } from 'notistack';
 import { appWithTranslation } from 'next-i18next';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -18,10 +15,10 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { getAndUpdateWalletAccount } from '../components/shared/account/wallet';
 import { ThemeProvider } from '@mui/material/styles';
 import { etheriscTheme } from '../config/theme';
-import UnexpectedChain from '../components/shared/unexpected_chain';
+import Layout from '../components/layout';
 
 
-export function App({ Component, pageProps }: AppProps) {
+export function App(appProps: AppProps) {
   const [ data, dispatch ] = useReducer(signerReducer, initialAppData());
 
   if (data.provider != undefined) {
@@ -54,14 +51,6 @@ export function App({ Component, pageProps }: AppProps) {
     }
   }
 
-  const content = useCallback(() => {
-    if (data.isExpectedChain) {
-      return (<Component {...pageProps} />);
-    } else {
-      return (<UnexpectedChain />);
-    }
-  }, [data.isExpectedChain, Component, pageProps]);
-
   return (
     <React.Fragment>
       <Head>
@@ -73,11 +62,7 @@ export function App({ Component, pageProps }: AppProps) {
         <AppContext.Provider value={{ data, dispatch}} >
           <SnackbarProvider maxSnack={3}>
             <LocalizationProvider dateAdapter={AdapterMoment}>
-              <Header />
-              <Container maxWidth="lg" sx={{ p: 1 }}>
-                {content()}
-              </Container>
-              <Footer />
+              <Layout {...appProps} />
             </LocalizationProvider>
           </SnackbarProvider>
         </AppContext.Provider>
