@@ -9,14 +9,25 @@ export default function UnexpectedChain() {
     const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME;
     const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
     const chainRpcUrl = process.env.NEXT_PUBLIC_CHAIN_RPC_URL;
+    const tokenName = process.env.NEXT_PUBLIC_CHAIN_TOKEN_NAME;
+    const tokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL;
+    const tokenDecimals = parseInt(process.env.NEXT_PUBLIC_CHAIN_TOKEN_DECIMALS ?? '0');
+    const blockExplorerUrl = process.env.NEXT_PUBLIC_CHAIN_TOKEN_BLOCKEXPLORER_URL;
     const showAddRpcUrlButton = chainRpcUrl?.startsWith('https://'); // adding chain only works for https rpc URLs
 
     async function switchNetwork() {
-        // @ts-ignore
-        await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: toHexString(chainId ?? '0') }],
-        });
+        try {
+            // @ts-ignore
+            await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: toHexString(chainId ?? '0') }],
+            });
+        } catch(switchError) {
+            // @ts-ignore
+            if (switchError.code === 4902) {
+                addNetwork();
+            }
+        }
     }
 
     async function addNetwork() {
@@ -28,17 +39,16 @@ export default function UnexpectedChain() {
                     chainId: toHexString(chainId ?? '0'),
                     chainName: chainName ?? 'Unknown',
                     rpcUrls: [chainRpcUrl],
+                    nativeCurrency: {
+                        name: tokenName ?? 'Unknown',
+                        symbol: tokenSymbol ?? 'Unknown',
+                        decimals: tokenDecimals 
+                    },
+                    blockExplorerUrls: [blockExplorerUrl]      
                 },
             ],
         });
     }
-
-    const addNetworkButton = showAddRpcUrlButton ? (
-        <Button variant="contained" color="primary" sx={{ ml: 2 }} onClick={addNetwork}>
-            {t('action.add_network', { network: chainName})}
-        </Button>
-        ) : (<></>);
-
 
     return (
         <div>
@@ -51,7 +61,6 @@ export default function UnexpectedChain() {
                 <Button variant="contained" color="primary" onClick={switchNetwork}>
                     {t('action.switch_network', { network: chainName})}
                 </Button>
-                {addNetworkButton}
             </Box>
         </div>
     );

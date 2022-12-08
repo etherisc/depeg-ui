@@ -11,7 +11,6 @@
     },
     "action": {
         "switch_network": "Switch to network '{{network}}'",
-        "add_network": "Add network configuration for '{{network}}'",
         "login_walletconnect": "Login with WalletConnect",
         "login_metamask": "Login with Metamask",
         "disconnect": "Disconnect",
