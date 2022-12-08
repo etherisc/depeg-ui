@@ -288,8 +288,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 <Premium 
                     disabled={props.disabled}
                     premium={premium}
-                    currency={props.usd2}
-                    currencyDecimals={props.usd2Decimals}
+                    premiumCurrency={props.usd2}
+                    premiumCurrencyDecimals={props.usd2Decimals}
+                    bundleCurrency={props.usd1}
+                    bundleCurrencyDecimals={props.usd1Decimals}
                     error={t(premiumErrorKey, { currency: props.usd2 })}
                     transactionInProgress={(props.premiumTrxTextKey != "") || premiumCalculationInProgress}
                     textKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}

@@ -9,8 +9,10 @@ import { BundleList } from "./bundle_list";
 export interface PremiumProps {
     disabled: boolean;
     premium: FormNumber;
-    currency: string;
-    currencyDecimals: number;
+    premiumCurrency: string;
+    premiumCurrencyDecimals: number;
+    bundleCurrency: string;
+    bundleCurrencyDecimals: number;
     error: string;
     textKey: string;
     transactionInProgress?: boolean;
@@ -25,8 +27,8 @@ export default function Premium(props: PremiumProps) {
 
     if (props.showBundles) {
         bundles = (<BundleList 
-            usd1={props.currency}
-            usd1Decimals={props.currencyDecimals}
+            currency={props.bundleCurrency}
+            currencyDecimals={props.bundleCurrencyDecimals}
             bundles={props.bundles} />);
     }
 
@@ -43,9 +45,9 @@ export default function Premium(props: PremiumProps) {
             id="premiumAmount"
             label={t('premiumAmount')}
             type="text"
-            value={formatCurrency(props.premium, props.currencyDecimals)}
+            value={formatCurrency(props.premium, props.premiumCurrencyDecimals)}
             InputProps={{
-                startAdornment: <InputAdornment position="start">{props.currency}</InputAdornment>,
+                startAdornment: <InputAdornment position="start">{props.premiumCurrency}</InputAdornment>,
                 readOnly: true,
             }}
             error={props.error !== ""}
