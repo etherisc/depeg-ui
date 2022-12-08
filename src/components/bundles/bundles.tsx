@@ -31,11 +31,11 @@ export default function Bundles(props: BundlesProps) {
     const [ pageSize, setPageSize ] = useState(5);
 
     function convertBundleDataToRowView(bundle: BundleData) {
-        const capital = formatCurrency(bundle.capital, props.insurance.usd1Decimals);
-        const capitalRemaining = formatCurrency(bundle.capital - bundle.locked, props.insurance.usd1Decimals);
+        const capital = formatCurrency(bundle.capital, props.insurance.usd2Decimals);
+        const capitalRemaining = formatCurrency(bundle.capital - bundle.locked, props.insurance.usd2Decimals);
         return {
             id: `${bundle.bundleId}`,
-            capital: `${props.insurance.usd1} ${capital} / ${capitalRemaining}`,
+            capital: `${props.insurance.usd2} ${capital} / ${capitalRemaining}`,
             created: formatDate(moment.unix(bundle.createdAt)),
             policies: `${bundle.policies}`,
             state: t('bundle_state_' + bundle.state, { ns: 'common'}),

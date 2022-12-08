@@ -15,8 +15,8 @@ const formInputVariant = 'outlined';
 
 export interface InvestFormProperties {
     disabled: boolean;
-    usd1: string;
-    usd1Decimals: number;
+    usd2: string;
+    usd2Decimals: number;
     insurance: InsuranceApi;
     formReadyForInvest: (isFormReady: boolean) => void;
     invest: (investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) => void;
@@ -131,11 +131,11 @@ export default function InvestForm(props: InvestFormProperties) {
                     id="investedAmount"
                     label={t('investedAmount')}
                     inputProps={{
-                        startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
+                        startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>,
                     }}
                     value={investedAmount}
-                    currency={props.usd1}
-                    currencyDecimals={props.usd1Decimals}
+                    currency={props.usd2}
+                    currencyDecimals={props.usd2Decimals}
                     onChange={setInvestedAmount}
                     minValue={investProps.minInvestedAmount}
                     maxValue={investProps.maxInvestedAmount}
@@ -150,11 +150,11 @@ export default function InvestForm(props: InvestFormProperties) {
                     id="minSumInsured"
                     label={t('minSumInsured')}
                     inputProps={{
-                        startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>
+                        startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>
                     }}
                     value={minSumInsured}
-                    currency={props.usd1}
-                    currencyDecimals={props.usd1Decimals}
+                    currency={props.usd2}
+                    currencyDecimals={props.usd2Decimals}
                     onChange={setMinSumInsured}
                     minValue={investProps.minSumInsured}
                     maxValue={investProps.maxSumInsured}
@@ -170,11 +170,11 @@ export default function InvestForm(props: InvestFormProperties) {
                     id="maxSumInsured"
                     label={t('maxSumInsured')}
                     inputProps={{
-                        startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>
+                        startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>
                     }}
                     value={maxSumInsured}
-                    currency={props.usd1}
-                    currencyDecimals={props.usd1Decimals}
+                    currency={props.usd2}
+                    currencyDecimals={props.usd2Decimals}
                     onChange={setMaxSumInsured}
                     minValue={investProps.minSumInsured}
                     maxValue={investProps.maxSumInsured}
