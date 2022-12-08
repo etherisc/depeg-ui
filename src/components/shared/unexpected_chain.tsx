@@ -42,7 +42,7 @@ export default function UnexpectedChain() {
 
     return (
         <div>
-            <Alert variant="filled" severity="error">
+            <Alert severity="warning">
                 <AlertTitle>{t('error.unexpected_network_title')}</AlertTitle>
                 {t('error.unexpected_network', { network: chainName})}
                 <br/>
