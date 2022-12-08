@@ -81,7 +81,7 @@ export default function Invest(props: InvestProps) {
                 investedAmount, 
                 (address, currency, amount) => {
                     snackbar = enqueueSnackbar(
-                        t('approval_info', { address, currency, amount: formatCurrency(amount, props.insurance.usd1Decimals) }),
+                        t('approval_info', { address, currency, amount: formatCurrency(amount, props.insurance.usd2Decimals) }),
                         { variant: "warning", persist: true }
                     );
                 },
@@ -237,7 +237,7 @@ export default function Invest(props: InvestProps) {
     return (
         <>
             <div>
-                <Typography variant="h5" mb={2}>{t('title', { currency: props.insurance.usd1 })}</Typography>
+                <Typography variant="h5" mb={2}>{t('title', { currency: props.insurance.usd2 })}</Typography>
 
                 <Stepper activeStep={activeStep}>
                     {steps.map((label) => {
@@ -255,8 +255,8 @@ export default function Invest(props: InvestProps) {
 
                 <InvestForm 
                     disabled={formDisabled}
-                    usd1={props.insurance.usd1}
-                    usd1Decimals={props.insurance.usd1Decimals}
+                    usd2={props.insurance.usd2}
+                    usd2Decimals={props.insurance.usd2Decimals}
                     insurance={props.insurance}
                     formReadyForInvest={formReadyForInvest}
                     invest={invest}
