@@ -13,8 +13,8 @@ import { BundleData } from '../../backend/bundle_data';
 import { ApplicationApi } from '../../backend/insurance_api';
 import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
 import { FormNumber } from '../../utils/types';
-import CurrencyTextField from '../shared/form/currency_text_field';
-import NumericTextField, { INPUT_VARIANT } from '../shared/form/numeric_text_field';
+import CurrencyTextField from '../form/currency_text_field';
+import NumericTextField, { INPUT_VARIANT } from '../form/numeric_text_field';
 import Premium from './premium';
 
 export interface ApplicationFormProperties {

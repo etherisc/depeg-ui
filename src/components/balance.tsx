@@ -1,7 +1,7 @@
 import { BigNumber, Signer } from "ethers";
 import { useEffect, useState } from "react";
-import { AggregatorV3Interface__factory } from "../../../contracts/chainlink";
-import { formatEthersNumber } from "../../../utils/bignumber";
+import { AggregatorV3Interface__factory } from "../contracts/chainlink";
+import { formatEthersNumber } from "../utils/bignumber";
 
 export interface BalanceProps {
     signer: Signer;
@@ -49,8 +49,6 @@ export default function Balance(props: BalanceProps) {
     } else {
         balanceString = `${props.currency} ${formatEthersNumber(balance, 4)}`;
     }
-
-    let balanceHtml = (<span>{balanceString}</span>);
 
     if (allowToggleBalance) {
         return (<span onClick={toggleBalanceUsd}>{balanceString}</span>);

@@ -1,8 +1,8 @@
-import { AppContext } from "../../../context/app_context";
-import { setSigner, updateSigner } from "../../../context/app_context";
+import { AppContext } from "../context/app_context";
+import { setSigner, updateSigner } from "../context/app_context";
 import { ethers } from "ethers";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { walletConnectConfig } from "../../../config/appConfig";
+import { walletConnectConfig } from "../config/appConfig";
 
 
 export async function reconnectWallets(appContext?: AppContext) {

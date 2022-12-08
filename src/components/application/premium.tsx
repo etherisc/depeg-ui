@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
 import { FormNumber } from "../../utils/types";
-import { INPUT_VARIANT } from "../shared/form/numeric_text_field";
+import { INPUT_VARIANT } from "../form/numeric_text_field";
 import { BundleList } from "./bundle_list";
 
 export interface PremiumProps {

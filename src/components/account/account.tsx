@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import Blockies from 'react-blockies';
-import { AppContext } from "../../../context/app_context";
-import { DOT, NBSP } from "../../../utils/chars";
+import { AppContext } from "../../context/app_context";
+import { DOT, NBSP } from "../../utils/chars";
 import { Box, Avatar } from "@mui/material";
-import Balance from "../onchain/balance";
-import AccountAddress from "../onchain/account_address";
+import Balance from "../balance";
+import AccountAddress from "../account_address";
 import LoginWithMetaMaskButton from "./login_metamask";
 import LoginWithWalletConnectButton from "./login_walletconnect";
 import Logout from "./logout";
-import { reconnectWallets } from "./wallet";
+import { reconnectWallets } from "../../utils/wallet";
 
 export default function Account() {
     const appContext = useContext(AppContext);

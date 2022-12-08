@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import { useContext } from "react";
-import { AppContext } from "../../../context/app_context";
+import { AppContext } from "../../context/app_context";
 import Button from '@mui/material/Button'
-import { getAndSetWalletAccount } from "./wallet";
+import { getAndSetWalletAccount } from "../../utils/wallet";
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
 

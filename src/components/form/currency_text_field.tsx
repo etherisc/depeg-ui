@@ -2,16 +2,20 @@ import { InputProps } from "@mui/material/Input";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "next-i18next";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { FormNumber } from "../../../utils/types";
+import { THOUSANDS_SEPARATOR } from "../../utils/numbers";
+import { formatCurrency } from "../../utils/numbers";
+import { FormNumber } from "../../utils/types";
+import { INPUT_VARIANT } from "./numeric_text_field";
 
-export interface NumericTextFieldProps {
+export interface CurrencyTextfieldProps {
     value: FormNumber;
-    unit: string;
+    currency: string;
+    currencyDecimals: number;
     onChange: (value: FormNumber) => void;
     onBlur?: () => void;
     disabled: boolean;
-    readOnly?: boolean;
     required: boolean;
+    readOnly?: boolean;
     fullWidth: boolean;
     id: string;
     label: string;
@@ -22,23 +26,22 @@ export interface NumericTextFieldProps {
     onError?: (errorMsg: string) => void;
 }
 
-export const INPUT_VARIANT = 'filled';
-
-export default function NumericTextField(props: NumericTextFieldProps) {
+export default function CurrencyTextField(props: CurrencyTextfieldProps) {
     const { t } = useTranslation('common');
-    const [ displayValue, setDisplayValue ] = useState<string>(props.value?.toString() ?? "");
+    const [ displayValue, setDisplayValue ] = useState<string>(formatCurrency(props.value, props.currencyDecimals));
     const [ error, setError ] = useState("");
     
     const value = props.value;
     const onBlur = props.onBlur;
+    const currency = props.currency;
+    const currencyDecimals = props.currencyDecimals;
     const label = props.label;
-    const unit = props.unit;
     const disabled = props.disabled;
     const minValue = props.minValue;
     const maxValue = props.maxValue;
     const extraValidation = props.extraValidation;
     const onError = props.onError;
-
+    const onChange = props.onChange;
 
     function handleDisplayValueChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         let val = (x.target as HTMLInputElement).value;
@@ -49,7 +52,7 @@ export default function NumericTextField(props: NumericTextFieldProps) {
         // console.log("changeValue");
         let val = parseDisplayValue(displayValue);
         // console.log("val", val);
-        props.onChange(val);
+        onChange(val);
         const error = validateValue(val);
         // console.log("error", error);
         handleError(error);
@@ -57,7 +60,8 @@ export default function NumericTextField(props: NumericTextFieldProps) {
 
     function parseDisplayValue(toParse: string) {
         if (toParse !== undefined && toParse !== "") {
-            return parseFloat(toParse);
+            console.log("THOUSANDS_SEPARATOR", THOUSANDS_SEPARATOR);
+            return parseFloat(toParse.replaceAll(THOUSANDS_SEPARATOR, '')) * Math.pow(10, currencyDecimals)
         } else {
             return undefined;
         }
@@ -65,37 +69,39 @@ export default function NumericTextField(props: NumericTextFieldProps) {
 
     // call onBlur AFTER value update has been propagated
     useEffect(() => {
+        // console.log("useEffect", "onBlur", props.value, displayValue);
+        setDisplayValue(formatCurrency(props.value, currencyDecimals));
         // call onBlue when value due to user input (the displayValue matches with the incoming value)
         // otherwise update the displayValue to match the incoming value (update from outside of component)
-        if (value === parseDisplayValue(displayValue) && onBlur !== undefined) {
+        if (onBlur !== undefined) {
             onBlur();
-        } else {
-            setDisplayValue(value?.toString() ?? "");
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [onBlur, value]); // do not react to displayValue change on purpose
+    }, [onBlur, props.value, currencyDecimals]); // do not react to displayValue change on purpose
 
     function handleError(error: string) {
         setError(error);
-        if (onError) {
+        if (onError !== undefined) {
             onError(error);
         }
     }
 
     const validateValue = useCallback((valueToValidate: number | undefined): string => {
         // console.log("validateValue", valueToValidate);
-    
+
         if (disabled) {
             return "";
         }
         if (valueToValidate === undefined) {
             return t('error.valueRequired', { fieldName: label });
         }
+        if (Number.isNaN(valueToValidate)) {
+            return t('error.notANumber', { fieldName: label });
+        }
         if (valueToValidate < minValue) {
-            return t('error.numericTextFieldMinValue', { fieldName: label, value: minValue, unit: unit });
+            return t('error.currencyTextFieldMinValue', { fieldName: label, amount: formatCurrency(minValue, currencyDecimals), currency: currency });
         } 
         if (valueToValidate > maxValue) {
-            return t('error.numericTextFieldMaxValue', { fieldName: label, value: maxValue, unit: unit });
+            return t('error.currencyTextFieldMaxValue', { fieldName: label, amount: formatCurrency(maxValue, currencyDecimals), currency: currency });
         }
         if (extraValidation !== undefined) {
             const errorMsg = extraValidation(valueToValidate);
@@ -104,8 +110,7 @@ export default function NumericTextField(props: NumericTextFieldProps) {
             }
         }
         return "";
-    }, [disabled, extraValidation, label, minValue, maxValue, unit, t]);
-
+    }, [disabled, label, currency, currencyDecimals, minValue, maxValue, extraValidation, t]);
 
     let ip = props.inputProps;
     if (props.inputProps === undefined) {

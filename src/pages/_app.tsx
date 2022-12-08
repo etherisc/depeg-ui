@@ -12,10 +12,10 @@ import { SnackbarProvider } from 'notistack';
 import { appWithTranslation } from 'next-i18next';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { getAndUpdateWalletAccount } from '../components/shared/account/wallet';
+import { getAndUpdateWalletAccount } from '../utils/wallet';
 import { ThemeProvider } from '@mui/material/styles';
 import { etheriscTheme } from '../config/theme';
-import Layout from '../components/layout';
+import Layout from '../components/layout/layout';
 
 
 export function App(appProps: AppProps) {

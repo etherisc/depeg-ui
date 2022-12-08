@@ -2,7 +2,7 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
-import Account from './account/account';
+import Account from '../account/account';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import { HeaderLink } from './header_link';

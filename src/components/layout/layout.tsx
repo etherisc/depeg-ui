@@ -1,10 +1,10 @@
 import Container from "@mui/material/Container";
 import { AppProps } from "next/app";
 import { useCallback, useContext } from "react";
-import { AppContext } from "../context/app_context";
-import Footer from "./shared/footer";
-import Header from "./shared/header";
-import UnexpectedChain from "./shared/unexpected_chain";
+import { AppContext } from "../../context/app_context";
+import Footer from "./footer";
+import Header from "./header";
+import UnexpectedChain from "./unexpected_chain";
 
 export default function Layout({ Component, pageProps }: AppProps) {
     const appContext = useContext(AppContext);

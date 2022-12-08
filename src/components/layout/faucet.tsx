@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../../context/app_context";
+import { AppContext } from "../../context/app_context";
 import { Button } from '@mui/material';
 import Typography from '@mui/material/Typography'
-import { DepegProduct__factory } from "../../../contracts/depeg-contracts";
+import { DepegProduct__factory } from "../../contracts/depeg-contracts";
 import { useSnackbar } from 'notistack';
 import { useTranslation } from "next-i18next";
 

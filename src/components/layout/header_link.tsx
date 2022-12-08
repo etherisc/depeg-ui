@@ -1,7 +1,6 @@
 import { Typography } from "@mui/material";
 import { Link } from '@mui/material';
-import { LinkBehaviour } from "./link_behaviour";
-import { Variant } from "@mui/material/styles/createTypography";
+import { LinkBehaviour } from "../link_behaviour";
 
 export function HeaderLink(props: any) {
     const { text, href, variant } = props;

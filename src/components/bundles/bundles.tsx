@@ -8,7 +8,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { BundleRowView } from "../../model/bundle";
 import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
-import { LinkBehaviour } from "../shared/link_behaviour";
+import { LinkBehaviour } from "../link_behaviour";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
