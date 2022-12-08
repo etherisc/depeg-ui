@@ -13,7 +13,7 @@ export default function UnexpectedChain() {
     const tokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL;
     const tokenDecimals = parseInt(process.env.NEXT_PUBLIC_CHAIN_TOKEN_DECIMALS ?? '0');
     const blockExplorerUrl = process.env.NEXT_PUBLIC_CHAIN_TOKEN_BLOCKEXPLORER_URL;
-    const showAddRpcUrlButton = chainRpcUrl?.startsWith('https://'); // adding chain only works for https rpc URLs
+    const allowAutoAdd = chainRpcUrl?.startsWith('https://'); // adding chain only works for https rpc URLs
 
     async function switchNetwork() {
         try {
@@ -24,7 +24,7 @@ export default function UnexpectedChain() {
             });
         } catch(switchError) {
             // @ts-ignore
-            if (switchError.code === 4902) {
+            if (allowAutoAdd && switchError.code === 4902) {
                 addNetwork();
             }
         }
