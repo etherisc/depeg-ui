@@ -1,10 +1,11 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";import { ethers } from "ethers";
 import { useContext, useEffect } from "react";
 import { walletConnectConfig } from "../../../config/appConfig";
-import { AppContext, setSigner, removeSigner, updateSigner } from "../../../context/app_context";
+import { AppContext, setSigner, removeSigner, updateSigner, AppActionType } from "../../../context/app_context";
 import Button from '@mui/material/Button'
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
+import { toHex } from "../../../utils/numbers";
 
 export default function LoginWithWalletConnectButton() {
     const appContext = useContext(AppContext);
@@ -40,10 +41,10 @@ export default function LoginWithWalletConnectButton() {
         wcProvider.on("chainChanged", (chainId: number) => {
             console.log("chainChanged", chainId);
             if (chainId != 43113) {
-                console.log('not fuji');
                 wcProvider.disconnect();
                 removeSigner(appContext!!.dispatch);
             }
+            location.reload();
         });
 
         // A Web3Provider wraps a standard Web3 provider, which is

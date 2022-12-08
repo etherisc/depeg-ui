@@ -15,3 +15,11 @@ export function formatCurrency(value: FormNumber, decimals: number, displayPreci
         minimumFractionDigits: displayPrecision || DISPLAY_PRECISION,
         maximumFractionDigits: displayPrecision || DISPLAY_PRECISION });
 }
+
+export function toHexString(valStr: string): string {
+    return '0x' + parseInt(valStr).toString(16);
+}
+
+export function toHex(number: number): string {
+    return '0x' + number.toString(16);
+}
