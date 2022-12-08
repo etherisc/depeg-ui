@@ -20,9 +20,13 @@ Then run the application in dev mode with `npm run dev`.
 ```
 # Blockchain connection configuration
 NEXT_PUBLIC_CHAIN_ID=80001
-NEXT_PUBLIC_CHAIN_NAME=Mumbai
-NEXT_PUBLIC_CHAIN_RPC_URL=https://matic-mumbai.chainstacklabs.com
+NEXT_PUBLIC_CHAIN_NAME=Polygon Mumbai
+NEXT_PUBLIC_CHAIN_RPC_URL=https://polygon-testnet-rpc.allthatnode.com:8545
+NEXT_PUBLIC_CHAIN_TOKEN_NAME=TEST-MATIC
 NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL=MATIC
+NEXT_PUBLIC_CHAIN_TOKEN_DECIMALS=18
+NEXT_PUBLIC_CHAIN_TOKEN_BLOCKEXPLORER_URL=https://mumbai.polygonscan.com/
+
 
 # Depeg configuration
 NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS=0x5930513a430E4D0171870aAe73c1e70edcc1917d
