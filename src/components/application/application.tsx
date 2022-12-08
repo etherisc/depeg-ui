@@ -223,23 +223,39 @@ export default function Application(props: ApplicationProps) {
         );
     }
 
+    function enableUnloadWarning(enable: boolean) {
+        if (enable) {
+            window.onbeforeunload = function() {
+                return t('warning.unload_page', { ns: 'common' });
+            }
+        } else {
+            window.onbeforeunload = null;
+        }
+    }
+
     async function applyForPolicy(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) {
-        setActiveStep(3);
-        const approvalSuccess = await doApproval(walletAddress, premium);
-        if ( ! approvalSuccess) {
-            setActiveStep(2);
-            showAllowanceNotice();
-            return;
+        try {
+            enableUnloadWarning(true);
+
+            setActiveStep(3);
+            const approvalSuccess = await doApproval(walletAddress, premium);
+            if ( ! approvalSuccess) {
+                setActiveStep(2);
+                showAllowanceNotice();
+                return;
+            }
+            setActiveStep(4);
+            const applicationSuccess = await doApplication(walletAddress, insuredAmount, coverageDuration, premium);
+            if ( ! applicationSuccess) {
+                setActiveStep(2);
+                showAllowanceNotice();
+                return;
+            }
+            setActiveStep(5);
+            applicationSuccessful();
+        } finally {
+            enableUnloadWarning(false);
         }
-        setActiveStep(4);
-        const applicationSuccess = await doApplication(walletAddress, insuredAmount, coverageDuration, premium);
-        if ( ! applicationSuccess) {
-            setActiveStep(2);
-            showAllowanceNotice();
-            return;
-        }
-        setActiveStep(5);
-        applicationSuccessful();
     }
 
     async function updateWalletAddress(signer: Signer) {

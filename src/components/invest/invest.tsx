@@ -199,24 +199,39 @@ export default function Invest(props: InvestProps) {
         );
     }
 
+    function enableUnloadWarning(enable: boolean) {
+        if (enable) {
+            window.onbeforeunload = function() {
+                return t('warning.unload_page', { ns: 'common' });
+            }
+        } else {
+            window.onbeforeunload = null;
+        }
+    }
+
     async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) {
-        setActiveStep(3);
-        const investorWalletAddress = await appContext!!.data.signer!!.getAddress();
-        const approvalSuccess = await doApproval(investorWalletAddress, investedAmount);
-        if ( ! approvalSuccess) {
-            setActiveStep(2);
-            showAllowanceNotice();
-            return;
+        try {
+            enableUnloadWarning(true);
+            setActiveStep(3);
+            const investorWalletAddress = await appContext!!.data.signer!!.getAddress();
+            const approvalSuccess = await doApproval(investorWalletAddress, investedAmount);
+            if ( ! approvalSuccess) {
+                setActiveStep(2);
+                showAllowanceNotice();
+                return;
+            }
+            setActiveStep(4);
+            const investSuccess = await doInvest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+            if ( ! investSuccess) {
+                setActiveStep(2);
+                showAllowanceNotice();
+                return;
+            }
+            setActiveStep(5);
+            applicationSuccessful();
+        } finally {
+            enableUnloadWarning(false);
         }
-        setActiveStep(4);
-        const investSuccess = await doInvest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
-        if ( ! investSuccess) {
-            setActiveStep(2);
-            showAllowanceNotice();
-            return;
-        }
-        setActiveStep(5);
-        applicationSuccessful();
     }
 
     return (

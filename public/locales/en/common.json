@@ -19,6 +19,9 @@
         "hide": "Hide",
         "address_copied": "Address copied to clipboard"
     },
+    "warning": {
+        "unload_page": "The transaction is still pending. Please do not leave the page or close the browser window."
+    },
     "error": {
         "unexpected_network_title": "Error - Unexpected network",
         "unexpected_network": "Please connect your wallet to the network '{{network}}'",
