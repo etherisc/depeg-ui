@@ -271,7 +271,7 @@ export default function Application(props: ApplicationProps) {
             <div>
                 <Typography variant="h5" mb={2}>{t('title', { currency: props.insurance.usd1 })}</Typography>
 
-                <Stepper activeStep={activeStep}>
+                <Stepper activeStep={activeStep} sx={{ display: { 'xs': 'none', 'md': 'flex' }}}>
                     {steps.map((label) => {
                         const stepProps: { completed?: boolean } = {};
                         const labelProps: {

@@ -122,7 +122,8 @@ export default function InvestForm(props: InvestFormProperties) {
     const waitForPayment = paymentInProgress ? <LinearProgress /> : null;
     
     return (
-        <Grid container maxWidth="md" spacing={4} mt={2} sx={{ p: 1, ml: 'auto', mr: 'auto' }} >
+        <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
+            sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
             <Grid item xs={12}>
                 <CurrencyTextField
                     disabled={props.disabled}
@@ -142,7 +143,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     onError={(errMsg) => setInvestedAmountValid(errMsg === "")}
                     />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
                 <CurrencyTextField
                     fullWidth={true}
                     required={true}
@@ -162,7 +163,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     onError={(errMsg) => setMinSumInsuredValid(errMsg === "")}
                     />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
                 <CurrencyTextField
                     fullWidth={true}
                     required={true}
@@ -182,7 +183,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     onError={(errMsg) => setMaxSumInsuredValid(errMsg === "")}
                     />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
                 <NumericTextField
                     fullWidth={true}
                     required={true}
@@ -201,7 +202,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     onError={(errMsg) => setMinDurationValid(errMsg === "")}
                 />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
                 <NumericTextField
                     fullWidth= {true}
                     required={true}

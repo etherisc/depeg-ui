@@ -6,11 +6,14 @@ import Button from '@mui/material/Button'
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
 import { toHex } from "../../utils/numbers";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 export default function LoginWithWalletConnectButton() {
     const appContext = useContext(AppContext);
     const { t } = useTranslation('common');
     const { enqueueSnackbar } = useSnackbar();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     async function login() {
         console.log("wallet connect login");
@@ -53,18 +56,17 @@ export default function LoginWithWalletConnectButton() {
         setSigner(appContext!!.dispatch, provider);
     }
 
-    // useEffect(() => {
-    //     console.log("wc reconnect");
-    //     const wcProvider = new WalletConnectProvider(walletConnectConfig);
-    //     console.log("wcProvider", wcProvider.wc.accounts);
-    // }, []);
-
     let button = (<></>);
+    let buttonText = t('action.login');
+
+    if (! isMobile) {
+        buttonText = t('action.login_walletconnect');
+    }
     
     if (appContext?.data.signer === undefined) {
         button = (
             <Button variant="contained" color="secondary" onClick={login}>
-                {t('action.login_walletconnect')}
+                {buttonText}
             </Button>
         );
     }

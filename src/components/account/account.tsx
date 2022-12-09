@@ -39,7 +39,9 @@ export default function Account() {
     if (! loggedIn) {
         return (
             <>
-                <LoginWithMetaMaskButton />
+                <Box sx={{ display: { xs: 'none', md: 'inline' }}}>
+                    <LoginWithMetaMaskButton />
+                </Box>
                 <LoginWithWalletConnectButton />
             </>
         );
@@ -49,13 +51,13 @@ export default function Account() {
 
     if (appContext?.data.signer != undefined && address !== undefined && address !== "") {
         account = (
-            <>
-                <Box sx={{ display: 'inline-flex', alignItems: 'center' }}>
-                    <Avatar sx={{ mr: 1 }} >
-                        <Blockies seed={address} size={10} scale={4} />
-                    </Avatar>
-                    <Box sx={{ mr: 1, alignItems: 'center', verticalAlign: 'middle' }}>
-                        <AccountAddress signer={appContext?.data.signer} address={address}/>
+            <Box sx={{ display: 'inline-flex', alignItems: 'center' }}>
+                <Avatar sx={{ mr: 1, display: { 'xs': 'none', 'md': 'inline-flex'} }} >
+                    <Blockies seed={address} size={10} scale={4} />
+                </Avatar>
+                <Box sx={{ mr: 1, alignItems: 'center', verticalAlign: 'middle' }}>
+                    <AccountAddress signer={appContext?.data.signer} address={address}/>
+                    <Box component="span" sx={{ display: { 'xs': 'none', 'md': 'inline-flex'}}}>
                         {NBSP} {DOT} {NBSP}
                         <Balance
                             signer={appContext?.data.signer}
@@ -65,7 +67,7 @@ export default function Account() {
                     </Box>
                 </Box>
                 <Logout />
-            </>
+            </Box>
         );
     }
 
