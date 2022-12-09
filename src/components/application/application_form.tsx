@@ -208,7 +208,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             <Grid item xs={12}>
                 <TextField
                     fullWidth
+                    required
                     disabled={props.disabled}
+                    InputProps={{ readOnly: true }}
                     variant={INPUT_VARIANT}
                     id="insuredWallet"
                     label={t('insuredWallet')}
@@ -216,7 +218,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     value={walletAddress}
                     onChange={handleWalletAddressChange}
                     onBlur={validateWalletAddressAndSetError}
-                    required
                     error={walletAddressErrorKey !== ""}
                     helperText={t(walletAddressErrorKey || 'insuredWalletHelper')}
                 />
