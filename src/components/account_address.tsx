@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { NBSP } from "../utils/chars";
 import { useSnackbar } from 'notistack';
 import { useTranslation } from "next-i18next";
+import { Box } from "@mui/material";
 
 export interface AccountAddressProps {
     signer: Signer;
@@ -31,12 +32,20 @@ export default function AccountAddress(props: AccountAddressProps) {
         await navigator.clipboard.writeText(address);
         enqueueSnackbar(t('action.address_copied'),  { autoHideDuration: 2000, variant: 'info' });
     }
+
+    const abrAdr = `${address.substring(0, 6)}…${address.substring(address.length - 4)}`;
+    const abrAdrMobile = `0x…${address.substring(address.length - 4)}`;
     
     return (
         <>
-            {address.substring(0, 6)}...{address.substring(address.length - 4)}
-            {NBSP}
-            <ContentCopy onClick={copyAddressToClipboard} sx={{ fontSize: 14 }} />
+            <Box component="span" sx={{ display: { 'xs': 'none', 'md': 'inline'}}}>
+                {abrAdr}
+                {NBSP}
+                <ContentCopy onClick={copyAddressToClipboard} sx={{ fontSize: 14 }} />
+            </Box>
+            <Box component="span" sx={{ display: { 'xs': 'inline', 'md': 'none'}}}>
+                {abrAdrMobile}
+            </Box>
         </>
     );
 }

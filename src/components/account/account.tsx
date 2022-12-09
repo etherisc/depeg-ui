@@ -52,17 +52,19 @@ export default function Account() {
     if (appContext?.data.signer != undefined && address !== undefined && address !== "") {
         account = (
             <Box sx={{ display: 'inline-flex', alignItems: 'center' }}>
-                <Avatar sx={{ mr: 1 }} >
+                <Avatar sx={{ mr: 1, display: { 'xs': 'none', 'md': 'inline-flex'} }} >
                     <Blockies seed={address} size={10} scale={4} />
                 </Avatar>
                 <Box sx={{ mr: 1, alignItems: 'center', verticalAlign: 'middle' }}>
                     <AccountAddress signer={appContext?.data.signer} address={address}/>
-                    {NBSP} {DOT} {NBSP}
-                    <Balance
-                        signer={appContext?.data.signer}
-                        currency={tokenSymbol}
-                        usdAggregatorAddress={process.env.NEXT_PUBLIC_CHAINLINK_AGGREGATOR_ETH_USD_ADDRESS!}
-                        />
+                    <Box component="span" sx={{ display: { 'xs': 'none', 'md': 'inline-flex'}}}>
+                        {NBSP} {DOT} {NBSP}
+                        <Balance
+                            signer={appContext?.data.signer}
+                            currency={tokenSymbol}
+                            usdAggregatorAddress={process.env.NEXT_PUBLIC_CHAINLINK_AGGREGATOR_ETH_USD_ADDRESS!}
+                            />
+                    </Box>
                 </Box>
                 <Logout />
             </Box>

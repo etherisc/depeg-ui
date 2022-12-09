@@ -62,9 +62,9 @@ export default function Header() {
 
 
     const drawer = (
-        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ my: 2 }}>
-                MUI
+        <Box onClick={handleDrawerToggle} >
+            <Typography variant="h6" sx={{ my: 2, pl: 2 }}>
+                {t('apptitle_short')}
             </Typography>
             <Divider />
             <List>
