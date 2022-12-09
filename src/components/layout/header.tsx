@@ -105,28 +105,28 @@ export default function Header() {
                         </Box>
 
                         {/* links only shown on desktop */}
-                        <Box sx={{ flexGrow: 0 }}>
+                        <Box sx={{ flexGrow: 0, display: 'flex' }}>
                             <Account />
                         </Box>
                     </Toolbar>
                 </Container>
             </AppBar>
             <Box component="nav">
-        <Drawer
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{
-                keepMounted: true, // Better open performance on mobile.
-            }}
-            sx={{
-                display: { xs: 'block', sm: 'none' },
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-            }}
-            >
-                {drawer}
-            </Drawer>
-        </Box>
+                <Drawer
+                    variant="temporary"
+                    open={mobileOpen}
+                    onClose={handleDrawerToggle}
+                    ModalProps={{
+                        keepMounted: true, // Better open performance on mobile.
+                    }}
+                    sx={{
+                        display: { xs: 'block', sm: 'none' },
+                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                    }}
+                    >
+                    {drawer}
+                </Drawer>
+            </Box>
         </Box>
     </>);    
 
