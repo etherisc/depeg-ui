@@ -204,7 +204,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
     
     return (
-        <Grid container maxWidth="md" spacing={4} mt={2} sx={{ p: 1, ml: 'auto', mr: 'auto' }} >
+        <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
+            sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
             <Grid item xs={12}>
                 <TextField
                     fullWidth
@@ -243,7 +244,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
                 />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
                 <NumericTextField
                     fullWidth={true}
                     required={true}
@@ -266,7 +267,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     onError={(errMsg) => setCoverageDaysValid(errMsg === "")}
                 />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
                 <DesktopDatePicker
                     disabled={props.disabled}
                     

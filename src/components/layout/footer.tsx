@@ -15,7 +15,7 @@ export default function Footer() {
                 right: 0,
                 bgcolor: "#C5D0DE",
             }}>
-                <Box sx={{ py: 1 }} display="flex" flexWrap="wrap" justifyContent="right" >
+                <Box sx={{ py: 1, display: { 'xs': 'none', 'md': 'flex' } }} flexWrap="wrap" justifyContent="right" >
                     <Faucet />
                     <ChainData />
                 </Box>
