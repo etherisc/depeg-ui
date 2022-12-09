@@ -6,16 +6,19 @@ import { walletConnectConfig } from "../config/appConfig";
 
 
 export async function reconnectWallets(appContext?: AppContext) {
-    // try browser wallet reconnection first (metamask, ...)
-    // @ts-ignore: window.ethereum is injected by metamask
-    const provider = new ethers.providers.Web3Provider(window.ethereum); 
-    console.log("check if browser wallet reconnection is possible");
-    const hasAccounts = (await provider.send("eth_accounts", [])).length > 0;
-    console.log("hasAccounts", hasAccounts);
-    if (hasAccounts) {
-        console.log("reconnect browser wallet");
-        getAndSetWalletAccount(appContext?.dispatch);
-        return;
+    // @ts-ignore
+    if (window.ethereum !== undefined) {
+        // try browser wallet reconnection first (metamask, ...)
+        // @ts-ignore: window.ethereum is injected by metamask
+        const provider = new ethers.providers.Web3Provider(window.ethereum); 
+        console.log("check if browser wallet reconnection is possible");
+        const hasAccounts = (await provider.send("eth_accounts", [])).length > 0;
+        console.log("hasAccounts", hasAccounts);
+        if (hasAccounts) {
+            console.log("reconnect browser wallet");
+            getAndSetWalletAccount(appContext?.dispatch);
+            return;
+        }
     }
 
     // try walletconnect reconnection
