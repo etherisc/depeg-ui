@@ -39,7 +39,9 @@ export default function Account() {
     if (! loggedIn) {
         return (
             <>
-                <LoginWithMetaMaskButton />
+                <Box sx={{ display: { xs: 'none', md: 'inline' }}}>
+                    <LoginWithMetaMaskButton />
+                </Box>
                 <LoginWithWalletConnectButton />
             </>
         );
