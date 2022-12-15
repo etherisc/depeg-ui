@@ -15,7 +15,7 @@ export async function hasBalance(walletAddress: string, expectedBalance: number,
 export async function transferAmount(walletAddress: string, amountToTransfer: number, tokenAddress: string, signer: Signer): Promise<boolean> {
     console.log(`Transferring ${amountToTransfer} from ${walletAddress} to ${tokenAddress}`);
     const token = getErc20Token(tokenAddress, signer);
-    const tx = await token.transfer(walletAddress, amountToTransfer);
+    const tx = await token.transfer(walletAddress, amountToTransfer, { gasLimit: 100000});
     const rcpt = await tx.wait();
     return rcpt.status === 1;
 }
