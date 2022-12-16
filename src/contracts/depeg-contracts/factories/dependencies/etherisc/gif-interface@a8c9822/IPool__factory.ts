@@ -266,7 +266,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
 export class IPool__factory {
   static readonly abi = _abi;

@@ -7,11 +7,17 @@ import type {
   BigNumberish,
   BytesLike,
   CallOverrides,
+  ContractTransaction,
+  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -25,12 +31,28 @@ export declare namespace IPriceDataProvider {
   export type PriceInfoStruct = {
     id: PromiseOrValue<BigNumberish>;
     price: PromiseOrValue<BigNumberish>;
+    compliance: PromiseOrValue<BigNumberish>;
+    stability: PromiseOrValue<BigNumberish>;
+    triggeredAt: PromiseOrValue<BigNumberish>;
+    depeggedAt: PromiseOrValue<BigNumberish>;
     createdAt: PromiseOrValue<BigNumberish>;
   };
 
-  export type PriceInfoStructOutput = [BigNumber, BigNumber, BigNumber] & {
+  export type PriceInfoStructOutput = [
+    BigNumber,
+    BigNumber,
+    number,
+    number,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
     id: BigNumber;
     price: BigNumber;
+    compliance: number;
+    stability: number;
+    triggeredAt: BigNumber;
+    depeggedAt: BigNumber;
     createdAt: BigNumber;
   };
 }
@@ -38,19 +60,29 @@ export declare namespace IPriceDataProvider {
 export interface IPriceDataProviderInterface extends utils.Interface {
   functions: {
     "getAggregatorAddress()": FunctionFragment;
-    "getAggregatorDecimals()": FunctionFragment;
+    "getDecimals()": FunctionFragment;
+    "getDepeggedAt()": FunctionFragment;
+    "getDeviation()": FunctionFragment;
+    "getHeartbeat()": FunctionFragment;
     "getLatestPriceInfo()": FunctionFragment;
-    "getPriceInfo(uint256)": FunctionFragment;
-    "getTokenAddress()": FunctionFragment;
+    "getToken()": FunctionFragment;
+    "getTriggeredAt()": FunctionFragment;
+    "hasNewPriceInfo()": FunctionFragment;
+    "processLatestPriceInfo()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "getAggregatorAddress"
-      | "getAggregatorDecimals"
+      | "getDecimals"
+      | "getDepeggedAt"
+      | "getDeviation"
+      | "getHeartbeat"
       | "getLatestPriceInfo"
-      | "getPriceInfo"
-      | "getTokenAddress"
+      | "getToken"
+      | "getTriggeredAt"
+      | "hasNewPriceInfo"
+      | "processLatestPriceInfo"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -58,19 +90,36 @@ export interface IPriceDataProviderInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getAggregatorDecimals",
+    functionFragment: "getDecimals",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDepeggedAt",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDeviation",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getHeartbeat",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getLatestPriceInfo",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getToken", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getPriceInfo",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "getTriggeredAt",
+    values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getTokenAddress",
+    functionFragment: "hasNewPriceInfo",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "processLatestPriceInfo",
     values?: undefined
   ): string;
 
@@ -79,24 +128,126 @@ export interface IPriceDataProviderInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getAggregatorDecimals",
+    functionFragment: "getDecimals",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDepeggedAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDeviation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getHeartbeat",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getLatestPriceInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getToken", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getPriceInfo",
+    functionFragment: "getTriggeredAt",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getTokenAddress",
+    functionFragment: "hasNewPriceInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "processLatestPriceInfo",
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "LogPriceDataDepegged(uint256,uint256,uint256,uint256)": EventFragment;
+    "LogPriceDataDeviationExceeded(uint256,uint256,uint256,uint256)": EventFragment;
+    "LogPriceDataHeartbeatExceeded(uint256,uint256,uint256,uint256)": EventFragment;
+    "LogPriceDataRecovered(uint256,uint256,uint256,uint256)": EventFragment;
+    "LogPriceDataTriggered(uint256,uint256,uint256)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "LogPriceDataDepegged"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LogPriceDataDeviationExceeded"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LogPriceDataHeartbeatExceeded"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogPriceDataRecovered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogPriceDataTriggered"): EventFragment;
 }
+
+export interface LogPriceDataDepeggedEventObject {
+  priceId: BigNumber;
+  price: BigNumber;
+  triggeredAt: BigNumber;
+  depeggedAt: BigNumber;
+}
+export type LogPriceDataDepeggedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber],
+  LogPriceDataDepeggedEventObject
+>;
+
+export type LogPriceDataDepeggedEventFilter =
+  TypedEventFilter<LogPriceDataDepeggedEvent>;
+
+export interface LogPriceDataDeviationExceededEventObject {
+  priceId: BigNumber;
+  priceDeviation: BigNumber;
+  currentPrice: BigNumber;
+  lastPrice: BigNumber;
+}
+export type LogPriceDataDeviationExceededEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber],
+  LogPriceDataDeviationExceededEventObject
+>;
+
+export type LogPriceDataDeviationExceededEventFilter =
+  TypedEventFilter<LogPriceDataDeviationExceededEvent>;
+
+export interface LogPriceDataHeartbeatExceededEventObject {
+  priceId: BigNumber;
+  timeDifference: BigNumber;
+  currentCreatedAt: BigNumber;
+  lastCreatedAt: BigNumber;
+}
+export type LogPriceDataHeartbeatExceededEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber],
+  LogPriceDataHeartbeatExceededEventObject
+>;
+
+export type LogPriceDataHeartbeatExceededEventFilter =
+  TypedEventFilter<LogPriceDataHeartbeatExceededEvent>;
+
+export interface LogPriceDataRecoveredEventObject {
+  priceId: BigNumber;
+  price: BigNumber;
+  triggeredAt: BigNumber;
+  recoveredAt: BigNumber;
+}
+export type LogPriceDataRecoveredEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber],
+  LogPriceDataRecoveredEventObject
+>;
+
+export type LogPriceDataRecoveredEventFilter =
+  TypedEventFilter<LogPriceDataRecoveredEvent>;
+
+export interface LogPriceDataTriggeredEventObject {
+  priceId: BigNumber;
+  price: BigNumber;
+  triggeredAt: BigNumber;
+}
+export type LogPriceDataTriggeredEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber],
+  LogPriceDataTriggeredEventObject
+>;
+
+export type LogPriceDataTriggeredEventFilter =
+  TypedEventFilter<LogPriceDataTriggeredEvent>;
 
 export interface IPriceDataProvider extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -127,11 +278,23 @@ export interface IPriceDataProvider extends BaseContract {
   functions: {
     getAggregatorAddress(
       overrides?: CallOverrides
-    ): Promise<[string] & { priceInfoSourceAddress: string }>;
+    ): Promise<[string] & { aggregatorAddress: string }>;
 
-    getAggregatorDecimals(
+    getDecimals(
       overrides?: CallOverrides
-    ): Promise<[number] & { priceInfoDecimals: number }>;
+    ): Promise<[number] & { aggregatorDecimals: number }>;
+
+    getDepeggedAt(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { depeggedAt: BigNumber }>;
+
+    getDeviation(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { deviationLevel: BigNumber }>;
+
+    getHeartbeat(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { heartbeatSeconds: BigNumber }>;
 
     getLatestPriceInfo(
       overrides?: CallOverrides
@@ -141,67 +304,180 @@ export interface IPriceDataProvider extends BaseContract {
       }
     >;
 
-    getPriceInfo(
-      priceId: PromiseOrValue<BigNumberish>,
+    getToken(overrides?: CallOverrides): Promise<[string] & { token: string }>;
+
+    getTriggeredAt(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { triggeredAt: BigNumber }>;
+
+    hasNewPriceInfo(
       overrides?: CallOverrides
     ): Promise<
-      [IPriceDataProvider.PriceInfoStructOutput] & {
-        priceInfo: IPriceDataProvider.PriceInfoStructOutput;
+      [boolean, BigNumber, BigNumber] & {
+        newInfoAvailable: boolean;
+        priceId: BigNumber;
+        timeSinceLastUpdate: BigNumber;
       }
     >;
 
-    getTokenAddress(
-      overrides?: CallOverrides
-    ): Promise<[string] & { tokenAddress: string }>;
+    processLatestPriceInfo(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   getAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
-  getAggregatorDecimals(overrides?: CallOverrides): Promise<number>;
+  getDecimals(overrides?: CallOverrides): Promise<number>;
+
+  getDepeggedAt(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getDeviation(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getHeartbeat(overrides?: CallOverrides): Promise<BigNumber>;
 
   getLatestPriceInfo(
     overrides?: CallOverrides
   ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
 
-  getPriceInfo(
-    priceId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
+  getToken(overrides?: CallOverrides): Promise<string>;
 
-  getTokenAddress(overrides?: CallOverrides): Promise<string>;
+  getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
+
+  hasNewPriceInfo(
+    overrides?: CallOverrides
+  ): Promise<
+    [boolean, BigNumber, BigNumber] & {
+      newInfoAvailable: boolean;
+      priceId: BigNumber;
+      timeSinceLastUpdate: BigNumber;
+    }
+  >;
+
+  processLatestPriceInfo(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     getAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
-    getAggregatorDecimals(overrides?: CallOverrides): Promise<number>;
+    getDecimals(overrides?: CallOverrides): Promise<number>;
+
+    getDepeggedAt(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getDeviation(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getHeartbeat(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLatestPriceInfo(
       overrides?: CallOverrides
     ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
 
-    getPriceInfo(
-      priceId: PromiseOrValue<BigNumberish>,
+    getToken(overrides?: CallOverrides): Promise<string>;
+
+    getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hasNewPriceInfo(
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber, BigNumber] & {
+        newInfoAvailable: boolean;
+        priceId: BigNumber;
+        timeSinceLastUpdate: BigNumber;
+      }
+    >;
+
+    processLatestPriceInfo(
       overrides?: CallOverrides
     ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
-
-    getTokenAddress(overrides?: CallOverrides): Promise<string>;
   };
 
-  filters: {};
+  filters: {
+    "LogPriceDataDepegged(uint256,uint256,uint256,uint256)"(
+      priceId?: null,
+      price?: null,
+      triggeredAt?: null,
+      depeggedAt?: null
+    ): LogPriceDataDepeggedEventFilter;
+    LogPriceDataDepegged(
+      priceId?: null,
+      price?: null,
+      triggeredAt?: null,
+      depeggedAt?: null
+    ): LogPriceDataDepeggedEventFilter;
+
+    "LogPriceDataDeviationExceeded(uint256,uint256,uint256,uint256)"(
+      priceId?: null,
+      priceDeviation?: null,
+      currentPrice?: null,
+      lastPrice?: null
+    ): LogPriceDataDeviationExceededEventFilter;
+    LogPriceDataDeviationExceeded(
+      priceId?: null,
+      priceDeviation?: null,
+      currentPrice?: null,
+      lastPrice?: null
+    ): LogPriceDataDeviationExceededEventFilter;
+
+    "LogPriceDataHeartbeatExceeded(uint256,uint256,uint256,uint256)"(
+      priceId?: null,
+      timeDifference?: null,
+      currentCreatedAt?: null,
+      lastCreatedAt?: null
+    ): LogPriceDataHeartbeatExceededEventFilter;
+    LogPriceDataHeartbeatExceeded(
+      priceId?: null,
+      timeDifference?: null,
+      currentCreatedAt?: null,
+      lastCreatedAt?: null
+    ): LogPriceDataHeartbeatExceededEventFilter;
+
+    "LogPriceDataRecovered(uint256,uint256,uint256,uint256)"(
+      priceId?: null,
+      price?: null,
+      triggeredAt?: null,
+      recoveredAt?: null
+    ): LogPriceDataRecoveredEventFilter;
+    LogPriceDataRecovered(
+      priceId?: null,
+      price?: null,
+      triggeredAt?: null,
+      recoveredAt?: null
+    ): LogPriceDataRecoveredEventFilter;
+
+    "LogPriceDataTriggered(uint256,uint256,uint256)"(
+      priceId?: null,
+      price?: null,
+      triggeredAt?: null
+    ): LogPriceDataTriggeredEventFilter;
+    LogPriceDataTriggered(
+      priceId?: null,
+      price?: null,
+      triggeredAt?: null
+    ): LogPriceDataTriggeredEventFilter;
+  };
 
   estimateGas: {
     getAggregatorAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getAggregatorDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+    getDecimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getDepeggedAt(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getDeviation(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getHeartbeat(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLatestPriceInfo(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getPriceInfo(
-      priceId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    getToken(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
+    getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hasNewPriceInfo(overrides?: CallOverrides): Promise<BigNumber>;
+
+    processLatestPriceInfo(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -209,19 +485,26 @@ export interface IPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getAggregatorDecimals(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    getDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getDepeggedAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getDeviation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getHeartbeat(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getLatestPriceInfo(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getPriceInfo(
-      priceId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    getToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getTriggeredAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    hasNewPriceInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    processLatestPriceInfo(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

@@ -29,8 +29,13 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
     "MAINNET()": FunctionFragment;
     "decimals()": FunctionFragment;
     "description()": FunctionFragment;
+    "deviation()": FunctionFragment;
     "getChainlinkAggregatorAddress()": FunctionFragment;
     "getRoundData(uint80)": FunctionFragment;
+    "heartbeat()": FunctionFragment;
+    "heartbeatMargin()": FunctionFragment;
+    "isExceedingDeviation(uint256,uint256)": FunctionFragment;
+    "isExceedingHeartbeat(uint256,uint256)": FunctionFragment;
     "latestRoundData()": FunctionFragment;
     "setRoundData(uint80,int256,uint256,uint256,uint80)": FunctionFragment;
     "version()": FunctionFragment;
@@ -42,8 +47,13 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
       | "MAINNET"
       | "decimals"
       | "description"
+      | "deviation"
       | "getChainlinkAggregatorAddress"
       | "getRoundData"
+      | "heartbeat"
+      | "heartbeatMargin"
+      | "isExceedingDeviation"
+      | "isExceedingHeartbeat"
       | "latestRoundData"
       | "setRoundData"
       | "version"
@@ -56,6 +66,7 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
     functionFragment: "description",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "deviation", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getChainlinkAggregatorAddress",
     values?: undefined
@@ -63,6 +74,19 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getRoundData",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(functionFragment: "heartbeat", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "heartbeatMargin",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isExceedingDeviation",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isExceedingHeartbeat",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "latestRoundData",
@@ -87,12 +111,26 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
     functionFragment: "description",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deviation", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getChainlinkAggregatorAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRoundData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "heartbeat", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "heartbeatMargin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isExceedingDeviation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isExceedingHeartbeat",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -143,6 +181,8 @@ export interface AggregatorDataProvider extends BaseContract {
 
     description(overrides?: CallOverrides): Promise<[string]>;
 
+    deviation(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<[string]>;
 
     getRoundData(
@@ -157,6 +197,22 @@ export interface AggregatorDataProvider extends BaseContract {
         answeredInRound: BigNumber;
       }
     >;
+
+    heartbeat(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    heartbeatMargin(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    isExceedingDeviation(
+      price1: PromiseOrValue<BigNumberish>,
+      price2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isExceeding: boolean }>;
+
+    isExceedingHeartbeat(
+      time1: PromiseOrValue<BigNumberish>,
+      time2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isExceeding: boolean }>;
 
     latestRoundData(
       overrides?: CallOverrides
@@ -190,6 +246,8 @@ export interface AggregatorDataProvider extends BaseContract {
 
   description(overrides?: CallOverrides): Promise<string>;
 
+  deviation(overrides?: CallOverrides): Promise<BigNumber>;
+
   getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
   getRoundData(
@@ -204,6 +262,22 @@ export interface AggregatorDataProvider extends BaseContract {
       answeredInRound: BigNumber;
     }
   >;
+
+  heartbeat(overrides?: CallOverrides): Promise<BigNumber>;
+
+  heartbeatMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+  isExceedingDeviation(
+    price1: PromiseOrValue<BigNumberish>,
+    price2: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isExceedingHeartbeat(
+    time1: PromiseOrValue<BigNumberish>,
+    time2: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   latestRoundData(
     overrides?: CallOverrides
@@ -237,6 +311,8 @@ export interface AggregatorDataProvider extends BaseContract {
 
     description(overrides?: CallOverrides): Promise<string>;
 
+    deviation(overrides?: CallOverrides): Promise<BigNumber>;
+
     getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
     getRoundData(
@@ -251,6 +327,22 @@ export interface AggregatorDataProvider extends BaseContract {
         answeredInRound: BigNumber;
       }
     >;
+
+    heartbeat(overrides?: CallOverrides): Promise<BigNumber>;
+
+    heartbeatMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isExceedingDeviation(
+      price1: PromiseOrValue<BigNumberish>,
+      price2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isExceedingHeartbeat(
+      time1: PromiseOrValue<BigNumberish>,
+      time2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     latestRoundData(
       overrides?: CallOverrides
@@ -287,12 +379,30 @@ export interface AggregatorDataProvider extends BaseContract {
 
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
+    deviation(overrides?: CallOverrides): Promise<BigNumber>;
+
     getChainlinkAggregatorAddress(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getRoundData(
       _roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    heartbeat(overrides?: CallOverrides): Promise<BigNumber>;
+
+    heartbeatMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isExceedingDeviation(
+      price1: PromiseOrValue<BigNumberish>,
+      price2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isExceedingHeartbeat(
+      time1: PromiseOrValue<BigNumberish>,
+      time2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -319,12 +429,30 @@ export interface AggregatorDataProvider extends BaseContract {
 
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    deviation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getChainlinkAggregatorAddress(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getRoundData(
       _roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    heartbeat(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    heartbeatMargin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isExceedingDeviation(
+      price1: PromiseOrValue<BigNumberish>,
+      price2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isExceedingHeartbeat(
+      time1: PromiseOrValue<BigNumberish>,
+      time2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

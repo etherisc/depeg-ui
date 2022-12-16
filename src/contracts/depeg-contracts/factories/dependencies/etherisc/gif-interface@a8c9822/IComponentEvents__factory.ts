@@ -157,7 +157,7 @@ const _abi = [
     name: "LogComponentUnpaused",
     type: "event",
   },
-];
+] as const;
 
 export class IComponentEvents__factory {
   static readonly abi = _abi;

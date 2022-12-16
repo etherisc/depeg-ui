@@ -11,12 +11,161 @@ import type {
 
 const _abi = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "priceId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "triggeredAt",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "depeggedAt",
+        type: "uint256",
+      },
+    ],
+    name: "LogPriceDataDepegged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "priceId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "priceDeviation",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "currentPrice",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "lastPrice",
+        type: "uint256",
+      },
+    ],
+    name: "LogPriceDataDeviationExceeded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "priceId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timeDifference",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "currentCreatedAt",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "lastCreatedAt",
+        type: "uint256",
+      },
+    ],
+    name: "LogPriceDataHeartbeatExceeded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "priceId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "triggeredAt",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "recoveredAt",
+        type: "uint256",
+      },
+    ],
+    name: "LogPriceDataRecovered",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "priceId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "triggeredAt",
+        type: "uint256",
+      },
+    ],
+    name: "LogPriceDataTriggered",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "getAggregatorAddress",
     outputs: [
       {
         internalType: "address",
-        name: "priceInfoSourceAddress",
+        name: "aggregatorAddress",
         type: "address",
       },
     ],
@@ -25,12 +174,51 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getAggregatorDecimals",
+    name: "getDecimals",
     outputs: [
       {
         internalType: "uint8",
-        name: "priceInfoDecimals",
+        name: "aggregatorDecimals",
         type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getDepeggedAt",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "depeggedAt",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getDeviation",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "deviationLevel",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getHeartbeat",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "heartbeatSeconds",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -53,39 +241,23 @@ const _abi = [
             type: "uint256",
           },
           {
-            internalType: "uint256",
-            name: "createdAt",
-            type: "uint256",
+            internalType: "enum IPriceDataProvider.ComplianceState",
+            name: "compliance",
+            type: "uint8",
           },
-        ],
-        internalType: "struct IPriceDataProvider.PriceInfo",
-        name: "priceInfo",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "priceId",
-        type: "uint256",
-      },
-    ],
-    name: "getPriceInfo",
-    outputs: [
-      {
-        components: [
+          {
+            internalType: "enum IPriceDataProvider.StabilityState",
+            name: "stability",
+            type: "uint8",
+          },
           {
             internalType: "uint256",
-            name: "id",
+            name: "triggeredAt",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "price",
+            name: "depeggedAt",
             type: "uint256",
           },
           {
@@ -104,18 +276,104 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getTokenAddress",
+    name: "getToken",
     outputs: [
       {
         internalType: "address",
-        name: "tokenAddress",
+        name: "token",
         type: "address",
       },
     ],
     stateMutability: "view",
     type: "function",
   },
-];
+  {
+    inputs: [],
+    name: "getTriggeredAt",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "triggeredAt",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "hasNewPriceInfo",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "newInfoAvailable",
+        type: "bool",
+      },
+      {
+        internalType: "uint256",
+        name: "priceId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "timeSinceLastUpdate",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "processLatestPriceInfo",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "id",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "price",
+            type: "uint256",
+          },
+          {
+            internalType: "enum IPriceDataProvider.ComplianceState",
+            name: "compliance",
+            type: "uint8",
+          },
+          {
+            internalType: "enum IPriceDataProvider.StabilityState",
+            name: "stability",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "triggeredAt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "depeggedAt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "createdAt",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IPriceDataProvider.PriceInfo",
+        name: "priceInfo",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;
 
 export class IPriceDataProvider__factory {
   static readonly abi = _abi;
