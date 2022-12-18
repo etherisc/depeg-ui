@@ -35,7 +35,7 @@ export default function Account() {
         reconnectWallets(appContext);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    
+
     if (! loggedIn) {
         return (
             <>
@@ -46,7 +46,7 @@ export default function Account() {
             </>
         );
     }
-    
+
     let account = (<></>);
 
     if (appContext?.data.signer != undefined && address !== undefined && address !== "") {
@@ -57,7 +57,7 @@ export default function Account() {
                 </Avatar>
                 <Box sx={{ mr: 1, alignItems: 'center', verticalAlign: 'middle' }}>
                     <AccountAddress signer={appContext?.data.signer} address={address}/>
-                    <Box component="span" sx={{ display: { 'xs': 'none', 'md': 'inline-flex'}}}>
+                    <Box component="span" sx={{ cursor: 'ew-resize', display: { 'xs': 'none', 'md': 'inline-flex'}}}>
                         {NBSP} {DOT} {NBSP}
                         <Balance
                             signer={appContext?.data.signer}
