@@ -38,10 +38,11 @@ export default function Header() {
     let links = [];
     let listitems = [];
 
-    links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" />);
-    listitems.push(getListItem(t('nav.link.policies'), '/policies'));
+
     links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" />);
     listitems.push(getListItem(t('nav.link.apply'), '/'));
+    links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" />);
+    listitems.push(getListItem(t('nav.link.policies'), '/policies'));
     links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" />);
     listitems.push(getListItem(t('nav.link.invest'), '/invest'));
     links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" />);
