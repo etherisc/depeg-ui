@@ -78,7 +78,7 @@ export default function Header() {
                             <Image src="/etherisc_logo_white.svg" alt="Etherisc logo" width={100} height={22}  />
                         </Box>
                         <Box sx={{ display: { xs: 'inherit', md: 'none'}}}>
-                            <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={22} height={22} />
+                            <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={28} height={22} />
                         </Box>
                         <HeaderLink text={t('apptitle_short')} href="/" variant="h6" sx={{ display: { xs: 'none', md: 'block'}}} />
 
