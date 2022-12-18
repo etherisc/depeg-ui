@@ -74,7 +74,7 @@ export default function Header() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Box sx={{ display: { xs: 'none', md: 'inherit'}}}>
+                        <Box sx={{ mt: 0.25, display: { xs: 'none', md: 'inherit'}}}>
                             <Image src="/etherisc_logo_white.svg" alt="Etherisc logo" width={100} height={22}  />
                         </Box>
                         <Box sx={{ display: { xs: 'inherit', md: 'none'}}}>
