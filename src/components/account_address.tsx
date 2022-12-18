@@ -27,7 +27,7 @@ export default function AccountAddress(props: AccountAddressProps) {
             updateData();
         }
     }, [props]);
-    
+
     async function copyAddressToClipboard() {
         await navigator.clipboard.writeText(address);
         enqueueSnackbar(t('action.address_copied'),  { autoHideDuration: 2000, variant: 'info' });
@@ -35,13 +35,13 @@ export default function AccountAddress(props: AccountAddressProps) {
 
     const abrAdr = `${address.substring(0, 6)}…${address.substring(address.length - 4)}`;
     const abrAdrMobile = `0x…${address.substring(address.length - 4)}`;
-    
+
     return (
         <>
             <Box component="span" sx={{ display: { 'xs': 'none', 'md': 'inline'}}}>
                 {abrAdr}
                 {NBSP}
-                <ContentCopy onClick={copyAddressToClipboard} sx={{ fontSize: 14 }} />
+                <ContentCopy onClick={copyAddressToClipboard} sx={{ fontSize: 14, cursor: 'pointer' }} />
             </Box>
             <Box component="span" sx={{ display: { 'xs': 'inline', 'md': 'none'}}}>
                 {abrAdrMobile}
