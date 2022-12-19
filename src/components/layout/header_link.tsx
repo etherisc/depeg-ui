@@ -8,7 +8,7 @@ import React from "react";
 export function HeaderLink(props: any) {
     const { text, href, variant, icon } = props;
 
-    let iconElement = undefined;
+    let iconElement = (<></>);
     if (icon) {
         iconElement = <FontAwesomeIcon icon={icon} className="fa" />;
     }

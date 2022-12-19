@@ -2,7 +2,8 @@ import { useContext } from "react";
 import { removeSigner, AppContext } from "../../context/app_context";
 import Button from '@mui/material/Button'
 import { useTranslation } from "next-i18next";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
 export default function Logout() {
     const appContext = useContext(AppContext);
@@ -17,7 +18,7 @@ export default function Logout() {
     if (appContext?.data.signer !== undefined) {
         button = (
             <Button variant="contained" color="secondary" onClick={logout}>
-                <FontAwesomeIcon icon="right-from-bracket" className="fa" />
+                <FontAwesomeIcon icon={faRightFromBracket} className="fa" />
                 {t('action.disconnect')}
             </Button>
         );

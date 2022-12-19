@@ -4,3 +4,7 @@
     color: #eee;
     margin-right: 4px;
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
