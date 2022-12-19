@@ -22,7 +22,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/icons-material": "^5.10.16",
-    "@mui/material": "^5.10.17",
+    "@mui/material": "^5.11.0",
     "@mui/x-data-grid": "^5.17.14",
     "@mui/x-date-pickers": "^5.0.10",
     "@walletconnect/web3-provider": "^1.8.0",
