@@ -14,7 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
 import { Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faWallet, faReceipt, faSackDollar, faVault } from "@fortawesome/free-solid-svg-icons";
+import { faShield, faReceipt, faSackDollar, faVault } from "@fortawesome/free-solid-svg-icons";
 
 export default function Header() {
     const { t } = useTranslation('common');
@@ -51,8 +51,8 @@ export default function Header() {
     let listitems = [];
 
 
-    links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" icon={faWallet} />);
-    listitems.push(getListItem(t('nav.link.apply'), '/', faWallet));
+    links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" icon={faShield} />);
+    listitems.push(getListItem(t('nav.link.apply'), '/', faShield));
     links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" icon={faReceipt} />);
     listitems.push(getListItem(t('nav.link.policies'), '/policies', faReceipt));
     links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" icon={faSackDollar} />);

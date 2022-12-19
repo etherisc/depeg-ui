@@ -16,6 +16,8 @@ import { FormNumber } from '../../utils/types';
 import CurrencyTextField from '../form/currency_text_field';
 import NumericTextField, { INPUT_VARIANT } from '../form/numeric_text_field';
 import Premium from './premium';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShield } from "@fortawesome/free-solid-svg-icons";
 
 export interface ApplicationFormProperties {
     disabled: boolean;
@@ -319,7 +321,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     disabled={buyButtonDisabled}
                     fullWidth
                     onClick={buy}
+                    sx={{ p: 1 }}
                 >
+                    <FontAwesomeIcon icon={faShield} className="fa" />
                     {t('button_buy')}
                 </Button>
                 {loadingBar}
