@@ -13,6 +13,7 @@ RUN npm ci
 
 # Rebuild the source code only when needed
 FROM ${VARIANT} AS builder
+ARG INSTANCE=production
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -22,11 +23,12 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-COPY .env.production .env
+COPY .env.$INSTANCE .env
 RUN npm run build
 
 # Production image, copy all the files and run next
 FROM ${VARIANT} AS runner
+ARG INSTANCE=production
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -43,7 +45,7 @@ COPY --from=builder /app/public ./public
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY .env.production .env
+COPY .env.$INSTANCE .env
 
 EXPOSE 3000
 
