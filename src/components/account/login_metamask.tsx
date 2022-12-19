@@ -5,6 +5,7 @@ import Button from '@mui/material/Button'
 import { getAndSetWalletAccount } from "../../utils/wallet";
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function LoginWithMetaMaskButton() {
     const appContext = useContext(AppContext);
@@ -40,6 +41,7 @@ export default function LoginWithMetaMaskButton() {
     if (appContext?.data.signer === undefined) {
         button = (
             <Button variant="contained" color="secondary" onClick={login} sx={{ mr: 1}} >
+                <FontAwesomeIcon icon="right-to-bracket" className="fa" />
                 {t('action.login_metamask')}
             </Button>
         );
