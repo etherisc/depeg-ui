@@ -29,7 +29,7 @@
     "abi-coder": "^4.1.1",
     "canvas-confetti": "^1.6.0",
     "eslint": "^8.29.0",
-    "eslint-config-next": "^13.0.6",
+    "eslint-config-next": "^13.0.7",
     "ethers": "^5.7.2",
     "i18next": "^22.4.3",
     "moment": "^2.29.4",
