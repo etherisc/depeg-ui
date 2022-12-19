@@ -7,6 +7,8 @@ import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
 import { toHex } from "../../utils/numbers";
 import { useMediaQuery, useTheme } from "@mui/material";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 export default function LoginWithWalletConnectButton() {
     const appContext = useContext(AppContext);
@@ -66,6 +68,7 @@ export default function LoginWithWalletConnectButton() {
     if (appContext?.data.signer === undefined) {
         button = (
             <Button variant="contained" color="secondary" onClick={login}>
+                <FontAwesomeIcon icon={faRightToBracket} className="fa" />
                 {buttonText}
             </Button>
         );

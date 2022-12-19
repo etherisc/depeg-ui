@@ -17,7 +17,6 @@ import { ThemeProvider } from '@mui/material/styles';
 import { etheriscTheme } from '../config/theme';
 import Layout from '../components/layout/layout';
 
-
 export function App(appProps: AppProps) {
   const [ data, dispatch ] = useReducer(signerReducer, initialAppData());
 

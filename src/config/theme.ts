@@ -29,4 +29,16 @@ export const etheriscTheme = createTheme({
             contrastText: "#fff"
         },
     },
+    components: {
+        MuiIcon: {
+            styleOverrides: {
+                root: {
+                    // Match 24px = 3 * 2 + 1.125 * 16
+                    boxSizing: 'content-box',
+                    padding: 3,
+                    fontSize: '1.125rem',
+                },
+            },
+        },
+    },
 });

@@ -10,6 +10,8 @@ import { InsuranceApi } from '../../backend/insurance_api';
 import { FormNumber } from '../../utils/types';
 import CurrencyTextField from '../form/currency_text_field';
 import NumericTextField from '../form/numeric_text_field';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
 
 const formInputVariant = 'outlined';
 
@@ -257,7 +259,9 @@ export default function InvestForm(props: InvestFormProperties) {
                     disabled={investButtonDisabled}
                     fullWidth
                     onClick={invest}
+                    sx={{ p: 1 }}
                 >
+                    <FontAwesomeIcon icon={faSackDollar} className="fa" />
                     {t('button_invest')}
                 </Button>
                 {waitForPayment}
