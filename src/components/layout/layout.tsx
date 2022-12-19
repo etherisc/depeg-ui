@@ -17,11 +17,11 @@ export default function Layout({ Component, pageProps }: AppProps) {
             return (<UnexpectedChain />);
         }
     }, [isExpectedChain, Component, pageProps]);
-    
+
 
     return (<>
         <Header />
-        <Container maxWidth="lg" sx={{ p: 1 }}>
+        <Container maxWidth="lg" sx={{ p: 1, marginBottom: "5vh" }}>
             {content()}
         </Container>
         <Footer />

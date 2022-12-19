@@ -35,7 +35,7 @@ export default function Account() {
         reconnectWallets(appContext);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    
+
     if (! loggedIn) {
         return (
             <>
@@ -46,7 +46,7 @@ export default function Account() {
             </>
         );
     }
-    
+
     let account = (<></>);
 
     if (appContext?.data.signer != undefined && address !== undefined && address !== "") {

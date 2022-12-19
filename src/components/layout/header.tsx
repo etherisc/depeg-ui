@@ -38,28 +38,15 @@ export default function Header() {
     let links = [];
     let listitems = [];
 
-    if (router.pathname === '/' || router.pathname === '/policies') {
-        if (router.pathname === '/') {
-            links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" />);
-            listitems.push(getListItem(t('nav.link.policies'), '/policies'));
-        } else {
-            links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" />);
-            listitems.push(getListItem(t('nav.link.apply'), '/'));
-        }
-        links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" />);
-        listitems.push(getListItem(t('nav.link.invest'), '/invest'));
-    } else if (router.pathname === '/invest' || router.pathname === '/bundles') {
-        links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" />);
-        listitems.push(getListItem(t('nav.link.apply'), '/'));
-        if (router.pathname === '/invest') {
-            links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" />);
-            listitems.push(getListItem(t('nav.link.bundles'), '/bundles'));
-        } else {
-            links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" />);
-            listitems.push(getListItem(t('nav.link.invest'), '/invest'));
-        }
-    }
 
+    links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" />);
+    listitems.push(getListItem(t('nav.link.apply'), '/'));
+    links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" />);
+    listitems.push(getListItem(t('nav.link.policies'), '/policies'));
+    links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" />);
+    listitems.push(getListItem(t('nav.link.invest'), '/invest'));
+    links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" />);
+    listitems.push(getListItem(t('nav.link.bundles'), '/bundles'));
 
     const drawer = (
         <Box onClick={handleDrawerToggle} >
@@ -88,14 +75,14 @@ export default function Header() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Box sx={{ display: { xs: 'none', md: 'inherit'}}}>
+                        <Box sx={{ mt: 0.25, display: { xs: 'none', md: 'inherit'}}}>
                             <Image src="/etherisc_logo_white.svg" alt="Etherisc logo" width={100} height={22}  />
                         </Box>
                         <Box sx={{ display: { xs: 'inherit', md: 'none'}}}>
-                            <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={22} height={22} />
+                            <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={28} height={22} />
                         </Box>
                         <HeaderLink text={t('apptitle_short')} href="/" variant="h6" sx={{ display: { xs: 'none', md: 'block'}}} />
-                        
+
                         {/* links only shown on desktop */}
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 1 }}>
                             {links}
@@ -128,6 +115,6 @@ export default function Header() {
                 </Drawer>
             </Box>
         </Box>
-    </>);    
+    </>);
 
 }
