@@ -57,7 +57,7 @@ export default function Account() {
                 </Avatar>
                 <Box sx={{ mr: 1, alignItems: 'center', verticalAlign: 'middle' }}>
                     <AccountAddress signer={appContext?.data.signer} address={address}/>
-                    <Box component="span" sx={{ cursor: 'ew-resize', display: { 'xs': 'none', 'md': 'inline-flex'}}}>
+                    <Box component="span" sx={{ display: { 'xs': 'none', 'md': 'inline-flex'}}}>
                         {NBSP} {DOT} {NBSP}
                         <Balance
                             signer={appContext?.data.signer}
