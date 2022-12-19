@@ -16,7 +16,11 @@ import { getAndUpdateWalletAccount } from '../utils/wallet';
 import { ThemeProvider } from '@mui/material/styles';
 import { etheriscTheme } from '../config/theme';
 import Layout from '../components/layout/layout';
+import "@fortawesome/fontawesome-svg-core/styles.css"; // import Font Awesome CSS
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 
+library.add(fas);
 
 export function App(appProps: AppProps) {
   const [ data, dispatch ] = useReducer(signerReducer, initialAppData());

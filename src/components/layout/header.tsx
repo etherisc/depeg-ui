@@ -12,7 +12,8 @@ import IconButton from '@mui/material/IconButton';
 import { useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
-import { Divider, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default function Header() {
     const { t } = useTranslation('common');
@@ -25,10 +26,20 @@ export default function Header() {
         setMobileOpen(!mobileOpen);
     };
 
-    function getListItem(text: string, href: string) {
+    function getListItem(text: string, href: string, icon?: any) {
+        let iconElement = undefined;
+        if (icon) {
+            iconElement = (
+                <ListItemIcon>
+                    <FontAwesomeIcon icon={icon} />
+                </ListItemIcon>
+            );
+        }
+
         return (
             <ListItem key={text} disablePadding>
                 <ListItemButton href={href}>
+                    {iconElement}
                     <ListItemText primary={text} />
                 </ListItemButton>
             </ListItem>
@@ -39,14 +50,14 @@ export default function Header() {
     let listitems = [];
 
 
-    links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" />);
-    listitems.push(getListItem(t('nav.link.apply'), '/'));
-    links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" />);
-    listitems.push(getListItem(t('nav.link.policies'), '/policies'));
-    links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" />);
-    listitems.push(getListItem(t('nav.link.invest'), '/invest'));
-    links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" />);
-    listitems.push(getListItem(t('nav.link.bundles'), '/bundles'));
+    links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" icon="wallet" />);
+    listitems.push(getListItem(t('nav.link.apply'), '/', "wallet"));
+    links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" icon="receipt" />);
+    listitems.push(getListItem(t('nav.link.policies'), '/policies', "receipt"));
+    links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" icon="sack-dollar" />);
+    listitems.push(getListItem(t('nav.link.invest'), '/invest', "sack-dollar"));
+    links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" icon="vault" />);
+    listitems.push(getListItem(t('nav.link.bundles'), '/bundles', "vault"));
 
     const drawer = (
         <Box onClick={handleDrawerToggle} >
