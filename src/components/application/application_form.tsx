@@ -5,7 +5,6 @@ import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 import TextField from '@mui/material/TextField'
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment from 'moment';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -18,6 +17,7 @@ import { faShield } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { INPUT_VARIANT } from '../../config/theme';
+import { DatePicker } from '@mui/x-date-pickers';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -298,7 +298,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         control={control}
                         rules={{ required: true }}
                         render={({ field }) => 
-                            <DesktopDatePicker
+                            <DatePicker
                                 {...field} 
                                 label={t('coverageDurationUntil')}
                                 inputFormat="DD.MM.YYYY"
