@@ -18,10 +18,12 @@ import NumericTextField from '../form/numeric_text_field';
 import Premium from './premium';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShield } from "@fortawesome/free-solid-svg-icons";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler, Controller, FormProvider } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { loadDefaultErrorComponents } from 'next/dist/server/load-components';
 import { INPUT_VARIANT } from '../../config/theme';
+import { USD1_DECIMALS } from '../../utils/numbers';
+import { parseUnits } from 'ethers/lib/utils';
 
 export interface ApplicationFormProperties {
     disabled: boolean;
@@ -37,19 +39,19 @@ export interface ApplicationFormProperties {
     applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => void;
 }
 
-type IFormValues = {
+export type IAplicationFormValues = {
     insuredWallet: string;
     insuredAmount: number;
     coverageDuration: number;
     coverageEndDate: string;
-    // premium: number;
+    premiumAmount: number;
     // termsAndConditions: boolean;
 };
 
 export default function ApplicationForm(props: ApplicationFormProperties) {
     const { t } = useTranslation('application');
 
-    const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IFormValues>({ 
+    const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IAplicationFormValues>({ 
         mode: "onBlur",
         defaultValues: {
             // checkbox: false,
@@ -57,9 +59,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             insuredAmount: undefined,
             coverageDuration: props.applicationApi.coverageDurationDaysMax,
             coverageEndDate: moment().add(props.applicationApi.coverageDurationDaysMax, 'days').format("YYYY-MM-DD"),
+            premiumAmount: undefined,
         }
     });
-    const onSubmit: SubmitHandler<IFormValues> = data => console.log(data);
+    const onSubmit: SubmitHandler<IAplicationFormValues> = data => console.log(data);
     const errors = useMemo(() => formState.errors, [formState]);
 
     useEffect(() => {
@@ -77,6 +80,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     useEffect(() => {
         setValue("coverageDuration", moment(watchCoverageEndDate).startOf('day').diff(moment().startOf('day'), 'days')); 
     }, [watchCoverageEndDate]);
+
+    // TODO: remove
+    // const watchPremiumFactors = watch(["insuredWallet", "insuredAmount", "coverageDuration"]);
+    // useEffect(() => {
+    //     console.log("watchPremiumFactors", watchPremiumFactors, errors);
+    // }, [watchPremiumFactors, errors]);
 
     // TODO: remove
     // // wallet address
@@ -127,7 +136,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const coverageUntilMax = moment().add(props.applicationApi.coverageDurationDaysMax, 'days');
 
     // premium
-    const [ premium, setPremium ] = useState(undefined as FormNumber);
+    // const [ premium, setPremium ] = useState(undefined as FormNumber);
+    const premium = useMemo(() => getValues("premiumAmount"), [getValues]);
     const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
     const [ showAvailableBundles, setShowAvailableBundles ] = useState(false);
@@ -195,43 +205,52 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     //-------------------------------------------------------------------------
     // calculate premium via onchain call
     const calculatePremium = useCallback( async () => {
-        // FIXME: reenable
-    //     if (! isFormValid()) {
-    //         console.log("Form is invalid, not calculating premium...");
-    //         setPremium(0);
-    //         return;
-    //     }
-    //     if (props.bundles.length == 0) {
-    //         console.log("No bundles, not calculating premium...");
-    //         setPremium(0);
-    //         return;
-    //     }
+        const values = getValues();
+        console.log('calculatePremium', values, errors);
 
+        if (formState.touchedFields.insuredAmount === undefined) {
+            console.log("amount not touched, not calculating premium...");
+            return;
+        }
 
-    //     console.log("Calculating premium...");
-    //     try {
-    //         setPremiumCalculationInProgress(true);
-    //         setShowAvailableBundles(false);
-    //         setPremium(await props.applicationApi.calculatePremium(walletAddress, insuredAmount || 0, coverageDays || 0, props.bundles));
-    //         setPremiumErrorKey("");
-    //     } catch (e) {
-    //         if (e instanceof NoBundleFoundError) {
-    //             console.log("No bundle found for this insurance.");
-    //             setPremiumErrorKey('error_no_matching_bundle_found');
-    //             setShowAvailableBundles(true);
-    //         } else if (e instanceof BalanceTooSmallError) {
-    //             console.log("Wallet balance too low");
-    //             setPremiumErrorKey('error_wallet_balance_too_low');
-    //         } else {
-    //             console.log("Error calculating premium: ", e);
-    //         }
-    //         setPremium(undefined);
-    //     } finally {
-    //         setPremiumCalculationInProgress(false);
-    //     }
-        
-    // }, [isFormValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.applicationApi]);
-    }, []);
+        if (errors.coverageDuration !== undefined || errors.insuredWallet !== undefined || errors.insuredAmount !== undefined) {
+            console.log("Form is invalid, not calculating premium...");
+            return;
+        }
+
+        if (props.bundles.length == 0) {
+            console.log("No bundles, not calculating premium...");
+            setValue("premiumAmount", 0);
+            return;
+        }
+
+        const walletAddress = values.insuredWallet;
+        const insuredAmount = values.insuredAmount * Math.pow(10, props.usd1Decimals);
+        const coverageDays = values.coverageDuration;
+
+        console.log("Calculating premium...");
+        try {
+            setPremiumCalculationInProgress(true);
+            setShowAvailableBundles(false);
+            const premium = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles);
+            setValue("premiumAmount", premium / Math.pow(10, props.usd1Decimals));
+            setPremiumErrorKey("");
+        } catch (e) {
+            if (e instanceof NoBundleFoundError) {
+                console.log("No bundle found for this insurance.");
+                setPremiumErrorKey('error_no_matching_bundle_found');
+                setShowAvailableBundles(true);
+            } else if (e instanceof BalanceTooSmallError) {
+                console.log("Wallet balance too low");
+                setPremiumErrorKey('error_wallet_balance_too_low');
+            } else {
+                console.log("Error calculating premium: ", e);
+            }
+            setValue("premiumAmount", -1);
+        } finally {
+            setPremiumCalculationInProgress(false);
+        }
+    }, [formState, errors, props.bundles]);
 
     async function buy() {
         setApplicationInProgress(true);
@@ -279,6 +298,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 fullWidth
                                 variant={INPUT_VARIANT}
                                 {...field} 
+                                onBlur={e => { field.onBlur(); calculatePremium(); }}
                                 error={errors.insuredWallet !== undefined}
                                 helperText={errors.insuredWallet !== undefined ? errors.insuredWallet.type.toString() : ""}
                                 />}
@@ -315,6 +335,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 fullWidth
                                 variant={INPUT_VARIANT}
                                 {...field} 
+                                onBlur={e => { field.onBlur(); calculatePremium(); }}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
                                 }}
@@ -356,6 +377,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 fullWidth
                                 variant={INPUT_VARIANT}
                                 {...field} 
+                                onBlur={e => { field.onBlur(); calculatePremium(); }}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                                 }}
@@ -393,7 +415,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 inputFormat="DD.MM.YYYY"
                                 renderInput={(params) => 
                                     <TextField 
-                                        {...params} 
+                                        {...params}
                                         fullWidth 
                                         variant={INPUT_VARIANT} 
                                         />
@@ -406,7 +428,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         {/* TODO: mobile version */}
                 </Grid>
                 <Grid item xs={12}>
-                    {/* <Premium 
+                    <Premium 
+                        control={control}
                         disabled={props.disabled}
                         premium={premium}
                         premiumCurrency={props.usd2}
@@ -418,7 +441,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         textKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
                         bundles={props.bundles}
                         showBundles={showAvailableBundles}
-                        /> */}
+                        />
                 </Grid>
                 <Grid item xs={12}>
                     {/* <FormControlLabel 

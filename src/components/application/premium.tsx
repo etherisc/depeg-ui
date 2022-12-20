@@ -1,9 +1,10 @@
 import { TextField, InputAdornment, LinearProgress, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
+import { Control, Controller } from "react-hook-form";
 import { BundleData } from "../../backend/bundle_data";
-import { formatCurrency } from "../../utils/numbers";
+import { INPUT_VARIANT } from "../../config/theme";
 import { FormNumber } from "../../utils/types";
-import { INPUT_VARIANT } from "../form/numeric_text_field";
+import { IAplicationFormValues } from "./application_form";
 import { BundleList } from "./bundle_list";
 
 export interface PremiumProps {
@@ -18,6 +19,7 @@ export interface PremiumProps {
     transactionInProgress?: boolean;
     bundles: Array<BundleData>;
     showBundles: boolean;
+    control: Control<IAplicationFormValues, any>;
 }
 
 export default function Premium(props: PremiumProps) {
@@ -37,7 +39,7 @@ export default function Premium(props: PremiumProps) {
         : null;
 
     return (<>
-        <TextField
+        {/* <TextField
             required
             fullWidth
             disabled={props.disabled}
@@ -45,13 +47,32 @@ export default function Premium(props: PremiumProps) {
             id="premiumAmount"
             label={t('premiumAmount')}
             type="text"
-            value={formatCurrency(props.premium, props.premiumCurrencyDecimals)}
+            value={props.premium}
             InputProps={{
                 startAdornment: <InputAdornment position="start">{props.premiumCurrency}</InputAdornment>,
                 readOnly: true,
             }}
             error={props.error !== ""}
             helperText={props.error}
+            /> */}
+        <Controller
+            name="premiumAmount"
+            control={props.control}
+            render={({ field }) => 
+                <TextField 
+                    label={t('premiumAmount')}
+                    fullWidth
+                    variant={INPUT_VARIANT}
+                    {...field} 
+                    value={field.value !== undefined ? field.value.toFixed(2) : ""}
+                    InputProps={{
+                        readOnly: true,
+                        startAdornment: <InputAdornment position="start">{props.premiumCurrency}</InputAdornment>,
+                    }}
+                    // FIXME: enable error text
+                    // error={errors.coverageDuration !== undefined}
+                    // helperText={errors.coverageDuration !== undefined ? errors.coverageDuration.type.toString() : ""}
+                    />}
             />
         <Typography variant="body2">{wait}</Typography>
         {bundles}
