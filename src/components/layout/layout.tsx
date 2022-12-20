@@ -1,7 +1,7 @@
-import { Alert, AlertColor } from "@mui/material";
+import { Alert, AlertColor, Box, Button, Collapse } from "@mui/material";
 import Container from "@mui/material/Container";
 import { AppProps } from "next/app";
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import Footer from "./footer";
 import Header from "./header";
@@ -10,6 +10,7 @@ import UnexpectedChain from "./unexpected_chain";
 export default function Layout({ Component, pageProps }: AppProps) {
     const appContext = useContext(AppContext);
     const isExpectedChain = appContext.data.isExpectedChain;
+    const [ noticeDismissed, setNoticeDismissed ] = useState(false);
 
     const content = useCallback(() => {
         if (isExpectedChain) {
@@ -19,19 +20,41 @@ export default function Layout({ Component, pageProps }: AppProps) {
         }
     }, [isExpectedChain, Component, pageProps]);
 
-    const globalNotice = () => {
-        const notice = process.env.NEXT_PUBLIC_GLOBAL_NOTICE_TEXT;
-        const type = process.env.NEXT_PUBLIC_GLOBAL_NOTICE_TYPE;
-        if (notice !== undefined && notice?.trim() !== "") {
-            return (<Alert severity={type as AlertColor} variant="filled" sx={{ mb: 2 }}>{notice}</Alert>);
-        }
-        return (<></>);
+    const dismissClicked = () => {
+        setNoticeDismissed(true);
     };
 
+    const globalNotice = useCallback(() => {
+        const notice = process.env.NEXT_PUBLIC_GLOBAL_NOTICE_TEXT;
+        const type = process.env.NEXT_PUBLIC_GLOBAL_NOTICE_TYPE;
+        if (notice !== undefined && notice?.trim() !== "" ) {
+            return (<>
+                <Container maxWidth={false} sx={{ backgroundColor: 'warning.main' }}>
+                    <Container maxWidth="lg">
+                        <Collapse in={!noticeDismissed}>
+                            <Alert 
+                                severity={type as AlertColor} 
+                                variant="filled" 
+                                action={
+                                    <Button color="inherit" size="small" onClick={dismissClicked}>
+                                        Dismiss
+                                    </Button>
+                                }
+                                >
+                                    {notice}
+                            </Alert>
+                        </Collapse>
+                    </Container>
+                </Container>
+            </>);
+        }
+        return (<></>);
+    }, [noticeDismissed]);
+
     return (<>
+        {globalNotice()}
         <Header />
         <Container maxWidth="lg" sx={{ p: 1, marginBottom: "5vh" }}>
-            {globalNotice()}
             {content()}
         </Container>
         <Footer />
