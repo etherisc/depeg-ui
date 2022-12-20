@@ -276,12 +276,16 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     async function buy() {
         setApplicationInProgress(true);
 
-        // FIXME: reenable
-        // try {
-        //     await props.applyForPolicy(walletAddress, insuredAmount!, coverageDays!, premium!);
-        // } finally {
-        //     setApplicationInProgress(false);
-        // }
+        try {
+            const values = getValues();
+            const walletAddress = values.insuredWallet;
+            const insuredAmountWei = values.insuredAmount * Math.pow(10, props.usd1Decimals);
+            const coverageDays = values.coverageDuration;
+            const premiumWei = values.premiumAmount * Math.pow(10, props.usd2Decimals);
+            await props.applyForPolicy(walletAddress, insuredAmountWei, coverageDays, premiumWei);
+        } finally {
+            setApplicationInProgress(false);
+        }
     }
 
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
@@ -497,8 +501,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         type="submit"
                         disabled={!formState.isValid || premiumCalculationInProgress}
                         fullWidth
-                        // FIXME: reenable buy button
-                        // onClick={buy}
+                        onClick={buy}
                         sx={{ p: 1 }}
                     >
                         <FontAwesomeIcon icon={faShield} className="fa" />
