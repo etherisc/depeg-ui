@@ -40,7 +40,7 @@ export interface ApplicationFormProperties {
 type IFormValues = {
     insuredWallet: string;
     insuredAmount: number;
-    // coverageDuration: number;
+    coverageDuration: number;
     // coverageEndDate: Date;
     // premium: number;
     // termsAndConditions: boolean;
@@ -102,9 +102,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     // coverage period (days and date)
 
-    // coverage days
-    const [ coverageDays, setCoverageDays ] = useState(props.applicationApi.coverageDurationDaysMax  as FormNumber);
-    const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
+    // TODO: remove coverage days
+    // const [ coverageDays, setCoverageDays ] = useState(props.applicationApi.coverageDurationDaysMax  as FormNumber);
+    // const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
     const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
     const [ coverageDaysMax, setCoverageDaysMax ] = useState(props.applicationApi.coverageDurationDaysMax);
 
@@ -118,7 +118,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             date = moment();
         }
         setCoverageUntil(date);
-        setCoverageDays(date.startOf('day').diff(moment().startOf('day'), 'days'));
+        // setCoverageDays(date.startOf('day').diff(moment().startOf('day'), 'days'));
     };
 
     // premium
@@ -183,7 +183,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setCoverageDaysMin(minCoverageDays);
             setCoverageDaysMax(maxCoverageDays);
             const coverageDays = maxCoverageDays < 30 ? maxCoverageDays : 30;
-            setCoverageDays(coverageDays);
+            // setCoverageDays(coverageDays);
+            setValue("coverageDuration", coverageDays);
             setCoverageUntil(moment().add(coverageDays, 'days'));
         }
     }, [props.bundles]);
@@ -321,6 +322,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>
+                    {/* TODO: remove this */}
                     {/* <NumericTextField
                         fullWidth={true}
                         required={true}
@@ -342,6 +344,23 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         maxValue={coverageDaysMax}
                         onError={(errMsg) => setCoverageDaysValid(errMsg === "")}
                     /> */}
+                    <Controller
+                        name="coverageDuration"
+                        control={control}
+                        rules={{ required: true, min: coverageDaysMin, max: coverageDaysMax, pattern: /^[0-9]+$/ }}
+                        render={({ field }) => 
+                            <TextField 
+                                label={t('coverageDurationDays')}
+                                fullWidth
+                                variant={INPUT_VARIANT}
+                                {...field} 
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
+                                }}
+                                error={errors.coverageDuration !== undefined}
+                                helperText={errors.coverageDuration !== undefined ? errors.coverageDuration.type.toString() : ""}
+                                />}
+                        />
                 </Grid>
                 <Grid item xs={12} md={6}>
                     {/* <DesktopDatePicker
