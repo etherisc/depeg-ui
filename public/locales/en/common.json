@@ -34,7 +34,8 @@
             "minLength": "This field must be at least {{minLength}} characters",
             "maxLength": "This field must be at most {{maxLength}} characters",
             "min": "This field must be at least {{minValue}}",
-            "max": "This field must be at most {{maxValue}}"
+            "max": "This field must be at most {{maxValue}}",
+            "minmax": "The minimum value must be smaller than the maximum value"
         },
         "currencyTextFieldMinValue": "{{fieldName}} must be at least {{currency}} {{amount}}",
         "currencyTextFieldMaxValue": "{{fieldName}} must be at most {{currency}} {{amount}}",

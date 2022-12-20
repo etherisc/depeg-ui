@@ -104,7 +104,7 @@ export default function InvestForm(props: InvestFormProperties) {
     // const [ annualPctReturn, setAnnualPctReturn ] = useState(investProps.annualPctReturn as FormNumber);
     // const [ annualPctReturnValid, setAnnualPctReturnValid ] = useState(true);
 
-    const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IInvestFormValues>({ 
+    const { handleSubmit, control, formState, getValues, setValue, watch, trigger } = useForm<IInvestFormValues>({ 
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
@@ -119,6 +119,26 @@ export default function InvestForm(props: InvestFormProperties) {
     });
 
     const errors = useMemo(() => formState.errors, [formState]);
+
+    const watchInsuredAmountMin = watch("insuredAmountMin");
+    useEffect(() => {
+        trigger("insuredAmountMax");
+    }, [watchInsuredAmountMin]);
+
+    const watchInsuredAmountMax = watch("insuredAmountMax");
+    useEffect(() => {
+        trigger("insuredAmountMin");
+    }, [watchInsuredAmountMax]);
+
+    const watchCoverageDurationMin = watch("coverageDurationMin");
+    useEffect(() => {
+        trigger("coverageDurationMax");
+    }, [watchCoverageDurationMin]);
+
+    const watchCoverageDurationMax = watch("coverageDurationMax");
+    useEffect(() => {
+        trigger("coverageDurationMin");
+    }, [watchCoverageDurationMax]);
 
     // TODO: remove this
     // useEffect(() => {
@@ -196,7 +216,11 @@ export default function InvestForm(props: InvestFormProperties) {
                     <Controller
                         name="investedAmount"
                         control={control}
-                        rules={{ required: true, min: minInvestedAmount, max: maxInvestedAmount }}
+                        rules={{ 
+                            required: true, 
+                            min: minInvestedAmount, 
+                            max: maxInvestedAmount,
+                        }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('investedAmount')}
@@ -237,7 +261,14 @@ export default function InvestForm(props: InvestFormProperties) {
                     <Controller
                         name="insuredAmountMin"
                         control={control}
-                        rules={{ required: true, min: minSumInsured, max: maxSumInsured }}
+                        rules={{ 
+                            required: true, 
+                            min: minSumInsured, 
+                            max: maxSumInsured,
+                            validate: {
+                                minmax: v => v <= watchInsuredAmountMax 
+                            }
+                        }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('minSumInsured')}
@@ -278,7 +309,14 @@ export default function InvestForm(props: InvestFormProperties) {
                     <Controller
                         name="insuredAmountMax"
                         control={control}
-                        rules={{ required: true, min: minSumInsured, max: maxSumInsured }}
+                        rules={{ 
+                            required: true, 
+                            min: minSumInsured, 
+                            max: maxSumInsured,
+                            validate: {
+                                minmax: v => v >= watchInsuredAmountMin
+                            }                        
+                        }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('maxSumInsured')}
@@ -295,7 +333,6 @@ export default function InvestForm(props: InvestFormProperties) {
                                     : ""}
                                 />}
                         />
-                        {/* FIXME: min < max */}
                 </Grid>
                 <Grid item xs={12} md={6}>
                     {/* // TODO: remove this
@@ -319,7 +356,15 @@ export default function InvestForm(props: InvestFormProperties) {
                     <Controller
                         name="coverageDurationMin"
                         control={control}
-                        rules={{ required: true, min: minCoverageDuration, max: maxCoverageDuration, pattern: /^[0-9]+$/ }}
+                        rules={{ 
+                            required: true, 
+                            min: minCoverageDuration, 
+                            max: maxCoverageDuration, 
+                            pattern: /^[0-9]+$/,
+                            validate: {
+                                minmax: v => v <= watchCoverageDurationMax
+                            }
+                        }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('minDuration')}
@@ -362,7 +407,15 @@ export default function InvestForm(props: InvestFormProperties) {
                     <Controller
                         name="coverageDurationMax"
                         control={control}
-                        rules={{ required: true, min: minCoverageDuration, max: maxCoverageDuration, pattern: /^[0-9]+$/ }}
+                        rules={{ 
+                            required: true, 
+                            min: minCoverageDuration, 
+                            max: maxCoverageDuration, 
+                            pattern: /^[0-9]+$/,
+                            validate: {
+                                minmax: v => v >= watchCoverageDurationMin
+                            }
+                        }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('maxDuration')}
@@ -382,7 +435,6 @@ export default function InvestForm(props: InvestFormProperties) {
                                     : ""}
                                 />}
                         />
-                    {/* FIXME: min < max */}
                 </Grid>
                 <Grid item xs={12}>
                     {/* // TODO: remove this
