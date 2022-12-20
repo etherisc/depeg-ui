@@ -378,7 +378,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                     startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
                                 }}
                                 error={errors.insuredAmount !== undefined}
-                                helperText={errors.insuredAmount !== undefined ? errors.insuredAmount.type.toString() : ""}
+                                helperText={errors.insuredAmount !== undefined 
+                                    ? t(`error.field.${errors.insuredAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${insuredAmountMin}`, "maxValue": `${props.usd1} ${insuredAmountMax}` }) 
+                                    : ""}
                                 />}
                         />
                 </Grid>
