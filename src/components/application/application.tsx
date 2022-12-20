@@ -286,7 +286,7 @@ export default function Application(props: ApplicationProps) {
                 </Stepper>
 
                 <ApplicationForm 
-                    disabled={formDisabled}
+                    formDisabled={formDisabled}
                     walletAddress={walletAddress}
                     usd1={props.insurance.usd1}
                     usd1Decimals={props.insurance.usd1Decimals}

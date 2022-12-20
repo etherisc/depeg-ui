@@ -26,7 +26,7 @@ import { USD1_DECIMALS } from '../../utils/numbers';
 import { parseUnits } from 'ethers/lib/utils';
 
 export interface ApplicationFormProperties {
-    disabled: boolean;
+    formDisabled: boolean;
     walletAddress: string;
     usd1: string;
     usd1Decimals: number;
@@ -64,7 +64,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             termsAndConditions: false,
         }
     });
-    const onSubmit: SubmitHandler<IAplicationFormValues> = data => console.log(data);
+    
+    const onSubmit: SubmitHandler<IAplicationFormValues> = data => {
+        console.log("submit clicked", data);
+        buy();
+    }
+
     const errors = useMemo(() => formState.errors, [formState]);
 
     const [ premiumCalculationRequired, setPremiumCalculationRequired ] = useState(false);
@@ -291,7 +296,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
     
     return (<>
-        {/* FIXME: disable form when step 0 */}
         {/* FIXME: error texts */}
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
@@ -321,6 +325,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                             <TextField 
                                 label={t('insuredWallet')}
                                 fullWidth
+                                disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
                                 {...field} 
                                 onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
@@ -358,6 +363,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                             <TextField 
                                 label={t('insuredAmount')}
                                 fullWidth
+                                disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
                                 {...field} 
                                 onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
@@ -400,6 +406,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                             <TextField 
                                 label={t('coverageDurationDays')}
                                 fullWidth
+                                disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
                                 {...field} 
                                 onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
@@ -438,6 +445,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 {...field} 
                                 label={t('coverageDurationUntil')}
                                 inputFormat="DD.MM.YYYY"
+                                disabled={props.formDisabled}
                                 renderInput={(params) => 
                                     <TextField 
                                         {...params}
@@ -455,7 +463,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 <Grid item xs={12}>
                     <Premium 
                         control={control}
-                        disabled={props.disabled}
+                        disabled={props.formDisabled}
                         premium={premium}
                         premiumCurrency={props.usd2}
                         premiumCurrencyDecimals={props.usd2Decimals}
@@ -491,7 +499,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                     {...field}
                                     />
                             } 
-                            disabled={props.disabled}
+                            disabled={props.formDisabled}
                             label={t('checkbox_t_and_c_label')} />}
                         />
                 </Grid>
@@ -499,9 +507,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Button 
                         variant='contained'
                         type="submit"
-                        disabled={!formState.isValid || premiumCalculationInProgress}
+                        disabled={!formState.isValid || premiumCalculationInProgress || props.formDisabled}
                         fullWidth
-                        onClick={buy}
+                        // onClick={buy}
                         sx={{ p: 1 }}
                     >
                         <FontAwesomeIcon icon={faShield} className="fa" />
@@ -512,6 +520,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             </Grid>
         </form>
 
-        <DevTool control={control} />
+        {/* <DevTool control={control} /> */}
     </>);
 }

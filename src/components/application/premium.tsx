@@ -62,6 +62,7 @@ export default function Premium(props: PremiumProps) {
                 <TextField 
                     label={t('premiumAmount')}
                     fullWidth
+                    disabled={props.disabled}
                     variant={INPUT_VARIANT}
                     {...field} 
                     value={field.value !== undefined ? field.value.toFixed(2) : ""}
@@ -69,9 +70,8 @@ export default function Premium(props: PremiumProps) {
                         readOnly: true,
                         startAdornment: <InputAdornment position="start">{props.premiumCurrency}</InputAdornment>,
                     }}
-                    // FIXME: enable error text
-                    // error={errors.coverageDuration !== undefined}
-                    // helperText={errors.coverageDuration !== undefined ? errors.coverageDuration.type.toString() : ""}
+                    error={props.error !== ""}
+                    helperText={props.error}
                     />}
             />
         <Typography variant="body2">{wait}</Typography>
