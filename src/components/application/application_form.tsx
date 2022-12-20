@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment from 'moment';
 import { useTranslation } from 'next-i18next';
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { BundleData } from '../../backend/bundle_data';
 import { ApplicationApi } from '../../backend/insurance_api';
 import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
@@ -18,6 +18,9 @@ import NumericTextField, { INPUT_VARIANT } from '../form/numeric_text_field';
 import Premium from './premium';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShield } from "@fortawesome/free-solid-svg-icons";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { DevTool } from "@hookform/devtools";
+import { loadDefaultErrorComponents } from 'next/dist/server/load-components';
 
 export interface ApplicationFormProperties {
     disabled: boolean;
@@ -33,34 +36,61 @@ export interface ApplicationFormProperties {
     applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => void;
 }
 
+type IFormValues = {
+    insuredWallet: string;
+    // insuredAmount: number;
+    // coverageDuration: number;
+    // coverageEndDate: Date;
+    // premium: number;
+    // termsAndConditions: boolean;
+};
+
 export default function ApplicationForm(props: ApplicationFormProperties) {
     const { t } = useTranslation('application');
 
-    // wallet address
-    const [ walletAddress, setWalletAddress ] = useState(props.walletAddress);
-    function handleWalletAddressChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        setWalletAddress((x.target as HTMLInputElement).value);
-    }
-    const [ walletAddressErrorKey, setWalletAddressErrorKey ] = useState("");
-    function validateWalletAddress() {
-        if (walletAddress == "") {
-            return t('insuredWalletRequired');
+    const { handleSubmit,control, formState, getValues, setValue } = useForm<IFormValues>({ 
+        mode: "onBlur",
+        defaultValues: {
+            // checkbox: false,
+            insuredWallet: "",
         }
-        if (walletAddress.length != 42) {
-            return t('insuredWalletInvalid');
-        }
-        return "";
-    }
-
-    const [ walletAddressValid, setWalletAddressValid ] = useState(true);
-    function validateWalletAddressAndSetError() {
-        const error = validateWalletAddress();
-        setWalletAddressErrorKey(error);
-        setWalletAddressValid(error === "");
-    }
+    });
+    const onSubmit: SubmitHandler<IFormValues> = data => console.log(data);
+    const errors = useMemo(() => formState.errors, [formState]);
 
     useEffect(() => {
-        setWalletAddress(props.walletAddress);
+        console.log("formState", formState);
+        console.log(getValues("insuredWallet"));
+    }, [formState]);
+
+
+    // TODO: remove
+    // // wallet address
+    // const [ walletAddress, setWalletAddress ] = useState(props.walletAddress);
+    // function handleWalletAddressChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    //     setWalletAddress((x.target as HTMLInputElement).value);
+    // }
+    // const [ walletAddressErrorKey, setWalletAddressErrorKey ] = useState("");
+    // function validateWalletAddress() {
+    //     if (walletAddress == "") {
+    //         return t('insuredWalletRequired');
+    //     }
+    //     if (walletAddress.length != 42) {
+    //         return t('insuredWalletInvalid');
+    //     }
+    //     return "";
+    // }
+
+    // const [ walletAddressValid, setWalletAddressValid ] = useState(true);
+    // function validateWalletAddressAndSetError() {
+    //     const error = validateWalletAddress();
+    //     setWalletAddressErrorKey(error);
+    //     setWalletAddressValid(error === "");
+    // }
+
+    useEffect(() => {
+        // TODO: setWalletAddress(props.walletAddress);
+        setValue("insuredWallet", props.walletAddress);
     }, [props.walletAddress]);
 
     // insured amount
@@ -96,9 +126,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
     const [ showAvailableBundles, setShowAvailableBundles ] = useState(false);
 
+
+    // TODO: remove
     const isFormValid = useCallback(() => {
-        return walletAddressValid && insuredAmountValid && coverageDaysValid;
-    }, [walletAddressValid, insuredAmountValid, coverageDaysValid]);
+        // return walletAddressValid && insuredAmountValid && coverageDaysValid;
+        return true;
+    }, []); // }, [walletAddressValid, insuredAmountValid, coverageDaysValid]);
 
     // TODO: when premium cannot be calculated, show list of bundles
 
@@ -157,177 +190,209 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     //-------------------------------------------------------------------------
     // calculate premium via onchain call
     const calculatePremium = useCallback( async () => {
-        if (! isFormValid()) {
-            console.log("Form is invalid, not calculating premium...");
-            setPremium(0);
-            return;
-        }
-        if (props.bundles.length == 0) {
-            console.log("No bundles, not calculating premium...");
-            setPremium(0);
-            return;
-        }
+        // FIXME: reenable
+    //     if (! isFormValid()) {
+    //         console.log("Form is invalid, not calculating premium...");
+    //         setPremium(0);
+    //         return;
+    //     }
+    //     if (props.bundles.length == 0) {
+    //         console.log("No bundles, not calculating premium...");
+    //         setPremium(0);
+    //         return;
+    //     }
 
 
-        console.log("Calculating premium...");
-        try {
-            setPremiumCalculationInProgress(true);
-            setShowAvailableBundles(false);
-            setPremium(await props.applicationApi.calculatePremium(walletAddress, insuredAmount || 0, coverageDays || 0, props.bundles));
-            setPremiumErrorKey("");
-        } catch (e) {
-            if (e instanceof NoBundleFoundError) {
-                console.log("No bundle found for this insurance.");
-                setPremiumErrorKey('error_no_matching_bundle_found');
-                setShowAvailableBundles(true);
-            } else if (e instanceof BalanceTooSmallError) {
-                console.log("Wallet balance too low");
-                setPremiumErrorKey('error_wallet_balance_too_low');
-            } else {
-                console.log("Error calculating premium: ", e);
-            }
-            setPremium(undefined);
-        } finally {
-            setPremiumCalculationInProgress(false);
-        }
+    //     console.log("Calculating premium...");
+    //     try {
+    //         setPremiumCalculationInProgress(true);
+    //         setShowAvailableBundles(false);
+    //         setPremium(await props.applicationApi.calculatePremium(walletAddress, insuredAmount || 0, coverageDays || 0, props.bundles));
+    //         setPremiumErrorKey("");
+    //     } catch (e) {
+    //         if (e instanceof NoBundleFoundError) {
+    //             console.log("No bundle found for this insurance.");
+    //             setPremiumErrorKey('error_no_matching_bundle_found');
+    //             setShowAvailableBundles(true);
+    //         } else if (e instanceof BalanceTooSmallError) {
+    //             console.log("Wallet balance too low");
+    //             setPremiumErrorKey('error_wallet_balance_too_low');
+    //         } else {
+    //             console.log("Error calculating premium: ", e);
+    //         }
+    //         setPremium(undefined);
+    //     } finally {
+    //         setPremiumCalculationInProgress(false);
+    //     }
         
-    }, [isFormValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.applicationApi]);
+    // }, [isFormValid, walletAddress, insuredAmount, coverageDays, props.bundles, props.applicationApi]);
+    }, []);
 
     async function buy() {
         setApplicationInProgress(true);
 
-        try {
-            await props.applyForPolicy(walletAddress, insuredAmount!, coverageDays!, premium!);
-        } finally {
-            setApplicationInProgress(false);
-        }
+        // FIXME: reenable
+        // try {
+        //     await props.applyForPolicy(walletAddress, insuredAmount!, coverageDays!, premium!);
+        // } finally {
+        //     setApplicationInProgress(false);
+        // }
     }
 
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
+    console.log(errors);
     
     return (
-        <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
-            sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
-            <Grid item xs={12}>
-                <TextField
-                    fullWidth
-                    required
-                    disabled={props.disabled}
-                    InputProps={{ readOnly: true }}
-                    variant={INPUT_VARIANT}
-                    id="insuredWallet"
-                    label={t('insuredWallet')}
-                    type="text"
-                    value={walletAddress}
-                    onChange={handleWalletAddressChange}
-                    onBlur={validateWalletAddressAndSetError}
-                    error={walletAddressErrorKey !== ""}
-                    helperText={t(walletAddressErrorKey || 'insuredWalletHelper')}
-                />
-            </Grid>
-            <Grid item xs={12}>
-                <CurrencyTextField
-                    required={true}
-                    fullWidth={true}
-                    disabled={props.disabled}
-                    readOnly={premiumCalculationInProgress}
-                    id="insuredAmount"
-                    label={t('insuredAmount')}
-                    inputProps={{
-                        startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
-                    }}
-                    value={insuredAmount}
-                    currency={props.usd1}
-                    currencyDecimals={props.usd1Decimals}
-                    onChange={setInsuredAmount}
-                    onBlur={calculatePremium}
-                    minValue={insuredAmountMin}
-                    maxValue={insuredAmountMax}
-                    onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
-                />
-            </Grid>
-            <Grid item xs={12} md={6}>
-                <NumericTextField
-                    fullWidth={true}
-                    required={true}
-                    disabled={props.disabled}
-                    readOnly={premiumCalculationInProgress}
-                    id="coverageDurationDays"
-                    label={t('coverageDurationDays')}
-                    inputProps={{
-                        endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
-                    }}
-                    value={coverageDays}
-                    unit={t('days').toLowerCase()}
-                    onChange={(days) => {
-                        setCoverageDays(days);
-                        setCoverageUntil(moment().add(days, 'days'));
-                    }}
-                    onBlur={calculatePremium}
-                    minValue={coverageDaysMin}
-                    maxValue={coverageDaysMax}
-                    onError={(errMsg) => setCoverageDaysValid(errMsg === "")}
-                />
-            </Grid>
-            <Grid item xs={12} md={6}>
-                <DesktopDatePicker
-                    disabled={props.disabled}
-                    
-                    readOnly={premiumCalculationInProgress}
-                    label={t('coverageDurationUntil')}
-                    inputFormat="DD.MM.YYYY"
-                    renderInput={(params) => 
-                        <TextField {...params} fullWidth variant={INPUT_VARIANT} />
-                    }
-                    disablePast={true}
-                    value={coverageUntil}
-                    onChange={handleCoverageUntilChange}
-                    onAccept={calculatePremium}
-                    minDate={coverageUntilMin}
-                    maxDate={coverageUntilMax}
+        <>
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
+                sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
+                <Grid item xs={12}>
+                    {/* <TextField
+                        fullWidth
+                        required
+                        disabled={props.disabled}
+                        InputProps={{ readOnly: true }}
+                        variant={INPUT_VARIANT}
+                        id="insuredWallet"
+                        label={t('insuredWallet')}
+                        type="text"
+                        value={walletAddress}
+                        onChange={handleWalletAddressChange}
+                        onBlur={validateWalletAddressAndSetError}
+                        error={walletAddressErrorKey !== ""}
+                        helperText={t(walletAddressErrorKey || 'insuredWalletHelper')}
+                    /> */}
+                    <Controller
+                        name="insuredWallet"
+                        control={control}
+                        rules={{ required: true, maxLength: 42, minLength: 42, pattern: /^0x[a-fA-F0-9]{40}$/ }}
+                        render={({ field, fieldState, formState }) => 
+                            <TextField 
+                                label={t('insuredWallet')}
+                                fullWidth
+                                variant={INPUT_VARIANT}
+                                // error={erfieldStaterors.insuredWallet !== undefined}
+                                // helperText={fieldState.insuredWallet !== undefined ? errors.insuredWallet.type.toString() : ""}
+                                {...field} 
+                                error={errors.insuredWallet !== undefined}
+                                helperText={errors.insuredWallet !== undefined ? errors.insuredWallet.type.toString() : ""}
+                                // onBlur={() => console.log("onBlur")}
+                                />}
+                            
+                            
                     />
-                {/* TODO: mobile version */}
                 </Grid>
-            <Grid item xs={12}>
-                <Premium 
-                    disabled={props.disabled}
-                    premium={premium}
-                    premiumCurrency={props.usd2}
-                    premiumCurrencyDecimals={props.usd2Decimals}
-                    bundleCurrency={props.usd1}
-                    bundleCurrencyDecimals={props.usd1Decimals}
-                    error={t(premiumErrorKey, { currency: props.usd2 })}
-                    transactionInProgress={(props.premiumTrxTextKey != "") || premiumCalculationInProgress}
-                    textKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
-                    bundles={props.bundles}
-                    showBundles={showAvailableBundles}
-                    />
+                <Grid item xs={12}>
+                    {/* <CurrencyTextField
+                        required={true}
+                        fullWidth={true}
+                        disabled={props.disabled}
+                        readOnly={premiumCalculationInProgress}
+                        id="insuredAmount"
+                        label={t('insuredAmount')}
+                        inputProps={{
+                            startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
+                        }}
+                        value={insuredAmount}
+                        currency={props.usd1}
+                        currencyDecimals={props.usd1Decimals}
+                        onChange={setInsuredAmount}
+                        onBlur={calculatePremium}
+                        minValue={insuredAmountMin}
+                        maxValue={insuredAmountMax}
+                        onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
+                    /> */}
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    {/* <NumericTextField
+                        fullWidth={true}
+                        required={true}
+                        disabled={props.disabled}
+                        readOnly={premiumCalculationInProgress}
+                        id="coverageDurationDays"
+                        label={t('coverageDurationDays')}
+                        inputProps={{
+                            endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
+                        }}
+                        value={coverageDays}
+                        unit={t('days').toLowerCase()}
+                        onChange={(days) => {
+                            setCoverageDays(days);
+                            setCoverageUntil(moment().add(days, 'days'));
+                        }}
+                        onBlur={calculatePremium}
+                        minValue={coverageDaysMin}
+                        maxValue={coverageDaysMax}
+                        onError={(errMsg) => setCoverageDaysValid(errMsg === "")}
+                    /> */}
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    {/* <DesktopDatePicker
+                        disabled={props.disabled}
+                        
+                        readOnly={premiumCalculationInProgress}
+                        label={t('coverageDurationUntil')}
+                        inputFormat="DD.MM.YYYY"
+                        renderInput={(params) => 
+                            <TextField {...params} fullWidth variant={INPUT_VARIANT} />
+                        }
+                        disablePast={true}
+                        value={coverageUntil}
+                        onChange={handleCoverageUntilChange}
+                        onAccept={calculatePremium}
+                        minDate={coverageUntilMin}
+                        maxDate={coverageUntilMax}
+                        /> */}
+                    {/* TODO: mobile version */}
+                    </Grid>
+                <Grid item xs={12}>
+                    {/* <Premium 
+                        disabled={props.disabled}
+                        premium={premium}
+                        premiumCurrency={props.usd2}
+                        premiumCurrencyDecimals={props.usd2Decimals}
+                        bundleCurrency={props.usd1}
+                        bundleCurrencyDecimals={props.usd1Decimals}
+                        error={t(premiumErrorKey, { currency: props.usd2 })}
+                        transactionInProgress={(props.premiumTrxTextKey != "") || premiumCalculationInProgress}
+                        textKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
+                        bundles={props.bundles}
+                        showBundles={showAvailableBundles}
+                        /> */}
+                </Grid>
+                <Grid item xs={12}>
+                    {/* <FormControlLabel 
+                        control={
+                            <Checkbox 
+                                defaultChecked={false}
+                                value={termsAccepted}
+                                onChange={handleTermsAcceptedChange}
+                                />
+                        } 
+                        disabled={props.disabled}
+                        label={t('checkbox_t_and_c_label')} /> */}
+                </Grid>
+                <Grid item xs={12}>
+                    <Button 
+                        variant='contained'
+                        type="submit"
+                        // FIXME: disabled when form invalid
+                        // disabled={buyButtonDisabled}
+                        fullWidth
+                        // FIXME: reenable buy button
+                        // onClick={buy}
+                        sx={{ p: 1 }}
+                    >
+                        <FontAwesomeIcon icon={faShield} className="fa" />
+                        {t('button_buy')}
+                    </Button>
+                    {loadingBar}
+                </Grid>
             </Grid>
-            <Grid item xs={12}>
-                <FormControlLabel 
-                    control={
-                        <Checkbox 
-                            defaultChecked={false}
-                            value={termsAccepted}
-                            onChange={handleTermsAcceptedChange}
-                            />
-                    } 
-                    disabled={props.disabled}
-                    label={t('checkbox_t_and_c_label')} />
-            </Grid>
-            <Grid item xs={12}>
-                <Button 
-                    variant='contained'
-                    disabled={buyButtonDisabled}
-                    fullWidth
-                    onClick={buy}
-                    sx={{ p: 1 }}
-                >
-                    <FontAwesomeIcon icon={faShield} className="fa" />
-                    {t('button_buy')}
-                </Button>
-                {loadingBar}
-            </Grid>
-        </Grid>
+        </form>
+
+        {/* <DevTool control={control} /> */}
+        </>
     );
 }
