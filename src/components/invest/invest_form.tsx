@@ -49,61 +49,6 @@ export default function InvestForm(props: InvestFormProperties) {
     const annualPctReturn = investProps.annualPctReturn;
     const maxAnnualPctReturn = investProps.maxAnnualPctReturn;
 
-    // TODO: remove
-    // invested amount
-    // const [ investedAmount, setInvestedAmount ] = useState(investProps.maxInvestedAmount as FormNumber);
-    // const [ investedAmountValid, setInvestedAmountValid ] = useState(true);
-
-    // // minimum sum insured
-    // const [ minSumInsured, setMinSumInsured ] = useState(investProps.minSumInsured as FormNumber);
-    // const [ minSumInsuredValid, setMinSumInsuredValid ] = useState(true);
-
-    // function validateMinSumInsured(minSumInsuredVal: number): string {
-    //     if (maxSumInsured !== undefined && minSumInsuredVal > maxSumInsured) {
-    //         return t('minSumInsuredMaxError');
-    //     }
-
-    //     return "";
-    // }
-
-    // // maximum sum insured
-    // const [ maxSumInsured, setMaxSumInsured ] = useState(investProps.maxSumInsured as FormNumber);
-    // const [ maxSumInsuredValid, setMaxSumInsuredValid ] = useState(true);
-
-    // function validateMaxSumInsured(maxSumInsuredVal: number): string {
-    //     if (minSumInsured !== undefined && maxSumInsuredVal < minSumInsured) {
-    //         return t('maxSumInsuredMinError');
-    //     }
-
-    //     return "";
-    // }
-
-    // // minimum coverage duration
-    // const [ minDuration, setMinDuration ] = useState(investProps.minCoverageDuration as FormNumber);
-    // const [ minDurationValid, setMinDurationValid ] = useState(true);
-
-    // function validateMinDuration(minDurationVal: number) {
-    //     if (maxDuration !== undefined && minDurationVal > maxDuration) {
-    //         return t('minDurationMaxError');
-    //     }
-    //     return "";
-    // }
-
-    // // maxmium coverage duration
-    // const [ maxDuration, setMaxDuration ] = useState(investProps.maxCoverageDuration as FormNumber);
-    // const [ maxDurationValid, setMaxDurationValid ] = useState(true);
-
-    // function validateMaxDuration(maxDurationVal: number): string {
-    //     if (minDuration !== undefined && maxDurationVal < minDuration) {
-    //         return t('maxDurationMinError');
-    //     }
-    //     return "";
-    // }
-
-    // // annual percentage return
-    // const [ annualPctReturn, setAnnualPctReturn ] = useState(investProps.annualPctReturn as FormNumber);
-    // const [ annualPctReturnValid, setAnnualPctReturnValid ] = useState(true);
-
     const { handleSubmit, control, formState, getValues, setValue, watch, trigger } = useForm<IInvestFormValues>({ 
         mode: "onChange",
         reValidateMode: "onChange",
@@ -140,35 +85,7 @@ export default function InvestForm(props: InvestFormProperties) {
         trigger("coverageDurationMin");
     }, [watchCoverageDurationMax]);
 
-    // TODO: remove this
-    // useEffect(() => {
-    //     let valid = true;
-    //     valid = investedAmountValid && valid;
-    //     valid = minSumInsuredValid && valid;
-    //     valid = maxSumInsuredValid && valid;
-    //     valid = minDurationValid && valid;
-    //     valid = maxDurationValid && valid;
-    //     valid = annualPctReturnValid && valid;
-    //     setFormValid(valid);
-    // }, [investedAmountValid, minSumInsuredValid, maxSumInsuredValid, minDurationValid, maxDurationValid, annualPctReturnValid]);
-
-    // // terms accepted and validation
-    // const [ termsAccepted, setTermsAccepted ] = useState(false);
-    // function handleTermsAcceptedChange(x: ChangeEvent<any>) {
-    //     setTermsAccepted((x.target as HTMLInputElement).checked);
-    // }
-
-    // invest button
-    // const [ formValid, setFormValid ] = useState(true);
-    // const [ investButtonDisabled, setInvestButtonDisabled ] = useState(true);
     const [ paymentInProgress, setPaymentInProgress ] = useState(false);
-
-    // useEffect(() => {
-    //     let isBuyButtonDisabled = !formValid || !termsAccepted || props.disabled || paymentInProgress;
-    //     setInvestButtonDisabled(isBuyButtonDisabled);
-    //     props.formReadyForInvest(!isBuyButtonDisabled);
-    // }, [formValid, termsAccepted, props.disabled, paymentInProgress, props]);  
-
 
     const onSubmit: SubmitHandler<IInvestFormValues> = async data => {
         console.log("submit clicked", data);
@@ -195,24 +112,6 @@ export default function InvestForm(props: InvestFormProperties) {
             <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
                 sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
                 <Grid item xs={12}>
-                    {/* TODO: remove
-                    <CurrencyTextField
-                        disabled={props.disabled}
-                        required={true}
-                        fullWidth={true}
-                        id="investedAmount"
-                        label={t('investedAmount')}
-                        inputProps={{
-                            startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>,
-                        }}
-                        value={investedAmount}
-                        currency={props.usd2}
-                        currencyDecimals={props.usd2Decimals}
-                        onChange={setInvestedAmount}
-                        minValue={investProps.minInvestedAmount}
-                        maxValue={investProps.maxInvestedAmount}
-                        onError={(errMsg) => setInvestedAmountValid(errMsg === "")}
-                        /> */}
                     <Controller
                         name="investedAmount"
                         control={control}
@@ -239,25 +138,6 @@ export default function InvestForm(props: InvestFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    {/* TODO: remove this
-                    <CurrencyTextField
-                        fullWidth={true}
-                        required={true}
-                        disabled={props.disabled}
-                        id="minSumInsured"
-                        label={t('minSumInsured')}
-                        inputProps={{
-                            startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>
-                        }}
-                        value={minSumInsured}
-                        currency={props.usd2}
-                        currencyDecimals={props.usd2Decimals}
-                        onChange={setMinSumInsured}
-                        minValue={investProps.minSumInsured}
-                        maxValue={investProps.maxSumInsured}
-                        extraValidation={validateMinSumInsured}
-                        onError={(errMsg) => setMinSumInsuredValid(errMsg === "")}
-                        /> */}
                     <Controller
                         name="insuredAmountMin"
                         control={control}
@@ -287,25 +167,6 @@ export default function InvestForm(props: InvestFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    {/* TODO: remove this
-                    <CurrencyTextField
-                        fullWidth={true}
-                        required={true}
-                        disabled={props.disabled}
-                        id="maxSumInsured"
-                        label={t('maxSumInsured')}
-                        inputProps={{
-                            startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>
-                        }}
-                        value={maxSumInsured}
-                        currency={props.usd2}
-                        currencyDecimals={props.usd2Decimals}
-                        onChange={setMaxSumInsured}
-                        minValue={investProps.minSumInsured}
-                        maxValue={investProps.maxSumInsured}
-                        extraValidation={validateMaxSumInsured}
-                        onError={(errMsg) => setMaxSumInsuredValid(errMsg === "")}
-                        /> */}
                     <Controller
                         name="insuredAmountMax"
                         control={control}
@@ -335,24 +196,6 @@ export default function InvestForm(props: InvestFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    {/* // TODO: remove this
-                    <NumericTextField
-                        fullWidth={true}
-                        required={true}
-                        disabled={props.disabled}
-                        id="minDuration"
-                        label={t('minDuration')}
-                        inputProps={{
-                            endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
-                        }}
-                        value={minDuration}
-                        unit={t('days').toLowerCase()}
-                        onChange={setMinDuration}
-                        minValue={investProps.minCoverageDuration}
-                        maxValue={investProps.maxCoverageDuration}
-                        extraValidation={validateMinDuration}
-                        onError={(errMsg) => setMinDurationValid(errMsg === "")}
-                    /> */}
                     <Controller
                         name="coverageDurationMin"
                         control={control}
@@ -386,24 +229,6 @@ export default function InvestForm(props: InvestFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    {/* // TODO: remove this
-                    <NumericTextField
-                        fullWidth= {true}
-                        required={true}
-                        disabled={props.disabled}
-                        id="maxDuration"
-                        label={t('maxDuration')}
-                        inputProps={{
-                            endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
-                        }}
-                        value={maxDuration}
-                        unit={t('days').toLowerCase()}
-                        onChange={setMaxDuration}
-                        minValue={investProps.minCoverageDuration}
-                        maxValue={investProps.maxCoverageDuration}
-                        extraValidation={validateMaxDuration}
-                        onError={(errMsg) => setMaxDurationValid(errMsg === "")}
-                        /> */}
                     <Controller
                         name="coverageDurationMax"
                         control={control}
@@ -437,23 +262,6 @@ export default function InvestForm(props: InvestFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12}>
-                    {/* // TODO: remove this
-                    <NumericTextField
-                        required={true}
-                        fullWidth={true}
-                        disabled={props.disabled}
-                        id="annualPercentageReturn"
-                        label={t('annualPercentageReturn')}
-                        value={annualPctReturn}
-                        unit="%"
-                        onChange={setAnnualPctReturn}
-                        inputProps={{
-                            endAdornment: <InputAdornment position="end">%</InputAdornment>,
-                        }}
-                        minValue={0.01}
-                        maxValue={investProps.maxAnnualPctReturn}
-                        onError={(errMsg) => setAnnualPctReturnValid(errMsg === "")}
-                    /> */}
                     <Controller
                         name="annualPctReturn"
                         control={control}
@@ -476,17 +284,6 @@ export default function InvestForm(props: InvestFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12}>
-                    {// TODO: remove this
-                    /* <FormControlLabel 
-                        control={
-                            <Checkbox 
-                                defaultChecked={false}
-                                value={termsAccepted}
-                                onChange={handleTermsAcceptedChange}
-                                />
-                        } 
-                        disabled={props.disabled}
-                        label={t('checkbox_t_and_c_label')} /> */}
                     <Controller
                         name="termsAndConditions"
                         control={control}
@@ -500,7 +297,8 @@ export default function InvestForm(props: InvestFormProperties) {
                                     />
                             } 
                             disabled={props.formDisabled}
-                            label={t('checkbox_t_and_c_label')} />}
+                            label={t('checkbox_t_and_c_label')} 
+                            />}
                         />
                 </Grid>
                 <Grid item xs={12}>
@@ -510,7 +308,7 @@ export default function InvestForm(props: InvestFormProperties) {
                         disabled={props.formDisabled || ! formState.isValid || paymentInProgress}
                         fullWidth
                         sx={{ p: 1 }}
-                    >
+                        >
                         <FontAwesomeIcon icon={faSackDollar} className="fa" />
                         {t('button_invest')}
                     </Button>
