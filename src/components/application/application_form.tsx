@@ -15,7 +15,7 @@ import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
 import Premium from './premium';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShield } from "@fortawesome/free-solid-svg-icons";
-import { useForm, SubmitHandler, Controller, FormProvider } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { INPUT_VARIANT } from '../../config/theme';
 
