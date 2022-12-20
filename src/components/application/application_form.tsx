@@ -41,7 +41,7 @@ type IFormValues = {
     insuredWallet: string;
     insuredAmount: number;
     coverageDuration: number;
-    // coverageEndDate: Date;
+    coverageEndDate: string;
     // premium: number;
     // termsAndConditions: boolean;
 };
@@ -49,11 +49,14 @@ type IFormValues = {
 export default function ApplicationForm(props: ApplicationFormProperties) {
     const { t } = useTranslation('application');
 
-    const { handleSubmit,control, formState, getValues, setValue } = useForm<IFormValues>({ 
+    const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IFormValues>({ 
         mode: "onBlur",
         defaultValues: {
             // checkbox: false,
             insuredWallet: "",
+            insuredAmount: undefined,
+            coverageDuration: props.applicationApi.coverageDurationDaysMax,
+            coverageEndDate: moment().add(props.applicationApi.coverageDurationDaysMax, 'days').format("YYYY-MM-DD"),
         }
     });
     const onSubmit: SubmitHandler<IFormValues> = data => console.log(data);
@@ -61,9 +64,19 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     useEffect(() => {
         console.log("formState", formState);
-        console.log(getValues("insuredWallet"));
+        // console.log(getValues("insuredWallet"));
     }, [formState]);
 
+    // handle changes in coverage duration / end date and update the other field accordingly
+    const watchCoverageDuration = watch("coverageDuration");
+    useEffect(() => {
+        setValue("coverageEndDate", moment().startOf('day').add(watchCoverageDuration, 'days').format("YYYY-MM-DD"));
+    }, [watchCoverageDuration]);
+
+    const watchCoverageEndDate = watch("coverageEndDate");
+    useEffect(() => {
+        setValue("coverageDuration", moment(watchCoverageEndDate).startOf('day').diff(moment().startOf('day'), 'days')); 
+    }, [watchCoverageEndDate]);
 
     // TODO: remove
     // // wallet address
@@ -108,18 +121,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
     const [ coverageDaysMax, setCoverageDaysMax ] = useState(props.applicationApi.coverageDurationDaysMax);
 
-    // coverage until date
-    const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.applicationApi.coverageDurationDaysMax, 'days'));
+    // TODO: remove coverage until date
+    // const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.applicationApi.coverageDurationDaysMax, 'days'));
     const coverageUntilMin = moment().add(props.applicationApi.coverageDurationDaysMin, 'days');
     const coverageUntilMax = moment().add(props.applicationApi.coverageDurationDaysMax, 'days');
-    function handleCoverageUntilChange(t: moment.Moment | null) {
-        let date = t;
-        if (date == null) {
-            date = moment();
-        }
-        setCoverageUntil(date);
-        // setCoverageDays(date.startOf('day').diff(moment().startOf('day'), 'days'));
-    };
 
     // premium
     const [ premium, setPremium ] = useState(undefined as FormNumber);
@@ -146,7 +151,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // buy button
     const [ buyButtonDisabled, setBuyButtonDisabled ] = useState(true);
     const [ applicationInProgress, setApplicationInProgress ] = useState(false);
-
 
     useEffect(() => {
         let isBuyButtonDisabled = !isFormValid() || !termsAccepted || props.disabled || applicationInProgress;
@@ -183,9 +187,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setCoverageDaysMin(minCoverageDays);
             setCoverageDaysMax(maxCoverageDays);
             const coverageDays = maxCoverageDays < 30 ? maxCoverageDays : 30;
-            // setCoverageDays(coverageDays);
             setValue("coverageDuration", coverageDays);
-            setCoverageUntil(moment().add(coverageDays, 'days'));
+            setValue("coverageEndDate", moment().add(coverageDays, 'days').format("YYYY-MM-DD"));
         }
     }, [props.bundles]);
 
@@ -242,7 +245,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }
 
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
-    console.log(errors);
     
     return (<>
         {/* FIXME: disable form when step 0 */}
@@ -363,6 +365,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>
+                    {/* TODO: remove this */}
                     {/* <DesktopDatePicker
                         disabled={props.disabled}
                         
@@ -379,8 +382,29 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         minDate={coverageUntilMin}
                         maxDate={coverageUntilMax}
                         /> */}
-                    {/* TODO: mobile version */}
-                    </Grid>
+                    <Controller
+                        name="coverageEndDate"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => 
+                            <DesktopDatePicker
+                                {...field} 
+                                label={t('coverageDurationUntil')}
+                                inputFormat="DD.MM.YYYY"
+                                renderInput={(params) => 
+                                    <TextField 
+                                        {...params} 
+                                        fullWidth 
+                                        variant={INPUT_VARIANT} 
+                                        />
+                                }
+                                disablePast={true}
+                                minDate={coverageUntilMin}
+                                maxDate={coverageUntilMax}
+                                />}
+                        />
+                        {/* TODO: mobile version */}
+                </Grid>
                 <Grid item xs={12}>
                     {/* <Premium 
                         disabled={props.disabled}
@@ -427,6 +451,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             </Grid>
         </form>
 
-        <DevTool control={control} />
+        {/* <DevTool control={control} /> */}
     </>);
 }
