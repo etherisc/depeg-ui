@@ -296,7 +296,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
     
     return (<>
-        {/* FIXME: error texts */}
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
                 sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
@@ -423,7 +422,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                     startAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                                 }}
                                 error={errors.coverageDuration !== undefined}
-                                helperText={errors.coverageDuration !== undefined ? errors.coverageDuration.type.toString() : ""}
+                                helperText={errors.coverageDuration !== undefined 
+                                    ? t(`error.field.${errors.coverageDuration.type}`, { "ns": "common", "minValue": coverageDaysMin, "maxValue": coverageDaysMax }) 
+                                    : ""}
                                 />}
                         />
                 </Grid>
