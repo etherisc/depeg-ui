@@ -3,13 +3,12 @@ import { useTranslation } from "next-i18next";
 import { Control, Controller } from "react-hook-form";
 import { BundleData } from "../../backend/bundle_data";
 import { INPUT_VARIANT } from "../../config/theme";
-import { FormNumber } from "../../utils/types";
 import { IAplicationFormValues } from "./application_form";
 import { BundleList } from "./bundle_list";
 
 export interface PremiumProps {
     disabled: boolean;
-    premium: FormNumber;
+    premium: number;
     premiumCurrency: string;
     premiumCurrencyDecimals: number;
     bundleCurrency: string;

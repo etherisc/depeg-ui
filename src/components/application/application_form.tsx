@@ -73,7 +73,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     });
 
     // premium
-    // const [ premium, setPremium ] = useState(undefined as FormNumber);
     const premium = useMemo(() => getValues("premiumAmount"), [getValues]);
     const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
