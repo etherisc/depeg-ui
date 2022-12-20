@@ -30,7 +30,8 @@
         "field": {
             "required": "This field is required",
             "walletType": "This field must contain a wallet address (0x...)",
-            "numberType": "This field must contain a natural number",
+            "numberType": "This field must contain an integer number",
+            "amountType": "This field must contain an amount",
             "minLength": "This field must be at least {{minLength}} characters",
             "maxLength": "This field must be at most {{maxLength}} characters",
             "min": "This field must be at least {{minValue}}",

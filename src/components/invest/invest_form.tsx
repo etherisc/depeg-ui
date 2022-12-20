@@ -116,6 +116,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: minInvestedAmount, 
                             max: maxInvestedAmount,
+                            pattern: /^[0-9.,]+$/
                         }}
                         render={({ field }) => 
                             <TextField 
@@ -129,8 +130,10 @@ export default function InvestForm(props: InvestFormProperties) {
                                 }}
                                 error={errors.investedAmount !== undefined}
                                 helperText={errors.investedAmount !== undefined 
-                                    ? t(`error.field.${errors.investedAmount.type}`, { "ns": "common", "minValue": `${props.usd2} ${minInvestedAmount}`, "maxValue": `${props.usd2} ${maxInvestedAmount}` }) 
-                                    : ""}
+                                    ? ( errors.investedAmount.type == 'pattern' 
+                                            ? t(`error.field.amountType`, { "ns": "common"}) 
+                                            : t(`error.field.${errors.investedAmount.type}`, { "ns": "common", "minValue": `${props.usd2} ${minInvestedAmount}`, "maxValue": `${props.usd2} ${maxInvestedAmount}` }) 
+                                    ) : ""}
                                 />}
                         />
                 </Grid>
@@ -142,6 +145,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: minSumInsured, 
                             max: maxSumInsured,
+                            pattern: /^[0-9.,]+$/,
                             validate: {
                                 minmax: v => v <= watchInsuredAmountMax 
                             }
@@ -158,8 +162,10 @@ export default function InvestForm(props: InvestFormProperties) {
                                 }}
                                 error={errors.insuredAmountMin !== undefined}
                                 helperText={errors.insuredAmountMin !== undefined 
-                                    ? t(`error.field.${errors.insuredAmountMin.type}`, { "ns": "common", "minValue": `${props.usd2} ${minSumInsured}`, "maxValue": `${props.usd2} ${maxSumInsured}` }) 
-                                    : ""}
+                                    ? ( errors.insuredAmountMin.type == 'pattern' 
+                                            ? t(`error.field.amountType`, { "ns": "common"}) 
+                                            : t(`error.field.${errors.insuredAmountMin.type}`, { "ns": "common", "minValue": `${props.usd2} ${minSumInsured}`, "maxValue": `${props.usd2} ${maxSumInsured}` }) 
+                                    ) : ""}
                                 />}
                         />
                 </Grid>
@@ -171,6 +177,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: minSumInsured, 
                             max: maxSumInsured,
+                            pattern: /^[0-9.,]+$/,
                             validate: {
                                 minmax: v => v >= watchInsuredAmountMin
                             }                        
@@ -187,8 +194,10 @@ export default function InvestForm(props: InvestFormProperties) {
                                 }}
                                 error={errors.insuredAmountMax !== undefined}
                                 helperText={errors.insuredAmountMax !== undefined 
-                                    ? t(`error.field.${errors.insuredAmountMax.type}`, { "ns": "common", "minValue": `${props.usd2} ${minSumInsured}`, "maxValue": `${props.usd2} ${maxSumInsured}` }) 
-                                    : ""}
+                                    ? ( errors.insuredAmountMax.type == 'pattern' 
+                                            ? t(`error.field.amountType`, { "ns": "common"}) 
+                                            : t(`error.field.${errors.insuredAmountMax.type}`, { "ns": "common", "minValue": `${props.usd2} ${minSumInsured}`, "maxValue": `${props.usd2} ${maxSumInsured}` }) 
+                                    ) : ""}
                                 />}
                         />
                 </Grid>
