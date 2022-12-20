@@ -328,9 +328,16 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
                                 {...field} 
+                                InputProps={{ readOnly: true }}
                                 onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
                                 error={errors.insuredWallet !== undefined}
-                                helperText={errors.insuredWallet !== undefined ? errors.insuredWallet.type.toString() : ""}
+                                helperText={errors.insuredWallet !== undefined 
+                                    ? ( 
+                                        errors.insuredWallet.type == 'pattern' 
+                                            ? t(`error.field.walletType`, { "ns": "common"}) 
+                                            : t(`error.field.${errors.insuredWallet.type}`, { "ns": "common", "minLength": 42, "maxLength": 42}) 
+                                    )
+                                    : ""}
                                 />}
                         />
                 </Grid>
