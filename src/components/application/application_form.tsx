@@ -45,14 +45,15 @@ export type IAplicationFormValues = {
     coverageDuration: number;
     coverageEndDate: string;
     premiumAmount: number;
-    // termsAndConditions: boolean;
+    termsAndConditions: boolean;
 };
 
 export default function ApplicationForm(props: ApplicationFormProperties) {
     const { t } = useTranslation('application');
 
     const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IAplicationFormValues>({ 
-        mode: "onBlur",
+        mode: "onChange",
+        reValidateMode: "onChange",
         defaultValues: {
             // checkbox: false,
             insuredWallet: "",
@@ -60,19 +61,31 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             coverageDuration: props.applicationApi.coverageDurationDaysMax,
             coverageEndDate: moment().add(props.applicationApi.coverageDurationDaysMax, 'days').format("YYYY-MM-DD"),
             premiumAmount: undefined,
+            termsAndConditions: false,
         }
     });
     const onSubmit: SubmitHandler<IAplicationFormValues> = data => console.log(data);
     const errors = useMemo(() => formState.errors, [formState]);
 
-    useEffect(() => {
-        console.log("formState", formState);
-        // console.log(getValues("insuredWallet"));
-    }, [formState]);
+    const [ premiumCalculationRequired, setPremiumCalculationRequired ] = useState(false);
+
+    // useEffect(() => {
+    //     console.log("formState", formState);
+    //     console.log(formState.errors.insuredAmount);
+    //     const values = getValues();
+    //     const walletAddress = values.insuredWallet;
+    //     const insuredAmount = values.insuredAmount * Math.pow(10, props.usd1Decimals);
+    //     const coverageDays = values.coverageDuration;
+    //     const premiumCalcReq = values.premiumCalculationRequired;
+    //     console.log("formState", walletAddress, insuredAmount, coverageDays, premiumCalcReq, premiumCalculationRequired);
+    //     // setPremiumCalculationRequired(false);
+    //     setValue("premiumCalculationRequired", false);
+    // }, [formState]);
 
     // handle changes in coverage duration / end date and update the other field accordingly
     const watchCoverageDuration = watch("coverageDuration");
     useEffect(() => {
+        console.log("watchCoverageDuration", watchCoverageDuration);
         setValue("coverageEndDate", moment().startOf('day').add(watchCoverageDuration, 'days').format("YYYY-MM-DD"));
     }, [watchCoverageDuration]);
 
@@ -81,11 +94,17 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         setValue("coverageDuration", moment(watchCoverageEndDate).startOf('day').diff(moment().startOf('day'), 'days')); 
     }, [watchCoverageEndDate]);
 
-    // TODO: remove
-    // const watchPremiumFactors = watch(["insuredWallet", "insuredAmount", "coverageDuration"]);
-    // useEffect(() => {
-    //     console.log("watchPremiumFactors", watchPremiumFactors, errors);
-    // }, [watchPremiumFactors, errors]);
+    // triggers premium calculation when any of the factors change and a calculation is required
+    const watchPremiumFactors = watch(["insuredWallet", "insuredAmount", "coverageDuration"]);
+    useEffect(() => {
+        console.log("watchPremiumFactors", premiumCalculationRequired, watchPremiumFactors, errors);
+        if (premiumCalculationRequired && !errors.insuredAmount && !errors.insuredWallet && !errors.coverageDuration) {
+            calculatePremium();
+        } else if (premiumCalculationRequired) {
+            setValue("premiumAmount", 0);
+        }
+        setPremiumCalculationRequired(false);
+    }, [watchPremiumFactors, errors]);
 
     // TODO: remove
     // // wallet address
@@ -152,21 +171,22 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // TODO: when premium cannot be calculated, show list of bundles
 
     
-    // terms accepted and validation
-    const [ termsAccepted, setTermsAccepted ] = useState(false);
-    function handleTermsAcceptedChange(x: ChangeEvent<any>) {
-        setTermsAccepted((x.target as HTMLInputElement).checked);
-    }
+    // // TODO: remove terms accepted and validation
+    // const [ termsAccepted, setTermsAccepted ] = useState(false);
+    // function handleTermsAcceptedChange(x: ChangeEvent<any>) {
+    //     setTermsAccepted((x.target as HTMLInputElement).checked);
+    // }
 
     // buy button
     const [ buyButtonDisabled, setBuyButtonDisabled ] = useState(true);
     const [ applicationInProgress, setApplicationInProgress ] = useState(false);
 
-    useEffect(() => {
-        let isBuyButtonDisabled = !isFormValid() || !termsAccepted || props.disabled || applicationInProgress;
-        setBuyButtonDisabled(isBuyButtonDisabled);
-        props.formReadyForApply(!isBuyButtonDisabled);
-    }, [isFormValid, termsAccepted, props.disabled, applicationInProgress, props]);  
+    // TODO: remove
+    // useEffect(() => {
+    //     let isBuyButtonDisabled = !isFormValid() || !termsAccepted || props.disabled || applicationInProgress;
+    //     setBuyButtonDisabled(isBuyButtonDisabled);
+    //     props.formReadyForApply(!isBuyButtonDisabled);
+    // }, [isFormValid, termsAccepted, props.disabled, applicationInProgress, props]);  
 
     //-------------------------------------------------------------------------
     // update min/max sum insured and coverage period when bundles are available
@@ -202,11 +222,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
     }, [props.bundles]);
 
+
     //-------------------------------------------------------------------------
     // calculate premium via onchain call
     const calculatePremium = useCallback( async () => {
         const values = getValues();
-        console.log('calculatePremium', values, errors);
+        console.log('calculatePremium', values, formState.errors);
 
         if (formState.touchedFields.insuredAmount === undefined) {
             console.log("amount not touched, not calculating premium...");
@@ -298,7 +319,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 fullWidth
                                 variant={INPUT_VARIANT}
                                 {...field} 
-                                onBlur={e => { field.onBlur(); calculatePremium(); }}
+                                onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
                                 error={errors.insuredWallet !== undefined}
                                 helperText={errors.insuredWallet !== undefined ? errors.insuredWallet.type.toString() : ""}
                                 />}
@@ -335,7 +356,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 fullWidth
                                 variant={INPUT_VARIANT}
                                 {...field} 
-                                onBlur={e => { field.onBlur(); calculatePremium(); }}
+                                onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
                                 }}
@@ -377,7 +398,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 fullWidth
                                 variant={INPUT_VARIANT}
                                 {...field} 
-                                onBlur={e => { field.onBlur(); calculatePremium(); }}
+                                onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                                 }}
@@ -454,13 +475,27 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         } 
                         disabled={props.disabled}
                         label={t('checkbox_t_and_c_label')} /> */}
+                    <Controller
+                        name="termsAndConditions"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => 
+                        <FormControlLabel 
+                            control={
+                                <Checkbox 
+                                    defaultChecked={false}
+                                    {...field}
+                                    />
+                            } 
+                            disabled={props.disabled}
+                            label={t('checkbox_t_and_c_label')} />}
+                        />
                 </Grid>
                 <Grid item xs={12}>
                     <Button 
                         variant='contained'
                         type="submit"
-                        // FIXME: disabled when form invalid
-                        // disabled={buyButtonDisabled}
+                        disabled={!formState.isValid || premiumCalculationInProgress}
                         fullWidth
                         // FIXME: reenable buy button
                         // onClick={buy}
@@ -474,6 +509,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             </Grid>
         </form>
 
-        {/* <DevTool control={control} /> */}
+        <DevTool control={control} />
     </>);
 }
