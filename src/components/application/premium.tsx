@@ -39,22 +39,6 @@ export default function Premium(props: PremiumProps) {
         : null;
 
     return (<>
-        {/* <TextField
-            required
-            fullWidth
-            disabled={props.disabled}
-            variant={INPUT_VARIANT}
-            id="premiumAmount"
-            label={t('premiumAmount')}
-            type="text"
-            value={props.premium}
-            InputProps={{
-                startAdornment: <InputAdornment position="start">{props.premiumCurrency}</InputAdornment>,
-                readOnly: true,
-            }}
-            error={props.error !== ""}
-            helperText={props.error}
-            /> */}
         <Controller
             name="premiumAmount"
             control={props.control}
