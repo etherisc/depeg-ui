@@ -8,22 +8,16 @@ import TextField from '@mui/material/TextField'
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import moment from 'moment';
 import { useTranslation } from 'next-i18next';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BundleData } from '../../backend/bundle_data';
 import { ApplicationApi } from '../../backend/insurance_api';
 import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
-import { FormNumber } from '../../utils/types';
-import CurrencyTextField from '../form/currency_text_field';
-import NumericTextField from '../form/numeric_text_field';
 import Premium from './premium';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShield } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler, Controller, FormProvider } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
-import { loadDefaultErrorComponents } from 'next/dist/server/load-components';
 import { INPUT_VARIANT } from '../../config/theme';
-import { USD1_DECIMALS } from '../../utils/numbers';
-import { parseUnits } from 'ethers/lib/utils';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -51,11 +45,24 @@ export type IAplicationFormValues = {
 export default function ApplicationForm(props: ApplicationFormProperties) {
     const { t } = useTranslation('application');
 
+    // update wallet address when it changes
+    useEffect(() => {
+        setValue("insuredWallet", props.walletAddress);
+    }, [props.walletAddress]);
+
+    const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin);
+    const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax);
+
+    // coverage period (days and date)
+    const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
+    const [ coverageDaysMax, setCoverageDaysMax ] = useState(props.applicationApi.coverageDurationDaysMax);
+    const coverageUntilMin = moment().add(props.applicationApi.coverageDurationDaysMin, 'days');
+    const coverageUntilMax = moment().add(props.applicationApi.coverageDurationDaysMax, 'days');
+
     const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IAplicationFormValues>({ 
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
-            // checkbox: false,
             insuredWallet: "",
             insuredAmount: undefined,
             coverageDuration: props.applicationApi.coverageDurationDaysMax,
@@ -64,29 +71,15 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             termsAndConditions: false,
         }
     });
+
+    // premium
+    // const [ premium, setPremium ] = useState(undefined as FormNumber);
+    const premium = useMemo(() => getValues("premiumAmount"), [getValues]);
+    const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
+    const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
+    const [ showAvailableBundles, setShowAvailableBundles ] = useState(false);
+
     
-    const onSubmit: SubmitHandler<IAplicationFormValues> = data => {
-        console.log("submit clicked", data);
-        buy();
-    }
-
-    const errors = useMemo(() => formState.errors, [formState]);
-
-    const [ premiumCalculationRequired, setPremiumCalculationRequired ] = useState(false);
-
-    // useEffect(() => {
-    //     console.log("formState", formState);
-    //     console.log(formState.errors.insuredAmount);
-    //     const values = getValues();
-    //     const walletAddress = values.insuredWallet;
-    //     const insuredAmount = values.insuredAmount * Math.pow(10, props.usd1Decimals);
-    //     const coverageDays = values.coverageDuration;
-    //     const premiumCalcReq = values.premiumCalculationRequired;
-    //     console.log("formState", walletAddress, insuredAmount, coverageDays, premiumCalcReq, premiumCalculationRequired);
-    //     // setPremiumCalculationRequired(false);
-    //     setValue("premiumCalculationRequired", false);
-    // }, [formState]);
-
     // handle changes in coverage duration / end date and update the other field accordingly
     const watchCoverageDuration = watch("coverageDuration");
     useEffect(() => {
@@ -99,6 +92,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         setValue("coverageDuration", moment(watchCoverageEndDate).startOf('day').diff(moment().startOf('day'), 'days')); 
     }, [watchCoverageEndDate]);
 
+
+    const errors = useMemo(() => formState.errors, [formState]);
+    const [ premiumCalculationRequired, setPremiumCalculationRequired ] = useState(false);
+
     // triggers premium calculation when any of the factors change and a calculation is required
     const watchPremiumFactors = watch(["insuredWallet", "insuredAmount", "coverageDuration"]);
     useEffect(() => {
@@ -110,88 +107,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
         setPremiumCalculationRequired(false);
     }, [watchPremiumFactors, errors]);
-
-    // TODO: remove
-    // // wallet address
-    // const [ walletAddress, setWalletAddress ] = useState(props.walletAddress);
-    // function handleWalletAddressChange(x: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    //     setWalletAddress((x.target as HTMLInputElement).value);
-    // }
-    // const [ walletAddressErrorKey, setWalletAddressErrorKey ] = useState("");
-    // function validateWalletAddress() {
-    //     if (walletAddress == "") {
-    //         return t('insuredWalletRequired');
-    //     }
-    //     if (walletAddress.length != 42) {
-    //         return t('insuredWalletInvalid');
-    //     }
-    //     return "";
-    // }
-
-    // const [ walletAddressValid, setWalletAddressValid ] = useState(true);
-    // function validateWalletAddressAndSetError() {
-    //     const error = validateWalletAddress();
-    //     setWalletAddressErrorKey(error);
-    //     setWalletAddressValid(error === "");
-    // }
-
-    useEffect(() => {
-        // TODO: setWalletAddress(props.walletAddress);
-        setValue("insuredWallet", props.walletAddress);
-    }, [props.walletAddress]);
-
-    // TODO: remove insured amount
-    // const [ insuredAmount, setInsuredAmount ] = useState(undefined as FormNumber);
-    // const [ insuredAmountValid, setInsuredAmountValid ] = useState(false);
-    const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin);
-    const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax);
-
-    // coverage period (days and date)
-
-    // TODO: remove coverage days
-    // const [ coverageDays, setCoverageDays ] = useState(props.applicationApi.coverageDurationDaysMax  as FormNumber);
-    // const [ coverageDaysValid, setCoverageDaysValid ] = useState(true);
-    const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
-    const [ coverageDaysMax, setCoverageDaysMax ] = useState(props.applicationApi.coverageDurationDaysMax);
-
-    // TODO: remove coverage until date
-    // const [ coverageUntil, setCoverageUntil ] = useState<moment.Moment | null>(moment().add(props.applicationApi.coverageDurationDaysMax, 'days'));
-    const coverageUntilMin = moment().add(props.applicationApi.coverageDurationDaysMin, 'days');
-    const coverageUntilMax = moment().add(props.applicationApi.coverageDurationDaysMax, 'days');
-
-    // premium
-    // const [ premium, setPremium ] = useState(undefined as FormNumber);
-    const premium = useMemo(() => getValues("premiumAmount"), [getValues]);
-    const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
-    const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
-    const [ showAvailableBundles, setShowAvailableBundles ] = useState(false);
-
-
-    // TODO: remove
-    const isFormValid = useCallback(() => {
-        // return walletAddressValid && insuredAmountValid && coverageDaysValid;
-        return true;
-    }, []); // }, [walletAddressValid, insuredAmountValid, coverageDaysValid]);
-
-    // TODO: when premium cannot be calculated, show list of bundles
-
-    
-    // // TODO: remove terms accepted and validation
-    // const [ termsAccepted, setTermsAccepted ] = useState(false);
-    // function handleTermsAcceptedChange(x: ChangeEvent<any>) {
-    //     setTermsAccepted((x.target as HTMLInputElement).checked);
-    // }
-
-    // buy button
-    const [ buyButtonDisabled, setBuyButtonDisabled ] = useState(true);
-    const [ applicationInProgress, setApplicationInProgress ] = useState(false);
-
-    // TODO: remove
-    // useEffect(() => {
-    //     let isBuyButtonDisabled = !isFormValid() || !termsAccepted || props.disabled || applicationInProgress;
-    //     setBuyButtonDisabled(isBuyButtonDisabled);
-    //     props.formReadyForApply(!isBuyButtonDisabled);
-    // }, [isFormValid, termsAccepted, props.disabled, applicationInProgress, props]);  
 
     //-------------------------------------------------------------------------
     // update min/max sum insured and coverage period when bundles are available
@@ -278,7 +193,11 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
     }, [formState, errors, props.bundles]);
 
-    async function buy() {
+
+    const [ applicationInProgress, setApplicationInProgress ] = useState(false);
+
+    const onSubmit: SubmitHandler<IAplicationFormValues> = async data => {
+        console.log("submit clicked", data);
         setApplicationInProgress(true);
 
         try {
@@ -300,22 +219,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
                 sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
                 <Grid item xs={12}>
-                    {/* TODO: remove this */}
-                    {/* <TextField
-                        fullWidth
-                        required
-                        disabled={props.disabled}
-                        InputProps={{ readOnly: true }}
-                        variant={INPUT_VARIANT}
-                        id="insuredWallet"
-                        label={t('insuredWallet')}
-                        type="text"
-                        value={walletAddress}
-                        onChange={handleWalletAddressChange}
-                        onBlur={validateWalletAddressAndSetError}
-                        error={walletAddressErrorKey !== ""}
-                        helperText={t(walletAddressErrorKey || 'insuredWalletHelper')}
-                    /> */}
                     <Controller
                         name="insuredWallet"
                         control={control}
@@ -341,26 +244,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12}>
-                    {/* TODO: remove this */}
-                    {/* <CurrencyTextField
-                        required={true}
-                        fullWidth={true}
-                        disabled={props.disabled}
-                        readOnly={premiumCalculationInProgress}
-                        id="insuredAmount"
-                        label={t('insuredAmount')}
-                        inputProps={{
-                            startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
-                        }}
-                        value={insuredAmount}
-                        currency={props.usd1}
-                        currencyDecimals={props.usd1Decimals}
-                        onChange={setInsuredAmount}
-                        onBlur={calculatePremium}
-                        minValue={insuredAmountMin}
-                        maxValue={insuredAmountMax}
-                        onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
-                    /> */}
                     <Controller
                         name="insuredAmount"
                         control={control}
@@ -384,28 +267,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    {/* TODO: remove this */}
-                    {/* <NumericTextField
-                        fullWidth={true}
-                        required={true}
-                        disabled={props.disabled}
-                        readOnly={premiumCalculationInProgress}
-                        id="coverageDurationDays"
-                        label={t('coverageDurationDays')}
-                        inputProps={{
-                            endAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
-                        }}
-                        value={coverageDays}
-                        unit={t('days').toLowerCase()}
-                        onChange={(days) => {
-                            setCoverageDays(days);
-                            setCoverageUntil(moment().add(days, 'days'));
-                        }}
-                        onBlur={calculatePremium}
-                        minValue={coverageDaysMin}
-                        maxValue={coverageDaysMax}
-                        onError={(errMsg) => setCoverageDaysValid(errMsg === "")}
-                    /> */}
                     <Controller
                         name="coverageDuration"
                         control={control}
@@ -429,23 +290,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    {/* TODO: remove this */}
-                    {/* <DesktopDatePicker
-                        disabled={props.disabled}
-                        
-                        readOnly={premiumCalculationInProgress}
-                        label={t('coverageDurationUntil')}
-                        inputFormat="DD.MM.YYYY"
-                        renderInput={(params) => 
-                            <TextField {...params} fullWidth variant={INPUT_VARIANT} />
-                        }
-                        disablePast={true}
-                        value={coverageUntil}
-                        onChange={handleCoverageUntilChange}
-                        onAccept={calculatePremium}
-                        minDate={coverageUntilMin}
-                        maxDate={coverageUntilMax}
-                        /> */}
                     <Controller
                         name="coverageEndDate"
                         control={control}
@@ -487,16 +331,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12}>
-                    {/* <FormControlLabel 
-                        control={
-                            <Checkbox 
-                                defaultChecked={false}
-                                value={termsAccepted}
-                                onChange={handleTermsAcceptedChange}
-                                />
-                        } 
-                        disabled={props.disabled}
-                        label={t('checkbox_t_and_c_label')} /> */}
                     <Controller
                         name="termsAndConditions"
                         control={control}
