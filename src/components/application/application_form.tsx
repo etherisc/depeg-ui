@@ -14,13 +14,14 @@ import { ApplicationApi } from '../../backend/insurance_api';
 import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
 import { FormNumber } from '../../utils/types';
 import CurrencyTextField from '../form/currency_text_field';
-import NumericTextField, { INPUT_VARIANT } from '../form/numeric_text_field';
+import NumericTextField from '../form/numeric_text_field';
 import Premium from './premium';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShield } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { loadDefaultErrorComponents } from 'next/dist/server/load-components';
+import { INPUT_VARIANT } from '../../config/theme';
 
 export interface ApplicationFormProperties {
     disabled: boolean;
@@ -38,7 +39,7 @@ export interface ApplicationFormProperties {
 
 type IFormValues = {
     insuredWallet: string;
-    // insuredAmount: number;
+    insuredAmount: number;
     // coverageDuration: number;
     // coverageEndDate: Date;
     // premium: number;
@@ -93,9 +94,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         setValue("insuredWallet", props.walletAddress);
     }, [props.walletAddress]);
 
-    // insured amount
-    const [ insuredAmount, setInsuredAmount ] = useState(undefined as FormNumber);
-    const [ insuredAmountValid, setInsuredAmountValid ] = useState(false);
+    // TODO: remove insured amount
+    // const [ insuredAmount, setInsuredAmount ] = useState(undefined as FormNumber);
+    // const [ insuredAmountValid, setInsuredAmountValid ] = useState(false);
     const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin);
     const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax);
 
@@ -175,8 +176,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     maxCoverageSecs = b.maxDuration;
                 }
             }
-            setInsuredAmountMin(minSumInsured);
-            setInsuredAmountMax(maxSumInsured);
+            setInsuredAmountMin(minSumInsured / Math.pow(10, props.usd1Decimals));
+            setInsuredAmountMax(maxSumInsured / Math.pow(10, props.usd1Decimals));
             const minCoverageDays = minCoverageSecs / 86400;
             const maxCoverageDays = maxCoverageSecs / 86400;
             setCoverageDaysMin(minCoverageDays);
@@ -242,12 +243,14 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
     console.log(errors);
     
-    return (
-        <>
+    return (<>
+        {/* FIXME: disable form when step 0 */}
+        {/* FIXME: error texts */}
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
                 sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
                 <Grid item xs={12}>
+                    {/* TODO: remove this */}
                     {/* <TextField
                         fullWidth
                         required
@@ -267,23 +270,19 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         name="insuredWallet"
                         control={control}
                         rules={{ required: true, maxLength: 42, minLength: 42, pattern: /^0x[a-fA-F0-9]{40}$/ }}
-                        render={({ field, fieldState, formState }) => 
+                        render={({ field }) => 
                             <TextField 
                                 label={t('insuredWallet')}
                                 fullWidth
                                 variant={INPUT_VARIANT}
-                                // error={erfieldStaterors.insuredWallet !== undefined}
-                                // helperText={fieldState.insuredWallet !== undefined ? errors.insuredWallet.type.toString() : ""}
                                 {...field} 
                                 error={errors.insuredWallet !== undefined}
                                 helperText={errors.insuredWallet !== undefined ? errors.insuredWallet.type.toString() : ""}
-                                // onBlur={() => console.log("onBlur")}
                                 />}
-                            
-                            
-                    />
+                        />
                 </Grid>
                 <Grid item xs={12}>
+                    {/* TODO: remove this */}
                     {/* <CurrencyTextField
                         required={true}
                         fullWidth={true}
@@ -303,6 +302,23 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         maxValue={insuredAmountMax}
                         onError={(errMsg) => setInsuredAmountValid(errMsg === "")}
                     /> */}
+                    <Controller
+                        name="insuredAmount"
+                        control={control}
+                        rules={{ required: true, min: insuredAmountMin, max: insuredAmountMax, pattern: /^[0-9.,]+$/ }}
+                        render={({ field }) => 
+                            <TextField 
+                                label={t('insuredAmount')}
+                                fullWidth
+                                variant={INPUT_VARIANT}
+                                {...field} 
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
+                                }}
+                                error={errors.insuredAmount !== undefined}
+                                helperText={errors.insuredAmount !== undefined ? errors.insuredAmount.type.toString() : ""}
+                                />}
+                        />
                 </Grid>
                 <Grid item xs={12} md={6}>
                     {/* <NumericTextField
@@ -392,7 +408,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             </Grid>
         </form>
 
-        {/* <DevTool control={control} /> */}
-        </>
-    );
+        <DevTool control={control} />
+    </>);
 }

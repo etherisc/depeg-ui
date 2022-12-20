@@ -2,10 +2,10 @@ import { InputProps } from "@mui/material/Input";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "next-i18next";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { INPUT_VARIANT } from "../../config/theme";
 import { THOUSANDS_SEPARATOR } from "../../utils/numbers";
 import { formatCurrency } from "../../utils/numbers";
 import { FormNumber } from "../../utils/types";
-import { INPUT_VARIANT } from "./numeric_text_field";
 
 export interface CurrencyTextfieldProps {
     value: FormNumber;

@@ -2,6 +2,7 @@ import { InputProps } from "@mui/material/Input";
 import TextField from "@mui/material/TextField";
 import { useTranslation } from "next-i18next";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { INPUT_VARIANT } from "../../config/theme";
 import { FormNumber } from "../../utils/types";
 
 export interface NumericTextFieldProps {
@@ -21,8 +22,6 @@ export interface NumericTextFieldProps {
     extraValidation?: (value: number) => string;
     onError?: (errorMsg: string) => void;
 }
-
-export const INPUT_VARIANT = 'filled';
 
 export default function NumericTextField(props: NumericTextFieldProps) {
     const { t } = useTranslation('common');
