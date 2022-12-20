@@ -1,14 +1,14 @@
 import { TextField, InputAdornment, LinearProgress, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
+import { Control, Controller } from "react-hook-form";
 import { BundleData } from "../../backend/bundle_data";
-import { formatCurrency } from "../../utils/numbers";
-import { FormNumber } from "../../utils/types";
-import { INPUT_VARIANT } from "../form/numeric_text_field";
+import { INPUT_VARIANT } from "../../config/theme";
+import { IAplicationFormValues } from "./application_form";
 import { BundleList } from "./bundle_list";
 
 export interface PremiumProps {
     disabled: boolean;
-    premium: FormNumber;
+    premium: number;
     premiumCurrency: string;
     premiumCurrencyDecimals: number;
     bundleCurrency: string;
@@ -18,6 +18,7 @@ export interface PremiumProps {
     transactionInProgress?: boolean;
     bundles: Array<BundleData>;
     showBundles: boolean;
+    control: Control<IAplicationFormValues, any>;
 }
 
 export default function Premium(props: PremiumProps) {
@@ -37,21 +38,24 @@ export default function Premium(props: PremiumProps) {
         : null;
 
     return (<>
-        <TextField
-            required
-            fullWidth
-            disabled={props.disabled}
-            variant={INPUT_VARIANT}
-            id="premiumAmount"
-            label={t('premiumAmount')}
-            type="text"
-            value={formatCurrency(props.premium, props.premiumCurrencyDecimals)}
-            InputProps={{
-                startAdornment: <InputAdornment position="start">{props.premiumCurrency}</InputAdornment>,
-                readOnly: true,
-            }}
-            error={props.error !== ""}
-            helperText={props.error}
+        <Controller
+            name="premiumAmount"
+            control={props.control}
+            render={({ field }) => 
+                <TextField 
+                    label={t('premiumAmount')}
+                    fullWidth
+                    disabled={props.disabled}
+                    variant={INPUT_VARIANT}
+                    {...field} 
+                    value={field.value !== undefined ? field.value.toFixed(2) : ""}
+                    InputProps={{
+                        readOnly: true,
+                        startAdornment: <InputAdornment position="start">{props.premiumCurrency}</InputAdornment>,
+                    }}
+                    error={props.error !== ""}
+                    helperText={props.error}
+                    />}
             />
         <Typography variant="body2">{wait}</Typography>
         {bundles}

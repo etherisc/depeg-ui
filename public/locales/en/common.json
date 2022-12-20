@@ -27,12 +27,17 @@
         "unexpected_network": "Please connect your wallet to '{{network}}'",
         "metamask_not_found": "Missing metamask plugin - get it from",
         "wallet_connect_failed": "WalletConnect login failed or cancelled",
-        "currencyTextFieldMinValue": "{{fieldName}} must be at least {{currency}} {{amount}}",
-        "currencyTextFieldMaxValue": "{{fieldName}} must be at most {{currency}} {{amount}}",
-        "numericTextFieldMinValue": "{{fieldName}} must be at least {{value}} {{unit}}",
-        "numericTextFieldMaxValue": "{{fieldName}} must be at most {{value}} {{unit}}",
-        "valueRequired": "{{fieldName}} cannot be empty",
-        "notANumber": "{{fieldName}} must be a number",
+        "field": {
+            "required": "This field is required",
+            "walletType": "This field must contain a wallet address (0x...)",
+            "numberType": "This field must contain an integer number",
+            "amountType": "This field must contain an amount",
+            "minLength": "This field must be at least {{minLength}} characters",
+            "maxLength": "This field must be at most {{maxLength}} characters",
+            "min": "This field must be at least {{minValue}}",
+            "max": "This field must be at most {{maxValue}}",
+            "minmax": "The minimum value must be smaller than the maximum value"
+        },
         "approval_failed": "Setting allowance permission in wallet app failed. Reason: {{error}}",
         "transaction_failed": "The blockchain transaction failed. Reason: {{error}}",
         "allowance_revoke_notice": "Due to the failed transaction, there might be a pending allowance on your wallet. For more information on this, please have a look"

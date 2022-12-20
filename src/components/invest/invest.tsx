@@ -254,7 +254,7 @@ export default function Invest(props: InvestProps) {
                 </Stepper>
 
                 <InvestForm 
-                    disabled={formDisabled}
+                    formDisabled={formDisabled}
                     usd2={props.insurance.usd2}
                     usd2Decimals={props.insurance.usd2Decimals}
                     insurance={props.insurance}
