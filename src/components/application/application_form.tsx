@@ -84,18 +84,21 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     useEffect(() => {
         console.log("watchCoverageDuration", watchCoverageDuration);
         setValue("coverageEndDate", moment().startOf('day').add(watchCoverageDuration, 'days').format("YYYY-MM-DD"));
-    }, [watchCoverageDuration]);
+    }, [watchCoverageDuration, setValue]);
 
     const watchCoverageEndDate = watch("coverageEndDate");
     useEffect(() => {
         setValue("coverageDuration", moment(watchCoverageEndDate).startOf('day').diff(moment().startOf('day'), 'days')); 
-    }, [watchCoverageEndDate]);
+        // this is a special case as changing date with date picker does not trigger the `watchPremiumFactors` useEffect
+        calculatePremium();
+    }, [watchCoverageEndDate, setValue]);
 
 
     const errors = useMemo(() => formState.errors, [formState]);
     const [ premiumCalculationRequired, setPremiumCalculationRequired ] = useState(false);
 
     // triggers premium calculation when any of the factors change and a calculation is required
+    // this works for all values except the date picker which is handled separately in the `watchCoverageEndDate` useEffect
     const watchPremiumFactors = watch(["insuredWallet", "insuredAmount", "coverageDuration"]);
     useEffect(() => {
         console.log("watchPremiumFactors", premiumCalculationRequired, watchPremiumFactors, errors);
@@ -105,7 +108,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setValue("premiumAmount", 0);
         }
         setPremiumCalculationRequired(false);
-    }, [watchPremiumFactors, errors]);
+    }, [watchPremiumFactors, errors, premiumCalculationRequired]);
 
     //-------------------------------------------------------------------------
     // update min/max sum insured and coverage period when bundles are available
@@ -139,7 +142,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setValue("coverageDuration", coverageDays);
             setValue("coverageEndDate", moment().add(coverageDays, 'days').format("YYYY-MM-DD"));
         }
-    }, [props.bundles]);
+    }, [props.bundles, props.usd1Decimals, setValue]);
 
 
     //-------------------------------------------------------------------------
@@ -315,7 +318,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 maxDate={coverageUntilMax}
                                 />}
                         />
-                        {/* TODO: mobile version */}
                 </Grid>
                 <Grid item xs={12}>
                     <Premium 
