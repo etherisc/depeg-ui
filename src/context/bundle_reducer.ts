@@ -25,7 +25,7 @@ export function bundleReducer(state: BundleState, action: BundleAction): BundleS
         case BundleActionType.STOP_LOADING:
             return { ...state, loading: false };
         case BundleActionType.ADD:
-            if (state.bundles.find(b => b.bundleId === action.bundle?.bundleId) !== undefined) {
+            if (state.bundles.find(b => b.id === action.bundle?.id) !== undefined) {
                 return state;
             }
             return { ...state, bundles: [...state.bundles, action.bundle!] };

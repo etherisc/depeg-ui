@@ -30,11 +30,11 @@ export function BundleList(props: BundleListProps) {
                     <TableBody>
                     {props.bundles.map((bundle: BundleData) => (
                         <TableRow
-                        key={bundle.bundleId}
+                        key={bundle.id}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                         <TableCell component="th" scope="row">
-                            {bundle.bundleId}
+                            {bundle.id}
                         </TableCell>
                         <TableCell align="right">{bundle.apr}</TableCell>
                         <TableCell align="right">{formatCurrency(bundle.minSumInsured, props.currencyDecimals)} / {formatCurrency(bundle.maxSumInsured, props.currencyDecimals)} {props.currency}</TableCell>

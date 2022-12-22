@@ -70,7 +70,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         const depegProduct = (await this.getDepegProductApi())!.getDepegProduct();
 
         console.log("bestBundle", bestBundle);
-        const netPremium = (await depegProduct.calculateNetPremium(insuredAmount, durationSecs, bestBundle.bundleId)).toNumber();
+        const netPremium = (await depegProduct.calculateNetPremium(insuredAmount, durationSecs, bestBundle.id)).toNumber();
         console.log("netPremium", netPremium);
         const premium = (await depegProduct.calculatePremium(netPremium)).toNumber();
         console.log("premium", premium);

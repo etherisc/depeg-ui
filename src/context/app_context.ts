@@ -77,6 +77,9 @@ export function signerReducer(state: AppData, action: AppAction): AppData {
                 signer: action?.signer,
             };
         case AppActionType.ADD_BUNDLE:
+            if (state.bundles.find(b => b.id === action.bundle?.id) !== undefined) {
+                return state;
+            }
             return {
                 ...state,
                 bundles: state.bundles.concat(action.bundle!!)
