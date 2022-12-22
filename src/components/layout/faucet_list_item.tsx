@@ -8,7 +8,7 @@ import { useTranslation } from "next-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
 
-export default function FaucetListItem() {
+export default function FaucetListItem(props: any) {
     const appContext = useContext(AppContext);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
@@ -51,7 +51,7 @@ export default function FaucetListItem() {
     }
 
     return (
-        <ListItem key='faucet' disablePadding>
+        <ListItem key={props.key} disablePadding>
             <ListItemButton onClick={useFaucet}>
                 <ListItemIcon>
                     <FontAwesomeIcon icon={faHandHoldingDollar} />
