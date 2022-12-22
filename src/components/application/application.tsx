@@ -45,13 +45,13 @@ export default function Application(props: ApplicationProps) {
         }
 
         console.log("signer", appContext.data.signer, "bundleDataInitialized", appContext.data.bundlesInitialized);
-        if (appContext.data.signer !== undefined && ! appContext.data.bundlesInitialized && ! (appContext.data.signer instanceof VoidSigner)) {
+        if (appContext.data.signer !== undefined && ! (appContext.data.signer instanceof VoidSigner)) {
             appContext.dispatch({ type: AppActionType.BUNDLE_INITIALIZING });
             setPremiumTrxTextKey('bundle_loading');
             console.log("got a new signer ... getting bundles");
             asyncGetBundles(appContext.dispatch);
         }    
-    }, [appContext, props.insurance, t]);
+    }, [appContext.data.signer]);
     
     // change steps according to application state
     useEffect(() => {
