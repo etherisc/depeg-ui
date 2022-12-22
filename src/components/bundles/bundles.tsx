@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useCallback, useContext, useEffect, useReducer, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { getInsuranceApi, InsuranceApi } from "../../backend/insurance_api";
-import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleRowView } from "../../model/bundle";
 import { BundleData } from "../../backend/bundle_data";
@@ -16,6 +16,7 @@ import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
 import { formatDate } from "../../utils/date";
 import moment from "moment";
+import { BigNumber } from "ethers";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -29,19 +30,6 @@ export default function Bundles(props: BundlesProps) {
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [ bundleState, dispatch ] = useReducer(bundleReducer, { bundles: [], loading: false });
     const [ pageSize, setPageSize ] = useState(5);
-
-    function convertBundleDataToRowView(bundle: BundleData) {
-        const capital = formatCurrency(bundle.capital, props.insurance.usd2Decimals);
-        const capitalRemaining = formatCurrency(bundle.capital - bundle.locked, props.insurance.usd2Decimals);
-        return {
-            id: `${bundle.bundleId}`,
-            capital: `${props.insurance.usd2} ${capital} / ${capitalRemaining}`,
-            created: formatDate(moment.unix(bundle.createdAt)),
-            policies: `${bundle.policies}`,
-            state: t('bundle_state_' + bundle.state, { ns: 'common'}),
-        } as BundleRowView;
-    }
-    
 
     const getBundles = useCallback(async () => {
         if (bundleState.loading) {
@@ -80,11 +68,40 @@ export default function Bundles(props: BundlesProps) {
     }, [appContext.data.signer]); // update bundles when signer changes
 
     const columns: GridColDef[] = [
-        { field: 'id', headerName: t('table.header.id'), flex: 1 },
-        { field: 'capital', headerName: t('table.header.capital'), flex: 1.5 },
-        { field: 'created', headerName: t('table.header.created'), flex: 1 },
-        { field: 'policies', headerName: t('table.header.policies'), flex: 1 },
-        { field: 'state', headerName: t('table.header.state'), flex: 1 },
+        { 
+            field: 'id', 
+            headerName: t('table.header.id'), 
+            flex: 1,
+        },
+        { 
+            field: 'capital', 
+            headerName: t('table.header.capital'), 
+            flex: 1.5,
+            valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
+            valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
+                const bundle = params.value;
+                const capital = formatCurrency(bundle.capital, props.insurance.usd2Decimals);
+                const capitalRemaining = formatCurrency(bundle.capital - bundle.locked, props.insurance.usd2Decimals);
+                return `${props.insurance.usd2} ${capital} / ${capitalRemaining}`
+            }
+        },
+        { 
+            field: 'createdAt', 
+            headerName: t('table.header.created'), 
+            flex: 1,
+            valueFormatter: (params: GridValueFormatterParams<number>) => formatDate(moment.unix(params.value)),
+        },
+        { 
+            field: 'policies', 
+            headerName: t('table.header.policies'), 
+            flex: 1 
+        },
+        { 
+            field: 'state', 
+            headerName: t('table.header.state'), 
+            flex: 1,
+            valueFormatter: (params: GridValueFormatterParams<number>) => t('bundle_state_' + params.value, { ns: 'common'}),
+        },
     ];
 
     function GridToolbar() {
@@ -112,7 +129,7 @@ export default function Bundles(props: BundlesProps) {
 
             <DataGrid 
                 autoHeight
-                rows={bundleState.bundles.map(convertBundleDataToRowView)} 
+                rows={bundleState.bundles} 
                 columns={columns} 
                 getRowId={(row) => row.id}
                 components={{

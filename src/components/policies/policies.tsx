@@ -39,18 +39,6 @@ export default function Policies(props: PoliciesProps) {
     }
 
     useEffect(() => {
-        // function convertPolicyDataToRowView(policy: PolicyData) {
-        //     const state = getPolicyState(policy);
-        //     return {
-        //         id: policy.processId,
-        //         walletAddress: policy.owner,
-        //         insuredAmount: `${props.insurance.usd1} ${formatCurrency(policy.suminsured.toNumber(), props.insurance.usd1Decimals)}`,
-        //         created: formatDate(moment.unix(policy.createdAt.toNumber())),
-        //         coverageUntil: formatDate(getPolicyEnd(policy)),
-        //         state: t('application_state_' + state, { ns: 'common'}),
-        //     } as PolicyRowView;
-        // }
-
         async function getPolicies() {
             const walletAddress = await appContext?.data.signer?.getAddress();
             if (walletAddress !== undefined) {
@@ -75,7 +63,7 @@ export default function Policies(props: PoliciesProps) {
 
     const columns: GridColDef[] = [
         // { field: 'id', headerName: t('table.header.id'), flex: 1 },
-        // TODO: add copy button to field and shorten content
+        // TODO: add copy button to field
         { 
             field: 'owner', 
             headerName: t('table.header.walletAddress'), 

@@ -47,9 +47,9 @@ export class DepegRiskpoolApi {
         const policies = await this.depegRiskpool.getActivePolicies(bundleId);
     
         return {
+            id: bundleId,
             riskpoolId: this.riskpoolId,
             owner: owner,
-            bundleId: bundleId,
             apr: apr,
             minSumInsured: minSumInsured.toNumber(),
             maxSumInsured: maxSumInsured.toNumber(),
