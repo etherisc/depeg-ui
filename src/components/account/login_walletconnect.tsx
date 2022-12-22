@@ -1,16 +1,17 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";import { ethers } from "ethers";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { walletConnectConfig } from "../../config/appConfig";
-import { AppContext, setSigner, removeSigner, updateSigner, AppActionType } from "../../context/app_context";
+import { AppContext, setSigner, removeSigner, updateSigner } from "../../context/app_context";
 import Button from '@mui/material/Button'
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
-import { toHex } from "../../utils/numbers";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
-export default function LoginWithWalletConnectButton() {
+export default function LoginWithWalletConnectButton(props: any) {
+    const { closeDialog } = props;
+
     const appContext = useContext(AppContext);
     const { t } = useTranslation('common');
     const { enqueueSnackbar } = useSnackbar();
@@ -19,6 +20,7 @@ export default function LoginWithWalletConnectButton() {
 
     async function login() {
         console.log("wallet connect login");
+        closeDialog();
 
         //  Create WalletConnect Provider
         const wcProvider = new WalletConnectProvider(walletConnectConfig);
@@ -59,15 +61,15 @@ export default function LoginWithWalletConnectButton() {
     }
 
     let button = (<></>);
-    let buttonText = t('action.login');
+    let buttonText = t('action.login_walletconnect');
 
-    if (! isMobile) {
-        buttonText = t('action.login_walletconnect');
+    if (isMobile) {
+        buttonText = t('action.login_walletconnect_short');
     }
     
     if (appContext?.data.signer === undefined) {
         button = (
-            <Button variant="contained" color="secondary" onClick={login}>
+            <Button variant="contained" color="secondary" onClick={login} fullWidth>
                 <FontAwesomeIcon icon={faRightToBracket} className="fa" />
                 {buttonText}
             </Button>

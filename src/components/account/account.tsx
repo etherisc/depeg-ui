@@ -5,10 +5,9 @@ import { DOT, NBSP } from "../../utils/chars";
 import { Box, Avatar } from "@mui/material";
 import Balance from "../balance";
 import AccountAddress from "../account_address";
-import LoginWithMetaMaskButton from "./login_metamask";
-import LoginWithWalletConnectButton from "./login_walletconnect";
 import Logout from "./logout";
 import { reconnectWallets } from "../../utils/wallet";
+import Login from "./login";
 
 export default function Account() {
     const appContext = useContext(AppContext);
@@ -39,10 +38,7 @@ export default function Account() {
     if (! loggedIn) {
         return (
             <>
-                <Box sx={{ display: { xs: 'none', md: 'inline' }}}>
-                    <LoginWithMetaMaskButton />
-                </Box>
-                <LoginWithWalletConnectButton />
+                <Login />
             </>
         );
     }

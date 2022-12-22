@@ -11,14 +11,17 @@
     },
     "action": {
         "switch_network": "Switch to network '{{network}}'",
-        "login_walletconnect": "Login with WalletConnect",
-        "login_metamask": "Login with Metamask",
-        "login": "Login",
+        "login_walletconnect": "Connect with WalletConnect",
+        "login_walletconnect_short": "WalletConnect",
+        "login_metamask": "Connect with Metamask",
+        "login_metamask_short": "Metamask",
+        "login": "Connect",
         "disconnect": "Disconnect",
         "close": "Close",
         "hide": "Hide",
         "address_copied": "Address copied to clipboard"
     },
+    "login_select": "Please choose a wallet",
     "warning": {
         "unload_page": "The transaction is still pending. Please do not leave the page or close the browser window."
     },

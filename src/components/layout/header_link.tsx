@@ -1,15 +1,19 @@
-import { Box, Icon, SvgIcon, Typography } from "@mui/material";
+import { Box, Icon, SvgIcon, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Link } from '@mui/material';
 import { LinkBehaviour } from "../link_behaviour";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from "react";
+import { NoEncryption } from "@mui/icons-material";
 
 
 export function HeaderLink(props: any) {
     const { text, href, variant, icon } = props;
 
+    const theme = useTheme();
+    const showIcons = useMediaQuery(theme.breakpoints.up('lg'));
+
     let iconElement = (<></>);
-    if (icon) {
+    if (icon && showIcons) {
         iconElement = <FontAwesomeIcon icon={icon} className="fa" />;
     }
 
