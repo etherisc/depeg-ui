@@ -63,6 +63,30 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "instanceId",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
+        name: "bundleId",
+        type: "uint256",
+      },
+    ],
+    name: "isRegisteredBundle",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "isRegistered",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
 ] as const;
 
 export class IStakingDataProvider__factory {

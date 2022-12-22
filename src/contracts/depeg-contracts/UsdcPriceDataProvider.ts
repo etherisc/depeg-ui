@@ -70,19 +70,24 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     "DEPEG_RECOVERY_WINDOW()": FunctionFragment;
     "DEPEG_TRIGGER_PRICE()": FunctionFragment;
     "GANACHE()": FunctionFragment;
+    "GANACHE2()": FunctionFragment;
     "MAINNET()": FunctionFragment;
+    "MUMBAI()": FunctionFragment;
     "PRICE_INFO_HISTORY_DURATION()": FunctionFragment;
     "USDC_CONTACT_ADDRESS()": FunctionFragment;
     "decimals()": FunctionFragment;
     "description()": FunctionFragment;
     "deviation()": FunctionFragment;
+    "forceDepegForNextPriceInfo()": FunctionFragment;
     "getAggregatorAddress()": FunctionFragment;
     "getChainlinkAggregatorAddress()": FunctionFragment;
     "getDecimals()": FunctionFragment;
+    "getDepegPriceInfo()": FunctionFragment;
     "getDepeggedAt()": FunctionFragment;
     "getDeviation()": FunctionFragment;
     "getHeartbeat()": FunctionFragment;
     "getLatestPriceInfo()": FunctionFragment;
+    "getOwner()": FunctionFragment;
     "getRoundData(uint80)": FunctionFragment;
     "getToken()": FunctionFragment;
     "getTriggeredAt()": FunctionFragment;
@@ -91,9 +96,17 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     "heartbeatMargin()": FunctionFragment;
     "isExceedingDeviation(uint256,uint256)": FunctionFragment;
     "isExceedingHeartbeat(uint256,uint256)": FunctionFragment;
+    "isMainnet()": FunctionFragment;
+    "isMainnetProvider()": FunctionFragment;
+    "isTestnet()": FunctionFragment;
+    "isTestnetProvider()": FunctionFragment;
     "latestRoundData()": FunctionFragment;
+    "owner()": FunctionFragment;
     "processLatestPriceInfo()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "resetDepeg()": FunctionFragment;
     "setRoundData(uint80,int256,uint256,uint256,uint80)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
     "version()": FunctionFragment;
   };
 
@@ -110,19 +123,24 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
       | "DEPEG_RECOVERY_WINDOW"
       | "DEPEG_TRIGGER_PRICE"
       | "GANACHE"
+      | "GANACHE2"
       | "MAINNET"
+      | "MUMBAI"
       | "PRICE_INFO_HISTORY_DURATION"
       | "USDC_CONTACT_ADDRESS"
       | "decimals"
       | "description"
       | "deviation"
+      | "forceDepegForNextPriceInfo"
       | "getAggregatorAddress"
       | "getChainlinkAggregatorAddress"
       | "getDecimals"
+      | "getDepegPriceInfo"
       | "getDepeggedAt"
       | "getDeviation"
       | "getHeartbeat"
       | "getLatestPriceInfo"
+      | "getOwner"
       | "getRoundData"
       | "getToken"
       | "getTriggeredAt"
@@ -131,9 +149,17 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
       | "heartbeatMargin"
       | "isExceedingDeviation"
       | "isExceedingHeartbeat"
+      | "isMainnet"
+      | "isMainnetProvider"
+      | "isTestnet"
+      | "isTestnetProvider"
       | "latestRoundData"
+      | "owner"
       | "processLatestPriceInfo"
+      | "renounceOwnership"
+      | "resetDepeg"
       | "setRoundData"
+      | "transferOwnership"
       | "version"
   ): FunctionFragment;
 
@@ -178,7 +204,9 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "GANACHE", values?: undefined): string;
+  encodeFunctionData(functionFragment: "GANACHE2", values?: undefined): string;
   encodeFunctionData(functionFragment: "MAINNET", values?: undefined): string;
+  encodeFunctionData(functionFragment: "MUMBAI", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "PRICE_INFO_HISTORY_DURATION",
     values?: undefined
@@ -194,6 +222,10 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "deviation", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "forceDepegForNextPriceInfo",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getAggregatorAddress",
     values?: undefined
   ): string;
@@ -203,6 +235,10 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getDecimals",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDepegPriceInfo",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -221,6 +257,7 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     functionFragment: "getLatestPriceInfo",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getRoundData",
     values: [PromiseOrValue<BigNumberish>]
@@ -247,12 +284,31 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     functionFragment: "isExceedingHeartbeat",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "isMainnet", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "isMainnetProvider",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "isTestnet", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "isTestnetProvider",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "latestRoundData",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "processLatestPriceInfo",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "resetDepeg",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -264,6 +320,10 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "version", values?: undefined): string;
 
@@ -308,7 +368,9 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "GANACHE", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "GANACHE2", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "MAINNET", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "MUMBAI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "PRICE_INFO_HISTORY_DURATION",
     data: BytesLike
@@ -324,6 +386,10 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "deviation", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "forceDepegForNextPriceInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getAggregatorAddress",
     data: BytesLike
   ): Result;
@@ -333,6 +399,10 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getDecimals",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDepegPriceInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -351,6 +421,7 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     functionFragment: "getLatestPriceInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoundData",
     data: BytesLike
@@ -377,16 +448,36 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     functionFragment: "isExceedingHeartbeat",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "isMainnet", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isMainnetProvider",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "isTestnet", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isTestnetProvider",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "latestRoundData",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "processLatestPriceInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "resetDepeg", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "setRoundData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
@@ -397,6 +488,9 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     "LogPriceDataHeartbeatExceeded(uint256,uint256,uint256,uint256)": EventFragment;
     "LogPriceDataRecovered(uint256,uint256,uint256,uint256)": EventFragment;
     "LogPriceDataTriggered(uint256,uint256,uint256)": EventFragment;
+    "LogUsdcProviderForcedDepeg(uint256,uint256)": EventFragment;
+    "LogUsdcProviderResetDepeg(uint256)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "LogPriceDataDepegged"): EventFragment;
@@ -408,6 +502,9 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogPriceDataRecovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogPriceDataTriggered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogUsdcProviderForcedDepeg"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogUsdcProviderResetDepeg"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
 export interface LogPriceDataDepeggedEventObject {
@@ -479,6 +576,41 @@ export type LogPriceDataTriggeredEvent = TypedEvent<
 export type LogPriceDataTriggeredEventFilter =
   TypedEventFilter<LogPriceDataTriggeredEvent>;
 
+export interface LogUsdcProviderForcedDepegEventObject {
+  updatedTriggeredAt: BigNumber;
+  forcedDepegAt: BigNumber;
+}
+export type LogUsdcProviderForcedDepegEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  LogUsdcProviderForcedDepegEventObject
+>;
+
+export type LogUsdcProviderForcedDepegEventFilter =
+  TypedEventFilter<LogUsdcProviderForcedDepegEvent>;
+
+export interface LogUsdcProviderResetDepegEventObject {
+  resetDepegAt: BigNumber;
+}
+export type LogUsdcProviderResetDepegEvent = TypedEvent<
+  [BigNumber],
+  LogUsdcProviderResetDepegEventObject
+>;
+
+export type LogUsdcProviderResetDepegEventFilter =
+  TypedEventFilter<LogUsdcProviderResetDepegEvent>;
+
+export interface OwnershipTransferredEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferredEventObject
+>;
+
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
+
 export interface UsdcPriceDataProvider extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -534,7 +666,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     GANACHE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    GANACHE2(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     MAINNET(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MUMBAI(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     PRICE_INFO_HISTORY_DURATION(
       overrides?: CallOverrides
@@ -548,6 +684,10 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     deviation(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    forceDepegForNextPriceInfo(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     getAggregatorAddress(
       overrides?: CallOverrides
     ): Promise<[string] & { priceInfoSourceAddress: string }>;
@@ -557,6 +697,14 @@ export interface UsdcPriceDataProvider extends BaseContract {
     getDecimals(
       overrides?: CallOverrides
     ): Promise<[number] & { priceInfoDecimals: number }>;
+
+    getDepegPriceInfo(
+      overrides?: CallOverrides
+    ): Promise<
+      [IPriceDataProvider.PriceInfoStructOutput] & {
+        priceInfo: IPriceDataProvider.PriceInfoStructOutput;
+      }
+    >;
 
     getDepeggedAt(
       overrides?: CallOverrides
@@ -578,6 +726,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
       }
     >;
 
+    getOwner(overrides?: CallOverrides): Promise<[string]>;
+
     getRoundData(
       _roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -591,9 +741,7 @@ export interface UsdcPriceDataProvider extends BaseContract {
       }
     >;
 
-    getToken(
-      overrides?: CallOverrides
-    ): Promise<[string] & { tokenAddress: string }>;
+    getToken(overrides?: CallOverrides): Promise<[string]>;
 
     getTriggeredAt(
       overrides?: CallOverrides
@@ -625,6 +773,14 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { isExceeding: boolean }>;
 
+    isMainnet(overrides?: CallOverrides): Promise<[boolean]>;
+
+    isMainnetProvider(overrides?: CallOverrides): Promise<[boolean]>;
+
+    isTestnet(overrides?: CallOverrides): Promise<[boolean]>;
+
+    isTestnetProvider(overrides?: CallOverrides): Promise<[boolean]>;
+
     latestRoundData(
       overrides?: CallOverrides
     ): Promise<
@@ -637,7 +793,17 @@ export interface UsdcPriceDataProvider extends BaseContract {
       }
     >;
 
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
     processLatestPriceInfo(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    resetDepeg(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -647,6 +813,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
       startedAt: PromiseOrValue<BigNumberish>,
       updatedAt: PromiseOrValue<BigNumberish>,
       answeredInRound: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -675,7 +846,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
   GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
+  GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
+
   MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
 
   PRICE_INFO_HISTORY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -687,11 +862,19 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
   deviation(overrides?: CallOverrides): Promise<BigNumber>;
 
+  forceDepegForNextPriceInfo(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   getAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
   getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
   getDecimals(overrides?: CallOverrides): Promise<number>;
+
+  getDepegPriceInfo(
+    overrides?: CallOverrides
+  ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
 
   getDepeggedAt(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -702,6 +885,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
   getLatestPriceInfo(
     overrides?: CallOverrides
   ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
+
+  getOwner(overrides?: CallOverrides): Promise<string>;
 
   getRoundData(
     _roundId: PromiseOrValue<BigNumberish>,
@@ -746,6 +931,14 @@ export interface UsdcPriceDataProvider extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  isMainnet(overrides?: CallOverrides): Promise<boolean>;
+
+  isMainnetProvider(overrides?: CallOverrides): Promise<boolean>;
+
+  isTestnet(overrides?: CallOverrides): Promise<boolean>;
+
+  isTestnetProvider(overrides?: CallOverrides): Promise<boolean>;
+
   latestRoundData(
     overrides?: CallOverrides
   ): Promise<
@@ -758,7 +951,17 @@ export interface UsdcPriceDataProvider extends BaseContract {
     }
   >;
 
+  owner(overrides?: CallOverrides): Promise<string>;
+
   processLatestPriceInfo(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  renounceOwnership(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  resetDepeg(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -768,6 +971,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
     startedAt: PromiseOrValue<BigNumberish>,
     updatedAt: PromiseOrValue<BigNumberish>,
     answeredInRound: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  transferOwnership(
+    newOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -796,7 +1004,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
+
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
 
     PRICE_INFO_HISTORY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -808,11 +1020,17 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     deviation(overrides?: CallOverrides): Promise<BigNumber>;
 
+    forceDepegForNextPriceInfo(overrides?: CallOverrides): Promise<void>;
+
     getAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
     getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
     getDecimals(overrides?: CallOverrides): Promise<number>;
+
+    getDepegPriceInfo(
+      overrides?: CallOverrides
+    ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
 
     getDepeggedAt(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -823,6 +1041,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
     getLatestPriceInfo(
       overrides?: CallOverrides
     ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
+
+    getOwner(overrides?: CallOverrides): Promise<string>;
 
     getRoundData(
       _roundId: PromiseOrValue<BigNumberish>,
@@ -867,6 +1087,14 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    isMainnet(overrides?: CallOverrides): Promise<boolean>;
+
+    isMainnetProvider(overrides?: CallOverrides): Promise<boolean>;
+
+    isTestnet(overrides?: CallOverrides): Promise<boolean>;
+
+    isTestnetProvider(overrides?: CallOverrides): Promise<boolean>;
+
     latestRoundData(
       overrides?: CallOverrides
     ): Promise<
@@ -879,9 +1107,15 @@ export interface UsdcPriceDataProvider extends BaseContract {
       }
     >;
 
+    owner(overrides?: CallOverrides): Promise<string>;
+
     processLatestPriceInfo(
       overrides?: CallOverrides
     ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    resetDepeg(overrides?: CallOverrides): Promise<void>;
 
     setRoundData(
       roundId: PromiseOrValue<BigNumberish>,
@@ -889,6 +1123,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
       startedAt: PromiseOrValue<BigNumberish>,
       updatedAt: PromiseOrValue<BigNumberish>,
       answeredInRound: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -958,6 +1197,31 @@ export interface UsdcPriceDataProvider extends BaseContract {
       price?: null,
       triggeredAt?: null
     ): LogPriceDataTriggeredEventFilter;
+
+    "LogUsdcProviderForcedDepeg(uint256,uint256)"(
+      updatedTriggeredAt?: null,
+      forcedDepegAt?: null
+    ): LogUsdcProviderForcedDepegEventFilter;
+    LogUsdcProviderForcedDepeg(
+      updatedTriggeredAt?: null,
+      forcedDepegAt?: null
+    ): LogUsdcProviderForcedDepegEventFilter;
+
+    "LogUsdcProviderResetDepeg(uint256)"(
+      resetDepegAt?: null
+    ): LogUsdcProviderResetDepegEventFilter;
+    LogUsdcProviderResetDepeg(
+      resetDepegAt?: null
+    ): LogUsdcProviderResetDepegEventFilter;
+
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
   };
 
   estimateGas: {
@@ -985,7 +1249,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
+
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
 
     PRICE_INFO_HISTORY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -997,6 +1265,10 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     deviation(overrides?: CallOverrides): Promise<BigNumber>;
 
+    forceDepegForNextPriceInfo(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getAggregatorAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     getChainlinkAggregatorAddress(
@@ -1005,6 +1277,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     getDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getDepegPriceInfo(overrides?: CallOverrides): Promise<BigNumber>;
+
     getDepeggedAt(overrides?: CallOverrides): Promise<BigNumber>;
 
     getDeviation(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1012,6 +1286,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
     getHeartbeat(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLatestPriceInfo(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoundData(
       _roundId: PromiseOrValue<BigNumberish>,
@@ -1040,9 +1316,27 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isMainnet(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isMainnetProvider(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isTestnet(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isTestnetProvider(overrides?: CallOverrides): Promise<BigNumber>;
+
     latestRoundData(overrides?: CallOverrides): Promise<BigNumber>;
 
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
     processLatestPriceInfo(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    resetDepeg(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1052,6 +1346,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
       startedAt: PromiseOrValue<BigNumberish>,
       updatedAt: PromiseOrValue<BigNumberish>,
       answeredInRound: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1101,7 +1400,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     GANACHE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    GANACHE2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     MAINNET(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MUMBAI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     PRICE_INFO_HISTORY_DURATION(
       overrides?: CallOverrides
@@ -1117,6 +1420,10 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     deviation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    forceDepegForNextPriceInfo(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     getAggregatorAddress(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1127,6 +1434,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     getDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getDepegPriceInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getDepeggedAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getDeviation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1136,6 +1445,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
     getLatestPriceInfo(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRoundData(
       _roundId: PromiseOrValue<BigNumberish>,
@@ -1164,9 +1475,27 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    isMainnet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isMainnetProvider(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isTestnet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isTestnetProvider(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     latestRoundData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     processLatestPriceInfo(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    resetDepeg(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1176,6 +1505,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
       startedAt: PromiseOrValue<BigNumberish>,
       updatedAt: PromiseOrValue<BigNumberish>,
       answeredInRound: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

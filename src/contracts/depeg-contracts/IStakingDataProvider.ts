@@ -25,10 +25,14 @@ export interface IStakingDataProviderInterface extends utils.Interface {
   functions: {
     "getBundleStakes(bytes32,uint256)": FunctionFragment;
     "getSupportedCapitalAmount(bytes32,uint256,address)": FunctionFragment;
+    "isRegisteredBundle(bytes32,uint256)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "getBundleStakes" | "getSupportedCapitalAmount"
+    nameOrSignatureOrTopic:
+      | "getBundleStakes"
+      | "getSupportedCapitalAmount"
+      | "isRegisteredBundle"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -43,6 +47,10 @@ export interface IStakingDataProviderInterface extends utils.Interface {
       PromiseOrValue<string>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "isRegisteredBundle",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "getBundleStakes",
@@ -50,6 +58,10 @@ export interface IStakingDataProviderInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getSupportedCapitalAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isRegisteredBundle",
     data: BytesLike
   ): Result;
 
@@ -95,6 +107,12 @@ export interface IStakingDataProvider extends BaseContract {
       token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { supportedCapitalAmount: BigNumber }>;
+
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isRegistered: boolean }>;
   };
 
   getBundleStakes(
@@ -110,6 +128,12 @@ export interface IStakingDataProvider extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  isRegisteredBundle(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   callStatic: {
     getBundleStakes(
       instanceId: PromiseOrValue<BytesLike>,
@@ -123,6 +147,12 @@ export interface IStakingDataProvider extends BaseContract {
       token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {};
@@ -140,6 +170,12 @@ export interface IStakingDataProvider extends BaseContract {
       token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -153,6 +189,12 @@ export interface IStakingDataProvider extends BaseContract {
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
       token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

@@ -96,9 +96,11 @@ export declare namespace IPolicy {
 export declare namespace DepegRiskpool {
   export type BundleInfoStruct = {
     bundleId: PromiseOrValue<BigNumberish>;
+    name: PromiseOrValue<string>;
     state: PromiseOrValue<BigNumberish>;
     tokenId: PromiseOrValue<BigNumberish>;
     owner: PromiseOrValue<string>;
+    lifetime: PromiseOrValue<BigNumberish>;
     minSumInsured: PromiseOrValue<BigNumberish>;
     maxSumInsured: PromiseOrValue<BigNumberish>;
     minDuration: PromiseOrValue<BigNumberish>;
@@ -113,6 +115,7 @@ export declare namespace DepegRiskpool {
 
   export type BundleInfoStructOutput = [
     BigNumber,
+    string,
     number,
     BigNumber,
     string,
@@ -125,12 +128,15 @@ export declare namespace DepegRiskpool {
     BigNumber,
     BigNumber,
     BigNumber,
+    BigNumber,
     BigNumber
   ] & {
     bundleId: BigNumber;
+    name: string;
     state: number;
     tokenId: BigNumber;
     owner: string;
+    lifetime: BigNumber;
     minSumInsured: BigNumber;
     maxSumInsured: BigNumber;
     minDuration: BigNumber;
@@ -148,10 +154,12 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   functions: {
     "APR_100_PERCENTAGE()": FunctionFragment;
     "DEFAULT_FILTER_DATA_STRUCTURE()": FunctionFragment;
+    "EMPTY_STRING_HASH()": FunctionFragment;
     "FULL_COLLATERALIZATION_LEVEL()": FunctionFragment;
     "MAX_APR()": FunctionFragment;
     "MAX_BUNDLE_LIFETIME()": FunctionFragment;
     "MAX_POLICY_DURATION()": FunctionFragment;
+    "MIN_BUNDLE_LIFETIME()": FunctionFragment;
     "ONE_YEAR_DURATION()": FunctionFragment;
     "USD_CAPITAL_CAP()": FunctionFragment;
     "activeBundles()": FunctionFragment;
@@ -164,14 +172,14 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "calculatePremium(uint256,uint256,uint256)": FunctionFragment;
     "closeBundle(uint256)": FunctionFragment;
     "collateralizePolicy(bytes32,uint256)": FunctionFragment;
+    "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "createBundle(bytes,uint256)": FunctionFragment;
-    "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "declineCallback()": FunctionFragment;
     "decodeApplicationParameterFromData(bytes)": FunctionFragment;
     "decodeBundleParamsFromFilter(bytes)": FunctionFragment;
     "defundBundle(uint256,uint256)": FunctionFragment;
     "encodeApplicationParameterAsData(uint256,uint256)": FunctionFragment;
-    "encodeBundleParamsAsFilter(uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "encodeBundleParamsAsFilter(string,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "fundBundle(uint256,uint256)": FunctionFragment;
     "getActiveBundleId(uint256)": FunctionFragment;
     "getActiveBundleIds()": FunctionFragment;
@@ -228,10 +236,12 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "APR_100_PERCENTAGE"
       | "DEFAULT_FILTER_DATA_STRUCTURE"
+      | "EMPTY_STRING_HASH"
       | "FULL_COLLATERALIZATION_LEVEL"
       | "MAX_APR"
       | "MAX_BUNDLE_LIFETIME"
       | "MAX_POLICY_DURATION"
+      | "MIN_BUNDLE_LIFETIME"
       | "ONE_YEAR_DURATION"
       | "USD_CAPITAL_CAP"
       | "activeBundles"
@@ -244,8 +254,8 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "calculatePremium"
       | "closeBundle"
       | "collateralizePolicy"
+      | "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"
       | "createBundle(bytes,uint256)"
-      | "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"
       | "declineCallback"
       | "decodeApplicationParameterFromData"
       | "decodeBundleParamsFromFilter"
@@ -313,6 +323,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "EMPTY_STRING_HASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "FULL_COLLATERALIZATION_LEVEL",
     values?: undefined
   ): string;
@@ -323,6 +337,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "MAX_POLICY_DURATION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MIN_BUNDLE_LIFETIME",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -375,12 +393,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "createBundle(bytes,uint256)",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)",
+    functionFragment: "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)",
     values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -388,6 +404,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createBundle(bytes,uint256)",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "declineCallback",
@@ -412,6 +432,8 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "encodeBundleParamsAsFilter",
     values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -602,6 +624,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "EMPTY_STRING_HASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "FULL_COLLATERALIZATION_LEVEL",
     data: BytesLike
   ): Result;
@@ -612,6 +638,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "MAX_POLICY_DURATION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MIN_BUNDLE_LIFETIME",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -657,11 +687,11 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "createBundle(bytes,uint256)",
+    functionFragment: "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)",
+    functionFragment: "createBundle(bytes,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1324,6 +1354,8 @@ export interface DepegRiskpool extends BaseContract {
 
     DEFAULT_FILTER_DATA_STRUCTURE(overrides?: CallOverrides): Promise<[string]>;
 
+    EMPTY_STRING_HASH(overrides?: CallOverrides): Promise<[string]>;
+
     FULL_COLLATERALIZATION_LEVEL(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -1333,6 +1365,8 @@ export interface DepegRiskpool extends BaseContract {
     MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1385,18 +1419,20 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "createBundle(bytes,uint256)"(
-      filter: PromiseOrValue<BytesLike>,
-      initialAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"(
+    "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       policyMinSumInsured: PromiseOrValue<BigNumberish>,
       policyMaxSumInsured: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      initialAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "createBundle(bytes,uint256)"(
+      filter: PromiseOrValue<BytesLike>,
       initialAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1416,7 +1452,17 @@ export interface DepegRiskpool extends BaseContract {
       filter: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        name: string;
+        lifetime: BigNumber;
         minSumInsured: BigNumber;
         maxSumInsured: BigNumber;
         minDuration: BigNumber;
@@ -1438,6 +1484,8 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<[string] & { data: string }>;
 
     encodeBundleParamsAsFilter(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
       maxSumInsured: PromiseOrValue<BigNumberish>,
       minDuration: PromiseOrValue<BigNumberish>,
@@ -1638,6 +1686,8 @@ export interface DepegRiskpool extends BaseContract {
 
   DEFAULT_FILTER_DATA_STRUCTURE(overrides?: CallOverrides): Promise<string>;
 
+  EMPTY_STRING_HASH(overrides?: CallOverrides): Promise<string>;
+
   FULL_COLLATERALIZATION_LEVEL(overrides?: CallOverrides): Promise<BigNumber>;
 
   MAX_APR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1645,6 +1695,8 @@ export interface DepegRiskpool extends BaseContract {
   MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
   MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
   ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1697,18 +1749,20 @@ export interface DepegRiskpool extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "createBundle(bytes,uint256)"(
-    filter: PromiseOrValue<BytesLike>,
-    initialAmount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"(
+  "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+    name: PromiseOrValue<string>,
+    lifetime: PromiseOrValue<BigNumberish>,
     policyMinSumInsured: PromiseOrValue<BigNumberish>,
     policyMaxSumInsured: PromiseOrValue<BigNumberish>,
     policyMinDuration: PromiseOrValue<BigNumberish>,
     policyMaxDuration: PromiseOrValue<BigNumberish>,
     annualPercentageReturn: PromiseOrValue<BigNumberish>,
+    initialAmount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "createBundle(bytes,uint256)"(
+    filter: PromiseOrValue<BytesLike>,
     initialAmount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1728,7 +1782,17 @@ export interface DepegRiskpool extends BaseContract {
     filter: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [
+      string,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      name: string;
+      lifetime: BigNumber;
       minSumInsured: BigNumber;
       maxSumInsured: BigNumber;
       minDuration: BigNumber;
@@ -1750,6 +1814,8 @@ export interface DepegRiskpool extends BaseContract {
   ): Promise<string>;
 
   encodeBundleParamsAsFilter(
+    name: PromiseOrValue<string>,
+    lifetime: PromiseOrValue<BigNumberish>,
     minSumInsured: PromiseOrValue<BigNumberish>,
     maxSumInsured: PromiseOrValue<BigNumberish>,
     minDuration: PromiseOrValue<BigNumberish>,
@@ -1932,6 +1998,8 @@ export interface DepegRiskpool extends BaseContract {
 
     DEFAULT_FILTER_DATA_STRUCTURE(overrides?: CallOverrides): Promise<string>;
 
+    EMPTY_STRING_HASH(overrides?: CallOverrides): Promise<string>;
+
     FULL_COLLATERALIZATION_LEVEL(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_APR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1939,6 +2007,8 @@ export interface DepegRiskpool extends BaseContract {
     MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1987,18 +2057,20 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "createBundle(bytes,uint256)"(
-      filter: PromiseOrValue<BytesLike>,
-      initialAmount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"(
+    "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       policyMinSumInsured: PromiseOrValue<BigNumberish>,
       policyMaxSumInsured: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      initialAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "createBundle(bytes,uint256)"(
+      filter: PromiseOrValue<BytesLike>,
       initialAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2016,7 +2088,17 @@ export interface DepegRiskpool extends BaseContract {
       filter: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        name: string;
+        lifetime: BigNumber;
         minSumInsured: BigNumber;
         maxSumInsured: BigNumber;
         minDuration: BigNumber;
@@ -2038,6 +2120,8 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<string>;
 
     encodeBundleParamsAsFilter(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
       maxSumInsured: PromiseOrValue<BigNumberish>,
       minDuration: PromiseOrValue<BigNumberish>,
@@ -2442,6 +2526,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    EMPTY_STRING_HASH(overrides?: CallOverrides): Promise<BigNumber>;
+
     FULL_COLLATERALIZATION_LEVEL(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_APR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2449,6 +2535,8 @@ export interface DepegRiskpool extends BaseContract {
     MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2501,18 +2589,20 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "createBundle(bytes,uint256)"(
-      filter: PromiseOrValue<BytesLike>,
-      initialAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"(
+    "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       policyMinSumInsured: PromiseOrValue<BigNumberish>,
       policyMaxSumInsured: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      initialAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "createBundle(bytes,uint256)"(
+      filter: PromiseOrValue<BytesLike>,
       initialAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -2544,6 +2634,8 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<BigNumber>;
 
     encodeBundleParamsAsFilter(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
       maxSumInsured: PromiseOrValue<BigNumberish>,
       minDuration: PromiseOrValue<BigNumberish>,
@@ -2733,6 +2825,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    EMPTY_STRING_HASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     FULL_COLLATERALIZATION_LEVEL(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2744,6 +2838,10 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     MAX_POLICY_DURATION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MIN_BUNDLE_LIFETIME(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2798,18 +2896,20 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "createBundle(bytes,uint256)"(
-      filter: PromiseOrValue<BytesLike>,
-      initialAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"(
+    "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       policyMinSumInsured: PromiseOrValue<BigNumberish>,
       policyMaxSumInsured: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      initialAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "createBundle(bytes,uint256)"(
+      filter: PromiseOrValue<BytesLike>,
       initialAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -2841,6 +2941,8 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     encodeBundleParamsAsFilter(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
       maxSumInsured: PromiseOrValue<BigNumberish>,
       minDuration: PromiseOrValue<BigNumberish>,

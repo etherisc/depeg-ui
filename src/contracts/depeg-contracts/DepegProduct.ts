@@ -27,33 +27,6 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace ITreasury {
-  export type FeeSpecificationStruct = {
-    componentId: PromiseOrValue<BigNumberish>;
-    fixedFee: PromiseOrValue<BigNumberish>;
-    fractionalFee: PromiseOrValue<BigNumberish>;
-    feeCalculationData: PromiseOrValue<BytesLike>;
-    createdAt: PromiseOrValue<BigNumberish>;
-    updatedAt: PromiseOrValue<BigNumberish>;
-  };
-
-  export type FeeSpecificationStructOutput = [
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    string,
-    BigNumber,
-    BigNumber
-  ] & {
-    componentId: BigNumber;
-    fixedFee: BigNumber;
-    fractionalFee: BigNumber;
-    feeCalculationData: string;
-    createdAt: BigNumber;
-    updatedAt: BigNumber;
-  };
-}
-
 export declare namespace IPriceDataProvider {
   export type PriceInfoStruct = {
     id: PromiseOrValue<BigNumberish>;
@@ -84,6 +57,33 @@ export declare namespace IPriceDataProvider {
   };
 }
 
+export declare namespace ITreasury {
+  export type FeeSpecificationStruct = {
+    componentId: PromiseOrValue<BigNumberish>;
+    fixedFee: PromiseOrValue<BigNumberish>;
+    fractionalFee: PromiseOrValue<BigNumberish>;
+    feeCalculationData: PromiseOrValue<BytesLike>;
+    createdAt: PromiseOrValue<BigNumberish>;
+    updatedAt: PromiseOrValue<BigNumberish>;
+  };
+
+  export type FeeSpecificationStructOutput = [
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber
+  ] & {
+    componentId: BigNumber;
+    fixedFee: BigNumber;
+    fractionalFee: BigNumber;
+    feeCalculationData: string;
+    createdAt: BigNumber;
+    updatedAt: BigNumber;
+  };
+}
+
 export interface DepegProductInterface extends utils.Interface {
   functions: {
     "DEFAULT_DATA_STRUCTURE()": FunctionFragment;
@@ -103,6 +103,7 @@ export interface DepegProductInterface extends utils.Interface {
     "getApplicationDataStructure()": FunctionFragment;
     "getApplicationId(uint256)": FunctionFragment;
     "getClaimDataStructure()": FunctionFragment;
+    "getDepegPriceInfo()": FunctionFragment;
     "getDepegState()": FunctionFragment;
     "getFeeFractionFullUnit()": FunctionFragment;
     "getFeeSpecification()": FunctionFragment;
@@ -162,6 +163,7 @@ export interface DepegProductInterface extends utils.Interface {
       | "getApplicationDataStructure"
       | "getApplicationId"
       | "getClaimDataStructure"
+      | "getDepegPriceInfo"
       | "getDepegState"
       | "getFeeFractionFullUnit"
       | "getFeeSpecification"
@@ -264,6 +266,10 @@ export interface DepegProductInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getClaimDataStructure",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDepegPriceInfo",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -443,6 +449,10 @@ export interface DepegProductInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getClaimDataStructure",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDepegPriceInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -980,6 +990,14 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { dataStructure: string }>;
 
+    getDepegPriceInfo(
+      overrides?: CallOverrides
+    ): Promise<
+      [IPriceDataProvider.PriceInfoStructOutput] & {
+        priceInfo: IPriceDataProvider.PriceInfoStructOutput;
+      }
+    >;
+
     getDepegState(
       overrides?: CallOverrides
     ): Promise<[number] & { state: number }>;
@@ -1191,6 +1209,10 @@ export interface DepegProduct extends BaseContract {
 
   getClaimDataStructure(overrides?: CallOverrides): Promise<string>;
 
+  getDepegPriceInfo(
+    overrides?: CallOverrides
+  ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
+
   getDepegState(overrides?: CallOverrides): Promise<number>;
 
   getFeeFractionFullUnit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1375,6 +1397,10 @@ export interface DepegProduct extends BaseContract {
     ): Promise<string>;
 
     getClaimDataStructure(overrides?: CallOverrides): Promise<string>;
+
+    getDepegPriceInfo(
+      overrides?: CallOverrides
+    ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
 
     getDepegState(overrides?: CallOverrides): Promise<number>;
 
@@ -1733,6 +1759,8 @@ export interface DepegProduct extends BaseContract {
 
     getClaimDataStructure(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getDepegPriceInfo(overrides?: CallOverrides): Promise<BigNumber>;
+
     getDepegState(overrides?: CallOverrides): Promise<BigNumber>;
 
     getFeeFractionFullUnit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1916,6 +1944,8 @@ export interface DepegProduct extends BaseContract {
     getClaimDataStructure(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getDepegPriceInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getDepegState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
