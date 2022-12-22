@@ -20,7 +20,7 @@ export async function createApprovalForTreasury(
         beforeApprovalCallback(treasury, "", amount); // TODO: currency symbol
     }
     try {
-        const tx = await usd1.approve(treasury, amount);
+        const tx = await usd1.approve(treasury, amount, { gasLimit: 100000 });
         console.log("tx done", tx)
         if (beforeWaitCallback !== undefined) {
             beforeWaitCallback(treasury, "", amount); // TODO: currency symbol
