@@ -5,7 +5,6 @@ import { AppContext } from "../../context/app_context";
 import { getInsuranceApi, InsuranceApi } from "../../backend/insurance_api";
 import { DataGrid, GridColDef, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
-import { BundleRowView } from "../../model/bundle";
 import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
 import { LinkBehaviour } from "../link_behaviour";
@@ -16,7 +15,6 @@ import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
 import { formatDate } from "../../utils/date";
 import moment from "moment";
-import { BigNumber } from "ethers";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -74,6 +72,11 @@ export default function Bundles(props: BundlesProps) {
             flex: 1,
         },
         { 
+            field: 'name', 
+            headerName: t('table.header.name'), 
+            flex: 1,
+        },
+        { 
             field: 'capital', 
             headerName: t('table.header.capital'), 
             flex: 1.5,
@@ -90,6 +93,17 @@ export default function Bundles(props: BundlesProps) {
             headerName: t('table.header.created'), 
             flex: 1,
             valueFormatter: (params: GridValueFormatterParams<number>) => formatDate(moment.unix(params.value)),
+        },
+        { 
+            field: 'lifetime', 
+            headerName: t('table.header.lifetime'), 
+            flex: 1,
+            valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
+            valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
+                const bundle = params.value;
+                const lifetime = moment.unix(bundle.createdAt).add(bundle.lifetime.toNumber(), 'seconds');
+                return formatDate(lifetime);
+            }
         },
         { 
             field: 'policies', 

@@ -114,6 +114,8 @@ export default function InvestForm(props: InvestFormProperties) {
         }
     }
 
+    // FIXME: lifetime and linetimeEndDate must be synced on update
+
     const waitForPayment = paymentInProgress ? <LinearProgress /> : null;
     
     return (<>
