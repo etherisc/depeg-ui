@@ -55,9 +55,18 @@ NEXT_FAUCET_SEND_ETHERS=true
 NEXT_FAUCET_SEND_TESTCOIN=true
 ```
 
+## Run docker image locally with mumbai instance configuration
+
+```
+docker build -t depeg-ui --build-arg INSTANCE=mumbai .
+docker run --rm -p 3002:3000 depeg-ui
+```
+
+open browser at http://localhost:3002
 
 
 ## Deployment
 
-TODO:
-
+```
+git push dokku develop:main
+```
