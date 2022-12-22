@@ -12,6 +12,8 @@ import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { TextField } from '@mui/material';
 import { INPUT_VARIANT } from '../../config/theme';
+import moment from 'moment';
+import { DatePicker } from '@mui/x-date-pickers';
 
 const formInputVariant = 'outlined';
 
@@ -27,6 +29,7 @@ export interface InvestFormProperties {
 export type IInvestFormValues = {
     bundleName: string,
     lifetime: number;
+    lifetimeEndDate: string;
     investedAmount: number;
     insuredAmountMin: number;
     insuredAmountMax: number;
@@ -48,12 +51,15 @@ export default function InvestForm(props: InvestFormProperties) {
     const annualPctReturn = investProps.annualPctReturn;
     const maxAnnualPctReturn = investProps.maxAnnualPctReturn;
 
+    const defaultLifetime = 90;
+
     const { handleSubmit, control, formState, getValues, setValue, watch, trigger } = useForm<IInvestFormValues>({ 
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
             bundleName: '',
-            lifetime: 90 * 24 * 60 * 60,
+            lifetime: defaultLifetime,
+            lifetimeEndDate: moment().add(defaultLifetime, 'days').format("YYYY-MM-DD"),
             investedAmount: maxInvestedAmount,
             insuredAmountMin: minSumInsured,
             insuredAmountMax: maxSumInsured,
@@ -95,7 +101,7 @@ export default function InvestForm(props: InvestFormProperties) {
         try {
             const values = getValues();
             const bundleName = values.bundleName;
-            const lifetime = values.lifetime;
+            const lifetime = values.lifetime * 24 * 60 * 60;
             const investedAmount = values.investedAmount * Math.pow(10, props.usd2Decimals);
             const minSumInsured = values.insuredAmountMin * Math.pow(10, props.usd2Decimals);
             const maxSumInsured = values.insuredAmountMax * Math.pow(10, props.usd2Decimals);
@@ -114,6 +120,86 @@ export default function InvestForm(props: InvestFormProperties) {
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
                 sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
+                <Grid item xs={12}>
+                    <Controller
+                        name="bundleName"
+                        control={control}
+                        rules={{ 
+                            required: true, 
+                            minLength: 3,
+                            maxLength: 32,
+                        }}
+                        render={({ field }) => 
+                            <TextField 
+                                label={t('bundleName')}
+                                fullWidth
+                                disabled={props.formDisabled}
+                                variant={INPUT_VARIANT}
+                                {...field} 
+                                error={errors.bundleName !== undefined}
+                                helperText={errors.bundleName !== undefined 
+                                    ? t(`error.field.${errors.bundleName.type}`, { "ns": "common", "minLength": 3, "maxLength": 32 }) 
+                                    : ""
+                                }
+                                />}
+                        />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <Controller
+                        name="lifetime"
+                        control={control}
+                        rules={{ 
+                            required: true, 
+                            // FIXME: min: coverageDaysMin, 
+                            // max: coverageDaysMax, 
+                            pattern: /^[0-9]+$/ 
+                        }}
+                        render={({ field }) => 
+                            <TextField 
+                                label={t('lifetime')}
+                                fullWidth
+                                disabled={props.formDisabled}
+                                variant={INPUT_VARIANT}
+                                {...field} 
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">{t('days')}</InputAdornment>,
+                                }}
+                                error={errors.lifetime !== undefined}
+                                helperText={errors.lifetime !== undefined 
+                                    ? ( errors.lifetime.type == 'pattern' 
+                                            ? t(`error.field.numberType`, { "ns": "common"}) 
+                                            : t(`error.field.${errors.lifetime.type}`, 
+                                                    // FIXME: { "ns": "common", "minValue": coverageDaysMin, "maxValue": coverageDaysMax }
+                                                    { "ns": "common" }
+                                                ) 
+                                    ) : ""}
+                                />}
+                        />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <Controller
+                        name="lifetimeEndDate"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => 
+                            <DatePicker
+                                {...field} 
+                                label={t('lifetimeUntil')}
+                                inputFormat="DD.MM.YYYY"
+                                disabled={props.formDisabled}
+                                renderInput={(params) => 
+                                    <TextField 
+                                        {...params}
+                                        fullWidth 
+                                        variant={INPUT_VARIANT} 
+                                        />
+                                }
+                                disablePast={true}
+                                // FIXME: minDate={coverageUntilMin}
+                                // maxDate={coverageUntilMax}
+                                />}
+                        />
+                </Grid>
                 <Grid item xs={12}>
                     <Controller
                         name="investedAmount"
