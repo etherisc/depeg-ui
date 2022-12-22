@@ -1,12 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/app_context";
-import { Button } from '@mui/material';
+import { Button, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import Typography from '@mui/material/Typography'
 import { DepegProduct__factory } from "../../contracts/depeg-contracts";
 import { useSnackbar } from 'notistack';
 import { useTranslation } from "next-i18next";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
 
-export default function Faucet() {
+export default function Faucet(props: any) {
+    const { listItem } = props;
     const appContext = useContext(AppContext);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
@@ -37,12 +40,6 @@ export default function Faucet() {
         );
     }
 
-    async function getTokenAddress() {
-        const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x00";
-        const depegProduct = DepegProduct__factory.connect(depegProductContractAddress, appContext.data.signer!);
-        return await depegProduct.getToken();
-    }
-
     async function useFaucet() {
         const snackbarId = enqueueSnackbar(t('wait_for_coins'),  { persist: true, variant: 'info' });
 
@@ -52,6 +49,18 @@ export default function Faucet() {
 
         closeSnackbar(snackbarId);
         enqueueSnackbar(t('coins_sent'),  { autoHideDuration: 3000, variant: 'success' });
+    }
+
+    if (listItem !== undefined && listItem) {
+        return (            
+            <ListItem key='faucet' disablePadding>
+                <ListItemButton onClick={useFaucet}>
+                    <ListItemIcon>
+                        <FontAwesomeIcon icon={faHandHoldingDollar} />
+                    </ListItemIcon>
+                    <ListItemText primary={`${currency} faucet`} />
+                </ListItemButton>
+            </ListItem>);
     }
     
     return (<>

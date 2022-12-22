@@ -15,6 +15,7 @@ import Drawer from '@mui/material/Drawer';
 import { Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShield, faReceipt, faSackDollar, faVault } from "@fortawesome/free-solid-svg-icons";
+import Faucet from './faucet';
 
 export default function Header() {
     const { t } = useTranslation('common');
@@ -59,6 +60,7 @@ export default function Header() {
     listitems.push(getListItem(t('nav.link.invest'), '/invest', faSackDollar));
     links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" icon={faVault} />);
     listitems.push(getListItem(t('nav.link.bundles'), '/bundles', faVault));
+    listitems.push(<Faucet listItem='true' />);
 
     const drawer = (
         <Box onClick={handleDrawerToggle} >
