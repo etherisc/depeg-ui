@@ -56,9 +56,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // coverage period (days and date)
     const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
     const [ coverageDaysMax, setCoverageDaysMax ] = useState(props.applicationApi.coverageDurationDaysMax);
-    const coverageUntilMin = moment().add(props.applicationApi.coverageDurationDaysMin, 'days');
-    const coverageUntilMax = moment().add(props.applicationApi.coverageDurationDaysMax, 'days');
-
+    const [ coverageUntilMin, setCoverageUntilMin ] = useState(moment().add(props.applicationApi.coverageDurationDaysMin, 'days'));
+    const [ coverageUntilMax, setCoverageUntilMax ] = useState(moment().add(props.applicationApi.coverageDurationDaysMax, 'days'));
+    
     const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IAplicationFormValues>({ 
         mode: "onChange",
         reValidateMode: "onChange",
@@ -141,6 +141,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             const coverageDays = maxCoverageDays < 30 ? maxCoverageDays : 30;
             setValue("coverageDuration", coverageDays);
             setValue("coverageEndDate", moment().add(coverageDays, 'days').format("YYYY-MM-DD"));
+            setCoverageUntilMin(moment().add(minCoverageDays, 'days'));
+            setCoverageUntilMax(moment().add(maxCoverageDays, 'days'));
+
         }
     }, [props.bundles, props.usd1Decimals, setValue]);
 
