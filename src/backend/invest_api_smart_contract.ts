@@ -53,6 +53,8 @@ export class InvestApiSmartContract implements InvestApi {
     }
 
     async invest(
+        name: string,
+        lifetime: number,
         investorWalletAddress: string, 
         investedAmount: number, 
         minSumInsured: number, 
@@ -65,6 +67,8 @@ export class InvestApiSmartContract implements InvestApi {
     ): Promise<boolean> {
         console.log("invest", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         const [tx, receipt] = await (await this.riskpoolApi()).createBundle(
+            name, 
+            lifetime,
             investorWalletAddress, 
             investedAmount, 
             minSumInsured, 

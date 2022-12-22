@@ -61,7 +61,7 @@ export default function Header() {
     listitems.push(getListItem(t('nav.link.invest'), '/invest', faSackDollar));
     links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" icon={faVault} />);
     listitems.push(getListItem(t('nav.link.bundles'), '/bundles', faVault));
-    listitems.push(<FaucetListItem />);
+    listitems.push(<FaucetListItem key="faucet" />);
 
     const drawer = (
         <Box onClick={handleDrawerToggle} >

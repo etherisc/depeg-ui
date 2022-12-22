@@ -130,6 +130,8 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         annualPctReturn: 5,
         maxAnnualPctReturn: 20,
         async invest(
+            name: string,
+            lifetime: number,
             investorWalletAddress: string, 
             investedAmount: number, 
             minSumInsured: number, 
@@ -139,7 +141,7 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
             annualPctReturn: number
         ): Promise<boolean> {
             enqueueSnackbar(
-                `Riskpool mocked ($investorWalletAddress, $investedAmount, $minSumInsured, $maxSumInsured, $minDuration, $maxDuration, $annualPctReturn)`,
+                `Riskpool mocked ($name, $lifetime, $investorWalletAddress, $investedAmount, $minSumInsured, $maxSumInsured, $minDuration, $maxDuration, $annualPctReturn)`,
                 { autoHideDuration: 3000, variant: 'info' }
             );
             await delay(2000);

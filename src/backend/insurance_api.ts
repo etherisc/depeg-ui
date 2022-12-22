@@ -70,6 +70,8 @@ export interface InvestApi {
     maxAnnualPctReturn: number;
     invest: 
         (
+            name: string,
+            lifetime: number,
             investorWalletAddress: string, 
             investedAmount: number, 
             minSumInsured: number, 

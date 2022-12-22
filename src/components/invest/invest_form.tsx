@@ -21,10 +21,12 @@ export interface InvestFormProperties {
     usd2Decimals: number;
     insurance: InsuranceApi;
     formReadyForInvest: (isFormReady: boolean) => void;
-    invest: (investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) => void;
+    invest: (name: string, lifetime: number, investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) => void;
 }
 
 export type IInvestFormValues = {
+    bundleName: string,
+    lifetime: number;
     investedAmount: number;
     insuredAmountMin: number;
     insuredAmountMax: number;
@@ -50,6 +52,8 @@ export default function InvestForm(props: InvestFormProperties) {
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
+            bundleName: '',
+            lifetime: 90 * 24 * 60 * 60,
             investedAmount: maxInvestedAmount,
             insuredAmountMin: minSumInsured,
             insuredAmountMax: maxSumInsured,
@@ -90,13 +94,15 @@ export default function InvestForm(props: InvestFormProperties) {
 
         try {
             const values = getValues();
+            const bundleName = values.bundleName;
+            const lifetime = values.lifetime;
             const investedAmount = values.investedAmount * Math.pow(10, props.usd2Decimals);
             const minSumInsured = values.insuredAmountMin * Math.pow(10, props.usd2Decimals);
             const maxSumInsured = values.insuredAmountMax * Math.pow(10, props.usd2Decimals);
             const minDuration = values.coverageDurationMin;
             const maxDuration = values.coverageDurationMax;
             const annualPctReturn = values.annualPctReturn;
-            await props.invest(investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+            await props.invest(bundleName, lifetime, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         } finally {
             setPaymentInProgress(false);
         }
