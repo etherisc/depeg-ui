@@ -1,11 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/app_context";
+import { Button, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import Typography from '@mui/material/Typography'
+import { DepegProduct__factory } from "../../contracts/depeg-contracts";
 import { useSnackbar } from 'notistack';
 import { useTranslation } from "next-i18next";
-import { Button } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
 
-export default function Faucet() {
+export default function FaucetListItem() {
     const appContext = useContext(AppContext);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
@@ -46,12 +49,15 @@ export default function Faucet() {
         closeSnackbar(snackbarId);
         enqueueSnackbar(t('coins_sent'),  { autoHideDuration: 3000, variant: 'success' });
     }
-    
-    return (<>
-        <Button variant="text" sx={{ p: 0 }} onClick={useFaucet}>
-            <Typography variant="body2" sx={{ fontSize: '10px' }}>
-                    {currency} faucet
-            </Typography>
-        </Button>
-    </>);
+
+    return (
+        <ListItem key='faucet' disablePadding>
+            <ListItemButton onClick={useFaucet}>
+                <ListItemIcon>
+                    <FontAwesomeIcon icon={faHandHoldingDollar} />
+                </ListItemIcon>
+                <ListItemText primary={`${currency} faucet`} />
+            </ListItemButton>
+        </ListItem>
+        );
 }

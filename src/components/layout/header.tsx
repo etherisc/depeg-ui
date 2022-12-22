@@ -16,6 +16,7 @@ import { Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } f
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShield, faReceipt, faSackDollar, faVault } from "@fortawesome/free-solid-svg-icons";
 import Faucet from './faucet';
+import FaucetListItem from './faucet_list_item';
 
 export default function Header() {
     const { t } = useTranslation('common');
@@ -60,7 +61,7 @@ export default function Header() {
     listitems.push(getListItem(t('nav.link.invest'), '/invest', faSackDollar));
     links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" icon={faVault} />);
     listitems.push(getListItem(t('nav.link.bundles'), '/bundles', faVault));
-    listitems.push(<Faucet listItem='true' />);
+    listitems.push(<FaucetListItem />);
 
     const drawer = (
         <Box onClick={handleDrawerToggle} >
