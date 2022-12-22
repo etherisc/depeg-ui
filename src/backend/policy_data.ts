@@ -1,8 +1,8 @@
 import { BigNumber } from "ethers/lib/ethers";
 
 export interface PolicyData {
+    id: string;
     owner: string
-    processId: string;
     applicationState: number;
     policyState?: number;
     payoutState?: number;

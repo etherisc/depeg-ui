@@ -159,8 +159,8 @@ export class DepegProductApi {
         }
         const [ duration ] = await this.depegRiskpool!.decodeApplicationParameterFromData(appdata);
         return {
+            id: processId,
             owner: ownerWalletAddress,
-            processId: processId,
             applicationState: applicationState,
             policyState: policyState,
             payoutState: payoutState,

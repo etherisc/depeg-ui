@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { InsuranceApi } from "../../backend/insurance_api";
-import { DataGrid, GridColDef, GridToolbarContainer } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { PolicyRowView } from "../../model/policy";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -17,6 +17,9 @@ import { formatCurrency } from "../../utils/numbers";
 import moment from "moment";
 import { formatDate } from "../../utils/date";
 import { getPolicyEnd, getPolicyState } from "../../utils/product_formatter";
+import { format } from "node:path/win32";
+import { formatAddress } from "../../utils/address";
+import { BigNumber } from "ethers";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -26,7 +29,7 @@ export default function Policies(props: PoliciesProps) {
     const { t } = useTranslation(['policies', 'common']);
     const appContext = useContext(AppContext);
 
-    const [ policies, setPolicies ] = useState<Array<PolicyRowView>>([]);
+    const [ policies, setPolicies ] = useState<Array<PolicyData>>([]);
     const [ policyRetrievalInProgess , setPolicyRetrievalInProgess ] = useState(false);
     const [ pageSize, setPageSize ] = useState(5);
 
@@ -36,17 +39,17 @@ export default function Policies(props: PoliciesProps) {
     }
 
     useEffect(() => {
-        function convertPolicyDataToRowView(policy: PolicyData) {
-            const state = getPolicyState(policy);
-            return {
-                id: policy.processId,
-                walletAddress: policy.owner,
-                insuredAmount: `${props.insurance.usd1} ${formatCurrency(policy.suminsured.toNumber(), props.insurance.usd1Decimals)}`,
-                created: formatDate(moment.unix(policy.createdAt.toNumber())),
-                coverageUntil: formatDate(getPolicyEnd(policy)),
-                state: t('application_state_' + state, { ns: 'common'}),
-            } as PolicyRowView;
-        }
+        // function convertPolicyDataToRowView(policy: PolicyData) {
+        //     const state = getPolicyState(policy);
+        //     return {
+        //         id: policy.processId,
+        //         walletAddress: policy.owner,
+        //         insuredAmount: `${props.insurance.usd1} ${formatCurrency(policy.suminsured.toNumber(), props.insurance.usd1Decimals)}`,
+        //         created: formatDate(moment.unix(policy.createdAt.toNumber())),
+        //         coverageUntil: formatDate(getPolicyEnd(policy)),
+        //         state: t('application_state_' + state, { ns: 'common'}),
+        //     } as PolicyRowView;
+        // }
 
         async function getPolicies() {
             const walletAddress = await appContext?.data.signer?.getAddress();
@@ -59,8 +62,8 @@ export default function Policies(props: PoliciesProps) {
                     if (showActivePoliciesOnly && (policy.applicationState !== 2 || policy.policyState !== 0)) {
                         continue;
                     }
-                    const rowView = convertPolicyDataToRowView(policy);
-                    setPolicies(policies => [...policies, rowView]);
+                    // const rowView = convertPolicyDataToRowView(policy);
+                    setPolicies(policies => [...policies, policy]);
                 }
                 setPolicyRetrievalInProgess(false);
             } else {
@@ -73,11 +76,38 @@ export default function Policies(props: PoliciesProps) {
     const columns: GridColDef[] = [
         // { field: 'id', headerName: t('table.header.id'), flex: 1 },
         // TODO: add copy button to field and shorten content
-        { field: 'walletAddress', headerName: t('table.header.walletAddress'), flex: 1 },
-        { field: 'insuredAmount', headerName: t('table.header.insuredAmount'), flex: 0.5 },
-        { field: 'created', headerName: t('table.header.createdDate'), flex: 0.5 },
-        { field: 'coverageUntil', headerName: t('table.header.coverageUntil'), flex: 0.5 },
-        { field: 'state', headerName: t('table.header.status'), flex: 0.5 },
+        { 
+            field: 'owner', 
+            headerName: t('table.header.walletAddress'), 
+            flex: 1,
+            valueFormatter: (params: GridValueFormatterParams<string>) => formatAddress(params.value)
+        },
+        { 
+            field: 'suminsured', 
+            headerName: t('table.header.insuredAmount'), 
+            flex: 1,
+            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.insurance.usd1} ${formatCurrency(params.value.toNumber(), props.insurance.usd1Decimals)}`
+        },
+        { 
+            field: 'createdAt', 
+            headerName: t('table.header.createdDate'), 
+            flex: 1,
+            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => formatDate(moment.unix(params.value.toNumber()))
+        },
+        { 
+            field: 'coverageUntil', 
+            headerName: t('table.header.coverageUntil'), 
+            flex: 1,
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => formatDate(getPolicyEnd(params.value))
+        },
+        { 
+            field: 'applicationState', 
+            headerName: t('table.header.status'), 
+            flex: 1,
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => t('application_state_' + getPolicyState(params.value), { ns: 'common'})
+        },
     ];
 
     function GridToolbar() {
