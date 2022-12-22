@@ -8,37 +8,25 @@ import { Box, Typography } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
 
-export interface AccountAddressProps {
-    signer: Signer;
-    address?: string;
+export interface AddressProps {
+    address: string;
     iconColor?: string;
 }
 
-export default function AccountAddress(props: AccountAddressProps) {
+export default function Address(props: AddressProps) {
     const { enqueueSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
 
-    const [ address, setAddress ] = useState(props.address ?? "");
     const iconColor = props.iconColor ?? "";
 
-    useEffect(() => {
-        console.log("signer changed");
-        async function updateData() {
-            const address = await props.signer.getAddress();
-            setAddress(address);
-        }
-        if (props.address !== null) {
-            updateData();
-        }
-    }, [props]);
-
+    
     async function copyAddressToClipboard() {
-        await navigator.clipboard.writeText(address);
+        await navigator.clipboard.writeText(props.address);
         enqueueSnackbar(t('action.address_copied'),  { autoHideDuration: 2000, variant: 'info' });
     }
 
-    const abrAdr = `${address.substring(0, 6)}…${address.substring(address.length - 4)}`;
-    const abrAdrMobile = `0x…${address.substring(address.length - 4)}`;
+    const abrAdr = `${props.address.substring(0, 6)}…${props.address.substring(props.address.length - 4)}`;
+    const abrAdrMobile = `0x…${props.address.substring(props.address.length - 4)}`;
 
     return (
         <>

@@ -4,7 +4,7 @@ import { AppContext } from "../../context/app_context";
 import { DOT, NBSP } from "../../utils/chars";
 import { Box, Avatar } from "@mui/material";
 import Balance from "../balance";
-import AccountAddress from "../account_address";
+import Address from "../address";
 import Logout from "./logout";
 import { reconnectWallets } from "../../utils/wallet";
 import Login from "./login";
@@ -52,7 +52,7 @@ export default function Account() {
                     <Blockies seed={address} size={10} scale={4} />
                 </Avatar>
                 <Box sx={{ mr: 1, alignItems: 'center', verticalAlign: 'middle' }}>
-                    <AccountAddress signer={appContext?.data.signer} address={address}/>
+                    <Address address={address}/>
                     <Box component="span" sx={{ display: { 'xs': 'none', 'md': 'inline-flex'}}}>
                         {NBSP} {DOT} {NBSP}
                         <Balance

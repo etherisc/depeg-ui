@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { InsuranceApi } from "../../backend/insurance_api";
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
-import { PolicyRowView } from "../../model/policy";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -17,10 +16,8 @@ import { formatCurrency } from "../../utils/numbers";
 import moment from "moment";
 import { formatDate } from "../../utils/date";
 import { getPolicyEnd, getPolicyState } from "../../utils/product_formatter";
-import { format } from "node:path/win32";
-import { formatAddress } from "../../utils/address";
 import { BigNumber } from "ethers";
-import AccountAddress from "../account_address";
+import Address from "../address";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -64,11 +61,18 @@ export default function Policies(props: PoliciesProps) {
 
     const columns: GridColDef[] = [
         { 
+            field: 'id', 
+            headerName: t('table.header.policyId'), 
+            flex: 1,
+            renderCell: (params: GridRenderCellParams<string>) => 
+            (<Address address={params.value ?? ""} iconColor="secondary.main" />)
+        },
+        { 
             field: 'owner', 
             headerName: t('table.header.walletAddress'), 
             flex: 1,
             renderCell: (params: GridRenderCellParams<string>) => 
-            (<AccountAddress address={params.value} signer={appContext.data.signer!} iconColor="secondary.main" />)
+            (<Address address={params.value ?? ""} iconColor="secondary.main" />)
         },
         { 
             field: 'suminsured', 

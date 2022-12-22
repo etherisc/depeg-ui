@@ -3,6 +3,7 @@
     "table": {
         "header": {
             "id": "ID",
+            "policyId": "Policy Id",
             "walletAddress": "Wallet Address",
             "insuredAmount": "Insured Amount",
             "coverageUntil": "Coverage Until",
