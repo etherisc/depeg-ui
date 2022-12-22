@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { InsuranceApi } from "../../backend/insurance_api";
-import { DataGrid, GridColDef, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { PolicyRowView } from "../../model/policy";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -20,6 +20,7 @@ import { getPolicyEnd, getPolicyState } from "../../utils/product_formatter";
 import { format } from "node:path/win32";
 import { formatAddress } from "../../utils/address";
 import { BigNumber } from "ethers";
+import AccountAddress from "../account_address";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -62,13 +63,12 @@ export default function Policies(props: PoliciesProps) {
     }, [appContext?.data.signer, props.insurance, showActivePoliciesOnly, t]);
 
     const columns: GridColDef[] = [
-        // { field: 'id', headerName: t('table.header.id'), flex: 1 },
-        // TODO: add copy button to field
         { 
             field: 'owner', 
             headerName: t('table.header.walletAddress'), 
             flex: 1,
-            valueFormatter: (params: GridValueFormatterParams<string>) => formatAddress(params.value)
+            renderCell: (params: GridRenderCellParams<string>) => 
+            (<AccountAddress address={params.value} signer={appContext.data.signer!} iconColor="secondary.main" />)
         },
         { 
             field: 'suminsured', 
@@ -146,6 +146,7 @@ export default function Policies(props: PoliciesProps) {
                 pageSize={pageSize}
                 rowsPerPageOptions={[5, 10, 20, 50]}
                 onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
+                disableSelectionOnClick={true}
                 />
         </>
     );

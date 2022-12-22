@@ -143,6 +143,7 @@ export default function Bundles(props: BundlesProps) {
                 pageSize={pageSize}
                 rowsPerPageOptions={[5, 10, 20, 50]}
                 onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
+                disableSelectionOnClick={true}
                 />
         </>
     );
