@@ -249,7 +249,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Controller
                         name="insuredAmount"
                         control={control}
-                        rules={{ required: true, min: insuredAmountMin, max: insuredAmountMax, pattern: /^[0-9.,]+$/ }}
+                        rules={{ required: true, min: insuredAmountMin, max: insuredAmountMax, pattern: /^[0-9.]+$/ }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('insuredAmount')}

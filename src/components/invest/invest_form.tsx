@@ -116,7 +116,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: minInvestedAmount, 
                             max: maxInvestedAmount,
-                            pattern: /^[0-9.,]+$/
+                            pattern: /^[0-9.]+$/
                         }}
                         render={({ field }) => 
                             <TextField 
@@ -145,7 +145,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: minSumInsured, 
                             max: maxSumInsured,
-                            pattern: /^[0-9.,]+$/,
+                            pattern: /^[0-9.]+$/,
                             validate: {
                                 minmax: v => v <= watchInsuredAmountMax 
                             }
@@ -177,7 +177,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: minSumInsured, 
                             max: maxSumInsured,
-                            pattern: /^[0-9.,]+$/,
+                            pattern: /^[0-9.]+$/,
                             validate: {
                                 minmax: v => v >= watchInsuredAmountMin
                             }                        
