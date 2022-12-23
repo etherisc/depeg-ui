@@ -7,6 +7,8 @@ export class InvestApiSmartContract implements InvestApi {
     private doNoUseDirectlydepegRiskpoolApi?: DepegRiskpoolApi;
     private depegProductApi: DepegProductApi;
 
+    minLifetime: number;
+    maxLifetime: number;
     minInvestedAmount: number;
     maxInvestedAmount: number;
     minSumInsured: number;
@@ -16,7 +18,15 @@ export class InvestApiSmartContract implements InvestApi {
     annualPctReturn: number;
     maxAnnualPctReturn: number;
 
-    constructor(depegProductApi: DepegProductApi, minInvestedAmount: number, maxInvestedAmount: number, minSumInsured: number, maxSumInsured: number, minCoverageDuration: number, maxCoverageDuration: number, annualPctReturn: number, maxAnnualPctReturn: number) {
+    constructor(depegProductApi: DepegProductApi, 
+        minLifetime: number, maxLifetime: number, 
+        minInvestedAmount: number, maxInvestedAmount: number, 
+        minSumInsured: number, maxSumInsured: number, 
+        minCoverageDuration: number, maxCoverageDuration: number, 
+        annualPctReturn: number, maxAnnualPctReturn: number
+    ) {
+        this.minLifetime = minLifetime;
+        this.maxLifetime = maxLifetime;
         this.minInvestedAmount = minInvestedAmount;
         this.maxInvestedAmount = maxInvestedAmount;
         this.minSumInsured = minSumInsured;
@@ -53,6 +63,8 @@ export class InvestApiSmartContract implements InvestApi {
     }
 
     async invest(
+        name: string,
+        lifetime: number,
         investorWalletAddress: string, 
         investedAmount: number, 
         minSumInsured: number, 
@@ -65,6 +77,8 @@ export class InvestApiSmartContract implements InvestApi {
     ): Promise<boolean> {
         console.log("invest", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         const [tx, receipt] = await (await this.riskpoolApi()).createBundle(
+            name, 
+            lifetime,
             investorWalletAddress, 
             investedAmount, 
             minSumInsured, 

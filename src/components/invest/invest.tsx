@@ -125,10 +125,12 @@ export default function Invest(props: InvestProps) {
         }
     }
 
-    async function doInvest(investorWalletAddress: string, investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
+    async function doInvest(name: string, lifetime: number, investorWalletAddress: string, investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
         let snackbar: SnackbarKey | undefined = undefined; 
         try {
             return await props.insurance.invest.invest(
+                name, 
+                lifetime,
                 investorWalletAddress, 
                 investedAmount, 
                 minSumInsured, 
@@ -209,7 +211,11 @@ export default function Invest(props: InvestProps) {
         }
     }
 
-    async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) {
+    async function invest(
+        name: string, lifetime: number, investedAmount: number, 
+        minSumInsured: number, maxSumInsured: number, 
+        minDuration: number, maxDuration: number, annualPctReturn: number
+    ) {
         try {
             enableUnloadWarning(true);
             setActiveStep(3);
@@ -221,7 +227,7 @@ export default function Invest(props: InvestProps) {
                 return;
             }
             setActiveStep(4);
-            const investSuccess = await doInvest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+            const investSuccess = await doInvest(name, lifetime, investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
             if ( ! investSuccess) {
                 setActiveStep(2);
                 showAllowanceNotice();

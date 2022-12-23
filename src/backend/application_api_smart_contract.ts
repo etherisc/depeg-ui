@@ -1,3 +1,4 @@
+import { BigNumber, ethers } from "ethers";
 import { NoBundleFoundError, BalanceTooSmallError } from "../utils/error";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
@@ -61,7 +62,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         const durationSecs = coverageDurationDays * 24 * 60 * 60;
         console.log("calculatePremium", walletAddress, insuredAmount, coverageDurationDays);
         console.log("bundleData", bundles);
-        const bestBundle = (await this.riskpoolApi()).getBestQuote(bundles, insuredAmount, durationSecs);
+        const bestBundle = (await this.riskpoolApi()).getBestQuote(bundles, insuredAmount, durationSecs, await this.lastBlockTimestamp());
         if (bestBundle.minDuration == Number.MAX_VALUE) { 
             throw new NoBundleFoundError();
         }
@@ -94,7 +95,13 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(insuredAmount, coverageDurationDays, premium, beforeApplyCallback, beforeWaitCallback);
         let processId = (await this.getDepegProductApi())!.extractProcessIdFromApplicationLogs(receipt.logs);
         console.log(`processId: ${processId}`);
-        // TODO: return real result
         return Promise.resolve(true);
     }
+
+    async lastBlockTimestamp(): Promise<number> {
+        const blockNumber = await this.depegProductApi.getSigner().provider?.getBlockNumber() ?? 0;
+        const block = await this.depegProductApi.getSigner().provider?.getBlock(blockNumber);
+        return block?.timestamp ?? 0;
+    }
+
 }

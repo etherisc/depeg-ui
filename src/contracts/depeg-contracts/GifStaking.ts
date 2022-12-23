@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace GifStaking {
+export declare namespace IBundleDataProvider {
   export type BundleKeyStruct = {
     instanceId: PromiseOrValue<BytesLike>;
     bundleId: PromiseOrValue<BigNumberish>;
@@ -38,9 +38,51 @@ export declare namespace GifStaking {
     bundleId: BigNumber;
   };
 
+  export type BundleInfoStruct = {
+    key: IBundleDataProvider.BundleKeyStruct;
+    riskpool: IComponentDataProvider.ComponentKeyStruct;
+    name: PromiseOrValue<string>;
+    state: PromiseOrValue<BigNumberish>;
+    token: IInstanceDataProvider.TokenKeyStruct;
+    tokenSymbol: PromiseOrValue<string>;
+    tokenDecimals: PromiseOrValue<BigNumberish>;
+    expiryAt: PromiseOrValue<BigNumberish>;
+    closedAt: PromiseOrValue<BigNumberish>;
+    createdAt: PromiseOrValue<BigNumberish>;
+    updatedAt: PromiseOrValue<BigNumberish>;
+  };
+
+  export type BundleInfoStructOutput = [
+    IBundleDataProvider.BundleKeyStructOutput,
+    IComponentDataProvider.ComponentKeyStructOutput,
+    string,
+    number,
+    IInstanceDataProvider.TokenKeyStructOutput,
+    string,
+    number,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    key: IBundleDataProvider.BundleKeyStructOutput;
+    riskpool: IComponentDataProvider.ComponentKeyStructOutput;
+    name: string;
+    state: number;
+    token: IInstanceDataProvider.TokenKeyStructOutput;
+    tokenSymbol: string;
+    tokenDecimals: number;
+    expiryAt: BigNumber;
+    closedAt: BigNumber;
+    createdAt: BigNumber;
+    updatedAt: BigNumber;
+  };
+}
+
+export declare namespace GifStaking {
   export type StakeInfoStruct = {
     staker: PromiseOrValue<string>;
-    key: GifStaking.BundleKeyStruct;
+    key: IBundleDataProvider.BundleKeyStruct;
     balance: PromiseOrValue<BigNumberish>;
     createdAt: PromiseOrValue<BigNumberish>;
     updatedAt: PromiseOrValue<BigNumberish>;
@@ -48,63 +90,115 @@ export declare namespace GifStaking {
 
   export type StakeInfoStructOutput = [
     string,
-    GifStaking.BundleKeyStructOutput,
+    IBundleDataProvider.BundleKeyStructOutput,
     BigNumber,
     BigNumber,
     BigNumber
   ] & {
     staker: string;
-    key: GifStaking.BundleKeyStructOutput;
+    key: IBundleDataProvider.BundleKeyStructOutput;
     balance: BigNumber;
     createdAt: BigNumber;
     updatedAt: BigNumber;
   };
+}
 
-  export type BundleInfoStruct = {
-    key: GifStaking.BundleKeyStruct;
-    chainId: PromiseOrValue<BigNumberish>;
-    token: PromiseOrValue<string>;
+export declare namespace IComponentDataProvider {
+  export type ComponentKeyStruct = {
+    instanceId: PromiseOrValue<BytesLike>;
+    componentId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type ComponentKeyStructOutput = [string, BigNumber] & {
+    instanceId: string;
+    componentId: BigNumber;
+  };
+
+  export type ComponentInfoStruct = {
+    key: IComponentDataProvider.ComponentKeyStruct;
+    componentType: PromiseOrValue<BigNumberish>;
     state: PromiseOrValue<BigNumberish>;
-    closedSince: PromiseOrValue<BigNumberish>;
     createdAt: PromiseOrValue<BigNumberish>;
     updatedAt: PromiseOrValue<BigNumberish>;
   };
 
-  export type BundleInfoStructOutput = [
-    GifStaking.BundleKeyStructOutput,
-    BigNumber,
-    string,
+  export type ComponentInfoStructOutput = [
+    IComponentDataProvider.ComponentKeyStructOutput,
     number,
-    BigNumber,
+    number,
     BigNumber,
     BigNumber
   ] & {
-    key: GifStaking.BundleKeyStructOutput;
-    chainId: BigNumber;
-    token: string;
+    key: IComponentDataProvider.ComponentKeyStructOutput;
+    componentType: number;
     state: number;
-    closedSince: BigNumber;
     createdAt: BigNumber;
     updatedAt: BigNumber;
+  };
+}
+
+export declare namespace IInstanceDataProvider {
+  export type TokenKeyStruct = {
+    token: PromiseOrValue<string>;
+    chainId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type TokenKeyStructOutput = [string, BigNumber] & {
+    token: string;
+    chainId: BigNumber;
   };
 
   export type InstanceInfoStruct = {
     id: PromiseOrValue<BytesLike>;
+    state: PromiseOrValue<BigNumberish>;
+    displayName: PromiseOrValue<string>;
     chainId: PromiseOrValue<BigNumberish>;
     registry: PromiseOrValue<string>;
     createdAt: PromiseOrValue<BigNumberish>;
+    updatedAt: PromiseOrValue<BigNumberish>;
   };
 
   export type InstanceInfoStructOutput = [
     string,
+    number,
+    string,
     BigNumber,
     string,
+    BigNumber,
     BigNumber
   ] & {
     id: string;
+    state: number;
+    displayName: string;
     chainId: BigNumber;
     registry: string;
     createdAt: BigNumber;
+    updatedAt: BigNumber;
+  };
+
+  export type TokenInfoStruct = {
+    key: IInstanceDataProvider.TokenKeyStruct;
+    state: PromiseOrValue<BigNumberish>;
+    symbol: PromiseOrValue<string>;
+    decimals: PromiseOrValue<BigNumberish>;
+    createdAt: PromiseOrValue<BigNumberish>;
+    updatedAt: PromiseOrValue<BigNumberish>;
+  };
+
+  export type TokenInfoStructOutput = [
+    IInstanceDataProvider.TokenKeyStructOutput,
+    number,
+    string,
+    number,
+    BigNumber,
+    BigNumber
+  ] & {
+    key: IInstanceDataProvider.TokenKeyStructOutput;
+    state: number;
+    symbol: string;
+    decimals: number;
+    createdAt: BigNumber;
+    updatedAt: BigNumber;
   };
 }
 
@@ -118,13 +212,24 @@ export interface GifStakingInterface extends utils.Interface {
     "ONE_YEAR_DURATION()": FunctionFragment;
     "REWARD_100_PERCENTAGE()": FunctionFragment;
     "REWARD_MAX_PERCENTAGE()": FunctionFragment;
+    "TOKEN_MAX_DECIMALS()": FunctionFragment;
     "bundles()": FunctionFragment;
+    "bundles(bytes32)": FunctionFragment;
+    "bundles(bytes32,uint256)": FunctionFragment;
+    "calculateRequiredStakingAmount(uint256,address,uint256)": FunctionFragment;
     "calculateRewards(uint256,uint256)": FunctionFragment;
     "calculateRewardsIncrement((address,(bytes32,uint256),uint256,uint256,uint256))": FunctionFragment;
     "calculateTokenAmountFromStaking(uint256,uint256,address)": FunctionFragment;
+    "components(bytes32)": FunctionFragment;
+    "getBundleCapitalSupport(bytes32,uint256)": FunctionFragment;
+    "getBundleId(bytes32,uint256,uint256)": FunctionFragment;
+    "getBundleId(bytes32,uint256)": FunctionFragment;
     "getBundleInfo(bytes32,uint256)": FunctionFragment;
     "getBundleKey(uint256)": FunctionFragment;
     "getBundleStakes(bytes32,uint256)": FunctionFragment;
+    "getBundleToken(bytes32,uint256)": FunctionFragment;
+    "getComponentId(bytes32,uint256)": FunctionFragment;
+    "getComponentInfo(bytes32,uint256)": FunctionFragment;
     "getDip()": FunctionFragment;
     "getDipStakingRate(uint256,address)": FunctionFragment;
     "getDipToTokenParityLevel()": FunctionFragment;
@@ -134,19 +239,30 @@ export interface GifStakingInterface extends utils.Interface {
     "getReward100PercentLevel()": FunctionFragment;
     "getStakeInfo(bytes32,uint256,address)": FunctionFragment;
     "getStakingWallet()": FunctionFragment;
-    "getSupportedCapitalAmount(bytes32,uint256,address)": FunctionFragment;
+    "getTokenId(uint256)": FunctionFragment;
+    "getTokenInfo(address)": FunctionFragment;
+    "getTokenInfo(address,uint256)": FunctionFragment;
+    "getTokenKey(uint256)": FunctionFragment;
     "instances()": FunctionFragment;
+    "isRegisteredBundle(bytes32,uint256)": FunctionFragment;
+    "isRegisteredComponent(bytes32,uint256)": FunctionFragment;
+    "isRegisteredInstance(bytes32)": FunctionFragment;
+    "isRegisteredToken(address)": FunctionFragment;
+    "isRegisteredToken(address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "registerGifInstance(bytes32,uint256,address)": FunctionFragment;
+    "registerToken(address)": FunctionFragment;
+    "registerToken(address,uint256,uint8,string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setDipContract(address)": FunctionFragment;
-    "setDipStakingRate(uint256,address,uint256,uint256)": FunctionFragment;
+    "setDipStakingRate(address,uint256,uint256)": FunctionFragment;
     "setRewardPercentage(uint256)": FunctionFragment;
     "stake(bytes32,uint256,uint256)": FunctionFragment;
     "stakes(bytes32,uint256)": FunctionFragment;
     "stakes(bytes32)": FunctionFragment;
     "stakes()": FunctionFragment;
     "stakes(bytes32,uint256,address)": FunctionFragment;
+    "tokens()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "updateBundleState(bytes32,uint256,address,uint8)": FunctionFragment;
     "updateBundleState(bytes32,uint256)": FunctionFragment;
@@ -164,13 +280,24 @@ export interface GifStakingInterface extends utils.Interface {
       | "ONE_YEAR_DURATION"
       | "REWARD_100_PERCENTAGE"
       | "REWARD_MAX_PERCENTAGE"
-      | "bundles"
+      | "TOKEN_MAX_DECIMALS"
+      | "bundles()"
+      | "bundles(bytes32)"
+      | "bundles(bytes32,uint256)"
+      | "calculateRequiredStakingAmount"
       | "calculateRewards"
       | "calculateRewardsIncrement"
       | "calculateTokenAmountFromStaking"
+      | "components"
+      | "getBundleCapitalSupport"
+      | "getBundleId(bytes32,uint256,uint256)"
+      | "getBundleId(bytes32,uint256)"
       | "getBundleInfo"
       | "getBundleKey"
       | "getBundleStakes"
+      | "getBundleToken"
+      | "getComponentId"
+      | "getComponentInfo"
       | "getDip"
       | "getDipStakingRate"
       | "getDipToTokenParityLevel"
@@ -180,10 +307,20 @@ export interface GifStakingInterface extends utils.Interface {
       | "getReward100PercentLevel"
       | "getStakeInfo"
       | "getStakingWallet"
-      | "getSupportedCapitalAmount"
+      | "getTokenId"
+      | "getTokenInfo(address)"
+      | "getTokenInfo(address,uint256)"
+      | "getTokenKey"
       | "instances"
+      | "isRegisteredBundle"
+      | "isRegisteredComponent"
+      | "isRegisteredInstance"
+      | "isRegisteredToken(address)"
+      | "isRegisteredToken(address,uint256)"
       | "owner"
       | "registerGifInstance"
+      | "registerToken(address)"
+      | "registerToken(address,uint256,uint8,string)"
       | "renounceOwnership"
       | "setDipContract"
       | "setDipStakingRate"
@@ -193,6 +330,7 @@ export interface GifStakingInterface extends utils.Interface {
       | "stakes(bytes32)"
       | "stakes()"
       | "stakes(bytes32,uint256,address)"
+      | "tokens"
       | "transferOwnership"
       | "updateBundleState(bytes32,uint256,address,uint8)"
       | "updateBundleState(bytes32,uint256)"
@@ -232,7 +370,27 @@ export interface GifStakingInterface extends utils.Interface {
     functionFragment: "REWARD_MAX_PERCENTAGE",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "bundles", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "TOKEN_MAX_DECIMALS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "bundles()", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "bundles(bytes32)",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "bundles(bytes32,uint256)",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calculateRequiredStakingAmount",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "calculateRewards",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
@@ -250,6 +408,26 @@ export interface GifStakingInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "components",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundleCapitalSupport",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundleId(bytes32,uint256,uint256)",
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundleId(bytes32,uint256)",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getBundleInfo",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -259,6 +437,18 @@ export interface GifStakingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getBundleStakes",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundleToken",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComponentId",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComponentInfo",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "getDip", values?: undefined): string;
@@ -299,19 +489,60 @@ export interface GifStakingInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getSupportedCapitalAmount",
+    functionFragment: "getTokenId",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenInfo(address)",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenInfo(address,uint256)",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenKey",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(functionFragment: "instances", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "isRegisteredBundle",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isRegisteredComponent",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isRegisteredInstance",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isRegisteredToken(address)",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isRegisteredToken(address,uint256)",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "registerGifInstance",
     values: [
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "instances", values?: undefined): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "registerGifInstance",
+    functionFragment: "registerToken(address)",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "registerToken(address,uint256,uint8,string)",
     values: [
-      PromiseOrValue<BytesLike>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
@@ -327,7 +558,6 @@ export interface GifStakingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setDipStakingRate",
     values: [
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
@@ -362,6 +592,7 @@ export interface GifStakingInterface extends utils.Interface {
       PromiseOrValue<string>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "tokens", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
@@ -421,7 +652,23 @@ export interface GifStakingInterface extends utils.Interface {
     functionFragment: "REWARD_MAX_PERCENTAGE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "bundles", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "TOKEN_MAX_DECIMALS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "bundles()", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "bundles(bytes32)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "bundles(bytes32,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateRequiredStakingAmount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "calculateRewards",
     data: BytesLike
@@ -434,6 +681,19 @@ export interface GifStakingInterface extends utils.Interface {
     functionFragment: "calculateTokenAmountFromStaking",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "components", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleCapitalSupport",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleId(bytes32,uint256,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleId(bytes32,uint256)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getBundleInfo",
     data: BytesLike
@@ -444,6 +704,18 @@ export interface GifStakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBundleStakes",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getComponentId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getComponentInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getDip", data: BytesLike): Result;
@@ -479,14 +751,51 @@ export interface GifStakingInterface extends utils.Interface {
     functionFragment: "getStakingWallet",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getTokenId", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getSupportedCapitalAmount",
+    functionFragment: "getTokenInfo(address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenInfo(address,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenKey",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "instances", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isRegisteredBundle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isRegisteredComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isRegisteredInstance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isRegisteredToken(address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isRegisteredToken(address,uint256)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "registerGifInstance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerToken(address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerToken(address,uint256,uint8,string)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -519,6 +828,7 @@ export interface GifStakingInterface extends utils.Interface {
     functionFragment: "stakes(bytes32,uint256,address)",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "tokens", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -604,9 +914,29 @@ export interface GifStaking extends BaseContract {
 
     REWARD_MAX_PERCENTAGE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    bundles(
+    TOKEN_MAX_DECIMALS(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "bundles()"(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { numberOfBundles: BigNumber }>;
+
+    "bundles(bytes32)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { numberOfBundles: BigNumber }>;
+
+    "bundles(bytes32,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { numberOfBundles: BigNumber }>;
+
+    calculateRequiredStakingAmount(
+      chainId: PromiseOrValue<BigNumberish>,
+      targetTokenAddress: PromiseOrValue<string>,
+      targetAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { stakingAmount: BigNumber }>;
 
     calculateRewards(
       amount: PromiseOrValue<BigNumberish>,
@@ -626,13 +956,37 @@ export interface GifStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { tokenAmount: BigNumber }>;
 
+    components(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { numberOfComponents: BigNumber }>;
+
+    getBundleCapitalSupport(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { captialCap: BigNumber }>;
+
+    "getBundleId(bytes32,uint256,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { bundleId: BigNumber }>;
+
+    "getBundleId(bytes32,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { bundleId: BigNumber }>;
+
     getBundleInfo(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [GifStaking.BundleInfoStructOutput] & {
-        info: GifStaking.BundleInfoStructOutput;
+      [IBundleDataProvider.BundleInfoStructOutput] & {
+        info: IBundleDataProvider.BundleInfoStructOutput;
       }
     >;
 
@@ -640,8 +994,8 @@ export interface GifStaking extends BaseContract {
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [GifStaking.BundleKeyStructOutput] & {
-        key: GifStaking.BundleKeyStructOutput;
+      [IBundleDataProvider.BundleKeyStructOutput] & {
+        key: IBundleDataProvider.BundleKeyStructOutput;
       }
     >;
 
@@ -650,6 +1004,28 @@ export interface GifStaking extends BaseContract {
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { stakedDipAmount: BigNumber }>;
+
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { token: string }>;
+
+    getComponentId(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { componentId: BigNumber }>;
+
+    getComponentInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [IComponentDataProvider.ComponentInfoStructOutput] & {
+        info: IComponentDataProvider.ComponentInfoStructOutput;
+      }
+    >;
 
     getDip(overrides?: CallOverrides): Promise<[string] & { dip: string }>;
 
@@ -672,8 +1048,8 @@ export interface GifStaking extends BaseContract {
       instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [GifStaking.InstanceInfoStructOutput] & {
-        info: GifStaking.InstanceInfoStructOutput;
+      [IInstanceDataProvider.InstanceInfoStructOutput] & {
+        info: IInstanceDataProvider.InstanceInfoStructOutput;
       }
     >;
 
@@ -700,16 +1076,72 @@ export interface GifStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { instanceWallet: string }>;
 
-    getSupportedCapitalAmount(
-      instanceId: PromiseOrValue<BytesLike>,
-      bundleId: PromiseOrValue<BigNumberish>,
+    getTokenId(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { tokenAddress: string; chainId: BigNumber }
+    >;
+
+    "getTokenInfo(address)"(
       tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { captialCap: BigNumber }>;
+    ): Promise<
+      [IInstanceDataProvider.TokenInfoStructOutput] & {
+        tokenInfo: IInstanceDataProvider.TokenInfoStructOutput;
+      }
+    >;
+
+    "getTokenInfo(address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [IInstanceDataProvider.TokenInfoStructOutput] & {
+        tokenInfo: IInstanceDataProvider.TokenInfoStructOutput;
+      }
+    >;
+
+    getTokenKey(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [IInstanceDataProvider.TokenKeyStructOutput] & {
+        tokenKey: IInstanceDataProvider.TokenKeyStructOutput;
+      }
+    >;
 
     instances(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { numberOfInstances: BigNumber }>;
+
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isRegistered: boolean }>;
+
+    isRegisteredComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isRegistered: boolean }>;
+
+    isRegisteredInstance(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isRegistered: boolean }>;
+
+    "isRegisteredToken(address)"(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isRegistered: boolean }>;
+
+    "isRegisteredToken(address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isRegistered: boolean }>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -717,6 +1149,19 @@ export interface GifStaking extends BaseContract {
       instanceId: PromiseOrValue<BytesLike>,
       chainId: PromiseOrValue<BigNumberish>,
       registry: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "registerToken(address)"(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "registerToken(address,uint256,uint8,string)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      decimals: PromiseOrValue<BigNumberish>,
+      symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -730,9 +1175,8 @@ export interface GifStaking extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setDipStakingRate(
-      chainId: PromiseOrValue<BigNumberish>,
       tokenAddress: PromiseOrValue<string>,
-      tokenDecimals: PromiseOrValue<BigNumberish>,
+      chainId: PromiseOrValue<BigNumberish>,
       stakingRate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -770,6 +1214,10 @@ export interface GifStaking extends BaseContract {
       staker: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { amount: BigNumber }>;
+
+    tokens(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { numberOfTokens: BigNumber }>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -822,7 +1270,27 @@ export interface GifStaking extends BaseContract {
 
   REWARD_MAX_PERCENTAGE(overrides?: CallOverrides): Promise<BigNumber>;
 
-  bundles(overrides?: CallOverrides): Promise<BigNumber>;
+  TOKEN_MAX_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "bundles()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "bundles(bytes32)"(
+    instanceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "bundles(bytes32,uint256)"(
+    instanceId: PromiseOrValue<BytesLike>,
+    riskpoolId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  calculateRequiredStakingAmount(
+    chainId: PromiseOrValue<BigNumberish>,
+    targetTokenAddress: PromiseOrValue<string>,
+    targetAmount: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   calculateRewards(
     amount: PromiseOrValue<BigNumberish>,
@@ -842,22 +1310,64 @@ export interface GifStaking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  components(
+    instanceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getBundleCapitalSupport(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "getBundleId(bytes32,uint256,uint256)"(
+    instanceId: PromiseOrValue<BytesLike>,
+    riskpoolId: PromiseOrValue<BigNumberish>,
+    idx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "getBundleId(bytes32,uint256)"(
+    instanceId: PromiseOrValue<BytesLike>,
+    idx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getBundleInfo(
     instanceId: PromiseOrValue<BytesLike>,
     bundleId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<GifStaking.BundleInfoStructOutput>;
+  ): Promise<IBundleDataProvider.BundleInfoStructOutput>;
 
   getBundleKey(
     idx: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<GifStaking.BundleKeyStructOutput>;
+  ): Promise<IBundleDataProvider.BundleKeyStructOutput>;
 
   getBundleStakes(
     instanceId: PromiseOrValue<BytesLike>,
     bundleId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getBundleToken(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getComponentId(
+    instanceId: PromiseOrValue<BytesLike>,
+    idx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getComponentInfo(
+    instanceId: PromiseOrValue<BytesLike>,
+    componentId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IComponentDataProvider.ComponentInfoStructOutput>;
 
   getDip(overrides?: CallOverrides): Promise<string>;
 
@@ -877,7 +1387,7 @@ export interface GifStaking extends BaseContract {
   getInstanceInfo(
     instanceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
-  ): Promise<GifStaking.InstanceInfoStructOutput>;
+  ): Promise<IInstanceDataProvider.InstanceInfoStructOutput>;
 
   getOneYearDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -892,14 +1402,58 @@ export interface GifStaking extends BaseContract {
 
   getStakingWallet(overrides?: CallOverrides): Promise<string>;
 
-  getSupportedCapitalAmount(
-    instanceId: PromiseOrValue<BytesLike>,
-    bundleId: PromiseOrValue<BigNumberish>,
+  getTokenId(
+    idx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber] & { tokenAddress: string; chainId: BigNumber }
+  >;
+
+  "getTokenInfo(address)"(
     tokenAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<IInstanceDataProvider.TokenInfoStructOutput>;
+
+  "getTokenInfo(address,uint256)"(
+    tokenAddress: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IInstanceDataProvider.TokenInfoStructOutput>;
+
+  getTokenKey(
+    idx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IInstanceDataProvider.TokenKeyStructOutput>;
 
   instances(overrides?: CallOverrides): Promise<BigNumber>;
+
+  isRegisteredBundle(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isRegisteredComponent(
+    instanceId: PromiseOrValue<BytesLike>,
+    componentId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isRegisteredInstance(
+    instanceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "isRegisteredToken(address)"(
+    tokenAddress: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "isRegisteredToken(address,uint256)"(
+    tokenAddress: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -907,6 +1461,19 @@ export interface GifStaking extends BaseContract {
     instanceId: PromiseOrValue<BytesLike>,
     chainId: PromiseOrValue<BigNumberish>,
     registry: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "registerToken(address)"(
+    tokenAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "registerToken(address,uint256,uint8,string)"(
+    tokenAddress: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    decimals: PromiseOrValue<BigNumberish>,
+    symbol: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -920,9 +1487,8 @@ export interface GifStaking extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setDipStakingRate(
-    chainId: PromiseOrValue<BigNumberish>,
     tokenAddress: PromiseOrValue<string>,
-    tokenDecimals: PromiseOrValue<BigNumberish>,
+    chainId: PromiseOrValue<BigNumberish>,
     stakingRate: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -958,6 +1524,8 @@ export interface GifStaking extends BaseContract {
     staker: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  tokens(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
@@ -1010,7 +1578,27 @@ export interface GifStaking extends BaseContract {
 
     REWARD_MAX_PERCENTAGE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    bundles(overrides?: CallOverrides): Promise<BigNumber>;
+    TOKEN_MAX_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "bundles()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "bundles(bytes32)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "bundles(bytes32,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    calculateRequiredStakingAmount(
+      chainId: PromiseOrValue<BigNumberish>,
+      targetTokenAddress: PromiseOrValue<string>,
+      targetAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     calculateRewards(
       amount: PromiseOrValue<BigNumberish>,
@@ -1030,22 +1618,64 @@ export interface GifStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    components(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleCapitalSupport(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getBundleId(bytes32,uint256,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getBundleId(bytes32,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBundleInfo(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<GifStaking.BundleInfoStructOutput>;
+    ): Promise<IBundleDataProvider.BundleInfoStructOutput>;
 
     getBundleKey(
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<GifStaking.BundleKeyStructOutput>;
+    ): Promise<IBundleDataProvider.BundleKeyStructOutput>;
 
     getBundleStakes(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getComponentId(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getComponentInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IComponentDataProvider.ComponentInfoStructOutput>;
 
     getDip(overrides?: CallOverrides): Promise<string>;
 
@@ -1065,7 +1695,7 @@ export interface GifStaking extends BaseContract {
     getInstanceInfo(
       instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<GifStaking.InstanceInfoStructOutput>;
+    ): Promise<IInstanceDataProvider.InstanceInfoStructOutput>;
 
     getOneYearDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1080,14 +1710,58 @@ export interface GifStaking extends BaseContract {
 
     getStakingWallet(overrides?: CallOverrides): Promise<string>;
 
-    getSupportedCapitalAmount(
-      instanceId: PromiseOrValue<BytesLike>,
-      bundleId: PromiseOrValue<BigNumberish>,
+    getTokenId(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { tokenAddress: string; chainId: BigNumber }
+    >;
+
+    "getTokenInfo(address)"(
       tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<IInstanceDataProvider.TokenInfoStructOutput>;
+
+    "getTokenInfo(address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IInstanceDataProvider.TokenInfoStructOutput>;
+
+    getTokenKey(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IInstanceDataProvider.TokenKeyStructOutput>;
 
     instances(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isRegisteredComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isRegisteredInstance(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "isRegisteredToken(address)"(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "isRegisteredToken(address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -1095,6 +1769,19 @@ export interface GifStaking extends BaseContract {
       instanceId: PromiseOrValue<BytesLike>,
       chainId: PromiseOrValue<BigNumberish>,
       registry: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "registerToken(address)"(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "registerToken(address,uint256,uint8,string)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      decimals: PromiseOrValue<BigNumberish>,
+      symbol: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1106,9 +1793,8 @@ export interface GifStaking extends BaseContract {
     ): Promise<void>;
 
     setDipStakingRate(
-      chainId: PromiseOrValue<BigNumberish>,
       tokenAddress: PromiseOrValue<string>,
-      tokenDecimals: PromiseOrValue<BigNumberish>,
+      chainId: PromiseOrValue<BigNumberish>,
       stakingRate: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1144,6 +1830,8 @@ export interface GifStaking extends BaseContract {
       staker: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    tokens(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -1208,7 +1896,27 @@ export interface GifStaking extends BaseContract {
 
     REWARD_MAX_PERCENTAGE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    bundles(overrides?: CallOverrides): Promise<BigNumber>;
+    TOKEN_MAX_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "bundles()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "bundles(bytes32)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "bundles(bytes32,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    calculateRequiredStakingAmount(
+      chainId: PromiseOrValue<BigNumberish>,
+      targetTokenAddress: PromiseOrValue<string>,
+      targetAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     calculateRewards(
       amount: PromiseOrValue<BigNumberish>,
@@ -1228,6 +1936,30 @@ export interface GifStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    components(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleCapitalSupport(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getBundleId(bytes32,uint256,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getBundleId(bytes32,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBundleInfo(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
@@ -1242,6 +1974,24 @@ export interface GifStaking extends BaseContract {
     getBundleStakes(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getComponentId(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getComponentInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1278,14 +2028,56 @@ export interface GifStaking extends BaseContract {
 
     getStakingWallet(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getSupportedCapitalAmount(
-      instanceId: PromiseOrValue<BytesLike>,
-      bundleId: PromiseOrValue<BigNumberish>,
+    getTokenId(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getTokenInfo(address)"(
       tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    "getTokenInfo(address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTokenKey(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     instances(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isRegisteredComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isRegisteredInstance(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "isRegisteredToken(address)"(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "isRegisteredToken(address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1293,6 +2085,19 @@ export interface GifStaking extends BaseContract {
       instanceId: PromiseOrValue<BytesLike>,
       chainId: PromiseOrValue<BigNumberish>,
       registry: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "registerToken(address)"(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "registerToken(address,uint256,uint8,string)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      decimals: PromiseOrValue<BigNumberish>,
+      symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1306,9 +2111,8 @@ export interface GifStaking extends BaseContract {
     ): Promise<BigNumber>;
 
     setDipStakingRate(
-      chainId: PromiseOrValue<BigNumberish>,
       tokenAddress: PromiseOrValue<string>,
-      tokenDecimals: PromiseOrValue<BigNumberish>,
+      chainId: PromiseOrValue<BigNumberish>,
       stakingRate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1344,6 +2148,8 @@ export interface GifStaking extends BaseContract {
       staker: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    tokens(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -1405,7 +2211,29 @@ export interface GifStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    bundles(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    TOKEN_MAX_DECIMALS(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "bundles()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "bundles(bytes32)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "bundles(bytes32,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    calculateRequiredStakingAmount(
+      chainId: PromiseOrValue<BigNumberish>,
+      targetTokenAddress: PromiseOrValue<string>,
+      targetAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     calculateRewards(
       amount: PromiseOrValue<BigNumberish>,
@@ -1425,6 +2253,30 @@ export interface GifStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    components(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBundleCapitalSupport(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getBundleId(bytes32,uint256,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getBundleId(bytes32,uint256)"(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getBundleInfo(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
@@ -1439,6 +2291,24 @@ export interface GifStaking extends BaseContract {
     getBundleStakes(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getComponentId(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getComponentInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1481,14 +2351,56 @@ export interface GifStaking extends BaseContract {
 
     getStakingWallet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getSupportedCapitalAmount(
-      instanceId: PromiseOrValue<BytesLike>,
-      bundleId: PromiseOrValue<BigNumberish>,
+    getTokenId(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getTokenInfo(address)"(
       tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    "getTokenInfo(address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTokenKey(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     instances(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isRegisteredComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isRegisteredInstance(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "isRegisteredToken(address)"(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "isRegisteredToken(address,uint256)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1496,6 +2408,19 @@ export interface GifStaking extends BaseContract {
       instanceId: PromiseOrValue<BytesLike>,
       chainId: PromiseOrValue<BigNumberish>,
       registry: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "registerToken(address)"(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "registerToken(address,uint256,uint8,string)"(
+      tokenAddress: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      decimals: PromiseOrValue<BigNumberish>,
+      symbol: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1509,9 +2434,8 @@ export interface GifStaking extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setDipStakingRate(
-      chainId: PromiseOrValue<BigNumberish>,
       tokenAddress: PromiseOrValue<string>,
-      tokenDecimals: PromiseOrValue<BigNumberish>,
+      chainId: PromiseOrValue<BigNumberish>,
       stakingRate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1547,6 +2471,8 @@ export interface GifStaking extends BaseContract {
       staker: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    tokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,

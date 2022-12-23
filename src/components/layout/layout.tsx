@@ -54,7 +54,7 @@ export default function Layout({ Component, pageProps }: AppProps) {
     return (<>
         {globalNotice()}
         <Header />
-        <Container maxWidth="lg" sx={{ p: 1, minHeight: '100%' }}>
+        <Container maxWidth="lg" sx={{ p: 1, marginBottom: "5vh" }}>
             {content()}
         </Container>
         <Footer />

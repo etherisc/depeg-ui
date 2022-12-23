@@ -161,6 +161,13 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "forceDepegForNextPriceInfo",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getAggregatorAddress",
     outputs: [
       {
@@ -180,6 +187,56 @@ const _abi = [
         internalType: "uint8",
         name: "aggregatorDecimals",
         type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getDepegPriceInfo",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "id",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "price",
+            type: "uint256",
+          },
+          {
+            internalType: "enum IPriceDataProvider.ComplianceState",
+            name: "compliance",
+            type: "uint8",
+          },
+          {
+            internalType: "enum IPriceDataProvider.StabilityState",
+            name: "stability",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "triggeredAt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "depeggedAt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "createdAt",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IPriceDataProvider.PriceInfo",
+        name: "priceInfo",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -276,11 +333,24 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getToken",
     outputs: [
       {
         internalType: "address",
-        name: "token",
+        name: "",
         type: "address",
       },
     ],
@@ -318,6 +388,32 @@ const _abi = [
         internalType: "uint256",
         name: "timeSinceLastUpdate",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isMainnetProvider",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isTestnetProvider",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -370,6 +466,13 @@ const _abi = [
         type: "tuple",
       },
     ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "resetDepeg",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

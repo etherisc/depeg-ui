@@ -7,6 +7,8 @@ import type {
   BigNumberish,
   BytesLike,
   CallOverrides,
+  ContractTransaction,
+  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -21,55 +23,43 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface IStakingDataProviderInterface extends utils.Interface {
+export interface IBundleRegistryInterface extends utils.Interface {
   functions: {
-    "getBundleCapitalSupport(bytes32,uint256)": FunctionFragment;
-    "getBundleStakes(bytes32,uint256)": FunctionFragment;
-    "getBundleToken(bytes32,uint256)": FunctionFragment;
+    "registerBundle(bytes32,uint256)": FunctionFragment;
+    "updateBundle(bytes32,uint256)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic:
-      | "getBundleCapitalSupport"
-      | "getBundleStakes"
-      | "getBundleToken"
+    nameOrSignatureOrTopic: "registerBundle" | "updateBundle"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "getBundleCapitalSupport",
+    functionFragment: "registerBundle",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getBundleStakes",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getBundleToken",
+    functionFragment: "updateBundle",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "getBundleCapitalSupport",
+    functionFragment: "registerBundle",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getBundleStakes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getBundleToken",
+    functionFragment: "updateBundle",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export interface IStakingDataProvider extends BaseContract {
+export interface IBundleRegistry extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IStakingDataProviderInterface;
+  interface: IBundleRegistryInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -91,102 +81,72 @@ export interface IStakingDataProvider extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    getBundleCapitalSupport(
+    registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { capitalAmount: BigNumber }>;
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
-    getBundleStakes(
+    updateBundle(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { dipAmount: BigNumber }>;
-
-    getBundleToken(
-      instanceId: PromiseOrValue<BytesLike>,
-      bundleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string] & { token: string }>;
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  getBundleCapitalSupport(
+  registerBundle(
     instanceId: PromiseOrValue<BytesLike>,
     bundleId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
-  getBundleStakes(
+  updateBundle(
     instanceId: PromiseOrValue<BytesLike>,
     bundleId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getBundleToken(
-    instanceId: PromiseOrValue<BytesLike>,
-    bundleId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    getBundleCapitalSupport(
+    registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
-    getBundleStakes(
+    updateBundle(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getBundleToken(
-      instanceId: PromiseOrValue<BytesLike>,
-      bundleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    getBundleCapitalSupport(
+    registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getBundleStakes(
+    updateBundle(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getBundleToken(
-      instanceId: PromiseOrValue<BytesLike>,
-      bundleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    getBundleCapitalSupport(
+    registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    getBundleStakes(
+    updateBundle(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getBundleToken(
-      instanceId: PromiseOrValue<BytesLike>,
-      bundleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

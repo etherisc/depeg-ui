@@ -1,3 +1,5 @@
+import { BigNumber } from "ethers";
+
 export type BundleData = {
     id: number;
     riskpoolId: number;
@@ -14,4 +16,6 @@ export type BundleData = {
     policies: number;
     state: number;
     createdAt: number;
+    name: string;
+    lifetime: BigNumber;
 }

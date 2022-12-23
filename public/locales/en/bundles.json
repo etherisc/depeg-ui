@@ -2,11 +2,13 @@
     "title": "Risk bundles",
     "table": {
         "header": {
-            "id": "Bundle Id",
+            "id": "Id",
+            "name": "Name",
+            "lifetime": "Active until",
             "capital": "Invested / remaining capital",
             "policies": "Policies",
             "state": "State",
-            "created": "Created Date"
+            "created": "Created"
         }
     },  
     "action": {

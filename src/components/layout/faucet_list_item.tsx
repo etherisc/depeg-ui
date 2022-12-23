@@ -1,8 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../context/app_context";
-import { Button, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import Typography from '@mui/material/Typography'
-import { DepegProduct__factory } from "../../contracts/depeg-contracts";
+import { ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from "next-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -51,7 +49,7 @@ export default function FaucetListItem() {
     }
 
     return (
-        <ListItem key='faucet' disablePadding>
+        <ListItem key={Math.random() * 1000} disablePadding>
             <ListItemButton onClick={useFaucet}>
                 <ListItemIcon>
                     <FontAwesomeIcon icon={faHandHoldingDollar} />

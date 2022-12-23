@@ -42,7 +42,7 @@ export class DepegRiskpoolApi {
     
     async getBundleDataByBundleId(bundleId: number): Promise<BundleData> {
         const bundleInfo = await this.depegRiskpool.getBundleInfo(bundleId);
-        const [ _bId, state, tokenId, owner, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn, capitalSupportedByStaking, capital, lockedCapital, balance, createdAt ] = bundleInfo;
+        const [ _bId, name, state, tokenId, owner, lifetime, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn, capitalSupportedByStaking, capital, lockedCapital, balance, createdAt ] = bundleInfo;
         const apr = 100 * annualPercentageReturn.toNumber() / (await this.depegRiskpool.getApr100PercentLevel()).toNumber();
         const policies = await this.depegRiskpool.getActivePolicies(bundleId);
     
@@ -62,15 +62,21 @@ export class DepegRiskpoolApi {
             state: state,
             tokenId: tokenId.toNumber(),
             createdAt: createdAt.toNumber(),
+            name: name,
+            lifetime: lifetime,
         } as BundleData;
     }
     
     getBestQuote(
         bundleData: Array<BundleData>, 
         sumInsured: number, 
-        duration: number
+        duration: number,
+        lastBlockTimestamp: number
     ): BundleData {
         return bundleData.reduce((best, bundle) => {
+            if (lastBlockTimestamp > (bundle.createdAt + bundle.lifetime.toNumber())) {
+                return best;
+            }
             if (sumInsured < bundle.minSumInsured) {
                 return best;
             }
@@ -94,6 +100,8 @@ export class DepegRiskpoolApi {
     }
     
     async createBundle(
+        name: string,
+        lifetime: number,
         investorWalletAddress: string, 
         investedAmount: number, 
         minSumInsured: number, 
@@ -112,7 +120,9 @@ export class DepegRiskpoolApi {
             beforeInvestCallback(riskpoolAddress);
         }
         try {
-            const tx = await this.depegRiskpool["createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"](
+            const tx = await this.depegRiskpool["createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"](
+                name,
+                lifetime,
                 minSumInsured, 
                 maxSumInsured, 
                 minDuration * 86400, 

@@ -115,12 +115,17 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
             await delay(2000);
             return Promise.resolve(true);
         },
+        lastBlockTimestamp(): Promise<number> {
+            return Promise.resolve(moment().unix());
+        }
     } as ApplicationApi
 }
 
 function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
         usd1: 'USDC',
+        minLifetime: 14,
+        maxLifetime: 180,
         minInvestedAmount: 25000000000,
         maxInvestedAmount: 100000000000,
         minSumInsured: 1000000000,
@@ -130,6 +135,8 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         annualPctReturn: 5,
         maxAnnualPctReturn: 20,
         async invest(
+            name: string,
+            lifetime: number,
             investorWalletAddress: string, 
             investedAmount: number, 
             minSumInsured: number, 
@@ -139,7 +146,7 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
             annualPctReturn: number
         ): Promise<boolean> {
             enqueueSnackbar(
-                `Riskpool mocked ($investorWalletAddress, $investedAmount, $minSumInsured, $maxSumInsured, $minDuration, $maxDuration, $annualPctReturn)`,
+                `Riskpool mocked ($name, $lifetime, $investorWalletAddress, $investedAmount, $minSumInsured, $maxSumInsured, $minDuration, $maxDuration, $annualPctReturn)`,
                 { autoHideDuration: 3000, variant: 'info' }
             );
             await delay(2000);
