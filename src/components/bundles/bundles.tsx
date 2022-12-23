@@ -69,7 +69,7 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'id', 
             headerName: t('table.header.id'), 
-            flex: 1,
+            flex: 0.5,
         },
         { 
             field: 'name', 
@@ -79,7 +79,7 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'capital', 
             headerName: t('table.header.capital'), 
-            flex: 1.5,
+            flex: 1,
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
             valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
                 const bundle = params.value;
@@ -91,13 +91,13 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'createdAt', 
             headerName: t('table.header.created'), 
-            flex: 1,
+            flex: 0.6,
             valueFormatter: (params: GridValueFormatterParams<number>) => formatDate(moment.unix(params.value)),
         },
         { 
             field: 'lifetime', 
             headerName: t('table.header.lifetime'), 
-            flex: 1,
+            flex: 0.6,
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
             valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
                 const bundle = params.value;
@@ -108,12 +108,12 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'policies', 
             headerName: t('table.header.policies'), 
-            flex: 1 
+            flex: 0.5
         },
         { 
             field: 'state', 
             headerName: t('table.header.state'), 
-            flex: 1,
+            flex: 0.5,
             valueFormatter: (params: GridValueFormatterParams<number>) => t('bundle_state_' + params.value, { ns: 'common'}),
         },
     ];
