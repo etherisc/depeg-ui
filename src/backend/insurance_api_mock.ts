@@ -115,6 +115,9 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
             await delay(2000);
             return Promise.resolve(true);
         },
+        lastBlockTimestamp(): Promise<number> {
+            return Promise.resolve(moment().unix());
+        }
     } as ApplicationApi
 }
 

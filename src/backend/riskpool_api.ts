@@ -70,9 +70,13 @@ export class DepegRiskpoolApi {
     getBestQuote(
         bundleData: Array<BundleData>, 
         sumInsured: number, 
-        duration: number
+        duration: number,
+        lastBlockTimestamp: number
     ): BundleData {
         return bundleData.reduce((best, bundle) => {
+            if (lastBlockTimestamp > (bundle.createdAt + bundle.lifetime.toNumber())) {
+                return best;
+            }
             if (sumInsured < bundle.minSumInsured) {
                 return best;
             }

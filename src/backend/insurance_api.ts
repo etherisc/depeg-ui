@@ -1,4 +1,4 @@
-import { ethers, Signer } from "ethers";
+import { BigNumber, ethers, Signer } from "ethers";
 import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
 import { BundleData } from "./bundle_data";
 import { insuranceApiMock } from "./insurance_api_mock";
@@ -57,6 +57,7 @@ export interface ApplicationApi {
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void
         ) => Promise<boolean>;
+    lastBlockTimestamp(): Promise<number>;
 }
 
 export interface InvestApi {
