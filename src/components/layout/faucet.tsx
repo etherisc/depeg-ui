@@ -5,8 +5,9 @@ import { useSnackbar } from 'notistack';
 import { useTranslation } from "next-i18next";
 import { Button } from "@mui/material";
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
-import { faFaucet } from '@fortawesome/free-solid-svg-icons';
+import { faFaucet, faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DOT } from "../../utils/chars";
 
 export default function Faucet() {
     const appContext = useContext(AppContext);
@@ -14,6 +15,9 @@ export default function Faucet() {
     const { t } = useTranslation('common');
     const currency = process.env.NEXT_PUBLIC_DEPEG_USD2;
     const coinAddress = process.env.NEXT_FAUCET_COIN_ADDRESS;
+
+    const chainTokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL;
+    const chainTokenFaucetUrl = process.env.NEXT_PUBLIC_CHAIN_TOKEN_FAUCET_URL;
 
     const [ address, setAddress ] = useState<string|undefined>(undefined);
 
@@ -35,9 +39,7 @@ export default function Faucet() {
     }
 
     if (address === undefined) {
-        return (
-            <></>
-        );
+        return (<></>);
     }
 
     async function useFaucet() {
@@ -64,6 +66,15 @@ export default function Faucet() {
             </Typography>
             <Typography variant="body2" sx={{ fontSize: '10px' }} onClick={copyAddressToClipboard} title={t('help.faucet_copy', { currency: currency })}>
                 <FontAwesomeIcon icon={faCopy} className="fa cursor-pointer" />
+            </Typography>
+        </Button>
+        <Typography variant="body2" sx={{ fontSize: '10px' }} >
+            {DOT}
+        </Typography>
+        <Button variant="text" sx={{ p: 0, ml: 1 }} href={chainTokenFaucetUrl!} target="_blank" rel="noreferrer">
+            <Typography variant="body2" sx={{ fontSize: '10px' }} >
+                {chainTokenSymbol} faucet
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="fa cursor-pointer" />
             </Typography>
         </Button>
     </>);
