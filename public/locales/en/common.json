@@ -45,6 +45,9 @@
         "transaction_failed": "The blockchain transaction failed. Reason: {{error}}",
         "allowance_revoke_notice": "Due to the failed transaction, there might be a pending allowance on your wallet. For more information on this, please have a look"
     },
+    "help": {
+        "faucet_copy": "Copy {{currency}} address to clipboard"
+    },
     "application_state_0": "Unknown",
     "application_state_1": "Applied",
     "application_state_2": "Revoked",

@@ -38,7 +38,7 @@ export default async function handler(
         const amount = 1000000 * Math.pow(10, currencyDecimals); // 1'000'000 USD2
         console.log("sending", currency, address);
         // transfer 1'000'000 testcoin
-        const tokenAddress = process.env.NEXT_FAUCET_COIN_ADDRESS ?? "";
+        const tokenAddress = process.env.NEXT_PUBLIC_FAUCET_COIN_ADDRESS ?? "";
         await transferAmount(address!, amount, tokenAddress, coinSourceSigner!); 
         console.log("done");
     }
