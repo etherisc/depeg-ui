@@ -13,11 +13,11 @@ import Link from "@mui/material/Link";
 import { PolicyData } from "../../backend/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
 import { formatCurrency } from "../../utils/numbers";
-import moment from "moment";
 import { formatDate } from "../../utils/date";
 import { getPolicyEnd, getPolicyState } from "../../utils/product_formatter";
 import { BigNumber } from "ethers";
 import Address from "../address";
+import dayjs from "dayjs";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -84,7 +84,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'createdAt', 
             headerName: t('table.header.createdDate'), 
             flex: 1,
-            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => formatDate(moment.unix(params.value.toNumber()))
+            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => formatDate(dayjs.unix(params.value.toNumber()))
         },
         { 
             field: 'coverageUntil', 

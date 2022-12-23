@@ -1,5 +1,5 @@
-import { Moment } from "moment";
+import dayjs from "dayjs";
 
-export function formatDate(moment: Moment): string {
-    return moment.format('YYYY-MM-DD');
+export function formatDate(timestamp: dayjs.Dayjs): string {
+    return timestamp.format('YYYY-MM-DD');
 }

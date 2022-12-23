@@ -1,10 +1,10 @@
 import { BigNumber } from "ethers/lib/ethers";
-import moment from "moment";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import { ApplicationApi, InsuranceApi, InvestApi } from "./insurance_api";
 import { delay } from "../utils/delay";
 import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
+import dayjs from "dayjs";
 
 export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
@@ -37,7 +37,7 @@ const mockPoliciesActive = [
         owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 0,
-        createdAt: BigNumber.from(moment().add('-2', 'days').unix()),
+        createdAt: BigNumber.from(dayjs().add(-2, 'days').unix()),
         duration: BigNumber.from(14 * 24 * 60 * 60),
         premium: BigNumber.from(17),
         suminsured: BigNumber.from(10000)
@@ -48,7 +48,7 @@ const mockPoliciesActive = [
         applicationState: 2,
         policyState: 0,
         payoutState: 0,
-        createdAt: BigNumber.from(moment().add('-2', 'days').unix()),
+        createdAt: BigNumber.from(dayjs().add(-2, 'days').unix()),
         duration: BigNumber.from(14 * 24 * 60 * 60),
         premium: BigNumber.from(17),
         suminsured: BigNumber.from(11000000000)
@@ -59,7 +59,7 @@ const mockPoliciesActive = [
         applicationState: 2,
         policyState: 0,
         payoutState: 1,
-        createdAt: BigNumber.from(moment().add('-2', 'days').unix()),
+        createdAt: BigNumber.from(dayjs().add(-2, 'days').unix()),
         duration: BigNumber.from(14 * 24 * 60 * 60),
         premium: BigNumber.from(17),
         suminsured: BigNumber.from(12000000000)
@@ -68,7 +68,7 @@ const mockPoliciesActive = [
         id: '0x34e190322453300229d2be2a38450b8a8bd8cf64',
         owner: '0xdCeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 0,
-        createdAt: BigNumber.from(moment().add('-1', 'days').unix()),
+        createdAt: BigNumber.from(dayjs().add(-1, 'days').unix()),
         duration: BigNumber.from(47 * 24 * 60 * 60),
         premium: BigNumber.from(27),
         suminsured: BigNumber.from(15000000000)
@@ -81,7 +81,7 @@ const mockPolicies = mockPoliciesActive.concat(
         owner: '0xFEeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 1,
-        createdAt: BigNumber.from(moment().add(-20, 'days').unix()),
+        createdAt: BigNumber.from(dayjs().add(-20, 'days').unix()),
         duration: BigNumber.from(14 * 24 * 60 * 60),
         premium: BigNumber.from(100),
         suminsured: BigNumber.from(35000)
@@ -91,7 +91,7 @@ const mockPolicies = mockPoliciesActive.concat(
         owner: '0x821c4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 2,
-        createdAt: BigNumber.from(moment().add(-3, 'months').unix()),
+        createdAt: BigNumber.from(dayjs().add(-3, 'months').unix()),
         duration: BigNumber.from(28 * 24 * 60 * 60),
         premium: BigNumber.from(67),
         suminsured: BigNumber.from(36000000000)
@@ -116,7 +116,7 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
             return Promise.resolve(true);
         },
         lastBlockTimestamp(): Promise<number> {
-            return Promise.resolve(moment().unix());
+            return Promise.resolve(dayjs().unix());
         }
     } as ApplicationApi
 }

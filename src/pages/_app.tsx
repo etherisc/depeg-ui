@@ -10,7 +10,7 @@ import Head from 'next/head';
 import { initialAppData, removeSigner, AppContext, signerReducer } from '../context/app_context';
 import { SnackbarProvider } from 'notistack';
 import { appWithTranslation } from 'next-i18next';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { getAndUpdateWalletAccount } from '../utils/wallet';
 import { ThemeProvider } from '@mui/material/styles';
@@ -67,7 +67,7 @@ export function App(appProps: AppProps) {
         <CssBaseline enableColorScheme />
         <AppContext.Provider value={{ data, dispatch}} >
           <SnackbarProvider maxSnack={3}>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Layout {...appProps} />
             </LocalizationProvider>
           </SnackbarProvider>

@@ -1,5 +1,5 @@
-import moment, { Moment } from "moment";
 import { PolicyData, APPLICATION_STATE_APPLIED, APPLICATION_STATE_REVOKED, APPLICATION_STATE_UNDERWRITTEN, APPLICATION_STATE_DECLINED, POLICY_STATE_ACTIVE, POLICY_STATE_EXPIRED, POLICY_STATE_CLOSED, PAYOUT_STATE_EXPECTED, PAYOUT_STATE_PAIDOUT, PolicyState } from "../backend/policy_data";
+import dayjs from "dayjs";
 
 export function getPolicyState(policy: PolicyData): PolicyState {
     switch (policy.applicationState) {
@@ -19,7 +19,7 @@ export function getPolicyState(policy: PolicyData): PolicyState {
 export function getPolicyStateForActivePolicy(policy: PolicyData): PolicyState {
     switch (policy.policyState) {
         case POLICY_STATE_ACTIVE:
-            if (moment().isAfter(getPolicyExpiration(policy))) {
+            if (dayjs().isAfter(getPolicyExpiration(policy))) {
                 return PolicyState.EXPIRED;
             }
             if (policy.payoutState !== undefined) {
@@ -47,10 +47,10 @@ export function getPolicyStateForPaidoutPolicy(policy: PolicyData): PolicyState 
     }
 }
 
-export function getPolicyExpiration(policy: PolicyData): Moment {
-    return moment.unix(policy.createdAt.toNumber() + policy.duration.toNumber());
+export function getPolicyExpiration(policy: PolicyData): dayjs.Dayjs {
+    return dayjs.unix(policy.createdAt.toNumber() + policy.duration.toNumber());
 }
 
-export function getPolicyEnd(policy: PolicyData): Moment {
+export function getPolicyEnd(policy: PolicyData): dayjs.Dayjs {
     return getPolicyExpiration(policy).startOf("day");
 }

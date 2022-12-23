@@ -12,8 +12,8 @@ import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { TextField } from '@mui/material';
 import { INPUT_VARIANT } from '../../config/theme';
-import moment from 'moment';
 import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 
 const formInputVariant = 'outlined';
 
@@ -43,9 +43,9 @@ export default function InvestForm(props: InvestFormProperties) {
     const { t } = useTranslation('invest');
     const investProps = props.insurance.invest;
     const minLifetimeDays = investProps.minLifetime;
-    const minLifetimeEndDate = moment().add(minLifetimeDays, 'days').format("YYYY-MM-DD");
+    const minLifetimeEndDate = dayjs().add(minLifetimeDays, 'days').format("YYYY-MM-DD");
     const maxLifetimeDays = investProps.maxLifetime;
-    const maxLifetimeEndDate = moment().add(maxLifetimeDays, 'days').format("YYYY-MM-DD");
+    const maxLifetimeEndDate = dayjs().add(maxLifetimeDays, 'days').format("YYYY-MM-DD");
     const minInvestedAmount = investProps.minInvestedAmount / Math.pow(10, props.usd2Decimals);
     const maxInvestedAmount = investProps.maxInvestedAmount / Math.pow(10, props.usd2Decimals);
     const minSumInsured = investProps.minSumInsured / Math.pow(10, props.usd2Decimals);
@@ -63,7 +63,7 @@ export default function InvestForm(props: InvestFormProperties) {
         defaultValues: {
             bundleName: '',
             lifetime: defaultLifetime.toString(),
-            lifetimeEndDate: moment().add(defaultLifetime, 'days').format("YYYY-MM-DD"),
+            lifetimeEndDate: dayjs().add(defaultLifetime, 'days').format("YYYY-MM-DD"),
             investedAmount: maxInvestedAmount.toString(),
             insuredAmountMin: minSumInsured.toString(),
             insuredAmountMax: maxSumInsured.toString(),
@@ -79,12 +79,12 @@ export default function InvestForm(props: InvestFormProperties) {
     // handle changes in lifetime duration / end date and update the other field accordingly
     const watchLifetime = watch("lifetime");
     useEffect(() => {
-        setValue("lifetimeEndDate", moment().startOf('day').add(parseInt(watchLifetime), 'days').format("YYYY-MM-DD"));
+        setValue("lifetimeEndDate", dayjs().startOf('day').add(parseInt(watchLifetime), 'days').format("YYYY-MM-DD"));
     }, [watchLifetime, setValue]);
 
     const watchLifetimeEndDate = watch("lifetimeEndDate");
     useEffect(() => {
-        setValue("lifetime", moment(watchLifetimeEndDate).startOf('day').diff(moment().startOf('day'), 'days').toString()); 
+        setValue("lifetime", dayjs(watchLifetimeEndDate).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
     }, [watchLifetimeEndDate, setValue]);
 
     // handle changes in insured amount min/max / coverage duration and validate the other field accordingly

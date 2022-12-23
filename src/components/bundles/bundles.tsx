@@ -14,10 +14,10 @@ import Box from "@mui/material/Box";
 import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
 import { formatDate } from "../../utils/date";
-import moment from "moment";
 import { FormControlLabel, Switch } from "@mui/material";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import dayjs from "dayjs";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -109,7 +109,7 @@ export default function Bundles(props: BundlesProps) {
             field: 'createdAt', 
             headerName: t('table.header.created'), 
             flex: 0.6,
-            valueFormatter: (params: GridValueFormatterParams<number>) => formatDate(moment.unix(params.value)),
+            valueFormatter: (params: GridValueFormatterParams<number>) => formatDate(dayjs.unix(params.value)),
         },
         { 
             field: 'lifetime', 
@@ -118,7 +118,7 @@ export default function Bundles(props: BundlesProps) {
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
             valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
                 const bundle = params.value;
-                const lifetime = moment.unix(bundle.createdAt).add(bundle.lifetime.toNumber(), 'seconds');
+                const lifetime = dayjs.unix(bundle.createdAt).add(bundle.lifetime.toNumber(), 'seconds');
                 return formatDate(lifetime);
             }
         },

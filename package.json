@@ -13,7 +13,6 @@
     "typechainChainLinkAggregatorType": "typechain --target ethers-v5 --out-dir src/contracts/chainlink './node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json'"
   },
   "dependencies": {
-    "@date-io/moment": "^2.16.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@fontsource/roboto": "^4.5.8",
@@ -28,11 +27,11 @@
     "@walletconnect/web3-provider": "^1.8.0",
     "abi-coder": "^4.1.1",
     "canvas-confetti": "^1.6.0",
+    "dayjs": "^1.11.7",
     "eslint": "^8.30.0",
     "eslint-config-next": "^13.0.7",
     "ethers": "^5.7.2",
     "i18next": "^22.4.6",
-    "moment": "^2.29.4",
     "next": "^13.0.7",
     "next-i18next": "^13.0.2",
     "notistack": "^2.0.8",
