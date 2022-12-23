@@ -35,8 +35,8 @@ export interface ApplicationFormProperties {
 
 export type IAplicationFormValues = {
     insuredWallet: string;
-    insuredAmount: number;
-    coverageDuration: number;
+    insuredAmount: string;
+    coverageDuration: string;
     coverageEndDate: string;
     premiumAmount: number;
     termsAndConditions: boolean;
@@ -82,13 +82,13 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // handle changes in coverage duration / end date and update the other field accordingly
     const watchCoverageDuration = watch("coverageDuration");
     useEffect(() => {
-        console.log("watchCoverageDuration", watchCoverageDuration);
-        setValue("coverageEndDate", moment().startOf('day').add(watchCoverageDuration, 'days').format("YYYY-MM-DD"));
+        // console.log("watchCoverageDuration", watchCoverageDuration);
+        setValue("coverageEndDate", moment().startOf('day').add(parseInt(watchCoverageDuration), 'days').format("YYYY-MM-DD"));
     }, [watchCoverageDuration, setValue]);
 
     const watchCoverageEndDate = watch("coverageEndDate");
     useEffect(() => {
-        setValue("coverageDuration", moment(watchCoverageEndDate).startOf('day').diff(moment().startOf('day'), 'days')); 
+        setValue("coverageDuration", moment(watchCoverageEndDate).startOf('day').diff(moment().startOf('day'), 'days').toString()); 
         // this is a special case as changing date with date picker does not trigger the `watchPremiumFactors` useEffect
         calculatePremium();
     }, [watchCoverageEndDate, setValue]);
@@ -139,7 +139,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setCoverageDaysMin(minCoverageDays);
             setCoverageDaysMax(maxCoverageDays);
             const coverageDays = maxCoverageDays < 30 ? maxCoverageDays : 30;
-            setValue("coverageDuration", coverageDays);
+            setValue("coverageDuration", coverageDays.toString());
             setValue("coverageEndDate", moment().add(coverageDays, 'days').format("YYYY-MM-DD"));
             setCoverageUntilMin(moment().add(minCoverageDays, 'days'));
             setCoverageUntilMax(moment().add(maxCoverageDays, 'days'));
@@ -171,8 +171,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
 
         const walletAddress = values.insuredWallet;
-        const insuredAmount = values.insuredAmount * Math.pow(10, props.usd1Decimals);
-        const coverageDays = values.coverageDuration;
+        const insuredAmount = parseFloat(values.insuredAmount) * Math.pow(10, props.usd1Decimals);
+        const coverageDays = parseInt(values.coverageDuration);
 
         console.log("Calculating premium...");
         try {
@@ -208,8 +208,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         try {
             const values = getValues();
             const walletAddress = values.insuredWallet;
-            const insuredAmountWei = values.insuredAmount * Math.pow(10, props.usd1Decimals);
-            const coverageDays = values.coverageDuration;
+            const insuredAmountWei = parseFloat(values.insuredAmount) * Math.pow(10, props.usd1Decimals);
+            const coverageDays = parseInt(values.coverageDuration);
             const premiumWei = values.premiumAmount * Math.pow(10, props.usd2Decimals);
             await props.applyForPolicy(walletAddress, insuredAmountWei, coverageDays, premiumWei);
         } finally {
