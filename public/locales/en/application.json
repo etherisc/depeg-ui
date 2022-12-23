@@ -27,9 +27,10 @@
     "apply_wait": "Transaction created, waiting for onchain confirmation",
     "bundles": {
         "title": "Available risk pool bundles",
-        "bundle": "Bundle",
-        "suminsured": "Min / max protected amount",
-        "duration": "Min / max coverage duration",
+        "id": "ID",
+        "name": "Name",
+        "suminsured": "Min / max amount",
+        "duration": "Min / max duration",
         "apr": "APR (%)",
         "capacity": "Capacity"
     }
