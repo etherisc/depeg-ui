@@ -65,7 +65,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         defaultValues: {
             insuredWallet: "",
             insuredAmount: undefined,
-            coverageDuration: props.applicationApi.coverageDurationDaysMax,
+            coverageDuration: props.applicationApi.coverageDurationDaysMax.toString(),
             coverageEndDate: moment().add(props.applicationApi.coverageDurationDaysMax, 'days').format("YYYY-MM-DD"),
             premiumAmount: undefined,
             termsAndConditions: false,
