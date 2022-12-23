@@ -13,7 +13,7 @@ import { ApplicationApi } from '../../backend/insurance_api';
 import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
 import Premium from './premium';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShield } from "@fortawesome/free-solid-svg-icons";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { INPUT_VARIANT } from '../../config/theme';
@@ -364,7 +364,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         // onClick={buy}
                         sx={{ p: 1 }}
                     >
-                        <FontAwesomeIcon icon={faShield} className="fa" />
+                        <FontAwesomeIcon icon={faShoppingCart} className="fa" />
                         {t('button_buy')}
                     </Button>
                     {loadingBar}

@@ -14,8 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
 import { Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faShield, faReceipt, faSackDollar, faVault } from "@fortawesome/free-solid-svg-icons";
-import Faucet from './faucet';
+import { faCartShopping, faShieldHalved, faSackDollar, faCoins } from "@fortawesome/free-solid-svg-icons";
 import FaucetListItem from './faucet_list_item';
 
 export default function Header() {
@@ -53,14 +52,14 @@ export default function Header() {
     let listitems = [];
 
 
-    links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" icon={faShield} />);
-    listitems.push(getListItem(t('nav.link.apply'), '/', faShield));
-    links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" icon={faReceipt} />);
-    listitems.push(getListItem(t('nav.link.policies'), '/policies', faReceipt));
+    links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" icon={faCartShopping} />);
+    listitems.push(getListItem(t('nav.link.apply'), '/', faCartShopping));
+    links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" icon={faShieldHalved} />);
+    listitems.push(getListItem(t('nav.link.policies'), '/policies', faShieldHalved));
     links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" icon={faSackDollar} />);
     listitems.push(getListItem(t('nav.link.invest'), '/invest', faSackDollar));
-    links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" icon={faVault} />);
-    listitems.push(getListItem(t('nav.link.bundles'), '/bundles', faVault));
+    links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" icon={faCoins} />);
+    listitems.push(getListItem(t('nav.link.bundles'), '/bundles', faCoins));
     listitems.push(<FaucetListItem key="faucet" />);
 
     const drawer = (

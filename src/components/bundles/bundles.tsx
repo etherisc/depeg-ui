@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useCallback, useContext, useEffect, useReducer, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { getInsuranceApi, InsuranceApi } from "../../backend/insurance_api";
-import { DataGrid, GridColDef, GridRowParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridRowParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
@@ -15,7 +15,9 @@ import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
 import { formatDate } from "../../utils/date";
 import moment from "moment";
-import { darken, FormControlLabel, lighten, Switch } from "@mui/material";
+import { FormControlLabel, Switch } from "@mui/material";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -78,6 +80,13 @@ export default function Bundles(props: BundlesProps) {
             field: 'id', 
             headerName: t('table.header.id'), 
             flex: 0.5,
+            valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
+            renderCell: (params: GridRenderCellParams<BundleData>) => {
+                if (params.value?.owner === address) {
+                    return (<>{params.value?.id} &nbsp; <FontAwesomeIcon icon={faUser} /></>)
+                }
+                return params.value?.id
+            }
         },
         { 
             field: 'name', 
@@ -152,24 +161,8 @@ export default function Bundles(props: BundlesProps) {
 
     const loadingBar = bundleState.loading ? <LinearProgress /> : null;
 
-    const getBackgroundColor = (color: string, mode: string) =>
-        mode === 'dark' ? darken(color, 0.6) : lighten(color, 0.7);
-
-    const getHoverBackgroundColor = (color: string, mode: string) =>
-        mode === 'dark' ? darken(color, 0.5) : lighten(color, 0.75);
-
     return (
-        <Box 
-            sx={{
-                '& .riskbundles-mine': {
-                    bgcolor: (theme) =>
-                        getBackgroundColor(theme.palette.primary.main, theme.palette.mode),
-                    '&:hover': {
-                    bgcolor: (theme) =>
-                        getHoverBackgroundColor(theme.palette.primary.main, theme.palette.mode),
-                    },
-                },
-            }}>
+        <>
             <Typography variant="h5" mb={2}>{t('title')}</Typography>
 
             {loadingBar}
@@ -191,8 +184,7 @@ export default function Bundles(props: BundlesProps) {
                 rowsPerPageOptions={[5, 10, 20, 50]}
                 onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
                 disableSelectionOnClick={true}
-                getRowClassName={(params: GridRowParams<BundleData>) => showAllBundles && params.row.owner === address ? 'riskbundles-mine' : '' } 
                 />
-        </Box>
+        </>
     );
 }
