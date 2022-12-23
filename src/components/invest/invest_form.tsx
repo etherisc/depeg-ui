@@ -28,14 +28,14 @@ export interface InvestFormProperties {
 
 export type IInvestFormValues = {
     bundleName: string,
-    lifetime: number;
+    lifetime: string;
     lifetimeEndDate: string;
-    investedAmount: number;
-    insuredAmountMin: number;
-    insuredAmountMax: number;
-    coverageDurationMin: number;
-    coverageDurationMax: number;
-    annualPctReturn: number;
+    investedAmount: string;
+    insuredAmountMin: string;
+    insuredAmountMax: string;
+    coverageDurationMin: string;
+    coverageDurationMax: string;
+    annualPctReturn: string;
     termsAndConditions: boolean;
 };
 
@@ -62,14 +62,14 @@ export default function InvestForm(props: InvestFormProperties) {
         reValidateMode: "onChange",
         defaultValues: {
             bundleName: '',
-            lifetime: defaultLifetime,
+            lifetime: defaultLifetime.toString(),
             lifetimeEndDate: moment().add(defaultLifetime, 'days').format("YYYY-MM-DD"),
-            investedAmount: maxInvestedAmount,
-            insuredAmountMin: minSumInsured,
-            insuredAmountMax: maxSumInsured,
-            coverageDurationMin: minCoverageDuration,
-            coverageDurationMax: maxCoverageDuration,
-            annualPctReturn: annualPctReturn,
+            investedAmount: maxInvestedAmount.toString(),
+            insuredAmountMin: minSumInsured.toString(),
+            insuredAmountMax: maxSumInsured.toString(),
+            coverageDurationMin: minCoverageDuration.toString(),
+            coverageDurationMax: maxCoverageDuration.toString(),
+            annualPctReturn: annualPctReturn.toString(),
             termsAndConditions: false
         }
     });
@@ -79,22 +79,24 @@ export default function InvestForm(props: InvestFormProperties) {
     // handle changes in lifetime duration / end date and update the other field accordingly
     const watchLifetime = watch("lifetime");
     useEffect(() => {
-        setValue("lifetimeEndDate", moment().startOf('day').add(watchLifetime, 'days').format("YYYY-MM-DD"));
+        setValue("lifetimeEndDate", moment().startOf('day').add(parseInt(watchLifetime), 'days').format("YYYY-MM-DD"));
     }, [watchLifetime, setValue]);
 
     const watchLifetimeEndDate = watch("lifetimeEndDate");
     useEffect(() => {
-        setValue("lifetime", moment(watchLifetimeEndDate).startOf('day').diff(moment().startOf('day'), 'days')); 
+        setValue("lifetime", moment(watchLifetimeEndDate).startOf('day').diff(moment().startOf('day'), 'days').toString()); 
     }, [watchLifetimeEndDate, setValue]);
 
     // handle changes in insured amount min/max / coverage duration and validate the other field accordingly
     const watchInsuredAmountMin = watch("insuredAmountMin");
     useEffect(() => {
-        trigger("insuredAmountMax");
+        console.log("insuredAmountMin changed", watchInsuredAmountMin);
+        trigger(["insuredAmountMax", "insuredAmountMin"]);
     }, [watchInsuredAmountMin, trigger]);
 
     const watchInsuredAmountMax = watch("insuredAmountMax");
     useEffect(() => {
+        console.log("insuredAmountMax changed", watchInsuredAmountMax);
         trigger("insuredAmountMin");
     }, [watchInsuredAmountMax, trigger]);
 
@@ -117,13 +119,13 @@ export default function InvestForm(props: InvestFormProperties) {
         try {
             const values = getValues();
             const bundleName = values.bundleName;
-            const lifetime = values.lifetime * 24 * 60 * 60;
-            const investedAmount = values.investedAmount * Math.pow(10, props.usd2Decimals);
-            const minSumInsured = values.insuredAmountMin * Math.pow(10, props.usd2Decimals);
-            const maxSumInsured = values.insuredAmountMax * Math.pow(10, props.usd2Decimals);
-            const minDuration = values.coverageDurationMin;
-            const maxDuration = values.coverageDurationMax;
-            const annualPctReturn = values.annualPctReturn;
+            const lifetime = parseInt(values.lifetime) * 24 * 60 * 60;
+            const investedAmount = parseFloat(values.investedAmount) * Math.pow(10, props.usd2Decimals);
+            const minSumInsured = parseFloat(values.insuredAmountMin) * Math.pow(10, props.usd2Decimals);
+            const maxSumInsured = parseFloat(values.insuredAmountMax) * Math.pow(10, props.usd2Decimals);
+            const minDuration = parseInt(values.coverageDurationMin);
+            const maxDuration = parseInt(values.coverageDurationMax);
+            const annualPctReturn = parseFloat(values.annualPctReturn);
             await props.invest(bundleName, lifetime, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         } finally {
             setPaymentInProgress(false);
@@ -252,7 +254,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             max: maxSumInsured,
                             pattern: /^[0-9.]+$/,
                             validate: {
-                                minmax: v => v <= watchInsuredAmountMax 
+                                minmax: (v: string) => parseFloat(v) <= parseFloat(watchInsuredAmountMax)
                             }
                         }}
                         render={({ field }) => 
@@ -284,7 +286,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             max: maxSumInsured,
                             pattern: /^[0-9.]+$/,
                             validate: {
-                                minmax: v => v >= watchInsuredAmountMin
+                                minmax: (v: string) => parseFloat(watchInsuredAmountMin) <= parseFloat(v)
                             }                        
                         }}
                         render={({ field }) => 
@@ -316,7 +318,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             max: maxCoverageDuration, 
                             pattern: /^[0-9]+$/,
                             validate: {
-                                minmax: v => v <= watchCoverageDurationMax
+                                minmax: (v:string) => parseFloat(v) <= parseFloat(watchCoverageDurationMax)
                             }
                         }}
                         render={({ field }) => 
@@ -349,7 +351,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             max: maxCoverageDuration, 
                             pattern: /^[0-9]+$/,
                             validate: {
-                                minmax: v => v >= watchCoverageDurationMin
+                                minmax: (v:string) => parseFloat(watchCoverageDurationMin) <= parseFloat(v)
                             }
                         }}
                         render={({ field }) => 
