@@ -8,7 +8,7 @@
             "insuredAmount": "Protected Amount",
             "coverageUntil": "Coverage Until",
             "status": "Status",
-            "createdDate": "Created Date"   
+            "createdDate": "Created"   
         }
     },  
     "action": {

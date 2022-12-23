@@ -13,8 +13,8 @@ import Link from "@mui/material/Link";
 import { PolicyData } from "../../backend/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
 import { formatCurrency } from "../../utils/numbers";
-import { formatDate } from "../../utils/date";
-import { getPolicyEnd, getPolicyState } from "../../utils/product_formatter";
+import { formatDateUtc } from "../../utils/date";
+import { getPolicyExpiration, getPolicyState } from "../../utils/product_formatter";
 import { BigNumber } from "ethers";
 import Address from "../address";
 import dayjs from "dayjs";
@@ -84,14 +84,14 @@ export default function Policies(props: PoliciesProps) {
             field: 'createdAt', 
             headerName: t('table.header.createdDate'), 
             flex: 1,
-            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => formatDate(dayjs.unix(params.value.toNumber()))
+            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => formatDateUtc(dayjs.unix(params.value.toNumber()))
         },
         { 
             field: 'coverageUntil', 
             headerName: t('table.header.coverageUntil'), 
             flex: 1,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => formatDate(getPolicyEnd(params.value))
+            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => formatDateUtc(getPolicyExpiration(params.value))
         },
         { 
             field: 'applicationState', 

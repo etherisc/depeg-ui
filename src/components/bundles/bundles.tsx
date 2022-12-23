@@ -13,7 +13,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
-import { formatDate } from "../../utils/date";
+import { formatDateUtc } from "../../utils/date";
 import { FormControlLabel, Switch } from "@mui/material";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -79,7 +79,7 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'id', 
             headerName: t('table.header.id'), 
-            flex: 0.5,
+            flex: 0.3,
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
             renderCell: (params: GridRenderCellParams<BundleData>) => {
                 if (params.value?.owner === address) {
@@ -96,7 +96,7 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'capital', 
             headerName: t('table.header.capital'), 
-            flex: 1,
+            flex: 0.85,
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
             valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
                 const bundle = params.value;
@@ -109,7 +109,7 @@ export default function Bundles(props: BundlesProps) {
             field: 'createdAt', 
             headerName: t('table.header.created'), 
             flex: 0.6,
-            valueFormatter: (params: GridValueFormatterParams<number>) => formatDate(dayjs.unix(params.value)),
+            valueFormatter: (params: GridValueFormatterParams<number>) => formatDateUtc(dayjs.unix(params.value)),
         },
         { 
             field: 'lifetime', 
@@ -119,18 +119,18 @@ export default function Bundles(props: BundlesProps) {
             valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
                 const bundle = params.value;
                 const lifetime = dayjs.unix(bundle.createdAt).add(bundle.lifetime.toNumber(), 'seconds');
-                return formatDate(lifetime);
+                return formatDateUtc(lifetime);
             }
         },
         { 
             field: 'policies', 
             headerName: t('table.header.policies'), 
-            flex: 0.5
+            flex: 0.3
         },
         { 
             field: 'state', 
             headerName: t('table.header.state'), 
-            flex: 0.5,
+            flex: 0.3,
             valueFormatter: (params: GridValueFormatterParams<number>) => t('bundle_state_' + params.value, { ns: 'common'}),
         },
     ];
