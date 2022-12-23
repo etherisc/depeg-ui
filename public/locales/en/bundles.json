@@ -12,6 +12,7 @@
         }
     },  
     "action": {
-        "create_bundle": "Create new risk bundle"
+        "create_bundle": "Create new risk bundle",
+        "all_mine_bundles": "Show all risk bundles"
     }
 }

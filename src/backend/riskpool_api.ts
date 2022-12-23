@@ -188,14 +188,13 @@ export class DepegRiskpoolApi {
      * nft tokens for a given owner.
      */
     async getBundle(
-        walletAddress: string, 
-        bundleTokenAddress: string, 
-        bundleId: number
+        bundleId: number,
+        walletAddress?: string, 
     ): Promise<BundleData|undefined> {
         console.log("getBundle", bundleId);
         const bundle = await this.getBundleDataByBundleId(bundleId);
         console.log(bundle);
-        if (bundle.owner !== walletAddress) {
+        if (walletAddress !== undefined && bundle.owner !== walletAddress) {
             // owner mismatch
             console.log("owner mismatch");
             return undefined;

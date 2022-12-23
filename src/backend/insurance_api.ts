@@ -88,7 +88,7 @@ export interface InvestApi {
     bundleTokenAddress(): Promise<string>;
     bundleCount(): Promise<number>;
     bundleId(idx: number): Promise<number>;
-    bundle(walletAddress: string, bundleTokenAddress: string, bundleId: number): Promise<BundleData|undefined>;
+    bundle(bundleId: number, walletAddress?: string): Promise<BundleData|undefined>;
 }
 
 export function getInsuranceApi(

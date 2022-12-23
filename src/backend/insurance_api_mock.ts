@@ -161,7 +161,7 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         bundleId(idx) {
             return Promise.resolve(idx);
         },
-        bundle(walletAddress: string, bundleTokenAddress: string, bundleId: number): Promise<BundleData|undefined> {
+        bundle(bundleId: number, walletAddress: string): Promise<BundleData|undefined> {
             // TODO: return mock
             return Promise.resolve(undefined);
         }

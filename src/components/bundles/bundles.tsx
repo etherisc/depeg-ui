@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useCallback, useContext, useEffect, useReducer, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { getInsuranceApi, InsuranceApi } from "../../backend/insurance_api";
-import { DataGrid, GridColDef, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
@@ -15,6 +15,7 @@ import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
 import { formatDate } from "../../utils/date";
 import moment from "moment";
+import { darken, FormControlLabel, lighten, Switch } from "@mui/material";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -28,6 +29,12 @@ export default function Bundles(props: BundlesProps) {
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [ bundleState, dispatch ] = useReducer(bundleReducer, { bundles: [], loading: false });
     const [ pageSize, setPageSize ] = useState(5);
+    const [ showAllBundles, setShowAllBundles ] = useState(true);
+    const [ address, setAddress ] = useState("");
+
+    function handleShowAllBundlesChanged(event: React.ChangeEvent<HTMLInputElement>) {
+        setShowAllBundles(!showAllBundles);
+    }
 
     const getBundles = useCallback(async () => {
         if (bundleState.loading) {
@@ -38,6 +45,8 @@ export default function Bundles(props: BundlesProps) {
         dispatch({ type: BundleActionType.RESET });
 
         const walletAddress = await appContext?.data.signer?.getAddress();
+        setAddress(walletAddress ?? "");
+
         if (walletAddress === undefined ) {
             dispatch({ type: BundleActionType.STOP_LOADING });
             return;
@@ -46,10 +55,9 @@ export default function Bundles(props: BundlesProps) {
         // this will return the count for all bundles in the system (right now this is the only way to get to bundles)
         const iapi = await getInsuranceApi(enqueueSnackbar, t, appContext.data.signer, appContext.data.provider).invest;
         const bundlesCount = await iapi.bundleCount();
-        const bundleTokenAddress = await iapi.bundleTokenAddress();
         for (let i = 0; i < bundlesCount; i++) {
             const bundleId = await iapi.bundleId(i);
-            const bundle = await iapi.bundle(walletAddress, bundleTokenAddress, bundleId);
+            const bundle = await iapi.bundle(bundleId, showAllBundles ? undefined : walletAddress);
             // bundle() will return undefined if bundles is not owned by the wallet address
             if (bundle === undefined ) {
                 continue;
@@ -58,12 +66,12 @@ export default function Bundles(props: BundlesProps) {
             dispatch({ type: BundleActionType.ADD, bundle: bundle });
         }
         dispatch({ type: BundleActionType.STOP_LOADING });
-    }, [appContext.data.provider, appContext.data.signer, bundleState.loading, enqueueSnackbar, t]);
+    }, [appContext.data.provider, appContext.data.signer, bundleState.loading, enqueueSnackbar, t, showAllBundles]);
 
     useEffect(() => {
         getBundles();
     // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [appContext.data.signer]); // update bundles when signer changes
+    }, [appContext.data.signer, showAllBundles]); // update bundles when signer changes
 
     const columns: GridColDef[] = [
         { 
@@ -122,6 +130,15 @@ export default function Bundles(props: BundlesProps) {
         return (
             <GridToolbarContainer >
                 <Box sx={{ flexGrow: 1 }}>
+                    <FormControlLabel 
+                        control={
+                            <Switch
+                                defaultChecked={showAllBundles}
+                                value={showAllBundles} 
+                                onChange={handleShowAllBundlesChanged}
+                                sx={{ ml: 1 }}
+                                />} 
+                        label={t('action.all_mine_bundles')} />   
                 </Box>
                 {/* aligned right beyond here */}
                 <Link component={LinkBehaviour} href="/invest" passHref style={{ textDecoration: 'none' }}>
@@ -135,8 +152,24 @@ export default function Bundles(props: BundlesProps) {
 
     const loadingBar = bundleState.loading ? <LinearProgress /> : null;
 
+    const getBackgroundColor = (color: string, mode: string) =>
+        mode === 'dark' ? darken(color, 0.6) : lighten(color, 0.7);
+
+    const getHoverBackgroundColor = (color: string, mode: string) =>
+        mode === 'dark' ? darken(color, 0.5) : lighten(color, 0.75);
+
     return (
-        <>
+        <Box 
+            sx={{
+                '& .riskbundles-mine': {
+                    bgcolor: (theme) =>
+                        getBackgroundColor(theme.palette.primary.main, theme.palette.mode),
+                    '&:hover': {
+                    bgcolor: (theme) =>
+                        getHoverBackgroundColor(theme.palette.primary.main, theme.palette.mode),
+                    },
+                },
+            }}>
             <Typography variant="h5" mb={2}>{t('title')}</Typography>
 
             {loadingBar}
@@ -158,7 +191,8 @@ export default function Bundles(props: BundlesProps) {
                 rowsPerPageOptions={[5, 10, 20, 50]}
                 onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
                 disableSelectionOnClick={true}
+                getRowClassName={(params: GridRowParams<BundleData>) => showAllBundles && params.row.owner === address ? 'riskbundles-mine' : '' } 
                 />
-        </>
+        </Box>
     );
 }
