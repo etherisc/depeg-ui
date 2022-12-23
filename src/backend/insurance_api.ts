@@ -60,6 +60,8 @@ export interface ApplicationApi {
 }
 
 export interface InvestApi {
+    minLifetime: number;
+    maxLifetime: number;
     minInvestedAmount: number;
     maxInvestedAmount: number;
     minSumInsured: number;

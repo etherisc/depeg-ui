@@ -42,6 +42,10 @@ export type IInvestFormValues = {
 export default function InvestForm(props: InvestFormProperties) {
     const { t } = useTranslation('invest');
     const investProps = props.insurance.invest;
+    const minLifetimeDays = investProps.minLifetime;
+    const minLifetimeEndDate = moment().add(minLifetimeDays, 'days').format("YYYY-MM-DD");
+    const maxLifetimeDays = investProps.maxLifetime;
+    const maxLifetimeEndDate = moment().add(maxLifetimeDays, 'days').format("YYYY-MM-DD");
     const minInvestedAmount = investProps.minInvestedAmount / Math.pow(10, props.usd2Decimals);
     const maxInvestedAmount = investProps.maxInvestedAmount / Math.pow(10, props.usd2Decimals);
     const minSumInsured = investProps.minSumInsured / Math.pow(10, props.usd2Decimals);
@@ -162,8 +166,8 @@ export default function InvestForm(props: InvestFormProperties) {
                         control={control}
                         rules={{ 
                             required: true, 
-                            // FIXME: min: coverageDaysMin, 
-                            // max: coverageDaysMax, 
+                            min: minLifetimeDays, 
+                            max: maxLifetimeDays, 
                             pattern: /^[0-9]+$/ 
                         }}
                         render={({ field }) => 
@@ -180,10 +184,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                 helperText={errors.lifetime !== undefined 
                                     ? ( errors.lifetime.type == 'pattern' 
                                             ? t(`error.field.numberType`, { "ns": "common"}) 
-                                            : t(`error.field.${errors.lifetime.type}`, 
-                                                    // FIXME: { "ns": "common", "minValue": coverageDaysMin, "maxValue": coverageDaysMax }
-                                                    { "ns": "common" }
-                                                ) 
+                                            : t(`error.field.${errors.lifetime.type}`, { "ns": "common", "minValue": minLifetimeDays, "maxValue": maxLifetimeDays }) 
                                     ) : ""}
                                 />}
                         />
@@ -207,8 +208,8 @@ export default function InvestForm(props: InvestFormProperties) {
                                         />
                                 }
                                 disablePast={true}
-                                // FIXME: minDate={coverageUntilMin}
-                                // maxDate={coverageUntilMax}
+                                minDate={minLifetimeEndDate}
+                                maxDate={maxLifetimeEndDate}
                                 />}
                         />
                 </Grid>

@@ -121,6 +121,8 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
 function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
         usd1: 'USDC',
+        minLifetime: 14,
+        maxLifetime: 180,
         minInvestedAmount: 25000000000,
         maxInvestedAmount: 100000000000,
         minSumInsured: 1000000000,
