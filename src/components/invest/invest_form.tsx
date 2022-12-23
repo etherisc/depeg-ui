@@ -72,25 +72,37 @@ export default function InvestForm(props: InvestFormProperties) {
 
     const errors = useMemo(() => formState.errors, [formState]);
 
+    // handle changes in lifetime duration / end date and update the other field accordingly
+    const watchLifetime = watch("lifetime");
+    useEffect(() => {
+        setValue("lifetimeEndDate", moment().startOf('day').add(watchLifetime, 'days').format("YYYY-MM-DD"));
+    }, [watchLifetime, setValue]);
+
+    const watchLifetimeEndDate = watch("lifetimeEndDate");
+    useEffect(() => {
+        setValue("lifetime", moment(watchLifetimeEndDate).startOf('day').diff(moment().startOf('day'), 'days')); 
+    }, [watchLifetimeEndDate, setValue]);
+
+    // handle changes in insured amount min/max / coverage duration and validate the other field accordingly
     const watchInsuredAmountMin = watch("insuredAmountMin");
     useEffect(() => {
         trigger("insuredAmountMax");
-    }, [watchInsuredAmountMin]);
+    }, [watchInsuredAmountMin, trigger]);
 
     const watchInsuredAmountMax = watch("insuredAmountMax");
     useEffect(() => {
         trigger("insuredAmountMin");
-    }, [watchInsuredAmountMax]);
+    }, [watchInsuredAmountMax, trigger]);
 
     const watchCoverageDurationMin = watch("coverageDurationMin");
     useEffect(() => {
         trigger("coverageDurationMax");
-    }, [watchCoverageDurationMin]);
+    }, [watchCoverageDurationMin, trigger]);
 
     const watchCoverageDurationMax = watch("coverageDurationMax");
     useEffect(() => {
         trigger("coverageDurationMin");
-    }, [watchCoverageDurationMax]);
+    }, [watchCoverageDurationMax, trigger]);
 
     const [ paymentInProgress, setPaymentInProgress ] = useState(false);
 
@@ -113,8 +125,6 @@ export default function InvestForm(props: InvestFormProperties) {
             setPaymentInProgress(false);
         }
     }
-
-    // FIXME: lifetime and linetimeEndDate must be synced on update
 
     const waitForPayment = paymentInProgress ? <LinearProgress /> : null;
     
