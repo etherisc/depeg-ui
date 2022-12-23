@@ -23,11 +23,35 @@ const _abi = [
         type: "uint256",
       },
     ],
+    name: "getBundleCapitalSupport",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "capitalAmount",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "instanceId",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
+        name: "bundleId",
+        type: "uint256",
+      },
+    ],
     name: "getBundleStakes",
     outputs: [
       {
         internalType: "uint256",
-        name: "stakedDipAmount",
+        name: "dipAmount",
         type: "uint256",
       },
     ],
@@ -46,42 +70,13 @@ const _abi = [
         name: "bundleId",
         type: "uint256",
       },
+    ],
+    name: "getBundleToken",
+    outputs: [
       {
         internalType: "address",
         name: "token",
         type: "address",
-      },
-    ],
-    name: "getSupportedCapitalAmount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "supportedCapitalAmount",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "instanceId",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
-        name: "bundleId",
-        type: "uint256",
-      },
-    ],
-    name: "isRegisteredBundle",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "isRegistered",
-        type: "bool",
       },
     ],
     stateMutability: "view",
