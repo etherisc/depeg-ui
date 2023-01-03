@@ -1,5 +1,4 @@
 import Typography from '@mui/material/Typography'
-import { Web3Provider } from "@ethersproject/providers";
 import { useDispatch, useSelector } from "react-redux";
 import { setBlock } from "../../redux/slices/chain_slice";
 import { RootState } from "../../redux/store";
@@ -15,24 +14,8 @@ export default function ChainData() {
 
     const blockNumber = useSelector((state: RootState) => state.chain.blockNumber);
     const blockTime = useSelector((state: RootState) => state.chain.blockTime);
-    const provider = useSelector((state: RootState) => state.chain.provider);
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     
-    async function blockListener(blockNumber: number) {
-        const blockTime = (await provider?.getBlock(blockNumber))?.timestamp ?? 0;
-        dispatch(setBlock([blockNumber, blockTime ]));
-    }
-
-    async function getAndSubscribeToLastBlock(provider: Web3Provider) {
-        // TODO: move this to provider initialization
-        const blockNumber = await provider.getBlockNumber();
-        const blockTime = (await provider.getBlock(blockNumber)).timestamp;
-        dispatch(setBlock([blockNumber, blockTime ]));
-
-        // now subscribe to future updates
-        provider.removeListener("block", blockListener);
-        provider.on("block", blockListener); 
-    };
-
     function formatUtc(timestamp: number): string {
         return moment(timestamp * 1000).utc().format("YYYY-MM-DD HH:mm:ss") + " UTC";
     }
@@ -41,9 +24,7 @@ export default function ChainData() {
         return moment(timestamp * 1000).format("YYYY-MM-DD HH:mm:ss") + " Local";
     }
     
-    if (provider !== undefined) {
-        getAndSubscribeToLastBlock(provider);
-    } else {
+    if (! isConnected) {
         if (blockNumber !== 0) {
             dispatch(setBlock([0, 0]));
         }
