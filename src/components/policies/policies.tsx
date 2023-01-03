@@ -17,6 +17,8 @@ import { getPolicyExpiration, getPolicyState } from "../../utils/product_formatt
 import { BigNumber } from "ethers";
 import Address from "../address";
 import Timestamp from "../timestamp";
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -24,7 +26,7 @@ export interface PoliciesProps {
 
 export default function Policies(props: PoliciesProps) {
     const { t } = useTranslation(['policies', 'common']);
-    const appContext = useContext(AppContext);
+    const signer = useSelector((state: RootState) => state.chain.signer);
 
     const [ policies, setPolicies ] = useState<Array<PolicyData>>([]);
     const [ policyRetrievalInProgess , setPolicyRetrievalInProgess ] = useState(false);
@@ -37,7 +39,7 @@ export default function Policies(props: PoliciesProps) {
 
     useEffect(() => {
         async function getPolicies() {
-            const walletAddress = await appContext?.data.signer?.getAddress();
+            const walletAddress = await signer?.getAddress();
             if (walletAddress !== undefined) {
                 setPolicyRetrievalInProgess(true);
                 setPolicies([]);
@@ -56,7 +58,7 @@ export default function Policies(props: PoliciesProps) {
             }
         }
         getPolicies();
-    }, [appContext?.data.signer, props.insurance, showActivePoliciesOnly, t]);
+    }, [signer, props.insurance, showActivePoliciesOnly, t]);
 
     const columns: GridColDef[] = [
         { 
