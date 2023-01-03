@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { AppContext } from "../../context/app_context";
 import Button from '@mui/material/Button'
 import { getAndSetWalletAccount } from "../../utils/wallet";
 import { useTranslation } from "next-i18next";
@@ -7,14 +5,16 @@ import { useSnackbar } from "notistack";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useMediaQuery, useTheme } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function LoginWithMetaMaskButton(props: any) {
     const { closeDialog } = props;
-    const appContext = useContext(AppContext);
     const { t } = useTranslation('common');
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const dispatch = useDispatch();
+    const isConnected = useSelector((state: any) => state.chain.isConnected);
 
     async function login() {
         console.log("metamask login");
@@ -38,7 +38,7 @@ export default function LoginWithMetaMaskButton(props: any) {
             return;
         }
 
-        getAndSetWalletAccount(appContext?.dispatch);
+        getAndSetWalletAccount(dispatch);
     }
 
     let button = (<></>);
@@ -48,7 +48,7 @@ export default function LoginWithMetaMaskButton(props: any) {
         buttonText = t('action.login_metamask_short');
     }
     
-    if (appContext?.data.signer === undefined) {
+    if (! isConnected ) {
         button = (
             <Button variant="contained" color="secondary" onClick={login} sx={{ mr: 1}} fullWidth>
                 <FontAwesomeIcon icon={faRightToBracket} className="fa" />

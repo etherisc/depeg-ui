@@ -10,6 +10,8 @@ import { useRouter } from 'next/router'
 import { formatCurrency } from "../../utils/numbers";
 import ApplicationForm from "./application_form";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -23,12 +25,14 @@ export default function Application(props: ApplicationProps) {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const router = useRouter();
 
+    const signer = useSelector((state: RootState) => state.chain.signer);
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+
     const appContext = useContext(AppContext);
-    const [ activeStep, setActiveStep ] = useState(appContext.data.signer === undefined ? 0 : 1);
+    const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ walletAddress, setWalletAddress ] = useState("");
     const [ readyToBuy, setReadyToBuy ] = useState(false);
-    // const [ premiumTrxInProgress, setPremiumTrxInProgress ] = useState(false);
     const [ premiumTrxTextKey, setPremiumTrxTextKey ] = useState("");
 
     async function walletDisconnected() {
@@ -44,23 +48,23 @@ export default function Application(props: ApplicationProps) {
             setPremiumTrxTextKey("");
         }
 
-        console.log("signer", appContext.data.signer, "bundleDataInitialized", appContext.data.bundlesInitialized);
-        if (appContext.data.signer !== undefined && ! (appContext.data.signer instanceof VoidSigner)) {
+        console.log("signer", signer, "bundleDataInitialized", appContext.data.bundlesInitialized);
+        if (signer !== undefined && ! (signer instanceof VoidSigner)) {
             appContext.dispatch({ type: AppActionType.BUNDLE_INITIALIZING });
             setPremiumTrxTextKey('bundle_loading');
             console.log("got a new signer ... getting bundles");
             asyncGetBundles(appContext.dispatch);
         }    
-    }, [appContext.data.signer]);
+    }, [signer]);
     
     // change steps according to application state
     useEffect(() => {
-        if (appContext?.data.signer === undefined) {
+        if (! isConnected) {
             setActiveStep(0);
             walletDisconnected();
-        } else if (activeStep < 1 && appContext.data.signer !== undefined) {
+        } else if (activeStep < 1 && isConnected) {
             setActiveStep(1);
-            updateWalletAddress(appContext.data.signer);
+            updateWalletAddress(signer!);
         } else if (activeStep == 1 && readyToBuy) {
             setActiveStep(2);
         } else if (activeStep == 2 && !readyToBuy) { 
@@ -68,7 +72,7 @@ export default function Application(props: ApplicationProps) {
         } else if (activeStep > 4) { // application completed
             setFormDisabled(true);
         }
-    }, [appContext?.data.signer, activeStep, readyToBuy]);
+    }, [signer, isConnected, activeStep, readyToBuy]);
 
     useEffect(() => {
         if (activeStep < 1 || activeStep > 2) {
@@ -262,8 +266,8 @@ export default function Application(props: ApplicationProps) {
         setWalletAddress(await signer.getAddress());
     }
 
-    if (appContext.data.signer !== undefined) {
-        updateWalletAddress(appContext.data.signer);
+    if (isConnected) {
+        updateWalletAddress(signer!);
     }
 
     return (
