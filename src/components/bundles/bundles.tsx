@@ -13,11 +13,13 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
-import { formatDateUtc } from "../../utils/date";
-import { FormControlLabel, Switch } from "@mui/material";
+import { formatDateLocal, formatDateUtc } from "../../utils/date";
+import { FormControlLabel, Switch, Tooltip } from "@mui/material";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from "dayjs";
+import { grey } from '@mui/material/colors';
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -79,7 +81,7 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'id', 
             headerName: t('table.header.id'), 
-            flex: 0.3,
+            flex: 0.2,
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
             renderCell: (params: GridRenderCellParams<BundleData>) => {
                 if (params.value?.owner === address) {
@@ -108,18 +110,38 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'createdAt', 
             headerName: t('table.header.created'), 
-            flex: 0.6,
-            valueFormatter: (params: GridValueFormatterParams<number>) => formatDateUtc(dayjs.unix(params.value)),
+            flex: 0.65,
+            renderCell: (params: GridRenderCellParams<number>) => {
+                const localtime = formatDateLocal(params?.value ?? 0);
+                return (<>
+                    {formatDateUtc(params?.value ?? 0)}
+                    &nbsp;
+                    <Tooltip title={localtime}>
+                        <Typography color={grey[400]}>
+                            <FontAwesomeIcon icon={faCircleInfo} className="fa" />
+                        </Typography>
+                    </Tooltip>
+                </>);
+            }
         },
         { 
             field: 'lifetime', 
             headerName: t('table.header.lifetime'), 
-            flex: 0.6,
+            flex: 0.65,
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
-                const bundle = params.value;
-                const lifetime = dayjs.unix(bundle.createdAt).add(bundle.lifetime.toNumber(), 'seconds');
-                return formatDateUtc(lifetime);
+            renderCell: (params: GridRenderCellParams<BundleData>) => {
+                const bundle = params.value!;
+                const lifetime = dayjs.unix(bundle.createdAt).add(bundle.lifetime.toNumber(), 'seconds').unix();
+                const localtime = formatDateLocal(lifetime);
+                return (<>
+                    {formatDateUtc(lifetime)}
+                    &nbsp;
+                    <Tooltip title={localtime}>
+                        <Typography color={grey[400]}>
+                            <FontAwesomeIcon icon={faCircleInfo} className="fa" />
+                        </Typography>
+                    </Tooltip>
+                </>);
             }
         },
         { 

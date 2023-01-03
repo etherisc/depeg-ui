@@ -10,7 +10,7 @@ import moment from "moment";
 import { Tooltip } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons"; 
-
+import { grey } from '@mui/material/colors';
 
 export default function ChainData() {
 
@@ -63,7 +63,8 @@ export default function ChainData() {
         chainData = (
             <Tooltip title={timestamp}>
                 <Typography variant="body2" sx={{ fontSize: '10px', ml: 1 }}>
-                    {blockNumber} <FontAwesomeIcon icon={faCircleInfo} className="fa" />
+                    {blockNumber} 
+                    <FontAwesomeIcon icon={faCircleInfo} className="fa" />
                 </Typography>
             </Tooltip>
         );

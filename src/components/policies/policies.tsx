@@ -13,11 +13,14 @@ import Link from "@mui/material/Link";
 import { PolicyData } from "../../backend/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
 import { formatCurrency } from "../../utils/numbers";
-import { formatDateUtc } from "../../utils/date";
+import { formatDateLocal, formatDateUtc } from "../../utils/date";
 import { getPolicyExpiration, getPolicyState } from "../../utils/product_formatter";
 import { BigNumber } from "ethers";
 import Address from "../address";
-import dayjs from "dayjs";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { grey } from '@mui/material/colors';
+import { Tooltip } from "@mui/material";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -65,14 +68,14 @@ export default function Policies(props: PoliciesProps) {
             headerName: t('table.header.policyId'), 
             flex: 1,
             renderCell: (params: GridRenderCellParams<string>) => 
-            (<Address address={params.value ?? ""} iconColor="secondary.main" />)
+                (<Address address={params.value ?? ""} iconColor="secondary.main" />)
         },
         { 
             field: 'owner', 
             headerName: t('table.header.walletAddress'), 
             flex: 1,
             renderCell: (params: GridRenderCellParams<string>) => 
-            (<Address address={params.value ?? ""} iconColor="secondary.main" />)
+                (<Address address={params.value ?? ""} iconColor="secondary.main" />)
         },
         { 
             field: 'suminsured', 
@@ -84,21 +87,46 @@ export default function Policies(props: PoliciesProps) {
             field: 'createdAt', 
             headerName: t('table.header.createdDate'), 
             flex: 1,
-            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => formatDateUtc(dayjs.unix(params.value.toNumber()))
+            renderCell: (params: GridRenderCellParams<BigNumber>) => {
+                const localtime = formatDateLocal(params?.value?.toNumber() ?? 0);
+                return (<>
+                    {formatDateUtc(params?.value?.toNumber() ?? 0)}
+                    &nbsp;
+                    <Tooltip title={localtime}>
+                        <Typography color={grey[400]}>
+                            <FontAwesomeIcon icon={faCircleInfo} className="fa" />
+                        </Typography>
+                    </Tooltip>
+                </>);
+            }
         },
         { 
             field: 'coverageUntil', 
             headerName: t('table.header.coverageUntil'), 
             flex: 1,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => formatDateUtc(getPolicyExpiration(params.value))
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                const ts = getPolicyExpiration(params.value!);
+                const localtime = formatDateLocal(ts);
+                return (<>
+                    {formatDateUtc(ts)}
+                    &nbsp;
+                    <Tooltip title={localtime}>
+                        <Typography color={grey[400]}>
+                            <FontAwesomeIcon icon={faCircleInfo} className="fa" />
+                        </Typography>
+                    </Tooltip>
+                </>);
+            }
         },
         { 
             field: 'applicationState', 
             headerName: t('table.header.status'), 
             flex: 1,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => t('application_state_' + getPolicyState(params.value), { ns: 'common'})
+            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => {
+                return t('application_state_' + getPolicyState(params.value), { ns: 'common'})
+            }
         },
     ];
 

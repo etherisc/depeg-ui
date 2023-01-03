@@ -19,7 +19,8 @@ export function getPolicyState(policy: PolicyData): PolicyState {
 export function getPolicyStateForActivePolicy(policy: PolicyData): PolicyState {
     switch (policy.policyState) {
         case POLICY_STATE_ACTIVE:
-            if (dayjs().isAfter(getPolicyExpiration(policy))) {
+            const exp = getPolicyExpiration(policy);
+            if (dayjs().isAfter(dayjs.unix(exp))) {
                 return PolicyState.EXPIRED;
             }
             if (policy.payoutState !== undefined) {
@@ -47,6 +48,6 @@ export function getPolicyStateForPaidoutPolicy(policy: PolicyData): PolicyState 
     }
 }
 
-export function getPolicyExpiration(policy: PolicyData): dayjs.Dayjs {
-    return dayjs.unix(policy.createdAt.toNumber() + policy.duration.toNumber());
+export function getPolicyExpiration(policy: PolicyData): number {
+    return dayjs.unix(policy.createdAt.toNumber() + policy.duration.toNumber()).unix();
 }
