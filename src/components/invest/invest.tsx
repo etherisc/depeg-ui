@@ -1,6 +1,5 @@
 import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/app_context";
+import { useEffect, useState } from "react";
 import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../backend/insurance_api";
 import { SnackbarKey, useSnackbar } from "notistack";
@@ -10,6 +9,8 @@ import { useRouter } from "next/router";
 import { formatCurrency } from "../../utils/numbers";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { REVOKE_INFO_URL } from "../application/application";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 export interface InvestProps {
     insurance: InsuranceApi;
@@ -22,17 +23,18 @@ export default function Invest(props: InvestProps) {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const router = useRouter();
 
-    const appContext = useContext(AppContext);
-    const [ activeStep, setActiveStep ] = useState(appContext?.data.signer === undefined ? 0 : 1);
+    const signer = useSelector((state: RootState) => state.chain.signer);
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ readyToInvest, setReadyToInvest ] = useState(false);
 
 
     // change steps according to application state
     useEffect(() => {
-        if (appContext?.data.signer === undefined) {
+        if (! isConnected) {
             setActiveStep(0);
-        } else if (activeStep < 1 && appContext?.data.signer !== undefined) {
+        } else if (activeStep < 1 && isConnected) {
             setActiveStep(1);
         } else if (activeStep == 1 && readyToInvest) {
             setActiveStep(2);
@@ -41,7 +43,7 @@ export default function Invest(props: InvestProps) {
         } else if (activeStep > 4) { // application completed
             setFormDisabled(true);
         }
-    }, [appContext?.data.signer, activeStep, readyToInvest]);
+    }, [isConnected, activeStep, readyToInvest]);
 
     useEffect(() => {
         if (activeStep < 1 || activeStep > 2) {
@@ -219,7 +221,7 @@ export default function Invest(props: InvestProps) {
         try {
             enableUnloadWarning(true);
             setActiveStep(3);
-            const investorWalletAddress = await appContext!!.data.signer!!.getAddress();
+            const investorWalletAddress = await signer!.getAddress();
             const approvalSuccess = await doApproval(investorWalletAddress, investedAmount);
             if ( ! approvalSuccess) {
                 setActiveStep(2);
