@@ -8,6 +8,9 @@ import { useSnackbar } from "notistack";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import { connectChain } from "../../redux/slices/chain_slice";
+import { getChainState } from "../../utils/chain";
 
 export default function LoginWithWalletConnectButton(props: any) {
     const { closeDialog } = props;
@@ -17,6 +20,7 @@ export default function LoginWithWalletConnectButton(props: any) {
     const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const dispatch = useDispatch();
 
     async function login() {
         console.log("wallet connect login");
@@ -43,12 +47,14 @@ export default function LoginWithWalletConnectButton(props: any) {
         wcProvider.on("accountsChanged", async (accounts: string[]) => {
             console.log("accountsChanged", accounts);
             await appContext?.data.provider?.send("eth_requestAccounts", []);
+            // FIXME: this
             updateSigner(appContext!!.dispatch, provider);
         });
         wcProvider.on("chainChanged", (chainId: number) => {
             console.log("chainChanged", chainId);
             if (chainId != 43113) {
                 wcProvider.disconnect();
+                // FIXME: this
                 removeSigner(appContext!!.dispatch);
             }
             location.reload();
@@ -57,7 +63,8 @@ export default function LoginWithWalletConnectButton(props: any) {
         // A Web3Provider wraps a standard Web3 provider, which is
         // what MetaMask injects as window.ethereum into each page
         const provider = new ethers.providers.Web3Provider(wcProvider);
-        setSigner(appContext!!.dispatch, provider);
+        // setSigner(appContext!!.dispatch, provider);
+        dispatch(connectChain(await getChainState(provider)));
     }
 
     let button = (<></>);

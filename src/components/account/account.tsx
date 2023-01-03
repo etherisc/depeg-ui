@@ -8,9 +8,11 @@ import Address from "../address";
 import Logout from "./logout";
 import { reconnectWallets } from "../../utils/wallet";
 import Login from "./login";
+import { useDispatch } from "react-redux";
 
 export default function Account() {
     const appContext = useContext(AppContext);
+    const dispatch = useDispatch();
 
     const [ loggedIn, setLoggedIn ] = useState(false);
     const [ address, setAddress ] = useState("");
@@ -31,7 +33,7 @@ export default function Account() {
     }, [appContext?.data.signer]);
 
     useEffect(() => {
-        reconnectWallets(appContext);
+        reconnectWallets(dispatch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

@@ -7,6 +7,7 @@ import { useSnackbar } from "notistack";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useMediaQuery, useTheme } from "@mui/material";
+import { useDispatch } from "react-redux";
 
 export default function LoginWithMetaMaskButton(props: any) {
     const { closeDialog } = props;
@@ -15,6 +16,7 @@ export default function LoginWithMetaMaskButton(props: any) {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const dispatch = useDispatch();
 
     async function login() {
         console.log("metamask login");
@@ -38,7 +40,7 @@ export default function LoginWithMetaMaskButton(props: any) {
             return;
         }
 
-        getAndSetWalletAccount(appContext?.dispatch);
+        getAndSetWalletAccount(dispatch);
     }
 
     let button = (<></>);
