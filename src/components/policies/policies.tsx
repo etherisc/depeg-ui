@@ -13,14 +13,10 @@ import Link from "@mui/material/Link";
 import { PolicyData } from "../../backend/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
 import { formatCurrency } from "../../utils/numbers";
-import { formatDateLocal, formatDateUtc } from "../../utils/date";
 import { getPolicyExpiration, getPolicyState } from "../../utils/product_formatter";
 import { BigNumber } from "ethers";
 import Address from "../address";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { grey } from '@mui/material/colors';
-import { Tooltip } from "@mui/material";
+import Timestamp from "../timestamp";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -87,18 +83,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'createdAt', 
             headerName: t('table.header.createdDate'), 
             flex: 1,
-            renderCell: (params: GridRenderCellParams<BigNumber>) => {
-                const localtime = formatDateLocal(params?.value?.toNumber() ?? 0);
-                return (<>
-                    {formatDateUtc(params?.value?.toNumber() ?? 0)}
-                    &nbsp;
-                    <Tooltip title={localtime}>
-                        <Typography color={grey[400]}>
-                            <FontAwesomeIcon icon={faCircleInfo} className="fa" />
-                        </Typography>
-                    </Tooltip>
-                </>);
-            }
+            renderCell: (params: GridRenderCellParams<BigNumber>) => <Timestamp at={params?.value?.toNumber() ?? 0} />
         },
         { 
             field: 'coverageUntil', 
@@ -107,16 +92,7 @@ export default function Policies(props: PoliciesProps) {
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 const ts = getPolicyExpiration(params.value!);
-                const localtime = formatDateLocal(ts);
-                return (<>
-                    {formatDateUtc(ts)}
-                    &nbsp;
-                    <Tooltip title={localtime}>
-                        <Typography color={grey[400]}>
-                            <FontAwesomeIcon icon={faCircleInfo} className="fa" />
-                        </Typography>
-                    </Tooltip>
-                </>);
+                return (<Timestamp at={ts} />);
             }
         },
         { 

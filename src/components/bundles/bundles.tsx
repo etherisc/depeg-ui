@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useCallback, useContext, useEffect, useReducer, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { getInsuranceApi, InsuranceApi } from "../../backend/insurance_api";
-import { DataGrid, GridColDef, GridRenderCellParams, GridRowParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
@@ -13,13 +13,11 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
-import { formatDateLocal, formatDateUtc } from "../../utils/date";
-import { FormControlLabel, Switch, Tooltip } from "@mui/material";
+import { FormControlLabel, Switch } from "@mui/material";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from "dayjs";
-import { grey } from '@mui/material/colors';
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import Timestamp from "../timestamp";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -111,18 +109,7 @@ export default function Bundles(props: BundlesProps) {
             field: 'createdAt', 
             headerName: t('table.header.created'), 
             flex: 0.65,
-            renderCell: (params: GridRenderCellParams<number>) => {
-                const localtime = formatDateLocal(params?.value ?? 0);
-                return (<>
-                    {formatDateUtc(params?.value ?? 0)}
-                    &nbsp;
-                    <Tooltip title={localtime}>
-                        <Typography color={grey[400]}>
-                            <FontAwesomeIcon icon={faCircleInfo} className="fa" />
-                        </Typography>
-                    </Tooltip>
-                </>);
-            }
+            renderCell: (params: GridRenderCellParams<number>) => <Timestamp at={params.value ?? 0} />
         },
         { 
             field: 'lifetime', 
@@ -132,16 +119,7 @@ export default function Bundles(props: BundlesProps) {
             renderCell: (params: GridRenderCellParams<BundleData>) => {
                 const bundle = params.value!;
                 const lifetime = dayjs.unix(bundle.createdAt).add(bundle.lifetime.toNumber(), 'seconds').unix();
-                const localtime = formatDateLocal(lifetime);
-                return (<>
-                    {formatDateUtc(lifetime)}
-                    &nbsp;
-                    <Tooltip title={localtime}>
-                        <Typography color={grey[400]}>
-                            <FontAwesomeIcon icon={faCircleInfo} className="fa" />
-                        </Typography>
-                    </Tooltip>
-                </>);
+                return (<Timestamp at={lifetime} />);
             }
         },
         { 
