@@ -1,7 +1,6 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
-import { useCallback, useContext, useEffect, useReducer, useState } from "react";
-import { AppContext } from "../../context/app_context";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { getInsuranceApi, InsuranceApi } from "../../backend/insurance_api";
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
@@ -18,6 +17,8 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from "dayjs";
 import Timestamp from "../timestamp";
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -25,8 +26,10 @@ export interface BundlesProps {
 
 export default function Bundles(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
-    const appContext = useContext(AppContext);
     const { enqueueSnackbar } = useSnackbar();
+
+    const signer = useSelector((state: RootState) => state.chain.signer);
+    const provider = useSelector((state: RootState) => state.chain.provider);
 
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [ bundleState, dispatch ] = useReducer(bundleReducer, { bundles: [], loading: false });
@@ -46,7 +49,7 @@ export default function Bundles(props: BundlesProps) {
         dispatch({ type: BundleActionType.START_LOADING });
         dispatch({ type: BundleActionType.RESET });
 
-        const walletAddress = await appContext?.data.signer?.getAddress();
+        const walletAddress = await signer?.getAddress();
         setAddress(walletAddress ?? "");
 
         if (walletAddress === undefined ) {
@@ -55,7 +58,7 @@ export default function Bundles(props: BundlesProps) {
         }
 
         // this will return the count for all bundles in the system (right now this is the only way to get to bundles)
-        const iapi = await getInsuranceApi(enqueueSnackbar, t, appContext.data.signer, appContext.data.provider).invest;
+        const iapi = await getInsuranceApi(enqueueSnackbar, t, signer, provider).invest;
         const bundlesCount = await iapi.bundleCount();
         for (let i = 0; i < bundlesCount; i++) {
             const bundleId = await iapi.bundleId(i);
@@ -68,12 +71,12 @@ export default function Bundles(props: BundlesProps) {
             dispatch({ type: BundleActionType.ADD, bundle: bundle });
         }
         dispatch({ type: BundleActionType.STOP_LOADING });
-    }, [appContext.data.provider, appContext.data.signer, bundleState.loading, enqueueSnackbar, t, showAllBundles]);
+    }, [provider, signer, bundleState.loading, enqueueSnackbar, t, showAllBundles]);
 
     useEffect(() => {
         getBundles();
     // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [appContext.data.signer, showAllBundles]); // update bundles when signer changes
+    }, [signer, showAllBundles]); // update bundles when signer changes
 
     const columns: GridColDef[] = [
         { 
