@@ -1,7 +1,6 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
-import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/app_context";
+import { useEffect, useState } from "react";
 import { InsuranceApi } from "../../backend/insurance_api";
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import Button from "@mui/material/Button";

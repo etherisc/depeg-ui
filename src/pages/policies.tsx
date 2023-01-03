@@ -4,11 +4,9 @@ import Head from "next/head";
 import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
 import Policies from '../components/policies/policies';
-import { useContext, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { getInsuranceApi } from '../backend/insurance_api';
-import { AppContext } from '../context/app_context';
 import { useRouter } from 'next/router';
-import { Signer } from 'ethers/lib/ethers';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 
