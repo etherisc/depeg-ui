@@ -8,18 +8,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import LoginWithMetaMaskButton from "./login_metamask";
 import LoginWithWalletConnectButton from "./login_walletconnect";
+import { useSelector } from "react-redux";
 
 export default function Login() {
-    const appContext = useContext(AppContext);
     const { t } = useTranslation('common');
     const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [ showLoginDialog, setShowLoginDialog ] = useState(false);
+    const isConnected = useSelector((state: any) => state.chain.isConnected);
 
     let button = (<></>);
     
-    if (appContext?.data.signer === undefined) {
+    if (! isConnected ) {
         button = (
             <Button variant="contained" color="secondary" onClick={() => setShowLoginDialog(! showLoginDialog)}>
                 <FontAwesomeIcon icon={faRightToBracket} className="fa" />

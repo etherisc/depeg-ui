@@ -1,12 +1,9 @@
-import { AppContext } from "../context/app_context";
-import { setSigner, updateSigner } from "../context/app_context";
 import { ethers } from "ethers";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { walletConnectConfig } from "../config/appConfig";
 import { connectChain } from "../redux/slices/chain_slice";
-import { getChainState } from "./chain";
-import { Dispatch } from "react";
-import { AnyAction } from "@reduxjs/toolkit";
+import { getAndUpdateBlock, getChainState, updateSigner } from "./chain";
+import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 
 
 export async function reconnectWallets(dispatch: Dispatch<AnyAction>) {
@@ -36,6 +33,10 @@ export async function reconnectWallets(dispatch: Dispatch<AnyAction>) {
         const provider = new ethers.providers.Web3Provider(wcProvider);
         dispatch(connectChain(await getChainState(provider)));
         // TODO: remove setSigner(appContext!!.dispatch, provider);
+
+        provider.on("block", (blockNumber: number) => {
+            getAndUpdateBlock(dispatch, provider, blockNumber);
+        });
     }
 }
 
@@ -51,6 +52,10 @@ export async function getAndSetWalletAccount(dispatch: Dispatch<AnyAction>) {
     // For this, you need the account signer...
     // TODO: remove setSigner(dispatch, provider);
     dispatch(connectChain(await getChainState(provider)));
+
+    provider.on("block", (blockNumber: number) => {
+        getAndUpdateBlock(dispatch, provider, blockNumber);
+    });
 }
 
 export async function getAndUpdateWalletAccount(dispatch: any) {
@@ -65,4 +70,8 @@ export async function getAndUpdateWalletAccount(dispatch: any) {
     // For this, you need the account signer...
     // FIXME: this
     updateSigner(dispatch, provider);
+
+    provider.on("block", (blockNumber: number) => {
+        getAndUpdateBlock(dispatch, provider, blockNumber);
+    });
 }

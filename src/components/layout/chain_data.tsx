@@ -20,7 +20,7 @@ export default function ChainData() {
 
     const blockNumber = useSelector((state: RootState) => state.chain.blockNumber);
     const blockTime = useSelector((state: RootState) => state.chain.blockTime);
-
+    
     async function blockListener(blockNumber: number) {
         const provider = appContext.data.provider!;
         const blockTime = (await provider.getBlock(blockNumber)).timestamp;

@@ -1,6 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Blockies from 'react-blockies';
-import { AppContext } from "../../context/app_context";
 import { DOT, NBSP } from "../../utils/chars";
 import { Box, Avatar } from "@mui/material";
 import Balance from "../balance";
@@ -8,11 +7,13 @@ import Address from "../address";
 import Logout from "./logout";
 import { reconnectWallets } from "../../utils/wallet";
 import Login from "./login";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 export default function Account() {
-    const appContext = useContext(AppContext);
     const dispatch = useDispatch();
+    const signer = useSelector((state: RootState) => state.chain.signer);
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
 
     const [ loggedIn, setLoggedIn ] = useState(false);
     const [ address, setAddress ] = useState("");
@@ -21,16 +22,16 @@ export default function Account() {
     useEffect(() => {
         console.log("signer changed");
         async function updateData() {
-            const address = await appContext?.data.signer?.getAddress();
+            const address = await signer!.getAddress();
             setAddress(address!);
         }
-        if (appContext?.data.signer !== undefined) {
+        if (isConnected) {
             setLoggedIn(true);
             updateData();
         } else {
             setLoggedIn(false);
         }
-    }, [appContext?.data.signer]);
+    }, [signer, isConnected]);
 
     useEffect(() => {
         reconnectWallets(dispatch);
@@ -47,7 +48,7 @@ export default function Account() {
 
     let account = (<></>);
 
-    if (appContext?.data.signer != undefined && address !== undefined && address !== "") {
+    if (isConnected && address !== undefined && address !== "") {
         account = (
             <Box sx={{ display: 'inline-flex', alignItems: 'center' }}>
                 <Avatar sx={{ mr: 1, display: { 'xs': 'none', 'md': 'inline-flex'} }} >
@@ -58,7 +59,7 @@ export default function Account() {
                     <Box component="span" sx={{ display: { 'xs': 'none', 'md': 'inline-flex'}}}>
                         {NBSP} {DOT} {NBSP}
                         <Balance
-                            signer={appContext?.data.signer}
+                            signer={signer!}
                             currency={tokenSymbol}
                             usdAggregatorAddress={process.env.NEXT_PUBLIC_CHAINLINK_AGGREGATOR_ETH_USD_ADDRESS!}
                             />

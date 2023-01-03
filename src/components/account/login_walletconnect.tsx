@@ -1,26 +1,25 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";import { ethers } from "ethers";
-import { useContext } from "react";
 import { walletConnectConfig } from "../../config/appConfig";
-import { AppContext, setSigner, removeSigner, updateSigner } from "../../context/app_context";
 import Button from '@mui/material/Button'
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { connectChain } from "../../redux/slices/chain_slice";
-import { getChainState } from "../../utils/chain";
+import { getChainState, removeSigner, updateSigner } from "../../utils/chain";
 
 export default function LoginWithWalletConnectButton(props: any) {
     const { closeDialog } = props;
 
-    const appContext = useContext(AppContext);
     const { t } = useTranslation('common');
     const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const dispatch = useDispatch();
+    const isConnected = useSelector((state: any) => state.chain.isConnected);
+    const provider = useSelector((state: any) => state.chain.provider);
 
     async function login() {
         console.log("wallet connect login");
@@ -46,16 +45,14 @@ export default function LoginWithWalletConnectButton(props: any) {
         // TODO: make this implementation more robust
         wcProvider.on("accountsChanged", async (accounts: string[]) => {
             console.log("accountsChanged", accounts);
-            await appContext?.data.provider?.send("eth_requestAccounts", []);
-            // FIXME: this
-            updateSigner(appContext!!.dispatch, provider);
+            await provider?.send("eth_requestAccounts", []);
+            updateSigner(dispatch, provider);
         });
         wcProvider.on("chainChanged", (chainId: number) => {
             console.log("chainChanged", chainId);
             if (chainId != 43113) {
                 wcProvider.disconnect();
-                // FIXME: this
-                removeSigner(appContext!!.dispatch);
+                removeSigner(dispatch);
             }
             location.reload();
         });
@@ -74,7 +71,7 @@ export default function LoginWithWalletConnectButton(props: any) {
         buttonText = t('action.login_walletconnect_short');
     }
     
-    if (appContext?.data.signer === undefined) {
+    if (! isConnected ) {
         button = (
             <Button variant="contained" color="secondary" onClick={login} fullWidth>
                 <FontAwesomeIcon icon={faRightToBracket} className="fa" />

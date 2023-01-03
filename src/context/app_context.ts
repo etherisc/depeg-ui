@@ -1,6 +1,8 @@
+import { AnyAction } from "@reduxjs/toolkit";
 import { ethers, providers, Signer } from "ethers";
 import React, { Dispatch } from "react";
 import { BundleData } from "../backend/bundle_data";
+import { disconnectChain } from "../redux/slices/chain_slice";
 import { expectedChain } from "../utils/const";
 import { toHex } from "../utils/numbers";
 
@@ -10,6 +12,7 @@ export interface AppContext {
 }
 
 export interface AppData {
+    // FIXME: remove chain related props
     chainId: string;
     isExpectedChain: boolean;
     provider: providers.Web3Provider | undefined;
@@ -105,22 +108,3 @@ export function signerReducer(state: AppData, action: AppAction): AppData {
     }
 }
 
-export async function setSigner(dispatch: Dispatch<AppAction>, provider: ethers.providers.Web3Provider) {
-    const signer = provider.getSigner(); 
-    const network = await provider.getNetwork();
-    const chainId = network.chainId;
-    console.log("set signer", signer, chainId);
-    dispatch({ type: AppActionType.SET, signer: signer, provider: provider, chainId: toHex(chainId) });
-}
-
-export function updateSigner(dispatch: Dispatch<AppAction>, provider: ethers.providers.Web3Provider) {
-    const signer = provider.getSigner();  
-    console.log("update signer", signer);
-    dispatch({ type: AppActionType.UPDATE_SIGNER, signer: signer });
-}
-
-export function removeSigner(dispatch: Dispatch<AppAction>) {
-    dispatch({ type: AppActionType.UNSET });
-    console.log("unset signer");
-    window.localStorage.clear();
-}

@@ -27,10 +27,12 @@ export const chainSlice = createSlice({
     initialState,
     reducers: {
         connectChain(state, action: PayloadAction<ChainState>) {
-            state = action.payload;
+            state.provider?.removeAllListeners();
+            Object.assign(state, action.payload);
         },
         disconnectChain(state) {
-            state = initialState;
+            state.provider?.removeAllListeners();
+            Object.assign(state, initialState);
         },
         updateSigner(state, action: PayloadAction<Signer>) {
             state.signer = action.payload;
@@ -48,6 +50,7 @@ export const chainSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const { 
     connectChain, disconnectChain, 
+    updateSigner, 
     setBlock 
 } = chainSlice.actions;
 
