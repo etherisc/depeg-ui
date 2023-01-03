@@ -1,5 +1,4 @@
-import { useContext, useState } from "react";
-import { AppContext } from "../../context/app_context";
+import { useState } from "react";
 import Button from '@mui/material/Button'
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";

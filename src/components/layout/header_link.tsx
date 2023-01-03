@@ -3,7 +3,6 @@ import { Link } from '@mui/material';
 import { LinkBehaviour } from "../link_behaviour";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from "react";
-import { NoEncryption } from "@mui/icons-material";
 
 
 export function HeaderLink(props: any) {

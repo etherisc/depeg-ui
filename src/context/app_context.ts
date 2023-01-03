@@ -12,11 +12,6 @@ export interface AppContext {
 }
 
 export interface AppData {
-    // FIXME: remove chain related props
-    chainId: string;
-    isExpectedChain: boolean;
-    provider: providers.Web3Provider | undefined;
-    signer: Signer | undefined;
     bundles: Array<BundleData>;
     bundlesLoading: boolean;
     bundlesInitialized: boolean;
@@ -27,10 +22,6 @@ AppContext.displayName = "AppContext";
 
 export function initialAppData(): AppData {
     return {
-        chainId: "0x0",
-        isExpectedChain: true,
-        provider: undefined,
-        signer: undefined,
         bundles: new Array<BundleData>(),
         bundlesInitialized: false,
         bundlesLoading: false,
@@ -38,9 +29,6 @@ export function initialAppData(): AppData {
 }
 
 export enum AppActionType {
-    SET,
-    UNSET,
-    UPDATE_SIGNER,
     ADD_BUNDLE,
     RESET_BUNDLE,
     BUNDLE_INITIALIZING,
@@ -58,27 +46,6 @@ export interface AppAction {
 
 export function signerReducer(state: AppData, action: AppAction): AppData {
     switch (action.type) {
-        case AppActionType.SET:
-            return { 
-                ...state,
-                chainId: action.chainId ?? "0x0",
-                isExpectedChain: action.chainId === expectedChain,
-                provider: action?.provider,
-                signer: action?.signer,
-            };
-        case AppActionType.UNSET:
-            return { 
-                ...state,
-                chainId: "0x0",
-                isExpectedChain: true,
-                provider: undefined,
-                signer: undefined,
-            };
-        case AppActionType.UPDATE_SIGNER:
-            return {
-                ...state,
-                signer: action?.signer,
-            };
         case AppActionType.ADD_BUNDLE:
             if (state.bundles.find(b => b.id === action.bundle?.id) !== undefined) {
                 return state;

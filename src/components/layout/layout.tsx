@@ -1,16 +1,16 @@
 import { Alert, AlertColor, Box, Button, Collapse } from "@mui/material";
 import Container from "@mui/material/Container";
 import { AppProps } from "next/app";
-import { useCallback, useContext, useState } from "react";
-import { AppContext } from "../../context/app_context";
+import { useCallback, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 import Footer from "./footer";
 import Header from "./header";
 import UnexpectedChain from "./unexpected_chain";
 
 export default function Layout({ Component, pageProps }: AppProps) {
-    const appContext = useContext(AppContext);
-    const isExpectedChain = appContext.data.isExpectedChain;
     const [ noticeDismissed, setNoticeDismissed ] = useState(false);
+    const isExpectedChain = useSelector((state: RootState) => state.chain.isExpectedChain);
 
     const content = useCallback(() => {
         if (isExpectedChain) {

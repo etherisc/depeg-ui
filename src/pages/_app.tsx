@@ -22,8 +22,8 @@ import Layout from '../components/layout/layout';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 // Prevent fontawesome from adding its CSS since we did it manually above:
 import { config } from '@fortawesome/fontawesome-svg-core';
-import { Provider, useDispatch } from 'react-redux';
-import { store } from '../redux/store';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { RootState, store } from '../redux/store';
 import { removeSigner } from '../utils/chain';
 config.autoAddCss = false; /* eslint-disable import/first */
 
@@ -51,9 +51,10 @@ export default appWithTranslation(App);
 export function AppWithBlockchainConnection(appProps: AppProps) {
   const [ data, dispatch ] = useReducer(signerReducer, initialAppData());
   const reduxDispatch = useDispatch();
+  const provider = useSelector((state: RootState) => state.chain.provider);
 
-  if (data.provider != undefined) {
-    data.provider.on('network', (newNetwork: any, oldNetwork: any) => {
+  if (provider != undefined) {
+    provider.on('network', (newNetwork: any, oldNetwork: any) => {
       console.log('network', newNetwork, oldNetwork);
       location.reload();
     });

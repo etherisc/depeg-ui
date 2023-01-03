@@ -32,7 +32,6 @@ export async function reconnectWallets(dispatch: Dispatch<AnyAction>) {
         await wcProvider.enable();
         const provider = new ethers.providers.Web3Provider(wcProvider);
         dispatch(connectChain(await getChainState(provider)));
-        // TODO: remove setSigner(appContext!!.dispatch, provider);
 
         provider.on("block", (blockNumber: number) => {
             getAndUpdateBlock(dispatch, provider, blockNumber);
@@ -50,7 +49,6 @@ export async function getAndSetWalletAccount(dispatch: Dispatch<AnyAction>) {
     // The MetaMask plugin also allows signing transactions to
     // send ether and pay to change state within the blockchain.
     // For this, you need the account signer...
-    // TODO: remove setSigner(dispatch, provider);
     dispatch(connectChain(await getChainState(provider)));
 
     provider.on("block", (blockNumber: number) => {
@@ -68,7 +66,6 @@ export async function getAndUpdateWalletAccount(dispatch: any) {
     // The MetaMask plugin also allows signing transactions to
     // send ether and pay to change state within the blockchain.
     // For this, you need the account signer...
-    // FIXME: this
     updateSigner(dispatch, provider);
 
     provider.on("block", (blockNumber: number) => {

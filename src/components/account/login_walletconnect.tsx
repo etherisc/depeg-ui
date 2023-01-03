@@ -19,7 +19,6 @@ export default function LoginWithWalletConnectButton(props: any) {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const dispatch = useDispatch();
     const isConnected = useSelector((state: any) => state.chain.isConnected);
-    const provider = useSelector((state: any) => state.chain.provider);
 
     async function login() {
         console.log("wallet connect login");
@@ -60,7 +59,6 @@ export default function LoginWithWalletConnectButton(props: any) {
         // A Web3Provider wraps a standard Web3 provider, which is
         // what MetaMask injects as window.ethereum into each page
         const provider = new ethers.providers.Web3Provider(wcProvider);
-        // setSigner(appContext!!.dispatch, provider);
         dispatch(connectChain(await getChainState(provider)));
 
         provider.on("block", (blockNumber: number) => {
