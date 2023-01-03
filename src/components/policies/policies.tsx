@@ -13,11 +13,10 @@ import Link from "@mui/material/Link";
 import { PolicyData } from "../../backend/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
 import { formatCurrency } from "../../utils/numbers";
-import moment from "moment";
-import { formatDate } from "../../utils/date";
-import { getPolicyEnd, getPolicyState } from "../../utils/product_formatter";
+import { getPolicyExpiration, getPolicyState } from "../../utils/product_formatter";
 import { BigNumber } from "ethers";
 import Address from "../address";
+import Timestamp from "../timestamp";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -65,14 +64,14 @@ export default function Policies(props: PoliciesProps) {
             headerName: t('table.header.policyId'), 
             flex: 1,
             renderCell: (params: GridRenderCellParams<string>) => 
-            (<Address address={params.value ?? ""} iconColor="secondary.main" />)
+                (<Address address={params.value ?? ""} iconColor="secondary.main" />)
         },
         { 
             field: 'owner', 
             headerName: t('table.header.walletAddress'), 
             flex: 1,
             renderCell: (params: GridRenderCellParams<string>) => 
-            (<Address address={params.value ?? ""} iconColor="secondary.main" />)
+                (<Address address={params.value ?? ""} iconColor="secondary.main" />)
         },
         { 
             field: 'suminsured', 
@@ -84,21 +83,26 @@ export default function Policies(props: PoliciesProps) {
             field: 'createdAt', 
             headerName: t('table.header.createdDate'), 
             flex: 1,
-            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => formatDate(moment.unix(params.value.toNumber()))
+            renderCell: (params: GridRenderCellParams<BigNumber>) => <Timestamp at={params?.value?.toNumber() ?? 0} />
         },
         { 
             field: 'coverageUntil', 
             headerName: t('table.header.coverageUntil'), 
             flex: 1,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => formatDate(getPolicyEnd(params.value))
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                const ts = getPolicyExpiration(params.value!);
+                return (<Timestamp at={ts} />);
+            }
         },
         { 
             field: 'applicationState', 
             headerName: t('table.header.status'), 
             flex: 1,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => t('application_state_' + getPolicyState(params.value), { ns: 'common'})
+            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => {
+                return t('application_state_' + getPolicyState(params.value), { ns: 'common'})
+            }
         },
     ];
 

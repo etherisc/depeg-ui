@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { useCallback, useContext, useEffect, useReducer, useState } from "react";
 import { AppContext } from "../../context/app_context";
 import { getInsuranceApi, InsuranceApi } from "../../backend/insurance_api";
-import { DataGrid, GridColDef, GridRenderCellParams, GridRowParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
@@ -13,11 +13,11 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
-import { formatDate } from "../../utils/date";
-import moment from "moment";
 import { FormControlLabel, Switch } from "@mui/material";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import dayjs from "dayjs";
+import Timestamp from "../timestamp";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -79,7 +79,7 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'id', 
             headerName: t('table.header.id'), 
-            flex: 0.5,
+            flex: 0.2,
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
             renderCell: (params: GridRenderCellParams<BundleData>) => {
                 if (params.value?.owner === address) {
@@ -96,7 +96,7 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'capital', 
             headerName: t('table.header.capital'), 
-            flex: 1,
+            flex: 0.85,
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
             valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
                 const bundle = params.value;
@@ -108,29 +108,29 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'createdAt', 
             headerName: t('table.header.created'), 
-            flex: 0.6,
-            valueFormatter: (params: GridValueFormatterParams<number>) => formatDate(moment.unix(params.value)),
+            flex: 0.65,
+            renderCell: (params: GridRenderCellParams<number>) => <Timestamp at={params.value ?? 0} />
         },
         { 
             field: 'lifetime', 
             headerName: t('table.header.lifetime'), 
-            flex: 0.6,
+            flex: 0.65,
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
-                const bundle = params.value;
-                const lifetime = moment.unix(bundle.createdAt).add(bundle.lifetime.toNumber(), 'seconds');
-                return formatDate(lifetime);
+            renderCell: (params: GridRenderCellParams<BundleData>) => {
+                const bundle = params.value!;
+                const lifetime = dayjs.unix(bundle.createdAt).add(bundle.lifetime.toNumber(), 'seconds').unix();
+                return (<Timestamp at={lifetime} />);
             }
         },
         { 
             field: 'policies', 
             headerName: t('table.header.policies'), 
-            flex: 0.5
+            flex: 0.3
         },
         { 
             field: 'state', 
             headerName: t('table.header.state'), 
-            flex: 0.5,
+            flex: 0.3,
             valueFormatter: (params: GridValueFormatterParams<number>) => t('bundle_state_' + params.value, { ns: 'common'}),
         },
     ];

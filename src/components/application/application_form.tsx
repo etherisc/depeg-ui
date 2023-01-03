@@ -5,7 +5,6 @@ import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 import TextField from '@mui/material/TextField'
-import moment from 'moment';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BundleData } from '../../backend/bundle_data';
@@ -18,6 +17,7 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { INPUT_VARIANT } from '../../config/theme';
 import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -56,8 +56,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // coverage period (days and date)
     const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
     const [ coverageDaysMax, setCoverageDaysMax ] = useState(props.applicationApi.coverageDurationDaysMax);
-    const [ coverageUntilMin, setCoverageUntilMin ] = useState(moment().add(props.applicationApi.coverageDurationDaysMin, 'days'));
-    const [ coverageUntilMax, setCoverageUntilMax ] = useState(moment().add(props.applicationApi.coverageDurationDaysMax, 'days'));
+    const [ coverageUntilMin, setCoverageUntilMin ] = useState(dayjs().add(props.applicationApi.coverageDurationDaysMin, 'days'));
+    const [ coverageUntilMax, setCoverageUntilMax ] = useState(dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days'));
     
     const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IAplicationFormValues>({ 
         mode: "onChange",
@@ -66,7 +66,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             insuredWallet: "",
             insuredAmount: undefined,
             coverageDuration: props.applicationApi.coverageDurationDaysMax.toString(),
-            coverageEndDate: moment().add(props.applicationApi.coverageDurationDaysMax, 'days').format("YYYY-MM-DD"),
+            coverageEndDate: dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days').format("YYYY-MM-DD"),
             premiumAmount: undefined,
             termsAndConditions: false,
         }
@@ -83,12 +83,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const watchCoverageDuration = watch("coverageDuration");
     useEffect(() => {
         // console.log("watchCoverageDuration", watchCoverageDuration);
-        setValue("coverageEndDate", moment().startOf('day').add(parseInt(watchCoverageDuration), 'days').format("YYYY-MM-DD"));
+        setValue("coverageEndDate", dayjs().startOf('day').add(parseInt(watchCoverageDuration), 'days').format("YYYY-MM-DD"));
     }, [watchCoverageDuration, setValue]);
 
     const watchCoverageEndDate = watch("coverageEndDate");
     useEffect(() => {
-        setValue("coverageDuration", moment(watchCoverageEndDate).startOf('day').diff(moment().startOf('day'), 'days').toString()); 
+        setValue("coverageDuration", dayjs(watchCoverageEndDate).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
         // this is a special case as changing date with date picker does not trigger the `watchPremiumFactors` useEffect
         calculatePremium();
     }, [watchCoverageEndDate, setValue]);
@@ -140,9 +140,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setCoverageDaysMax(maxCoverageDays);
             const coverageDays = maxCoverageDays < 30 ? maxCoverageDays : 30;
             setValue("coverageDuration", coverageDays.toString());
-            setValue("coverageEndDate", moment().add(coverageDays, 'days').format("YYYY-MM-DD"));
-            setCoverageUntilMin(moment().add(minCoverageDays, 'days'));
-            setCoverageUntilMax(moment().add(maxCoverageDays, 'days'));
+            setValue("coverageEndDate", dayjs().add(coverageDays, 'days').format("YYYY-MM-DD"));
+            setCoverageUntilMin(dayjs().add(minCoverageDays, 'days'));
+            setCoverageUntilMax(dayjs().add(maxCoverageDays, 'days'));
 
         }
     }, [props.bundles, props.usd1Decimals, setValue]);

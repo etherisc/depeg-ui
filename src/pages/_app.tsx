@@ -10,7 +10,7 @@ import Head from 'next/head';
 import { initialAppData, removeSigner, AppContext, signerReducer } from '../context/app_context';
 import { SnackbarProvider } from 'notistack';
 import { appWithTranslation } from 'next-i18next';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { getAndUpdateWalletAccount } from '../utils/wallet';
 import { ThemeProvider } from '@mui/material/styles';
@@ -22,6 +22,8 @@ import Layout from '../components/layout/layout';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 // Prevent fontawesome from adding its CSS since we did it manually above:
 import { config } from '@fortawesome/fontawesome-svg-core';
+import { Provider } from 'react-redux';
+import { store } from '../redux/store';
 config.autoAddCss = false; /* eslint-disable import/first */
 
 export function App(appProps: AppProps) {
@@ -64,14 +66,16 @@ export function App(appProps: AppProps) {
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <ThemeProvider theme={etheriscTheme}>
-        <CssBaseline enableColorScheme />
-        <AppContext.Provider value={{ data, dispatch}} >
-          <SnackbarProvider maxSnack={3}>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <Layout {...appProps} />
-            </LocalizationProvider>
-          </SnackbarProvider>
-        </AppContext.Provider>
+        <Provider store={store}>
+          <CssBaseline enableColorScheme />
+          <AppContext.Provider value={{ data, dispatch}} >
+            <SnackbarProvider maxSnack={3}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Layout {...appProps} />
+              </LocalizationProvider>
+            </SnackbarProvider>
+          </AppContext.Provider>
+        </Provider>
       </ThemeProvider>
     </React.Fragment>
   );
