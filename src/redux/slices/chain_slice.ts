@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { BigNumber, providers, Signer } from 'ethers';
+import { providers, Signer } from 'ethers';
 
 export interface ChainState {
     chainId: string,

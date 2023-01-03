@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { connectChain } from "../../redux/slices/chain_slice";
-import { getChainState, removeSigner, updateSigner } from "../../utils/chain";
+import { getAndUpdateBlock, getChainState, removeSigner, updateSigner } from "../../utils/chain";
 
 export default function LoginWithWalletConnectButton(props: any) {
     const { closeDialog } = props;
@@ -62,6 +62,10 @@ export default function LoginWithWalletConnectButton(props: any) {
         const provider = new ethers.providers.Web3Provider(wcProvider);
         // setSigner(appContext!!.dispatch, provider);
         dispatch(connectChain(await getChainState(provider)));
+
+        provider.on("block", (blockNumber: number) => {
+            getAndUpdateBlock(dispatch, provider, blockNumber);
+        });
     }
 
     let button = (<></>);
