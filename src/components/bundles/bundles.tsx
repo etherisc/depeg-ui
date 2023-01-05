@@ -121,7 +121,7 @@ export default function Bundles(props: BundlesProps) {
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
             renderCell: (params: GridRenderCellParams<BundleData>) => {
                 const bundle = params.value!;
-                const lifetime = dayjs.unix(bundle.createdAt).add(bundle.lifetime.toNumber(), 'seconds').unix();
+                const lifetime = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 'seconds').unix();
                 return (<Timestamp at={lifetime} />);
             }
         },

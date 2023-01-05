@@ -98,6 +98,28 @@ const mockPolicies = mockPoliciesActive.concat(
     } as PolicyData,
 );
 
+const bundles = [
+    {
+        "id": 21,
+        "riskpoolId": 11,
+        "owner": "0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729",
+        "apr": 2.5,
+        "minSumInsured": 2300000000,
+        "maxSumInsured": 2500000000,
+        "minDuration": 1987200,
+        "maxDuration": 2160000,
+        "capital": 100000000000,
+        "locked": 0,
+        "capacity": 100000000000,
+        "policies": 0,
+        "state": 0,
+        "tokenId": 21,
+        "createdAt": 1672758484,
+        "name": "jabababado",
+        "lifetime": (90 * 24 * 60 * 60).toString(),
+    } as BundleData
+];
+
 function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
         insuredAmountMin: 3000000000,
@@ -108,7 +130,7 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
             return Promise.resolve(new Array());
         },
         calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>) {
-            return Promise.resolve(insuredAmount * 0.017 * coverageDurationDays / 365);
+            return Promise.resolve([insuredAmount * 0.017 * coverageDurationDays / 365, bundles[0]]);
         },
         async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays, premium) {
             enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationDays})`,  { autoHideDuration: 3000, variant: 'info' });

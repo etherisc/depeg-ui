@@ -73,7 +73,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     });
 
     // premium
-    const premium = useMemo(() => getValues("premiumAmount"), [getValues]);
+    const [ matchedBundle, setMatchedBundle ] = useState<BundleData|undefined>(undefined);
     const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
     const [ showAvailableBundles, setShowAvailableBundles ] = useState(false);
@@ -106,6 +106,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             calculatePremium();
         } else if (premiumCalculationRequired) {
             setValue("premiumAmount", 0);
+            setMatchedBundle(undefined);
         }
         setPremiumCalculationRequired(false);
     }, [watchPremiumFactors, errors, premiumCalculationRequired]);
@@ -167,6 +168,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         if (props.bundles.length == 0) {
             console.log("No bundles, not calculating premium...");
             setValue("premiumAmount", 0);
+            setMatchedBundle(undefined);
             return;
         }
 
@@ -178,8 +180,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         try {
             setPremiumCalculationInProgress(true);
             setShowAvailableBundles(false);
-            const premium = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles);
+            const [premium, bundle] = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles);
             setValue("premiumAmount", premium / Math.pow(10, props.usd1Decimals));
+            setMatchedBundle(bundle);
             setPremiumErrorKey("");
         } catch (e) {
             if (e instanceof NoBundleFoundError) {
@@ -193,6 +196,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 console.log("Error calculating premium: ", e);
             }
             setValue("premiumAmount", -1);
+            setMatchedBundle(undefined);
         } finally {
             setPremiumCalculationInProgress(false);
         }
@@ -326,14 +330,15 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Premium 
                         control={control}
                         disabled={props.formDisabled}
-                        premium={premium}
                         premiumCurrency={props.usd2}
                         premiumCurrencyDecimals={props.usd2Decimals}
                         bundleCurrency={props.usd1}
                         bundleCurrencyDecimals={props.usd1Decimals}
-                        error={t(premiumErrorKey, { currency: props.usd2 })}
+                        helperText={t(premiumErrorKey, { currency: props.usd2 })}
+                        helperTextIsError={premiumErrorKey != ""}
                         transactionInProgress={(props.premiumTrxTextKey != "") || premiumCalculationInProgress}
-                        textKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
+                        trxTextKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
+                        matchedBundle={matchedBundle}
                         bundles={props.bundles}
                         showBundles={showAvailableBundles}
                         />

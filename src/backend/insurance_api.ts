@@ -47,7 +47,7 @@ export interface ApplicationApi {
             insuredAmount: number, 
             coverageDurationDays: number,
             bundles: Array<BundleData>,
-        ) => Promise<number>;
+        ) => Promise<[number, BundleData]>;
     applyForPolicy: 
         (
             walletAddress: string, 

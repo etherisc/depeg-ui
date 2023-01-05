@@ -53,10 +53,10 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         return await (await this.riskpoolApi()).getBundleData();
     }
 
-    async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>): Promise<number> {
+    async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>): Promise<[number, BundleData]> {
         if ((await this.getDepegProductApi())!.isVoidSigner()) {
             console.log('no chain connection, no premium calculation');
-            return Promise.resolve(0);
+            return Promise.resolve([0, {} as BundleData]);
         }
 
         const durationSecs = coverageDurationDays * 24 * 60 * 60;
@@ -80,7 +80,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
             throw new BalanceTooSmallError();
         }
 
-        return Promise.resolve(premium);
+        return [premium, bestBundle];
     }
 
     async applyForPolicy(

@@ -63,7 +63,7 @@ export class DepegRiskpoolApi {
             tokenId: tokenId.toNumber(),
             createdAt: createdAt.toNumber(),
             name: name,
-            lifetime: lifetime,
+            lifetime: lifetime.toString(),
         } as BundleData;
     }
     
@@ -74,7 +74,7 @@ export class DepegRiskpoolApi {
         lastBlockTimestamp: number
     ): BundleData {
         return bundleData.reduce((best, bundle) => {
-            if (lastBlockTimestamp > (bundle.createdAt + bundle.lifetime.toNumber())) {
+            if (lastBlockTimestamp > (bundle.createdAt + parseInt(bundle.lifetime))) {
                 return best;
             }
             if (sumInsured < bundle.minSumInsured) {
