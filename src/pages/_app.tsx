@@ -9,13 +9,14 @@ import React, { useReducer } from 'react';
 import Head from 'next/head';
 import { initialAppData, AppContext, signerReducer } from '../context/app_context';
 import { SnackbarProvider } from 'notistack';
-import { appWithTranslation } from 'next-i18next';
+import { appWithTranslation, useTranslation } from 'next-i18next';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { getAndUpdateWalletAccount } from '../utils/wallet';
 import { ThemeProvider } from '@mui/material/styles';
 import { etheriscTheme } from '../config/theme';
 import Layout from '../components/layout/layout';
+import { faCartShopping, faShieldHalved, faSackDollar, faCoins } from "@fortawesome/free-solid-svg-icons";
 
 // The following import prevents a Font Awesome icon server-side rendering bug,
 // where the icons flash from a very large icon down to a properly sized one:
@@ -25,6 +26,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '../redux/store';
 import { removeSigner } from '../utils/chain';
+import { ListItemIcon } from '@mui/material';
 config.autoAddCss = false; /* eslint-disable import/first */
 
 export function App(appProps: AppProps) {
@@ -49,6 +51,7 @@ export default appWithTranslation(App);
 
 
 export function AppWithBlockchainConnection(appProps: AppProps) {
+  const { t } = useTranslation('common');
   const [ data, dispatch ] = useReducer(signerReducer, initialAppData());
   const reduxDispatch = useDispatch();
   const provider = useSelector((state: RootState) => state.chain.provider);
@@ -82,6 +85,16 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
       });
     }
   }
+
+  let items = [
+    [t('nav.link.apply'), '/', faCartShopping],
+    [t('nav.link.policies'), '/policies', faShieldHalved],
+    [t('nav.link.invest'), '/invest', faSackDollar],
+    [t('nav.link.bundles'), '/bundles', faCoins],
+  ];
+
+  appProps.pageProps.items = items;
+  appProps.pageProps.title = t('apptitle_short');
 
   return (
     <AppContext.Provider value={{ data, dispatch}} >

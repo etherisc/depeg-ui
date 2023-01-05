@@ -14,10 +14,15 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
 import { Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCartShopping, faShieldHalved, faSackDollar, faCoins } from "@fortawesome/free-solid-svg-icons";
+import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import FaucetListItem from './faucet_list_item';
 
-export default function Header() {
+interface HeaderProps {
+    items: Array<[string, string, IconDefinition]>;
+    title: string;
+}
+
+export default function Header(props: HeaderProps) {
     const { t } = useTranslation('common');
     const router = useRouter();
 
@@ -48,20 +53,25 @@ export default function Header() {
         );
     }
 
-    let links = [];
+    let links: Array<any> = [];
     let listitems = [];
 
 
-    links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" icon={faCartShopping} />);
-    listitems.push(getListItem(t('nav.link.apply'), '/', faCartShopping));
-    links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" icon={faShieldHalved} />);
-    listitems.push(getListItem(t('nav.link.policies'), '/policies', faShieldHalved));
-    links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" icon={faSackDollar} />);
-    listitems.push(getListItem(t('nav.link.invest'), '/invest', faSackDollar));
-    links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" icon={faCoins} />);
-    listitems.push(getListItem(t('nav.link.bundles'), '/bundles', faCoins));
+    // links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" icon={faCartShopping} />);
+    // listitems.push(getListItem(t('nav.link.apply'), '/', faCartShopping));
+    // links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" icon={faShieldHalved} />);
+    // listitems.push(getListItem(t('nav.link.policies'), '/policies', faShieldHalved));
+    // links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" icon={faSackDollar} />);
+    // listitems.push(getListItem(t('nav.link.invest'), '/invest', faSackDollar));
+    // links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" icon={faCoins} />);
+    // listitems.push(getListItem(t('nav.link.bundles'), '/bundles', faCoins));
+    props.items.forEach((item, i) => {
+        const [text, href, icon] = item;
+        links.push(<HeaderLink text={text} href={href} key={`k-${i}`} icon={icon} />);
+        listitems.push(getListItem(text, href, icon));
+    });
     listitems.push(<FaucetListItem key="faucet" />);
-
+    
     const drawer = (
         <Box onClick={handleDrawerToggle} >
             <Typography variant="h6" sx={{ my: 2, pl: 2 }}>
@@ -95,7 +105,7 @@ export default function Header() {
                         <Box sx={{ display: { xs: 'inherit', md: 'none'}}}>
                             <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={28} height={22} />
                         </Box>
-                        <HeaderLink text={t('apptitle_short')} href="/" variant="h6" sx={{ display: { xs: 'none', md: 'block'}}} />
+                        <HeaderLink text={props.title} href="/" variant="h6" sx={{ display: { xs: 'none', md: 'block'}}} />
 
                         {/* links only shown on desktop */}
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 1 }}>

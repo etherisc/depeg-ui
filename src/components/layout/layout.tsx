@@ -1,4 +1,4 @@
-import { Alert, AlertColor, Box, Button, Collapse } from "@mui/material";
+import { Alert, AlertColor, Button, Collapse } from "@mui/material";
 import Container from "@mui/material/Container";
 import { useTranslation } from "next-i18next";
 import { AppProps } from "next/app";
@@ -10,6 +10,8 @@ import Header from "./header";
 import UnexpectedChain from "./unexpected_chain";
 
 export default function Layout({ Component, pageProps }: AppProps) {
+    const { title, items } = pageProps;
+
     const { t } = useTranslation('common');
     const [ noticeDismissed, setNoticeDismissed ] = useState(false);
     const isExpectedChain = useSelector((state: RootState) => state.chain.isExpectedChain);
@@ -55,7 +57,7 @@ export default function Layout({ Component, pageProps }: AppProps) {
 
     return (<>
         {globalNotice()}
-        <Header />
+        <Header title={title} items={items} />
         <Container maxWidth="lg" sx={{ p: 1, marginBottom: "5vh" }}>
             {content()}
         </Container>
