@@ -19,7 +19,8 @@
         "disconnect": "Disconnect",
         "close": "Close",
         "hide": "Hide",
-        "address_copied": "Value copied to clipboard"
+        "address_copied": "Value copied to clipboard",
+        "dismiss" : "Dismiss"
     },
     "login_select": "Please choose a wallet",
     "warning": {

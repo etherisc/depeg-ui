@@ -1,5 +1,6 @@
 import { Alert, AlertColor, Box, Button, Collapse } from "@mui/material";
 import Container from "@mui/material/Container";
+import { useTranslation } from "next-i18next";
 import { AppProps } from "next/app";
 import { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
@@ -9,6 +10,7 @@ import Header from "./header";
 import UnexpectedChain from "./unexpected_chain";
 
 export default function Layout({ Component, pageProps }: AppProps) {
+    const { t } = useTranslation('common');
     const [ noticeDismissed, setNoticeDismissed ] = useState(false);
     const isExpectedChain = useSelector((state: RootState) => state.chain.isExpectedChain);
 
@@ -37,7 +39,7 @@ export default function Layout({ Component, pageProps }: AppProps) {
                                 variant="filled" 
                                 action={
                                     <Button color="inherit" size="small" onClick={dismissClicked}>
-                                        Dismiss
+                                        { t('action.dismiss') }
                                     </Button>
                                 }
                                 >
