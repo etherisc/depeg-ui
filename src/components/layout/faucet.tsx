@@ -13,7 +13,7 @@ import { RootState } from "../../redux/store";
 export default function Faucet() {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
-    const currency = process.env.NEXT_PUBLIC_DEPEG_USD2;
+    const currency = process.env.NEXT_PUBLIC_FAUCET_SYMBOL;
     const coinAddress = process.env.NEXT_FAUCET_COIN_ADDRESS;
 
     const chainTokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL;
