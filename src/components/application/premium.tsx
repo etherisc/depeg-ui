@@ -8,7 +8,6 @@ import { BundleList } from "./bundle_list";
 
 export interface PremiumProps {
     disabled: boolean;
-    premium: number;
     premiumCurrency: string;
     premiumCurrencyDecimals: number;
     bundleCurrency: string;
@@ -36,26 +35,31 @@ export default function Premium(props: PremiumProps) {
     const wait = props.transactionInProgress ? 
         (<><LinearProgress />{t(props.textKey)}</>) 
         : null;
-
+    
     return (<>
         <Controller
             name="premiumAmount"
             control={props.control}
-            render={({ field }) => 
-                <TextField 
+            render={({ field }) => {
+                const color = field.value > 0 ? "success" : (props.error !== "" && field.value !== undefined) ? "error" : undefined; // undefined => grey 
+                const disabled = props.disabled || field.value === undefined || field.value === 0 ;
+                return (<TextField 
                     label={t('premiumAmount')}
                     fullWidth
-                    disabled={props.disabled}
-                    variant={INPUT_VARIANT}
+                    variant="outlined"
+                    color={color}
+                    disabled={disabled}
                     {...field} 
-                    value={field.value !== undefined ? field.value.toFixed(2) : ""}
+                    focused
+                    value={field.value !== undefined && field.value > 0 ? field.value.toFixed(2) : ""}
                     InputProps={{
                         readOnly: true,
                         startAdornment: <InputAdornment position="start">{props.premiumCurrency}</InputAdornment>,
                     }}
                     error={props.error !== ""}
                     helperText={props.error}
-                    />}
+                    />);
+                }}
             />
         <Typography variant="body2">{wait}</Typography>
         {bundles}
