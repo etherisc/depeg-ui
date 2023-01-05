@@ -368,7 +368,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Button 
                         variant='contained'
                         type="submit"
-                        disabled={!formState.isValid || premiumCalculationInProgress || props.formDisabled}
+                        disabled={!formState.isValid || premiumCalculationInProgress || props.formDisabled || matchedBundle == null}
                         fullWidth
                         // onClick={buy}
                         sx={{ p: 1 }}
