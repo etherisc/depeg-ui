@@ -56,15 +56,6 @@ export default function Header(props: HeaderProps) {
     let links: Array<any> = [];
     let listitems = [];
 
-
-    // links.push(<HeaderLink text={t('nav.link.apply')} href="/" key="apply" icon={faCartShopping} />);
-    // listitems.push(getListItem(t('nav.link.apply'), '/', faCartShopping));
-    // links.push(<HeaderLink text={t('nav.link.policies')} href="/policies" key="policies" icon={faShieldHalved} />);
-    // listitems.push(getListItem(t('nav.link.policies'), '/policies', faShieldHalved));
-    // links.push(<HeaderLink text={t('nav.link.invest')} href="/invest" key="invest" icon={faSackDollar} />);
-    // listitems.push(getListItem(t('nav.link.invest'), '/invest', faSackDollar));
-    // links.push(<HeaderLink text={t('nav.link.bundles')} href="/bundles" key="bundles" icon={faCoins} />);
-    // listitems.push(getListItem(t('nav.link.bundles'), '/bundles', faCoins));
     props.items.forEach((item, i) => {
         const [text, href, icon] = item;
         links.push(<HeaderLink text={text} href={href} key={`k-${i}`} icon={icon} />);

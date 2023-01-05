@@ -26,7 +26,6 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '../redux/store';
 import { removeSigner } from '../utils/chain';
-import { ListItemIcon } from '@mui/material';
 config.autoAddCss = false; /* eslint-disable import/first */
 
 export function App(appProps: AppProps) {
