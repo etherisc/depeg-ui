@@ -82,8 +82,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // handle changes in coverage duration / end date and update the other field accordingly
     const watchCoverageDuration = watch("coverageDuration");
     useEffect(() => {
+        if (watchCoverageDuration === "") {
+            return;
+        }
+        const durationDays = parseInt(watchCoverageDuration);
         // console.log("watchCoverageDuration", watchCoverageDuration);
-        setValue("coverageEndDate", dayjs().startOf('day').add(parseInt(watchCoverageDuration), 'days').format("YYYY-MM-DD"));
+        setValue("coverageEndDate", dayjs().startOf('day').add(durationDays, 'days').format("YYYY-MM-DD"));
     }, [watchCoverageDuration, setValue]);
 
     const watchCoverageEndDate = watch("coverageEndDate");
