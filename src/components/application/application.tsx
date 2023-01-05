@@ -6,7 +6,7 @@ import { InsuranceApi } from "../../backend/insurance_api";
 import { SnackbarKey, useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import { Signer, VoidSigner } from "ethers";
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 import { formatCurrency } from "../../utils/numbers";
 import ApplicationForm from "./application_form";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";

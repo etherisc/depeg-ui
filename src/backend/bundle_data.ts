@@ -17,5 +17,5 @@ export type BundleData = {
     state: number;
     createdAt: number;
     name: string;
-    lifetime: BigNumber;
+    lifetime: string;
 }
