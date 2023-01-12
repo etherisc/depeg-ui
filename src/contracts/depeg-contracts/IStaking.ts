@@ -7,11 +7,17 @@ import type {
   BigNumberish,
   BytesLike,
   CallOverrides,
+  ContractTransaction,
+  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -76,13 +82,14 @@ export declare namespace IStakingDataProvider {
   };
 }
 
-export interface IStakingDataProviderInterface extends utils.Interface {
+export interface IStakingInterface extends utils.Interface {
   functions: {
     "calculateCapitalSupport(address,uint256,uint256)": FunctionFragment;
     "calculateRequiredStaking(address,uint256,uint256)": FunctionFragment;
     "calculateRewards(uint256,uint256)": FunctionFragment;
     "calculateRewardsIncrement((address,bytes32,uint256,uint256,uint256,uint256))": FunctionFragment;
     "capitalSupport(bytes32)": FunctionFragment;
+    "claimRewards(bytes32)": FunctionFragment;
     "fromRate(uint256)": FunctionFragment;
     "getBundleRegistry()": FunctionFragment;
     "getInfo(bytes32,address)": FunctionFragment;
@@ -96,11 +103,16 @@ export interface IStakingDataProviderInterface extends utils.Interface {
     "getTargetId(uint256)": FunctionFragment;
     "hasDefinedStakingRate(address,uint256)": FunctionFragment;
     "hasInfo(bytes32,address)": FunctionFragment;
+    "increaseRewardReserves(uint256)": FunctionFragment;
     "isStakingSupported(bytes32)": FunctionFragment;
     "isTarget(bytes32)": FunctionFragment;
     "isTargetRegistered((uint8,bytes32,uint256,uint256,bytes,address,uint256))": FunctionFragment;
     "isUnstakingSupported(bytes32)": FunctionFragment;
     "oneYear()": FunctionFragment;
+    "register(bytes32,(uint8,bytes32,uint256,uint256,bytes,address,uint256))": FunctionFragment;
+    "setRewardRate(uint256)": FunctionFragment;
+    "setStakingRate(address,uint256,uint256)": FunctionFragment;
+    "stake(bytes32,uint256)": FunctionFragment;
     "stakes(bytes32)": FunctionFragment;
     "stakes(bytes32,address)": FunctionFragment;
     "targets()": FunctionFragment;
@@ -109,6 +121,8 @@ export interface IStakingDataProviderInterface extends utils.Interface {
     "toInstanceTargetId(bytes32)": FunctionFragment;
     "toRate(uint256,int8)": FunctionFragment;
     "toTarget(uint8,bytes32,uint256,uint256,bytes)": FunctionFragment;
+    "unstake(bytes32,uint256)": FunctionFragment;
+    "unstakeAndClaimRewards(bytes32)": FunctionFragment;
   };
 
   getFunction(
@@ -118,6 +132,7 @@ export interface IStakingDataProviderInterface extends utils.Interface {
       | "calculateRewards"
       | "calculateRewardsIncrement"
       | "capitalSupport"
+      | "claimRewards"
       | "fromRate"
       | "getBundleRegistry"
       | "getInfo"
@@ -131,11 +146,16 @@ export interface IStakingDataProviderInterface extends utils.Interface {
       | "getTargetId"
       | "hasDefinedStakingRate"
       | "hasInfo"
+      | "increaseRewardReserves"
       | "isStakingSupported"
       | "isTarget"
       | "isTargetRegistered"
       | "isUnstakingSupported"
       | "oneYear"
+      | "register"
+      | "setRewardRate"
+      | "setStakingRate"
+      | "stake"
       | "stakes(bytes32)"
       | "stakes(bytes32,address)"
       | "targets"
@@ -144,6 +164,8 @@ export interface IStakingDataProviderInterface extends utils.Interface {
       | "toInstanceTargetId"
       | "toRate"
       | "toTarget"
+      | "unstake"
+      | "unstakeAndClaimRewards"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -172,6 +194,10 @@ export interface IStakingDataProviderInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "capitalSupport",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "claimRewards",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -227,6 +253,10 @@ export interface IStakingDataProviderInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "increaseRewardReserves",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isStakingSupported",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -243,6 +273,26 @@ export interface IStakingDataProviderInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(functionFragment: "oneYear", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "register",
+    values: [PromiseOrValue<BytesLike>, IStakingDataProvider.TargetStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRewardRate",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setStakingRate",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "stake",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "stakes(bytes32)",
     values: [PromiseOrValue<BytesLike>]
@@ -282,6 +332,14 @@ export interface IStakingDataProviderInterface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "unstake",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unstakeAndClaimRewards",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "calculateCapitalSupport",
@@ -301,6 +359,10 @@ export interface IStakingDataProviderInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "capitalSupport",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "claimRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "fromRate", data: BytesLike): Result;
@@ -344,6 +406,10 @@ export interface IStakingDataProviderInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "hasInfo", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "increaseRewardReserves",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isStakingSupported",
     data: BytesLike
   ): Result;
@@ -357,6 +423,16 @@ export interface IStakingDataProviderInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "oneYear", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "register", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setRewardRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setStakingRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "stakes(bytes32)",
     data: BytesLike
@@ -380,16 +456,181 @@ export interface IStakingDataProviderInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "toRate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "toTarget", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "unstake", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "unstakeAndClaimRewards",
+    data: BytesLike
+  ): Result;
 
-  events: {};
+  events: {
+    "LogStakingDipBalanceChanged(uint256,uint256,uint256,uint256)": EventFragment;
+    "LogStakingRewardRateSet(uint256,uint256)": EventFragment;
+    "LogStakingRewardReservesIncreased(address,uint256,uint256)": EventFragment;
+    "LogStakingRewardsClaimed(address,bytes32,bytes32,uint256,uint256,uint256,uint256)": EventFragment;
+    "LogStakingRewardsUpdated(address,bytes32,bytes32,uint256,uint256,uint256,uint256)": EventFragment;
+    "LogStakingStaked(address,bytes32,bytes32,uint256,uint256,uint256,uint256)": EventFragment;
+    "LogStakingStakingRateSet(address,uint256,uint256,uint256)": EventFragment;
+    "LogStakingTargetRegistered(bytes32,uint8,bytes32,uint256,uint256)": EventFragment;
+    "LogStakingUnstaked(address,bytes32,bytes32,uint256,uint256,uint256,uint256)": EventFragment;
+  };
+
+  getEvent(
+    nameOrSignatureOrTopic: "LogStakingDipBalanceChanged"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogStakingRewardRateSet"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LogStakingRewardReservesIncreased"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogStakingRewardsClaimed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogStakingRewardsUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogStakingStaked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogStakingStakingRateSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogStakingTargetRegistered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogStakingUnstaked"): EventFragment;
 }
 
-export interface IStakingDataProvider extends BaseContract {
+export interface LogStakingDipBalanceChangedEventObject {
+  stakeBalance: BigNumber;
+  rewardBalance: BigNumber;
+  actualBalance: BigNumber;
+  reserves: BigNumber;
+}
+export type LogStakingDipBalanceChangedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber],
+  LogStakingDipBalanceChangedEventObject
+>;
+
+export type LogStakingDipBalanceChangedEventFilter =
+  TypedEventFilter<LogStakingDipBalanceChangedEvent>;
+
+export interface LogStakingRewardRateSetEventObject {
+  oldRewardRate: BigNumber;
+  newRewardRate: BigNumber;
+}
+export type LogStakingRewardRateSetEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  LogStakingRewardRateSetEventObject
+>;
+
+export type LogStakingRewardRateSetEventFilter =
+  TypedEventFilter<LogStakingRewardRateSetEvent>;
+
+export interface LogStakingRewardReservesIncreasedEventObject {
+  user: string;
+  amount: BigNumber;
+  newBalance: BigNumber;
+}
+export type LogStakingRewardReservesIncreasedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  LogStakingRewardReservesIncreasedEventObject
+>;
+
+export type LogStakingRewardReservesIncreasedEventFilter =
+  TypedEventFilter<LogStakingRewardReservesIncreasedEvent>;
+
+export interface LogStakingRewardsClaimedEventObject {
+  user: string;
+  targetId: string;
+  instanceId: string;
+  componentId: BigNumber;
+  bundleId: BigNumber;
+  amount: BigNumber;
+  newBalance: BigNumber;
+}
+export type LogStakingRewardsClaimedEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber, BigNumber, BigNumber],
+  LogStakingRewardsClaimedEventObject
+>;
+
+export type LogStakingRewardsClaimedEventFilter =
+  TypedEventFilter<LogStakingRewardsClaimedEvent>;
+
+export interface LogStakingRewardsUpdatedEventObject {
+  user: string;
+  targetId: string;
+  instanceId: string;
+  componentId: BigNumber;
+  bundleId: BigNumber;
+  amount: BigNumber;
+  newBalance: BigNumber;
+}
+export type LogStakingRewardsUpdatedEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber, BigNumber, BigNumber],
+  LogStakingRewardsUpdatedEventObject
+>;
+
+export type LogStakingRewardsUpdatedEventFilter =
+  TypedEventFilter<LogStakingRewardsUpdatedEvent>;
+
+export interface LogStakingStakedEventObject {
+  user: string;
+  targetId: string;
+  instanceId: string;
+  componentId: BigNumber;
+  bundleId: BigNumber;
+  amount: BigNumber;
+  newBalance: BigNumber;
+}
+export type LogStakingStakedEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber, BigNumber, BigNumber],
+  LogStakingStakedEventObject
+>;
+
+export type LogStakingStakedEventFilter =
+  TypedEventFilter<LogStakingStakedEvent>;
+
+export interface LogStakingStakingRateSetEventObject {
+  token: string;
+  chainId: BigNumber;
+  oldStakingRate: BigNumber;
+  newStakingRate: BigNumber;
+}
+export type LogStakingStakingRateSetEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber],
+  LogStakingStakingRateSetEventObject
+>;
+
+export type LogStakingStakingRateSetEventFilter =
+  TypedEventFilter<LogStakingStakingRateSetEvent>;
+
+export interface LogStakingTargetRegisteredEventObject {
+  targetId: string;
+  targetType: number;
+  instanceId: string;
+  componentId: BigNumber;
+  bundleId: BigNumber;
+}
+export type LogStakingTargetRegisteredEvent = TypedEvent<
+  [string, number, string, BigNumber, BigNumber],
+  LogStakingTargetRegisteredEventObject
+>;
+
+export type LogStakingTargetRegisteredEventFilter =
+  TypedEventFilter<LogStakingTargetRegisteredEvent>;
+
+export interface LogStakingUnstakedEventObject {
+  user: string;
+  targetId: string;
+  instanceId: string;
+  componentId: BigNumber;
+  bundleId: BigNumber;
+  amount: BigNumber;
+  newBalance: BigNumber;
+}
+export type LogStakingUnstakedEvent = TypedEvent<
+  [string, string, string, BigNumber, BigNumber, BigNumber, BigNumber],
+  LogStakingUnstakedEventObject
+>;
+
+export type LogStakingUnstakedEventFilter =
+  TypedEventFilter<LogStakingUnstakedEvent>;
+
+export interface IStaking extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IStakingDataProviderInterface;
+  interface: IStakingInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -440,6 +681,11 @@ export interface IStakingDataProvider extends BaseContract {
       targetId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { capitalAmount: BigNumber }>;
+
+    claimRewards(
+      targetId: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     fromRate(
       rate: PromiseOrValue<BigNumberish>,
@@ -514,6 +760,11 @@ export interface IStakingDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { hasInfos: boolean }>;
 
+    increaseRewardReserves(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     isStakingSupported(
       targetId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -537,6 +788,30 @@ export interface IStakingDataProvider extends BaseContract {
     oneYear(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { yearInSeconds: BigNumber }>;
+
+    register(
+      targetId: PromiseOrValue<BytesLike>,
+      target: IStakingDataProvider.TargetStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setRewardRate(
+      rewardRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setStakingRate(
+      token: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      stakingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    stake(
+      targetId: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     "stakes(bytes32)"(
       targetId: PromiseOrValue<BytesLike>,
@@ -590,6 +865,17 @@ export interface IStakingDataProvider extends BaseContract {
         target: IStakingDataProvider.TargetStructOutput;
       }
     >;
+
+    unstake(
+      targetId: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    unstakeAndClaimRewards(
+      targetId: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   calculateCapitalSupport(
@@ -621,6 +907,11 @@ export interface IStakingDataProvider extends BaseContract {
     targetId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  claimRewards(
+    targetId: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   fromRate(
     rate: PromiseOrValue<BigNumberish>,
@@ -673,6 +964,11 @@ export interface IStakingDataProvider extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  increaseRewardReserves(
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   isStakingSupported(
     targetId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -694,6 +990,30 @@ export interface IStakingDataProvider extends BaseContract {
   ): Promise<boolean>;
 
   oneYear(overrides?: CallOverrides): Promise<BigNumber>;
+
+  register(
+    targetId: PromiseOrValue<BytesLike>,
+    target: IStakingDataProvider.TargetStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setRewardRate(
+    rewardRate: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setStakingRate(
+    token: PromiseOrValue<string>,
+    chainId: PromiseOrValue<BigNumberish>,
+    stakingRate: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  stake(
+    targetId: PromiseOrValue<BytesLike>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   "stakes(bytes32)"(
     targetId: PromiseOrValue<BytesLike>,
@@ -746,6 +1066,17 @@ export interface IStakingDataProvider extends BaseContract {
     }
   >;
 
+  unstake(
+    targetId: PromiseOrValue<BytesLike>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  unstakeAndClaimRewards(
+    targetId: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     calculateCapitalSupport(
       token: PromiseOrValue<string>,
@@ -776,6 +1107,11 @@ export interface IStakingDataProvider extends BaseContract {
       targetId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    claimRewards(
+      targetId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     fromRate(
       rate: PromiseOrValue<BigNumberish>,
@@ -830,6 +1166,11 @@ export interface IStakingDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    increaseRewardReserves(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     isStakingSupported(
       targetId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -851,6 +1192,30 @@ export interface IStakingDataProvider extends BaseContract {
     ): Promise<boolean>;
 
     oneYear(overrides?: CallOverrides): Promise<BigNumber>;
+
+    register(
+      targetId: PromiseOrValue<BytesLike>,
+      target: IStakingDataProvider.TargetStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setRewardRate(
+      rewardRate: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setStakingRate(
+      token: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      stakingRate: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    stake(
+      targetId: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     "stakes(bytes32)"(
       targetId: PromiseOrValue<BytesLike>,
@@ -902,9 +1267,157 @@ export interface IStakingDataProvider extends BaseContract {
         target: IStakingDataProvider.TargetStructOutput;
       }
     >;
+
+    unstake(
+      targetId: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unstakeAndClaimRewards(
+      targetId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "LogStakingDipBalanceChanged(uint256,uint256,uint256,uint256)"(
+      stakeBalance?: null,
+      rewardBalance?: null,
+      actualBalance?: null,
+      reserves?: null
+    ): LogStakingDipBalanceChangedEventFilter;
+    LogStakingDipBalanceChanged(
+      stakeBalance?: null,
+      rewardBalance?: null,
+      actualBalance?: null,
+      reserves?: null
+    ): LogStakingDipBalanceChangedEventFilter;
+
+    "LogStakingRewardRateSet(uint256,uint256)"(
+      oldRewardRate?: null,
+      newRewardRate?: null
+    ): LogStakingRewardRateSetEventFilter;
+    LogStakingRewardRateSet(
+      oldRewardRate?: null,
+      newRewardRate?: null
+    ): LogStakingRewardRateSetEventFilter;
+
+    "LogStakingRewardReservesIncreased(address,uint256,uint256)"(
+      user?: null,
+      amount?: null,
+      newBalance?: null
+    ): LogStakingRewardReservesIncreasedEventFilter;
+    LogStakingRewardReservesIncreased(
+      user?: null,
+      amount?: null,
+      newBalance?: null
+    ): LogStakingRewardReservesIncreasedEventFilter;
+
+    "LogStakingRewardsClaimed(address,bytes32,bytes32,uint256,uint256,uint256,uint256)"(
+      user?: null,
+      targetId?: null,
+      instanceId?: null,
+      componentId?: null,
+      bundleId?: null,
+      amount?: null,
+      newBalance?: null
+    ): LogStakingRewardsClaimedEventFilter;
+    LogStakingRewardsClaimed(
+      user?: null,
+      targetId?: null,
+      instanceId?: null,
+      componentId?: null,
+      bundleId?: null,
+      amount?: null,
+      newBalance?: null
+    ): LogStakingRewardsClaimedEventFilter;
+
+    "LogStakingRewardsUpdated(address,bytes32,bytes32,uint256,uint256,uint256,uint256)"(
+      user?: null,
+      targetId?: null,
+      instanceId?: null,
+      componentId?: null,
+      bundleId?: null,
+      amount?: null,
+      newBalance?: null
+    ): LogStakingRewardsUpdatedEventFilter;
+    LogStakingRewardsUpdated(
+      user?: null,
+      targetId?: null,
+      instanceId?: null,
+      componentId?: null,
+      bundleId?: null,
+      amount?: null,
+      newBalance?: null
+    ): LogStakingRewardsUpdatedEventFilter;
+
+    "LogStakingStaked(address,bytes32,bytes32,uint256,uint256,uint256,uint256)"(
+      user?: null,
+      targetId?: null,
+      instanceId?: null,
+      componentId?: null,
+      bundleId?: null,
+      amount?: null,
+      newBalance?: null
+    ): LogStakingStakedEventFilter;
+    LogStakingStaked(
+      user?: null,
+      targetId?: null,
+      instanceId?: null,
+      componentId?: null,
+      bundleId?: null,
+      amount?: null,
+      newBalance?: null
+    ): LogStakingStakedEventFilter;
+
+    "LogStakingStakingRateSet(address,uint256,uint256,uint256)"(
+      token?: null,
+      chainId?: null,
+      oldStakingRate?: null,
+      newStakingRate?: null
+    ): LogStakingStakingRateSetEventFilter;
+    LogStakingStakingRateSet(
+      token?: null,
+      chainId?: null,
+      oldStakingRate?: null,
+      newStakingRate?: null
+    ): LogStakingStakingRateSetEventFilter;
+
+    "LogStakingTargetRegistered(bytes32,uint8,bytes32,uint256,uint256)"(
+      targetId?: null,
+      targetType?: null,
+      instanceId?: null,
+      componentId?: null,
+      bundleId?: null
+    ): LogStakingTargetRegisteredEventFilter;
+    LogStakingTargetRegistered(
+      targetId?: null,
+      targetType?: null,
+      instanceId?: null,
+      componentId?: null,
+      bundleId?: null
+    ): LogStakingTargetRegisteredEventFilter;
+
+    "LogStakingUnstaked(address,bytes32,bytes32,uint256,uint256,uint256,uint256)"(
+      user?: null,
+      targetId?: null,
+      instanceId?: null,
+      componentId?: null,
+      bundleId?: null,
+      amount?: null,
+      newBalance?: null
+    ): LogStakingUnstakedEventFilter;
+    LogStakingUnstaked(
+      user?: null,
+      targetId?: null,
+      instanceId?: null,
+      componentId?: null,
+      bundleId?: null,
+      amount?: null,
+      newBalance?: null
+    ): LogStakingUnstakedEventFilter;
+  };
 
   estimateGas: {
     calculateCapitalSupport(
@@ -935,6 +1448,11 @@ export interface IStakingDataProvider extends BaseContract {
     capitalSupport(
       targetId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    claimRewards(
+      targetId: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     fromRate(
@@ -988,6 +1506,11 @@ export interface IStakingDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    increaseRewardReserves(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     isStakingSupported(
       targetId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1009,6 +1532,30 @@ export interface IStakingDataProvider extends BaseContract {
     ): Promise<BigNumber>;
 
     oneYear(overrides?: CallOverrides): Promise<BigNumber>;
+
+    register(
+      targetId: PromiseOrValue<BytesLike>,
+      target: IStakingDataProvider.TargetStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setRewardRate(
+      rewardRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setStakingRate(
+      token: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      stakingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    stake(
+      targetId: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     "stakes(bytes32)"(
       targetId: PromiseOrValue<BytesLike>,
@@ -1055,6 +1602,17 @@ export interface IStakingDataProvider extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    unstake(
+      targetId: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    unstakeAndClaimRewards(
+      targetId: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1086,6 +1644,11 @@ export interface IStakingDataProvider extends BaseContract {
     capitalSupport(
       targetId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    claimRewards(
+      targetId: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     fromRate(
@@ -1139,6 +1702,11 @@ export interface IStakingDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    increaseRewardReserves(
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     isStakingSupported(
       targetId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1160,6 +1728,30 @@ export interface IStakingDataProvider extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     oneYear(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    register(
+      targetId: PromiseOrValue<BytesLike>,
+      target: IStakingDataProvider.TargetStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setRewardRate(
+      rewardRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setStakingRate(
+      token: PromiseOrValue<string>,
+      chainId: PromiseOrValue<BigNumberish>,
+      stakingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    stake(
+      targetId: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     "stakes(bytes32)"(
       targetId: PromiseOrValue<BytesLike>,
@@ -1205,6 +1797,17 @@ export interface IStakingDataProvider extends BaseContract {
       bundleId: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    unstake(
+      targetId: PromiseOrValue<BytesLike>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unstakeAndClaimRewards(
+      targetId: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

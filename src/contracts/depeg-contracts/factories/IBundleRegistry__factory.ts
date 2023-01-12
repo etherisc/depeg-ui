@@ -11,6 +11,68 @@ import type {
 
 const _abi = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "instanceId",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "riskpoolId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "bundleId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "enum IBundle.BundleState",
+        name: "state",
+        type: "uint8",
+      },
+    ],
+    name: "LogInstanceRegistryBundleRegistered",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "instanceId",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "bundleId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "enum IBundle.BundleState",
+        name: "oldState",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "enum IBundle.BundleState",
+        name: "newState",
+        type: "uint8",
+      },
+    ],
+    name: "LogInstanceRegistryBundleUpdated",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "bytes32",
@@ -19,7 +81,22 @@ const _abi = [
       },
       {
         internalType: "uint256",
+        name: "riskpoolId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
         name: "bundleId",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "expiryAt",
         type: "uint256",
       },
     ],

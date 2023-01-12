@@ -82,6 +82,7 @@ export class DepegProductApi {
     }
     
     async applyForDepegPolicy(
+        walletAddress: string,
         insuredAmount: number, 
         coverageDurationDays: number, 
         premium: number, 
@@ -93,6 +94,7 @@ export class DepegProductApi {
         }
         try {
             const tx = await this.depegProduct!.applyForPolicy(
+                walletAddress,
                 insuredAmount, 
                 coverageDurationDays * 24 * 60 * 60,
                 premium);
@@ -157,10 +159,10 @@ export class DepegProductApi {
                 [ payoutState ] = payout;
             }
         }
-        const [ duration ] = await this.depegRiskpool!.decodeApplicationParameterFromData(appdata);
+        const { wallet, duration } = await this.depegRiskpool!.decodeApplicationParameterFromData(appdata);
         return {
             id: processId,
-            owner: ownerWalletAddress,
+            owner: wallet,
             applicationState: applicationState,
             policyState: policyState,
             payoutState: payoutState,

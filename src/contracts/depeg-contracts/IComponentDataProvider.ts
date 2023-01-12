@@ -36,6 +36,8 @@ export declare namespace IComponentDataProvider {
     key: IComponentDataProvider.ComponentKeyStruct;
     componentType: PromiseOrValue<BigNumberish>;
     state: PromiseOrValue<BigNumberish>;
+    token: PromiseOrValue<string>;
+    chainId: PromiseOrValue<BigNumberish>;
     createdAt: PromiseOrValue<BigNumberish>;
     updatedAt: PromiseOrValue<BigNumberish>;
   };
@@ -44,12 +46,16 @@ export declare namespace IComponentDataProvider {
     IComponentDataProvider.ComponentKeyStructOutput,
     number,
     number,
+    string,
+    BigNumber,
     BigNumber,
     BigNumber
   ] & {
     key: IComponentDataProvider.ComponentKeyStructOutput;
     componentType: number;
     state: number;
+    token: string;
+    chainId: BigNumber;
     createdAt: BigNumber;
     updatedAt: BigNumber;
   };
@@ -135,6 +141,7 @@ export interface IComponentDataProviderInterface extends utils.Interface {
     "isRegisteredInstance(bytes32)": FunctionFragment;
     "isRegisteredToken(address)": FunctionFragment;
     "isRegisteredToken(address,uint256)": FunctionFragment;
+    "probeInstance(address)": FunctionFragment;
     "tokens()": FunctionFragment;
   };
 
@@ -153,6 +160,7 @@ export interface IComponentDataProviderInterface extends utils.Interface {
       | "isRegisteredInstance"
       | "isRegisteredToken(address)"
       | "isRegisteredToken(address,uint256)"
+      | "probeInstance"
       | "tokens"
   ): FunctionFragment;
 
@@ -205,6 +213,10 @@ export interface IComponentDataProviderInterface extends utils.Interface {
     functionFragment: "isRegisteredToken(address,uint256)",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "probeInstance",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "tokens", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "components", data: BytesLike): Result;
@@ -248,6 +260,10 @@ export interface IComponentDataProviderInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "isRegisteredToken(address,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "probeInstance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tokens", data: BytesLike): Result;
@@ -369,6 +385,19 @@ export interface IComponentDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { isRegistered: boolean }>;
 
+    probeInstance(
+      registry: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber, boolean, string, string] & {
+        isContract: boolean;
+        contractSize: BigNumber;
+        isValidId: boolean;
+        istanceId: string;
+        instanceService: string;
+      }
+    >;
+
     tokens(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { numberOfTokens: BigNumber }>;
@@ -443,6 +472,19 @@ export interface IComponentDataProvider extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  probeInstance(
+    registry: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<
+    [boolean, BigNumber, boolean, string, string] & {
+      isContract: boolean;
+      contractSize: BigNumber;
+      isValidId: boolean;
+      istanceId: string;
+      instanceService: string;
+    }
+  >;
+
   tokens(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
@@ -514,6 +556,19 @@ export interface IComponentDataProvider extends BaseContract {
       chainId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    probeInstance(
+      registry: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber, boolean, string, string] & {
+        isContract: boolean;
+        contractSize: BigNumber;
+        isValidId: boolean;
+        istanceId: string;
+        instanceService: string;
+      }
+    >;
 
     tokens(overrides?: CallOverrides): Promise<BigNumber>;
   };
@@ -588,6 +643,11 @@ export interface IComponentDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    probeInstance(
+      registry: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     tokens(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
@@ -656,6 +716,11 @@ export interface IComponentDataProvider extends BaseContract {
     "isRegisteredToken(address,uint256)"(
       tokenAddress: PromiseOrValue<string>,
       chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    probeInstance(
+      registry: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

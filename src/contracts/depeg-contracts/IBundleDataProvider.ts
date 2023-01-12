@@ -34,12 +34,10 @@ export declare namespace IBundleDataProvider {
 
   export type BundleInfoStruct = {
     key: IBundleDataProvider.BundleKeyStruct;
-    riskpool: IComponentDataProvider.ComponentKeyStruct;
-    name: PromiseOrValue<string>;
+    riskpoolId: PromiseOrValue<BigNumberish>;
+    token: PromiseOrValue<string>;
     state: PromiseOrValue<BigNumberish>;
-    token: IInstanceDataProvider.TokenKeyStruct;
-    tokenSymbol: PromiseOrValue<string>;
-    tokenDecimals: PromiseOrValue<BigNumberish>;
+    name: PromiseOrValue<string>;
     expiryAt: PromiseOrValue<BigNumberish>;
     closedAt: PromiseOrValue<BigNumberish>;
     createdAt: PromiseOrValue<BigNumberish>;
@@ -48,60 +46,22 @@ export declare namespace IBundleDataProvider {
 
   export type BundleInfoStructOutput = [
     IBundleDataProvider.BundleKeyStructOutput,
-    IComponentDataProvider.ComponentKeyStructOutput,
+    BigNumber,
     string,
     number,
-    IInstanceDataProvider.TokenKeyStructOutput,
     string,
-    number,
     BigNumber,
     BigNumber,
     BigNumber,
     BigNumber
   ] & {
     key: IBundleDataProvider.BundleKeyStructOutput;
-    riskpool: IComponentDataProvider.ComponentKeyStructOutput;
-    name: string;
+    riskpoolId: BigNumber;
+    token: string;
     state: number;
-    token: IInstanceDataProvider.TokenKeyStructOutput;
-    tokenSymbol: string;
-    tokenDecimals: number;
+    name: string;
     expiryAt: BigNumber;
     closedAt: BigNumber;
-    createdAt: BigNumber;
-    updatedAt: BigNumber;
-  };
-}
-
-export declare namespace IComponentDataProvider {
-  export type ComponentKeyStruct = {
-    instanceId: PromiseOrValue<BytesLike>;
-    componentId: PromiseOrValue<BigNumberish>;
-  };
-
-  export type ComponentKeyStructOutput = [string, BigNumber] & {
-    instanceId: string;
-    componentId: BigNumber;
-  };
-
-  export type ComponentInfoStruct = {
-    key: IComponentDataProvider.ComponentKeyStruct;
-    componentType: PromiseOrValue<BigNumberish>;
-    state: PromiseOrValue<BigNumberish>;
-    createdAt: PromiseOrValue<BigNumberish>;
-    updatedAt: PromiseOrValue<BigNumberish>;
-  };
-
-  export type ComponentInfoStructOutput = [
-    IComponentDataProvider.ComponentKeyStructOutput,
-    number,
-    number,
-    BigNumber,
-    BigNumber
-  ] & {
-    key: IComponentDataProvider.ComponentKeyStructOutput;
-    componentType: number;
-    state: number;
     createdAt: BigNumber;
     updatedAt: BigNumber;
   };
@@ -116,6 +76,31 @@ export declare namespace IInstanceDataProvider {
   export type TokenKeyStructOutput = [string, BigNumber] & {
     token: string;
     chainId: BigNumber;
+  };
+
+  export type TokenInfoStruct = {
+    key: IInstanceDataProvider.TokenKeyStruct;
+    state: PromiseOrValue<BigNumberish>;
+    symbol: PromiseOrValue<string>;
+    decimals: PromiseOrValue<BigNumberish>;
+    createdAt: PromiseOrValue<BigNumberish>;
+    updatedAt: PromiseOrValue<BigNumberish>;
+  };
+
+  export type TokenInfoStructOutput = [
+    IInstanceDataProvider.TokenKeyStructOutput,
+    number,
+    string,
+    number,
+    BigNumber,
+    BigNumber
+  ] & {
+    key: IInstanceDataProvider.TokenKeyStructOutput;
+    state: number;
+    symbol: string;
+    decimals: number;
+    createdAt: BigNumber;
+    updatedAt: BigNumber;
   };
 
   export type InstanceInfoStruct = {
@@ -145,28 +130,43 @@ export declare namespace IInstanceDataProvider {
     createdAt: BigNumber;
     updatedAt: BigNumber;
   };
+}
 
-  export type TokenInfoStruct = {
-    key: IInstanceDataProvider.TokenKeyStruct;
+export declare namespace IComponentDataProvider {
+  export type ComponentKeyStruct = {
+    instanceId: PromiseOrValue<BytesLike>;
+    componentId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type ComponentKeyStructOutput = [string, BigNumber] & {
+    instanceId: string;
+    componentId: BigNumber;
+  };
+
+  export type ComponentInfoStruct = {
+    key: IComponentDataProvider.ComponentKeyStruct;
+    componentType: PromiseOrValue<BigNumberish>;
     state: PromiseOrValue<BigNumberish>;
-    symbol: PromiseOrValue<string>;
-    decimals: PromiseOrValue<BigNumberish>;
+    token: PromiseOrValue<string>;
+    chainId: PromiseOrValue<BigNumberish>;
     createdAt: PromiseOrValue<BigNumberish>;
     updatedAt: PromiseOrValue<BigNumberish>;
   };
 
-  export type TokenInfoStructOutput = [
-    IInstanceDataProvider.TokenKeyStructOutput,
+  export type ComponentInfoStructOutput = [
+    IComponentDataProvider.ComponentKeyStructOutput,
+    number,
     number,
     string,
-    number,
+    BigNumber,
     BigNumber,
     BigNumber
   ] & {
-    key: IInstanceDataProvider.TokenKeyStructOutput;
+    key: IComponentDataProvider.ComponentKeyStructOutput;
+    componentType: number;
     state: number;
-    symbol: string;
-    decimals: number;
+    token: string;
+    chainId: BigNumber;
     createdAt: BigNumber;
     updatedAt: BigNumber;
   };
@@ -174,12 +174,12 @@ export declare namespace IInstanceDataProvider {
 
 export interface IBundleDataProviderInterface extends utils.Interface {
   functions: {
-    "bundles(bytes32)": FunctionFragment;
     "bundles(bytes32,uint256)": FunctionFragment;
     "components(bytes32)": FunctionFragment;
     "getBundleId(bytes32,uint256,uint256)": FunctionFragment;
-    "getBundleId(bytes32,uint256)": FunctionFragment;
     "getBundleInfo(bytes32,uint256)": FunctionFragment;
+    "getBundleToken(bytes32,uint256)": FunctionFragment;
+    "getBundleTokenInfo(bytes32,uint256)": FunctionFragment;
     "getComponentId(bytes32,uint256)": FunctionFragment;
     "getComponentInfo(bytes32,uint256)": FunctionFragment;
     "getInstanceId(uint256)": FunctionFragment;
@@ -193,17 +193,18 @@ export interface IBundleDataProviderInterface extends utils.Interface {
     "isRegisteredInstance(bytes32)": FunctionFragment;
     "isRegisteredToken(address)": FunctionFragment;
     "isRegisteredToken(address,uint256)": FunctionFragment;
+    "probeInstance(address)": FunctionFragment;
     "tokens()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "bundles(bytes32)"
-      | "bundles(bytes32,uint256)"
+      | "bundles"
       | "components"
-      | "getBundleId(bytes32,uint256,uint256)"
-      | "getBundleId(bytes32,uint256)"
+      | "getBundleId"
       | "getBundleInfo"
+      | "getBundleToken"
+      | "getBundleTokenInfo"
       | "getComponentId"
       | "getComponentInfo"
       | "getInstanceId"
@@ -217,15 +218,12 @@ export interface IBundleDataProviderInterface extends utils.Interface {
       | "isRegisteredInstance"
       | "isRegisteredToken(address)"
       | "isRegisteredToken(address,uint256)"
+      | "probeInstance"
       | "tokens"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "bundles(bytes32)",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "bundles(bytes32,uint256)",
+    functionFragment: "bundles",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -233,7 +231,7 @@ export interface IBundleDataProviderInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getBundleId(bytes32,uint256,uint256)",
+    functionFragment: "getBundleId",
     values: [
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BigNumberish>,
@@ -241,11 +239,15 @@ export interface IBundleDataProviderInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "getBundleId(bytes32,uint256)",
+    functionFragment: "getBundleInfo",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getBundleInfo",
+    functionFragment: "getBundleToken",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundleTokenInfo",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -297,27 +299,28 @@ export interface IBundleDataProviderInterface extends utils.Interface {
     functionFragment: "isRegisteredToken(address,uint256)",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "probeInstance",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "tokens", values?: undefined): string;
 
-  decodeFunctionResult(
-    functionFragment: "bundles(bytes32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "bundles(bytes32,uint256)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "bundles", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "components", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getBundleId(bytes32,uint256,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getBundleId(bytes32,uint256)",
+    functionFragment: "getBundleId",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBundleInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleTokenInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -366,6 +369,10 @@ export interface IBundleDataProviderInterface extends utils.Interface {
     functionFragment: "isRegisteredToken(address,uint256)",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "probeInstance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "tokens", data: BytesLike): Result;
 
   events: {};
@@ -398,12 +405,7 @@ export interface IBundleDataProvider extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    "bundles(bytes32)"(
-      instanceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { numberOfBundles: BigNumber }>;
-
-    "bundles(bytes32,uint256)"(
+    bundles(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -414,15 +416,9 @@ export interface IBundleDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { numberOfComponents: BigNumber }>;
 
-    "getBundleId(bytes32,uint256,uint256)"(
+    getBundleId(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
-      idx: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { bundleId: BigNumber }>;
-
-    "getBundleId(bytes32,uint256)"(
-      instanceId: PromiseOrValue<BytesLike>,
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { bundleId: BigNumber }>;
@@ -434,6 +430,22 @@ export interface IBundleDataProvider extends BaseContract {
     ): Promise<
       [IBundleDataProvider.BundleInfoStructOutput] & {
         info: IBundleDataProvider.BundleInfoStructOutput;
+      }
+    >;
+
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { token: string }>;
+
+    getBundleTokenInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [IInstanceDataProvider.TokenInfoStructOutput] & {
+        token: IInstanceDataProvider.TokenInfoStructOutput;
       }
     >;
 
@@ -525,17 +537,25 @@ export interface IBundleDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { isRegistered: boolean }>;
 
+    probeInstance(
+      registry: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber, boolean, string, string] & {
+        isContract: boolean;
+        contractSize: BigNumber;
+        isValidId: boolean;
+        istanceId: string;
+        instanceService: string;
+      }
+    >;
+
     tokens(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { numberOfTokens: BigNumber }>;
   };
 
-  "bundles(bytes32)"(
-    instanceId: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "bundles(bytes32,uint256)"(
+  bundles(
     instanceId: PromiseOrValue<BytesLike>,
     riskpoolId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -546,15 +566,9 @@ export interface IBundleDataProvider extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "getBundleId(bytes32,uint256,uint256)"(
+  getBundleId(
     instanceId: PromiseOrValue<BytesLike>,
     riskpoolId: PromiseOrValue<BigNumberish>,
-    idx: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getBundleId(bytes32,uint256)"(
-    instanceId: PromiseOrValue<BytesLike>,
     idx: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -564,6 +578,18 @@ export interface IBundleDataProvider extends BaseContract {
     bundleId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<IBundleDataProvider.BundleInfoStructOutput>;
+
+  getBundleToken(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getBundleTokenInfo(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IInstanceDataProvider.TokenInfoStructOutput>;
 
   getComponentId(
     instanceId: PromiseOrValue<BytesLike>,
@@ -635,15 +661,23 @@ export interface IBundleDataProvider extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  probeInstance(
+    registry: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<
+    [boolean, BigNumber, boolean, string, string] & {
+      isContract: boolean;
+      contractSize: BigNumber;
+      isValidId: boolean;
+      istanceId: string;
+      instanceService: string;
+    }
+  >;
+
   tokens(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    "bundles(bytes32)"(
-      instanceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "bundles(bytes32,uint256)"(
+    bundles(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -654,15 +688,9 @@ export interface IBundleDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getBundleId(bytes32,uint256,uint256)"(
+    getBundleId(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
-      idx: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getBundleId(bytes32,uint256)"(
-      instanceId: PromiseOrValue<BytesLike>,
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -672,6 +700,18 @@ export interface IBundleDataProvider extends BaseContract {
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<IBundleDataProvider.BundleInfoStructOutput>;
+
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getBundleTokenInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IInstanceDataProvider.TokenInfoStructOutput>;
 
     getComponentId(
       instanceId: PromiseOrValue<BytesLike>,
@@ -743,18 +783,26 @@ export interface IBundleDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    probeInstance(
+      registry: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber, boolean, string, string] & {
+        isContract: boolean;
+        contractSize: BigNumber;
+        isValidId: boolean;
+        istanceId: string;
+        instanceService: string;
+      }
+    >;
+
     tokens(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
-    "bundles(bytes32)"(
-      instanceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "bundles(bytes32,uint256)"(
+    bundles(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -765,20 +813,26 @@ export interface IBundleDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getBundleId(bytes32,uint256,uint256)"(
+    getBundleId(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getBundleId(bytes32,uint256)"(
+    getBundleInfo(
       instanceId: PromiseOrValue<BytesLike>,
-      idx: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getBundleInfo(
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleTokenInfo(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -852,16 +906,16 @@ export interface IBundleDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    probeInstance(
+      registry: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     tokens(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    "bundles(bytes32)"(
-      instanceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "bundles(bytes32,uint256)"(
+    bundles(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -872,20 +926,26 @@ export interface IBundleDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getBundleId(bytes32,uint256,uint256)"(
+    getBundleId(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getBundleId(bytes32,uint256)"(
+    getBundleInfo(
       instanceId: PromiseOrValue<BytesLike>,
-      idx: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getBundleInfo(
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBundleTokenInfo(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -956,6 +1016,11 @@ export interface IBundleDataProvider extends BaseContract {
     "isRegisteredToken(address,uint256)"(
       tokenAddress: PromiseOrValue<string>,
       chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    probeInstance(
+      registry: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

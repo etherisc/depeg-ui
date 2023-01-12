@@ -92,7 +92,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
             beforeWaitCallback?: (address: string) => void,
         ) {
         console.log("applyForPolicy", walletAddress, insuredAmount, coverageDurationDays, premium);
-        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(insuredAmount, coverageDurationDays, premium, beforeApplyCallback, beforeWaitCallback);
+        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, insuredAmount, coverageDurationDays, premium, beforeApplyCallback, beforeWaitCallback);
         let processId = (await this.getDepegProductApi())!.extractProcessIdFromApplicationLogs(receipt.logs);
         console.log(`processId: ${processId}`);
         return Promise.resolve(true);
