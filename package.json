@@ -22,7 +22,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.4",
-    "@mui/x-data-grid": "^5.17.17",
+    "@mui/x-data-grid": "^5.17.18",
     "@mui/x-date-pickers": "^5.0.13",
     "@reduxjs/toolkit": "^1.9.1",
     "@walletconnect/web3-provider": "^1.8.0",
