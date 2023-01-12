@@ -18,6 +18,7 @@ import { DevTool } from "@hookform/devtools";
 import { INPUT_VARIANT } from '../../config/theme';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import { ethers } from 'ethers';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -235,7 +236,21 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Controller
                         name="insuredWallet"
                         control={control}
-                        rules={{ required: true, maxLength: 42, minLength: 42, pattern: /^0x[a-fA-F0-9]{40}$/ }}
+                        rules={{ 
+                            required: true, 
+                            maxLength: 42, 
+                            minLength: 42, 
+                            pattern: /^0x[a-fA-F0-9]{40}$/,
+                            validate: {
+                                isAddress: (value) => {
+                                    try {
+                                        return ethers.utils.isAddress(value);
+                                    } catch (e) {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('insuredWallet')}
@@ -243,7 +258,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
                                 {...field} 
-                                InputProps={{ readOnly: true }}
                                 onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
                                 error={errors.insuredWallet !== undefined}
                                 helperText={errors.insuredWallet !== undefined 

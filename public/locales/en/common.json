@@ -33,7 +33,8 @@
         "wallet_connect_failed": "WalletConnect login failed or cancelled",
         "field": {
             "required": "This field is required",
-            "walletType": "This field must contain a wallet address (0x...)",
+            "walletType": "This field must contain a ethereum address (0x...)",
+            "isAddress": "This field must contain a valid ethereum address",
             "numberType": "This field must contain an integer number",
             "amountType": "This field must contain an amount",
             "minLength": "This field must be at least {{minLength}} characters",
