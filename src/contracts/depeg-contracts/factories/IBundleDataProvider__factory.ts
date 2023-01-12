@@ -17,25 +17,6 @@ const _abi = [
         name: "instanceId",
         type: "bytes32",
       },
-    ],
-    name: "bundles",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "numberOfBundles",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "instanceId",
-        type: "bytes32",
-      },
       {
         internalType: "uint256",
         name: "riskpoolId",
@@ -110,30 +91,6 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "idx",
-        type: "uint256",
-      },
-    ],
-    name: "getBundleId",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "bundleId",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "instanceId",
-        type: "bytes32",
-      },
-      {
-        internalType: "uint256",
         name: "bundleId",
         type: "uint256",
       },
@@ -160,26 +117,14 @@ const _abi = [
             type: "tuple",
           },
           {
-            components: [
-              {
-                internalType: "bytes32",
-                name: "instanceId",
-                type: "bytes32",
-              },
-              {
-                internalType: "uint256",
-                name: "componentId",
-                type: "uint256",
-              },
-            ],
-            internalType: "struct IComponentDataProvider.ComponentKey",
-            name: "riskpool",
-            type: "tuple",
+            internalType: "uint256",
+            name: "riskpoolId",
+            type: "uint256",
           },
           {
-            internalType: "string",
-            name: "name",
-            type: "string",
+            internalType: "address",
+            name: "token",
+            type: "address",
           },
           {
             internalType: "enum IBundle.BundleState",
@@ -187,31 +132,9 @@ const _abi = [
             type: "uint8",
           },
           {
-            components: [
-              {
-                internalType: "address",
-                name: "token",
-                type: "address",
-              },
-              {
-                internalType: "uint256",
-                name: "chainId",
-                type: "uint256",
-              },
-            ],
-            internalType: "struct IInstanceDataProvider.TokenKey",
-            name: "token",
-            type: "tuple",
-          },
-          {
             internalType: "string",
-            name: "tokenSymbol",
+            name: "name",
             type: "string",
-          },
-          {
-            internalType: "uint8",
-            name: "tokenDecimals",
-            type: "uint8",
           },
           {
             internalType: "uint256",
@@ -236,6 +159,98 @@ const _abi = [
         ],
         internalType: "struct IBundleDataProvider.BundleInfo",
         name: "info",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "instanceId",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
+        name: "bundleId",
+        type: "uint256",
+      },
+    ],
+    name: "getBundleToken",
+    outputs: [
+      {
+        internalType: "contract IERC20Metadata",
+        name: "token",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "instanceId",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256",
+        name: "bundleId",
+        type: "uint256",
+      },
+    ],
+    name: "getBundleTokenInfo",
+    outputs: [
+      {
+        components: [
+          {
+            components: [
+              {
+                internalType: "address",
+                name: "token",
+                type: "address",
+              },
+              {
+                internalType: "uint256",
+                name: "chainId",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct IInstanceDataProvider.TokenKey",
+            name: "key",
+            type: "tuple",
+          },
+          {
+            internalType: "enum IInstanceDataProvider.TokenState",
+            name: "state",
+            type: "uint8",
+          },
+          {
+            internalType: "string",
+            name: "symbol",
+            type: "string",
+          },
+          {
+            internalType: "uint8",
+            name: "decimals",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "createdAt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "updatedAt",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IInstanceDataProvider.TokenInfo",
+        name: "token",
         type: "tuple",
       },
     ],
@@ -309,6 +324,16 @@ const _abi = [
             internalType: "enum IComponent.ComponentState",
             name: "state",
             type: "uint8",
+          },
+          {
+            internalType: "address",
+            name: "token",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "chainId",
+            type: "uint256",
           },
           {
             internalType: "uint256",
@@ -677,6 +702,45 @@ const _abi = [
         internalType: "bool",
         name: "isRegistered",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "registry",
+        type: "address",
+      },
+    ],
+    name: "probeInstance",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "isContract",
+        type: "bool",
+      },
+      {
+        internalType: "uint256",
+        name: "contractSize",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isValidId",
+        type: "bool",
+      },
+      {
+        internalType: "bytes32",
+        name: "istanceId",
+        type: "bytes32",
+      },
+      {
+        internalType: "contract IInstanceService",
+        name: "instanceService",
+        type: "address",
       },
     ],
     stateMutability: "view",

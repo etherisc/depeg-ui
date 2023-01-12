@@ -42,6 +42,8 @@ export declare namespace IComponentDataProvider {
     key: IComponentDataProvider.ComponentKeyStruct;
     componentType: PromiseOrValue<BigNumberish>;
     state: PromiseOrValue<BigNumberish>;
+    token: PromiseOrValue<string>;
+    chainId: PromiseOrValue<BigNumberish>;
     createdAt: PromiseOrValue<BigNumberish>;
     updatedAt: PromiseOrValue<BigNumberish>;
   };
@@ -50,12 +52,16 @@ export declare namespace IComponentDataProvider {
     IComponentDataProvider.ComponentKeyStructOutput,
     number,
     number,
+    string,
+    BigNumber,
     BigNumber,
     BigNumber
   ] & {
     key: IComponentDataProvider.ComponentKeyStructOutput;
     componentType: number;
     state: number;
+    token: string;
+    chainId: BigNumber;
     createdAt: BigNumber;
     updatedAt: BigNumber;
   };
@@ -143,6 +149,7 @@ export interface ComponentRegistryInterface extends utils.Interface {
     "isRegisteredToken(address)": FunctionFragment;
     "isRegisteredToken(address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
+    "probeInstance(address)": FunctionFragment;
     "registerComponent(bytes32,uint256)": FunctionFragment;
     "registerInstance(address)": FunctionFragment;
     "registerInstance(bytes32,uint256,address)": FunctionFragment;
@@ -174,6 +181,7 @@ export interface ComponentRegistryInterface extends utils.Interface {
       | "isRegisteredToken(address)"
       | "isRegisteredToken(address,uint256)"
       | "owner"
+      | "probeInstance"
       | "registerComponent"
       | "registerInstance(address)"
       | "registerInstance(bytes32,uint256,address)"
@@ -242,6 +250,10 @@ export interface ComponentRegistryInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "probeInstance",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "registerComponent",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
@@ -349,6 +361,10 @@ export interface ComponentRegistryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "probeInstance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "registerComponent",
     data: BytesLike
@@ -654,6 +670,19 @@ export interface ComponentRegistry extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    probeInstance(
+      registryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber, boolean, string, string] & {
+        isContract: boolean;
+        contractSize: BigNumber;
+        isValidId: boolean;
+        instanceId: string;
+        instanceService: string;
+      }
+    >;
+
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
       componentId: PromiseOrValue<BigNumberish>,
@@ -795,6 +824,19 @@ export interface ComponentRegistry extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  probeInstance(
+    registryAddress: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<
+    [boolean, BigNumber, boolean, string, string] & {
+      isContract: boolean;
+      contractSize: BigNumber;
+      isValidId: boolean;
+      instanceId: string;
+      instanceService: string;
+    }
+  >;
+
   registerComponent(
     instanceId: PromiseOrValue<BytesLike>,
     componentId: PromiseOrValue<BigNumberish>,
@@ -933,6 +975,19 @@ export interface ComponentRegistry extends BaseContract {
     ): Promise<boolean>;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    probeInstance(
+      registryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber, boolean, string, string] & {
+        isContract: boolean;
+        contractSize: BigNumber;
+        isValidId: boolean;
+        instanceId: string;
+        instanceService: string;
+      }
+    >;
 
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
@@ -1170,6 +1225,11 @@ export interface ComponentRegistry extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    probeInstance(
+      registryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
       componentId: PromiseOrValue<BigNumberish>,
@@ -1311,6 +1371,11 @@ export interface ComponentRegistry extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    probeInstance(
+      registryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,

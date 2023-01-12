@@ -87,7 +87,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "riskpoolId",
+        name: "componentId",
         type: "uint256",
       },
     ],
@@ -105,7 +105,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "riskpoolId",
+        name: "componentId",
         type: "uint256",
       },
     ],

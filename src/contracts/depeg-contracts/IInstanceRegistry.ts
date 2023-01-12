@@ -103,6 +103,7 @@ export interface IInstanceRegistryInterface extends utils.Interface {
     "isRegisteredInstance(bytes32)": FunctionFragment;
     "isRegisteredToken(address)": FunctionFragment;
     "isRegisteredToken(address,uint256)": FunctionFragment;
+    "probeInstance(address)": FunctionFragment;
     "registerInstance(address)": FunctionFragment;
     "registerInstance(bytes32,uint256,address)": FunctionFragment;
     "registerToken(address)": FunctionFragment;
@@ -124,6 +125,7 @@ export interface IInstanceRegistryInterface extends utils.Interface {
       | "isRegisteredInstance"
       | "isRegisteredToken(address)"
       | "isRegisteredToken(address,uint256)"
+      | "probeInstance"
       | "registerInstance(address)"
       | "registerInstance(bytes32,uint256,address)"
       | "registerToken(address)"
@@ -166,6 +168,10 @@ export interface IInstanceRegistryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "isRegisteredToken(address,uint256)",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "probeInstance",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "registerInstance(address)",
@@ -238,6 +244,10 @@ export interface IInstanceRegistryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "isRegisteredToken(address,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "probeInstance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -449,6 +459,19 @@ export interface IInstanceRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { isRegistered: boolean }>;
 
+    probeInstance(
+      registry: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber, boolean, string, string] & {
+        isContract: boolean;
+        contractSize: BigNumber;
+        isValidId: boolean;
+        istanceId: string;
+        instanceService: string;
+      }
+    >;
+
     "registerInstance(address)"(
       registry: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -544,6 +567,19 @@ export interface IInstanceRegistry extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  probeInstance(
+    registry: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<
+    [boolean, BigNumber, boolean, string, string] & {
+      isContract: boolean;
+      contractSize: BigNumber;
+      isValidId: boolean;
+      istanceId: string;
+      instanceService: string;
+    }
+  >;
+
   "registerInstance(address)"(
     registry: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -636,6 +672,19 @@ export interface IInstanceRegistry extends BaseContract {
       chainId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    probeInstance(
+      registry: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber, boolean, string, string] & {
+        isContract: boolean;
+        contractSize: BigNumber;
+        isValidId: boolean;
+        istanceId: string;
+        instanceService: string;
+      }
+    >;
 
     "registerInstance(address)"(
       registry: PromiseOrValue<string>,
@@ -790,6 +839,11 @@ export interface IInstanceRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    probeInstance(
+      registry: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "registerInstance(address)"(
       registry: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -879,6 +933,11 @@ export interface IInstanceRegistry extends BaseContract {
     "isRegisteredToken(address,uint256)"(
       tokenAddress: PromiseOrValue<string>,
       chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    probeInstance(
+      registry: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

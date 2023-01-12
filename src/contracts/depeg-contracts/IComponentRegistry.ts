@@ -126,39 +126,39 @@ export interface IComponentRegistry extends BaseContract {
   functions: {
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
-      riskpoolId: PromiseOrValue<BigNumberish>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     updateComponent(
       instanceId: PromiseOrValue<BytesLike>,
-      riskpoolId: PromiseOrValue<BigNumberish>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   registerComponent(
     instanceId: PromiseOrValue<BytesLike>,
-    riskpoolId: PromiseOrValue<BigNumberish>,
+    componentId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   updateComponent(
     instanceId: PromiseOrValue<BytesLike>,
-    riskpoolId: PromiseOrValue<BigNumberish>,
+    componentId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
-      riskpoolId: PromiseOrValue<BigNumberish>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updateComponent(
       instanceId: PromiseOrValue<BytesLike>,
-      riskpoolId: PromiseOrValue<BigNumberish>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -196,13 +196,13 @@ export interface IComponentRegistry extends BaseContract {
   estimateGas: {
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
-      riskpoolId: PromiseOrValue<BigNumberish>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     updateComponent(
       instanceId: PromiseOrValue<BytesLike>,
-      riskpoolId: PromiseOrValue<BigNumberish>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -210,13 +210,13 @@ export interface IComponentRegistry extends BaseContract {
   populateTransaction: {
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
-      riskpoolId: PromiseOrValue<BigNumberish>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     updateComponent(
       instanceId: PromiseOrValue<BytesLike>,
-      riskpoolId: PromiseOrValue<BigNumberish>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -178,7 +178,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "decodeApplicationParameterFromData(bytes)": FunctionFragment;
     "decodeBundleParamsFromFilter(bytes)": FunctionFragment;
     "defundBundle(uint256,uint256)": FunctionFragment;
-    "encodeApplicationParameterAsData(uint256,uint256)": FunctionFragment;
+    "encodeApplicationParameterAsData(address,uint256,uint256)": FunctionFragment;
     "encodeBundleParamsAsFilter(string,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "fundBundle(uint256,uint256)": FunctionFragment;
     "getActiveBundleId(uint256)": FunctionFragment;
@@ -427,7 +427,11 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "encodeApplicationParameterAsData",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "encodeBundleParamsAsFilter",
@@ -1445,7 +1449,11 @@ export interface DepegRiskpool extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber] & { duration: BigNumber; maxPremium: BigNumber }
+      [string, BigNumber, BigNumber] & {
+        wallet: string;
+        duration: BigNumber;
+        maxPremium: BigNumber;
+      }
     >;
 
     decodeBundleParamsFromFilter(
@@ -1478,6 +1486,7 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<ContractTransaction>;
 
     encodeApplicationParameterAsData(
+      wallet: PromiseOrValue<string>,
       duration: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1775,7 +1784,11 @@ export interface DepegRiskpool extends BaseContract {
     data: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber] & { duration: BigNumber; maxPremium: BigNumber }
+    [string, BigNumber, BigNumber] & {
+      wallet: string;
+      duration: BigNumber;
+      maxPremium: BigNumber;
+    }
   >;
 
   decodeBundleParamsFromFilter(
@@ -1808,6 +1821,7 @@ export interface DepegRiskpool extends BaseContract {
   ): Promise<ContractTransaction>;
 
   encodeApplicationParameterAsData(
+    wallet: PromiseOrValue<string>,
     duration: PromiseOrValue<BigNumberish>,
     maxPremium: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -2081,7 +2095,11 @@ export interface DepegRiskpool extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber] & { duration: BigNumber; maxPremium: BigNumber }
+      [string, BigNumber, BigNumber] & {
+        wallet: string;
+        duration: BigNumber;
+        maxPremium: BigNumber;
+      }
     >;
 
     decodeBundleParamsFromFilter(
@@ -2114,6 +2132,7 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<BigNumber>;
 
     encodeApplicationParameterAsData(
+      wallet: PromiseOrValue<string>,
       duration: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2628,6 +2647,7 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<BigNumber>;
 
     encodeApplicationParameterAsData(
+      wallet: PromiseOrValue<string>,
       duration: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2935,6 +2955,7 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     encodeApplicationParameterAsData(
+      wallet: PromiseOrValue<string>,
       duration: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides

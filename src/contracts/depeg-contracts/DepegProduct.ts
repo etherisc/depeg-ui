@@ -93,7 +93,7 @@ export interface DepegProductInterface extends utils.Interface {
     "POLICY_FLOW()": FunctionFragment;
     "VERSION()": FunctionFragment;
     "applications()": FunctionFragment;
-    "applyForPolicy(uint256,uint256,uint256)": FunctionFragment;
+    "applyForPolicy(address,uint256,uint256,uint256)": FunctionFragment;
     "approvalCallback()": FunctionFragment;
     "archiveCallback()": FunctionFragment;
     "calculateFee(uint256)": FunctionFragment;
@@ -223,6 +223,7 @@ export interface DepegProductInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "applyForPolicy",
     values: [
+      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
@@ -580,8 +581,8 @@ export interface DepegProductInterface extends utils.Interface {
     "LogComponentStateChanged(uint256,uint8,uint8)": EventFragment;
     "LogComponentSuspended(uint256)": EventFragment;
     "LogComponentUnpaused(uint256)": EventFragment;
-    "LogDepegApplicationCreated(bytes32,address,uint256,uint256,uint256)": EventFragment;
-    "LogDepegPolicyCreated(bytes32,address,uint256,uint256)": EventFragment;
+    "LogDepegApplicationCreated(bytes32,address,address,uint256,uint256,uint256)": EventFragment;
+    "LogDepegPolicyCreated(bytes32,address,uint256)": EventFragment;
     "LogDepegPolicyProcessed(bytes32)": EventFragment;
     "LogDepegPriceInfoUpdated(uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "LogDepegProductDeactivated(uint256,uint256)": EventFragment;
@@ -739,14 +740,15 @@ export type LogComponentUnpausedEventFilter =
   TypedEventFilter<LogComponentUnpausedEvent>;
 
 export interface LogDepegApplicationCreatedEventObject {
-  policyId: string;
+  processId: string;
   policyHolder: string;
+  protectedWallet: string;
+  sumInsuredAmount: BigNumber;
   premiumAmount: BigNumber;
   netPremiumAmount: BigNumber;
-  sumInsuredAmount: BigNumber;
 }
 export type LogDepegApplicationCreatedEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber, BigNumber],
+  [string, string, string, BigNumber, BigNumber, BigNumber],
   LogDepegApplicationCreatedEventObject
 >;
 
@@ -754,13 +756,12 @@ export type LogDepegApplicationCreatedEventFilter =
   TypedEventFilter<LogDepegApplicationCreatedEvent>;
 
 export interface LogDepegPolicyCreatedEventObject {
-  policyId: string;
+  processId: string;
   policyHolder: string;
-  premiumAmount: BigNumber;
   sumInsuredAmount: BigNumber;
 }
 export type LogDepegPolicyCreatedEvent = TypedEvent<
-  [string, string, BigNumber, BigNumber],
+  [string, string, BigNumber],
   LogDepegPolicyCreatedEventObject
 >;
 
@@ -940,6 +941,7 @@ export interface DepegProduct extends BaseContract {
     ): Promise<[BigNumber] & { applicationCount: BigNumber }>;
 
     applyForPolicy(
+      wallet: PromiseOrValue<string>,
       sumInsured: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
@@ -1163,6 +1165,7 @@ export interface DepegProduct extends BaseContract {
   applications(overrides?: CallOverrides): Promise<BigNumber>;
 
   applyForPolicy(
+    wallet: PromiseOrValue<string>,
     sumInsured: PromiseOrValue<BigNumberish>,
     duration: PromiseOrValue<BigNumberish>,
     maxPremium: PromiseOrValue<BigNumberish>,
@@ -1358,6 +1361,7 @@ export interface DepegProduct extends BaseContract {
     applications(overrides?: CallOverrides): Promise<BigNumber>;
 
     applyForPolicy(
+      wallet: PromiseOrValue<string>,
       sumInsured: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
@@ -1585,31 +1589,31 @@ export interface DepegProduct extends BaseContract {
     "LogComponentUnpaused(uint256)"(id?: null): LogComponentUnpausedEventFilter;
     LogComponentUnpaused(id?: null): LogComponentUnpausedEventFilter;
 
-    "LogDepegApplicationCreated(bytes32,address,uint256,uint256,uint256)"(
-      policyId?: null,
+    "LogDepegApplicationCreated(bytes32,address,address,uint256,uint256,uint256)"(
+      processId?: null,
       policyHolder?: null,
+      protectedWallet?: null,
+      sumInsuredAmount?: null,
       premiumAmount?: null,
-      netPremiumAmount?: null,
-      sumInsuredAmount?: null
+      netPremiumAmount?: null
     ): LogDepegApplicationCreatedEventFilter;
     LogDepegApplicationCreated(
-      policyId?: null,
+      processId?: null,
       policyHolder?: null,
+      protectedWallet?: null,
+      sumInsuredAmount?: null,
       premiumAmount?: null,
-      netPremiumAmount?: null,
-      sumInsuredAmount?: null
+      netPremiumAmount?: null
     ): LogDepegApplicationCreatedEventFilter;
 
-    "LogDepegPolicyCreated(bytes32,address,uint256,uint256)"(
-      policyId?: null,
+    "LogDepegPolicyCreated(bytes32,address,uint256)"(
+      processId?: null,
       policyHolder?: null,
-      premiumAmount?: null,
       sumInsuredAmount?: null
     ): LogDepegPolicyCreatedEventFilter;
     LogDepegPolicyCreated(
-      policyId?: null,
+      processId?: null,
       policyHolder?: null,
-      premiumAmount?: null,
       sumInsuredAmount?: null
     ): LogDepegPolicyCreatedEventFilter;
 
@@ -1715,6 +1719,7 @@ export interface DepegProduct extends BaseContract {
     applications(overrides?: CallOverrides): Promise<BigNumber>;
 
     applyForPolicy(
+      wallet: PromiseOrValue<string>,
       sumInsured: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
@@ -1897,6 +1902,7 @@ export interface DepegProduct extends BaseContract {
     applications(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     applyForPolicy(
+      wallet: PromiseOrValue<string>,
       sumInsured: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,

@@ -316,6 +316,45 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "registry",
+        type: "address",
+      },
+    ],
+    name: "probeInstance",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "isContract",
+        type: "bool",
+      },
+      {
+        internalType: "uint256",
+        name: "contractSize",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isValidId",
+        type: "bool",
+      },
+      {
+        internalType: "bytes32",
+        name: "istanceId",
+        type: "bytes32",
+      },
+      {
+        internalType: "contract IInstanceService",
+        name: "instanceService",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "tokens",
     outputs: [

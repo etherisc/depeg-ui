@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -25,7 +29,7 @@ import type {
 
 export interface IBundleRegistryInterface extends utils.Interface {
   functions: {
-    "registerBundle(bytes32,uint256)": FunctionFragment;
+    "registerBundle(bytes32,uint256,uint256,string,uint256)": FunctionFragment;
     "updateBundle(bytes32,uint256)": FunctionFragment;
   };
 
@@ -35,7 +39,13 @@ export interface IBundleRegistryInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "registerBundle",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "updateBundle",
@@ -51,8 +61,46 @@ export interface IBundleRegistryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "LogInstanceRegistryBundleRegistered(bytes32,uint256,uint256,uint8)": EventFragment;
+    "LogInstanceRegistryBundleUpdated(bytes32,uint256,uint8,uint8)": EventFragment;
+  };
+
+  getEvent(
+    nameOrSignatureOrTopic: "LogInstanceRegistryBundleRegistered"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LogInstanceRegistryBundleUpdated"
+  ): EventFragment;
 }
+
+export interface LogInstanceRegistryBundleRegisteredEventObject {
+  instanceId: string;
+  riskpoolId: BigNumber;
+  bundleId: BigNumber;
+  state: number;
+}
+export type LogInstanceRegistryBundleRegisteredEvent = TypedEvent<
+  [string, BigNumber, BigNumber, number],
+  LogInstanceRegistryBundleRegisteredEventObject
+>;
+
+export type LogInstanceRegistryBundleRegisteredEventFilter =
+  TypedEventFilter<LogInstanceRegistryBundleRegisteredEvent>;
+
+export interface LogInstanceRegistryBundleUpdatedEventObject {
+  instanceId: string;
+  bundleId: BigNumber;
+  oldState: number;
+  newState: number;
+}
+export type LogInstanceRegistryBundleUpdatedEvent = TypedEvent<
+  [string, BigNumber, number, number],
+  LogInstanceRegistryBundleUpdatedEventObject
+>;
+
+export type LogInstanceRegistryBundleUpdatedEventFilter =
+  TypedEventFilter<LogInstanceRegistryBundleUpdatedEvent>;
 
 export interface IBundleRegistry extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -83,7 +131,10 @@ export interface IBundleRegistry extends BaseContract {
   functions: {
     registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      expiryAt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -96,7 +147,10 @@ export interface IBundleRegistry extends BaseContract {
 
   registerBundle(
     instanceId: PromiseOrValue<BytesLike>,
+    riskpoolId: PromiseOrValue<BigNumberish>,
     bundleId: PromiseOrValue<BigNumberish>,
+    name: PromiseOrValue<string>,
+    expiryAt: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -109,7 +163,10 @@ export interface IBundleRegistry extends BaseContract {
   callStatic: {
     registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      expiryAt: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -120,12 +177,41 @@ export interface IBundleRegistry extends BaseContract {
     ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "LogInstanceRegistryBundleRegistered(bytes32,uint256,uint256,uint8)"(
+      instanceId?: null,
+      riskpoolId?: null,
+      bundleId?: null,
+      state?: null
+    ): LogInstanceRegistryBundleRegisteredEventFilter;
+    LogInstanceRegistryBundleRegistered(
+      instanceId?: null,
+      riskpoolId?: null,
+      bundleId?: null,
+      state?: null
+    ): LogInstanceRegistryBundleRegisteredEventFilter;
+
+    "LogInstanceRegistryBundleUpdated(bytes32,uint256,uint8,uint8)"(
+      instanceId?: null,
+      bundleId?: null,
+      oldState?: null,
+      newState?: null
+    ): LogInstanceRegistryBundleUpdatedEventFilter;
+    LogInstanceRegistryBundleUpdated(
+      instanceId?: null,
+      bundleId?: null,
+      oldState?: null,
+      newState?: null
+    ): LogInstanceRegistryBundleUpdatedEventFilter;
+  };
 
   estimateGas: {
     registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      expiryAt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -139,7 +225,10 @@ export interface IBundleRegistry extends BaseContract {
   populateTransaction: {
     registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      expiryAt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

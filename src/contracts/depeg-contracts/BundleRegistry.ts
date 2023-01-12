@@ -27,35 +27,53 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace IInstanceDataProvider {
-  export type InstanceInfoStruct = {
-    id: PromiseOrValue<BytesLike>;
+export declare namespace IBundleDataProvider {
+  export type BundleKeyStruct = {
+    instanceId: PromiseOrValue<BytesLike>;
+    bundleId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type BundleKeyStructOutput = [string, BigNumber] & {
+    instanceId: string;
+    bundleId: BigNumber;
+  };
+
+  export type BundleInfoStruct = {
+    key: IBundleDataProvider.BundleKeyStruct;
+    riskpoolId: PromiseOrValue<BigNumberish>;
+    token: PromiseOrValue<string>;
     state: PromiseOrValue<BigNumberish>;
-    displayName: PromiseOrValue<string>;
-    chainId: PromiseOrValue<BigNumberish>;
-    registry: PromiseOrValue<string>;
+    name: PromiseOrValue<string>;
+    expiryAt: PromiseOrValue<BigNumberish>;
+    closedAt: PromiseOrValue<BigNumberish>;
     createdAt: PromiseOrValue<BigNumberish>;
     updatedAt: PromiseOrValue<BigNumberish>;
   };
 
-  export type InstanceInfoStructOutput = [
+  export type BundleInfoStructOutput = [
+    IBundleDataProvider.BundleKeyStructOutput,
+    BigNumber,
     string,
     number,
     string,
     BigNumber,
-    string,
+    BigNumber,
     BigNumber,
     BigNumber
   ] & {
-    id: string;
+    key: IBundleDataProvider.BundleKeyStructOutput;
+    riskpoolId: BigNumber;
+    token: string;
     state: number;
-    displayName: string;
-    chainId: BigNumber;
-    registry: string;
+    name: string;
+    expiryAt: BigNumber;
+    closedAt: BigNumber;
     createdAt: BigNumber;
     updatedAt: BigNumber;
   };
+}
 
+export declare namespace IInstanceDataProvider {
   export type TokenKeyStruct = {
     token: PromiseOrValue<string>;
     chainId: PromiseOrValue<BigNumberish>;
@@ -90,22 +108,102 @@ export declare namespace IInstanceDataProvider {
     createdAt: BigNumber;
     updatedAt: BigNumber;
   };
+
+  export type InstanceInfoStruct = {
+    id: PromiseOrValue<BytesLike>;
+    state: PromiseOrValue<BigNumberish>;
+    displayName: PromiseOrValue<string>;
+    chainId: PromiseOrValue<BigNumberish>;
+    registry: PromiseOrValue<string>;
+    createdAt: PromiseOrValue<BigNumberish>;
+    updatedAt: PromiseOrValue<BigNumberish>;
+  };
+
+  export type InstanceInfoStructOutput = [
+    string,
+    number,
+    string,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber
+  ] & {
+    id: string;
+    state: number;
+    displayName: string;
+    chainId: BigNumber;
+    registry: string;
+    createdAt: BigNumber;
+    updatedAt: BigNumber;
+  };
 }
 
-export interface InstanceRegistryInterface extends utils.Interface {
+export declare namespace IComponentDataProvider {
+  export type ComponentKeyStruct = {
+    instanceId: PromiseOrValue<BytesLike>;
+    componentId: PromiseOrValue<BigNumberish>;
+  };
+
+  export type ComponentKeyStructOutput = [string, BigNumber] & {
+    instanceId: string;
+    componentId: BigNumber;
+  };
+
+  export type ComponentInfoStruct = {
+    key: IComponentDataProvider.ComponentKeyStruct;
+    componentType: PromiseOrValue<BigNumberish>;
+    state: PromiseOrValue<BigNumberish>;
+    token: PromiseOrValue<string>;
+    chainId: PromiseOrValue<BigNumberish>;
+    createdAt: PromiseOrValue<BigNumberish>;
+    updatedAt: PromiseOrValue<BigNumberish>;
+  };
+
+  export type ComponentInfoStructOutput = [
+    IComponentDataProvider.ComponentKeyStructOutput,
+    number,
+    number,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
+    key: IComponentDataProvider.ComponentKeyStructOutput;
+    componentType: number;
+    state: number;
+    token: string;
+    chainId: BigNumber;
+    createdAt: BigNumber;
+    updatedAt: BigNumber;
+  };
+}
+
+export interface BundleRegistryInterface extends utils.Interface {
   functions: {
     "TOKEN_MAX_DECIMALS()": FunctionFragment;
+    "bundles(bytes32,uint256)": FunctionFragment;
+    "components(bytes32)": FunctionFragment;
+    "getBundleId(bytes32,uint256,uint256)": FunctionFragment;
+    "getBundleInfo(bytes32,uint256)": FunctionFragment;
+    "getBundleToken(bytes32,uint256)": FunctionFragment;
+    "getBundleTokenInfo(bytes32,uint256)": FunctionFragment;
+    "getComponentId(bytes32,uint256)": FunctionFragment;
+    "getComponentInfo(bytes32,uint256)": FunctionFragment;
     "getInstanceId(uint256)": FunctionFragment;
     "getInstanceInfo(bytes32)": FunctionFragment;
     "getTokenId(uint256)": FunctionFragment;
     "getTokenInfo(address)": FunctionFragment;
     "getTokenInfo(address,uint256)": FunctionFragment;
     "instances()": FunctionFragment;
+    "isRegisteredBundle(bytes32,uint256)": FunctionFragment;
+    "isRegisteredComponent(bytes32,uint256)": FunctionFragment;
     "isRegisteredInstance(bytes32)": FunctionFragment;
     "isRegisteredToken(address)": FunctionFragment;
     "isRegisteredToken(address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "probeInstance(address)": FunctionFragment;
+    "registerBundle(bytes32,uint256,uint256,string,uint256)": FunctionFragment;
+    "registerComponent(bytes32,uint256)": FunctionFragment;
     "registerInstance(address)": FunctionFragment;
     "registerInstance(bytes32,uint256,address)": FunctionFragment;
     "registerToken(address)": FunctionFragment;
@@ -113,6 +211,8 @@ export interface InstanceRegistryInterface extends utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "tokens()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "updateBundle(bytes32,uint256)": FunctionFragment;
+    "updateComponent(bytes32,uint256)": FunctionFragment;
     "updateInstance(bytes32,string)": FunctionFragment;
     "updateInstance(bytes32,uint8)": FunctionFragment;
     "updateToken(address,uint256,uint8)": FunctionFragment;
@@ -121,17 +221,29 @@ export interface InstanceRegistryInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "TOKEN_MAX_DECIMALS"
+      | "bundles"
+      | "components"
+      | "getBundleId"
+      | "getBundleInfo"
+      | "getBundleToken"
+      | "getBundleTokenInfo"
+      | "getComponentId"
+      | "getComponentInfo"
       | "getInstanceId"
       | "getInstanceInfo"
       | "getTokenId"
       | "getTokenInfo(address)"
       | "getTokenInfo(address,uint256)"
       | "instances"
+      | "isRegisteredBundle"
+      | "isRegisteredComponent"
       | "isRegisteredInstance"
       | "isRegisteredToken(address)"
       | "isRegisteredToken(address,uint256)"
       | "owner"
       | "probeInstance"
+      | "registerBundle"
+      | "registerComponent"
       | "registerInstance(address)"
       | "registerInstance(bytes32,uint256,address)"
       | "registerToken(address)"
@@ -139,6 +251,8 @@ export interface InstanceRegistryInterface extends utils.Interface {
       | "renounceOwnership"
       | "tokens"
       | "transferOwnership"
+      | "updateBundle"
+      | "updateComponent"
       | "updateInstance(bytes32,string)"
       | "updateInstance(bytes32,uint8)"
       | "updateToken"
@@ -147,6 +261,42 @@ export interface InstanceRegistryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "TOKEN_MAX_DECIMALS",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "bundles",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "components",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundleId",
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundleInfo",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundleToken",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundleTokenInfo",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComponentId",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComponentInfo",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getInstanceId",
@@ -170,6 +320,14 @@ export interface InstanceRegistryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "instances", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "isRegisteredBundle",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isRegisteredComponent",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isRegisteredInstance",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -185,6 +343,20 @@ export interface InstanceRegistryInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "probeInstance",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "registerBundle",
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "registerComponent",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "registerInstance(address)",
@@ -221,6 +393,14 @@ export interface InstanceRegistryInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateBundle",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateComponent",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateInstance(bytes32,string)",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
@@ -239,6 +419,32 @@ export interface InstanceRegistryInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "TOKEN_MAX_DECIMALS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "bundles", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "components", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleTokenInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getComponentId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getComponentInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -260,6 +466,14 @@ export interface InstanceRegistryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "instances", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "isRegisteredBundle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isRegisteredComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isRegisteredInstance",
     data: BytesLike
   ): Result;
@@ -274,6 +488,14 @@ export interface InstanceRegistryInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "probeInstance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerBundle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerComponent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -302,6 +524,14 @@ export interface InstanceRegistryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "updateBundle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "updateInstance(bytes32,string)",
     data: BytesLike
   ): Result;
@@ -315,6 +545,10 @@ export interface InstanceRegistryInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "LogInstanceRegistryBundleRegistered(bytes32,uint256,uint256,uint8)": EventFragment;
+    "LogInstanceRegistryBundleUpdated(bytes32,uint256,uint8,uint8)": EventFragment;
+    "LogInstanceRegistryComponentRegistered(bytes32,uint256,uint8,uint8,bool)": EventFragment;
+    "LogInstanceRegistryComponentUpdated(bytes32,uint256,uint8,uint8)": EventFragment;
     "LogInstanceRegistryInstanceDisplayNameUpdated(bytes32,string,string)": EventFragment;
     "LogInstanceRegistryInstanceRegistered(bytes32,uint8,bool)": EventFragment;
     "LogInstanceRegistryInstanceStateUpdated(bytes32,uint8,uint8)": EventFragment;
@@ -323,6 +557,18 @@ export interface InstanceRegistryInterface extends utils.Interface {
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(
+    nameOrSignatureOrTopic: "LogInstanceRegistryBundleRegistered"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LogInstanceRegistryBundleUpdated"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LogInstanceRegistryComponentRegistered"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LogInstanceRegistryComponentUpdated"
+  ): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "LogInstanceRegistryInstanceDisplayNameUpdated"
   ): EventFragment;
@@ -340,6 +586,63 @@ export interface InstanceRegistryInterface extends utils.Interface {
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export interface LogInstanceRegistryBundleRegisteredEventObject {
+  instanceId: string;
+  riskpoolId: BigNumber;
+  bundleId: BigNumber;
+  state: number;
+}
+export type LogInstanceRegistryBundleRegisteredEvent = TypedEvent<
+  [string, BigNumber, BigNumber, number],
+  LogInstanceRegistryBundleRegisteredEventObject
+>;
+
+export type LogInstanceRegistryBundleRegisteredEventFilter =
+  TypedEventFilter<LogInstanceRegistryBundleRegisteredEvent>;
+
+export interface LogInstanceRegistryBundleUpdatedEventObject {
+  instanceId: string;
+  bundleId: BigNumber;
+  oldState: number;
+  newState: number;
+}
+export type LogInstanceRegistryBundleUpdatedEvent = TypedEvent<
+  [string, BigNumber, number, number],
+  LogInstanceRegistryBundleUpdatedEventObject
+>;
+
+export type LogInstanceRegistryBundleUpdatedEventFilter =
+  TypedEventFilter<LogInstanceRegistryBundleUpdatedEvent>;
+
+export interface LogInstanceRegistryComponentRegisteredEventObject {
+  instanceId: string;
+  componentId: BigNumber;
+  componentType: number;
+  state: number;
+  isNewComponent: boolean;
+}
+export type LogInstanceRegistryComponentRegisteredEvent = TypedEvent<
+  [string, BigNumber, number, number, boolean],
+  LogInstanceRegistryComponentRegisteredEventObject
+>;
+
+export type LogInstanceRegistryComponentRegisteredEventFilter =
+  TypedEventFilter<LogInstanceRegistryComponentRegisteredEvent>;
+
+export interface LogInstanceRegistryComponentUpdatedEventObject {
+  instanceId: string;
+  componentId: BigNumber;
+  oldState: number;
+  newState: number;
+}
+export type LogInstanceRegistryComponentUpdatedEvent = TypedEvent<
+  [string, BigNumber, number, number],
+  LogInstanceRegistryComponentUpdatedEventObject
+>;
+
+export type LogInstanceRegistryComponentUpdatedEventFilter =
+  TypedEventFilter<LogInstanceRegistryComponentUpdatedEvent>;
 
 export interface LogInstanceRegistryInstanceDisplayNameUpdatedEventObject {
   instanceId: string;
@@ -420,12 +723,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface InstanceRegistry extends BaseContract {
+export interface BundleRegistry extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: InstanceRegistryInterface;
+  interface: BundleRegistryInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -448,6 +751,66 @@ export interface InstanceRegistry extends BaseContract {
 
   functions: {
     TOKEN_MAX_DECIMALS(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    bundles(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { numberOfBundles: BigNumber }>;
+
+    components(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { numberOfComponents: BigNumber }>;
+
+    getBundleId(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { bundleId: BigNumber }>;
+
+    getBundleInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [IBundleDataProvider.BundleInfoStructOutput] & {
+        info: IBundleDataProvider.BundleInfoStructOutput;
+      }
+    >;
+
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { token: string }>;
+
+    getBundleTokenInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [IInstanceDataProvider.TokenInfoStructOutput] & {
+        token: IInstanceDataProvider.TokenInfoStructOutput;
+      }
+    >;
+
+    getComponentId(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { componentId: BigNumber }>;
+
+    getComponentInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [IComponentDataProvider.ComponentInfoStructOutput] & {
+        info: IComponentDataProvider.ComponentInfoStructOutput;
+      }
+    >;
 
     getInstanceId(
       idx: PromiseOrValue<BigNumberish>,
@@ -491,6 +854,18 @@ export interface InstanceRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { numberOfInstances: BigNumber }>;
 
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isRegistered: boolean }>;
+
+    isRegisteredComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isRegistered: boolean }>;
+
     isRegisteredInstance(
       instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -521,6 +896,21 @@ export interface InstanceRegistry extends BaseContract {
         instanceService: string;
       }
     >;
+
+    registerBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      expiryAt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    registerComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     "registerInstance(address)"(
       registry: PromiseOrValue<string>,
@@ -560,6 +950,18 @@ export interface InstanceRegistry extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    updateBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    updateComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     "updateInstance(bytes32,string)"(
       instanceId: PromiseOrValue<BytesLike>,
       newDisplayName: PromiseOrValue<string>,
@@ -581,6 +983,54 @@ export interface InstanceRegistry extends BaseContract {
   };
 
   TOKEN_MAX_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
+
+  bundles(
+    instanceId: PromiseOrValue<BytesLike>,
+    riskpoolId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  components(
+    instanceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getBundleId(
+    instanceId: PromiseOrValue<BytesLike>,
+    riskpoolId: PromiseOrValue<BigNumberish>,
+    idx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getBundleInfo(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IBundleDataProvider.BundleInfoStructOutput>;
+
+  getBundleToken(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getBundleTokenInfo(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IInstanceDataProvider.TokenInfoStructOutput>;
+
+  getComponentId(
+    instanceId: PromiseOrValue<BytesLike>,
+    idx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getComponentInfo(
+    instanceId: PromiseOrValue<BytesLike>,
+    componentId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IComponentDataProvider.ComponentInfoStructOutput>;
 
   getInstanceId(
     idx: PromiseOrValue<BigNumberish>,
@@ -609,6 +1059,18 @@ export interface InstanceRegistry extends BaseContract {
   ): Promise<IInstanceDataProvider.TokenInfoStructOutput>;
 
   instances(overrides?: CallOverrides): Promise<BigNumber>;
+
+  isRegisteredBundle(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isRegisteredComponent(
+    instanceId: PromiseOrValue<BytesLike>,
+    componentId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   isRegisteredInstance(
     instanceId: PromiseOrValue<BytesLike>,
@@ -640,6 +1102,21 @@ export interface InstanceRegistry extends BaseContract {
       instanceService: string;
     }
   >;
+
+  registerBundle(
+    instanceId: PromiseOrValue<BytesLike>,
+    riskpoolId: PromiseOrValue<BigNumberish>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    name: PromiseOrValue<string>,
+    expiryAt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  registerComponent(
+    instanceId: PromiseOrValue<BytesLike>,
+    componentId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   "registerInstance(address)"(
     registry: PromiseOrValue<string>,
@@ -677,6 +1154,18 @@ export interface InstanceRegistry extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  updateBundle(
+    instanceId: PromiseOrValue<BytesLike>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  updateComponent(
+    instanceId: PromiseOrValue<BytesLike>,
+    componentId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   "updateInstance(bytes32,string)"(
     instanceId: PromiseOrValue<BytesLike>,
     newDisplayName: PromiseOrValue<string>,
@@ -698,6 +1187,54 @@ export interface InstanceRegistry extends BaseContract {
 
   callStatic: {
     TOKEN_MAX_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    bundles(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    components(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleId(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IBundleDataProvider.BundleInfoStructOutput>;
+
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getBundleTokenInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IInstanceDataProvider.TokenInfoStructOutput>;
+
+    getComponentId(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getComponentInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IComponentDataProvider.ComponentInfoStructOutput>;
 
     getInstanceId(
       idx: PromiseOrValue<BigNumberish>,
@@ -726,6 +1263,18 @@ export interface InstanceRegistry extends BaseContract {
     ): Promise<IInstanceDataProvider.TokenInfoStructOutput>;
 
     instances(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isRegisteredComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     isRegisteredInstance(
       instanceId: PromiseOrValue<BytesLike>,
@@ -757,6 +1306,21 @@ export interface InstanceRegistry extends BaseContract {
         instanceService: string;
       }
     >;
+
+    registerBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      expiryAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    registerComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     "registerInstance(address)"(
       registry: PromiseOrValue<string>,
@@ -792,6 +1356,18 @@ export interface InstanceRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    updateBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     "updateInstance(bytes32,string)"(
       instanceId: PromiseOrValue<BytesLike>,
       newDisplayName: PromiseOrValue<string>,
@@ -813,6 +1389,60 @@ export interface InstanceRegistry extends BaseContract {
   };
 
   filters: {
+    "LogInstanceRegistryBundleRegistered(bytes32,uint256,uint256,uint8)"(
+      instanceId?: null,
+      riskpoolId?: null,
+      bundleId?: null,
+      state?: null
+    ): LogInstanceRegistryBundleRegisteredEventFilter;
+    LogInstanceRegistryBundleRegistered(
+      instanceId?: null,
+      riskpoolId?: null,
+      bundleId?: null,
+      state?: null
+    ): LogInstanceRegistryBundleRegisteredEventFilter;
+
+    "LogInstanceRegistryBundleUpdated(bytes32,uint256,uint8,uint8)"(
+      instanceId?: null,
+      bundleId?: null,
+      oldState?: null,
+      newState?: null
+    ): LogInstanceRegistryBundleUpdatedEventFilter;
+    LogInstanceRegistryBundleUpdated(
+      instanceId?: null,
+      bundleId?: null,
+      oldState?: null,
+      newState?: null
+    ): LogInstanceRegistryBundleUpdatedEventFilter;
+
+    "LogInstanceRegistryComponentRegistered(bytes32,uint256,uint8,uint8,bool)"(
+      instanceId?: null,
+      componentId?: null,
+      componentType?: null,
+      state?: null,
+      isNewComponent?: null
+    ): LogInstanceRegistryComponentRegisteredEventFilter;
+    LogInstanceRegistryComponentRegistered(
+      instanceId?: null,
+      componentId?: null,
+      componentType?: null,
+      state?: null,
+      isNewComponent?: null
+    ): LogInstanceRegistryComponentRegisteredEventFilter;
+
+    "LogInstanceRegistryComponentUpdated(bytes32,uint256,uint8,uint8)"(
+      instanceId?: null,
+      componentId?: null,
+      oldState?: null,
+      newState?: null
+    ): LogInstanceRegistryComponentUpdatedEventFilter;
+    LogInstanceRegistryComponentUpdated(
+      instanceId?: null,
+      componentId?: null,
+      oldState?: null,
+      newState?: null
+    ): LogInstanceRegistryComponentUpdatedEventFilter;
+
     "LogInstanceRegistryInstanceDisplayNameUpdated(bytes32,string,string)"(
       instanceId?: null,
       oldDisplayName?: null,
@@ -885,6 +1515,54 @@ export interface InstanceRegistry extends BaseContract {
   estimateGas: {
     TOKEN_MAX_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
 
+    bundles(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    components(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleId(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleTokenInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getComponentId(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getComponentInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getInstanceId(
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -913,6 +1591,18 @@ export interface InstanceRegistry extends BaseContract {
 
     instances(overrides?: CallOverrides): Promise<BigNumber>;
 
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isRegisteredComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isRegisteredInstance(
       instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -934,6 +1624,21 @@ export interface InstanceRegistry extends BaseContract {
     probeInstance(
       registryAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    registerBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      expiryAt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    registerComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     "registerInstance(address)"(
@@ -972,6 +1677,18 @@ export interface InstanceRegistry extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    updateBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     "updateInstance(bytes32,string)"(
       instanceId: PromiseOrValue<BytesLike>,
       newDisplayName: PromiseOrValue<string>,
@@ -994,6 +1711,54 @@ export interface InstanceRegistry extends BaseContract {
 
   populateTransaction: {
     TOKEN_MAX_DECIMALS(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    bundles(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    components(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBundleId(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBundleInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBundleToken(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBundleTokenInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getComponentId(
+      instanceId: PromiseOrValue<BytesLike>,
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getComponentInfo(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1025,6 +1790,18 @@ export interface InstanceRegistry extends BaseContract {
 
     instances(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    isRegisteredBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isRegisteredComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isRegisteredInstance(
       instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1046,6 +1823,21 @@ export interface InstanceRegistry extends BaseContract {
     probeInstance(
       registryAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    registerBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      riskpoolId: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      name: PromiseOrValue<string>,
+      expiryAt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    registerComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     "registerInstance(address)"(
@@ -1081,6 +1873,18 @@ export interface InstanceRegistry extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateBundle(
+      instanceId: PromiseOrValue<BytesLike>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateComponent(
+      instanceId: PromiseOrValue<BytesLike>,
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
