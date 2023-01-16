@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DOT } from "../../utils/chars";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import WithTooltip from "../with_tooltip";
 
 export default function Faucet() {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -62,10 +63,12 @@ export default function Faucet() {
     
     return (<>
         <Button variant="text" sx={{ p: 0 }} >
-            <Typography variant="body2" sx={{ fontSize: '10px' }} onClick={useFaucet}>
-                {currency} faucet
-                <FontAwesomeIcon icon={faFaucet} className="fa cursor-pointer" />
-            </Typography>
+            <WithTooltip tooltipText={t('help.faucet', { currency: currency })}>
+                <Typography variant="body2" sx={{ fontSize: '10px' }} onClick={useFaucet}>
+                    {currency} faucet
+                    <FontAwesomeIcon icon={faFaucet} className="fa cursor-pointer" />
+                </Typography>
+            </WithTooltip>
             <Typography variant="body2" sx={{ fontSize: '10px' }} onClick={copyAddressToClipboard} title={t('help.faucet_copy', { currency: currency })}>
                 <FontAwesomeIcon icon={faCopy} className="fa cursor-pointer" />
             </Typography>

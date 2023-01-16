@@ -48,6 +48,7 @@
         "allowance_revoke_notice": "Due to the failed transaction, there might be a pending allowance on your wallet. For more information on this, please have a look"
     },
     "help": {
+        "faucet": "Click this link to receive some {{currency}} from the faucet",
         "faucet_copy": "Copy {{currency}} address to clipboard"
     },
     "application_state_0": "Unknown",
