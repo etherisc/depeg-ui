@@ -4,6 +4,7 @@ import { BundleData } from "./bundle_data";
 import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json'
 import { Coder } from "abi-coder";
 import { TransactionFailedError } from "../utils/error";
+import StakingApi from "./staking_api";
 
 export class DepegRiskpoolApi {
 
@@ -11,6 +12,7 @@ export class DepegRiskpoolApi {
     private signer?: Signer;
     private riskpoolId: number;
     private instanceService: IInstanceService;
+    private stakingApi?: StakingApi;
 
     constructor(
         riskpool: DepegRiskpool,
@@ -22,6 +24,12 @@ export class DepegRiskpoolApi {
         this.signer = riskpool.signer;
         this.riskpoolId = riskpoolId;
         this.instanceService = instanceService;
+        
+
+        const stakingAddress = process.env.NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS;
+        if (stakingAddress !== undefined) {
+            this.stakingApi = new StakingApi(stakingAddress, riskpool.signer, instanceService);
+        }
     }
 
     async getBundleData(
@@ -45,7 +53,12 @@ export class DepegRiskpoolApi {
         const [ _bId, name, state, tokenId, owner, lifetime, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn, capitalSupportedByStaking, capital, lockedCapital, balance, createdAt ] = bundleInfo;
         const apr = 100 * annualPercentageReturn.toNumber() / (await this.depegRiskpool.getApr100PercentLevel()).toNumber();
         const policies = await this.depegRiskpool.getActivePolicies(bundleId);
+        let capitalSupport = undefined;
     
+        if (this.stakingApi !== undefined) {
+            capitalSupport = await this.stakingApi.getSupportedCapital(this.riskpoolId, bundleId);
+        }
+
         return {
             id: bundleId,
             riskpoolId: this.riskpoolId,
@@ -57,6 +70,7 @@ export class DepegRiskpoolApi {
             maxDuration: maxDuration.toNumber(),
             capital: capital.toNumber(),
             locked: lockedCapital.toNumber(),
+            capitalSupport: capitalSupport?.toString(),
             capacity: capital.toNumber() - lockedCapital.toNumber(),
             policies: policies.toNumber(),
             state: state,

@@ -12,6 +12,7 @@ export type BundleData = {
     maxDuration: number;
     capital: number;
     locked: number;
+    capitalSupport: string | undefined;
     capacity: number;
     policies: number;
     state: number;
