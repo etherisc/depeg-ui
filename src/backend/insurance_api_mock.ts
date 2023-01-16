@@ -126,8 +126,7 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         insuredAmountMax: 10000000000,
         coverageDurationDaysMin: 14,
         coverageDurationDaysMax: 45,
-        getRiskBundles() {
-            return Promise.resolve(new Array());
+        getRiskBundles(handleBundle: (bundle: BundleData) => void) {
         },
         calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>) {
             return Promise.resolve([insuredAmount * 0.017 * coverageDurationDays / 365, bundles[0]]);

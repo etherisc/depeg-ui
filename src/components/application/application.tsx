@@ -1,6 +1,5 @@
 import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import { AppActionType, AppContext } from "../../context/app_context";
+import { useEffect, useState } from "react";
 import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../backend/insurance_api";
 import { SnackbarKey, useSnackbar } from "notistack";
@@ -11,7 +10,9 @@ import { formatCurrency } from "../../utils/numbers";
 import ApplicationForm from "./application_form";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { RootState } from "../../redux/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addBundle, finishLoading, startLoading } from "../../redux/slices/bundles_slice";
+import { BundleData } from "../../backend/bundle_data";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -27,8 +28,9 @@ export default function Application(props: ApplicationProps) {
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    const dispatch = useDispatch();
 
-    const appContext = useContext(AppContext);
+    // const appContext = useContext(AppContext);
     const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ walletAddress, setWalletAddress ] = useState("");
@@ -41,19 +43,20 @@ export default function Application(props: ApplicationProps) {
 
     // get bundle data once the wallet is connected
     useEffect(() => {
-        async function asyncGetBundles(dispatch: any) {
-            const bundles = await props.insurance.application.getRiskBundles();
-            bundles.forEach((bundle) => dispatch({ type: AppActionType.ADD_BUNDLE, bundle: bundle}))
-            dispatch({ type: AppActionType.BUNDLE_LOADING_FINISHED });
+        async function asyncGetBundles() {
+            await props.insurance.application.getRiskBundles(
+                (bundle: BundleData) => dispatch(addBundle(bundle)) 
+            );
+            dispatch(finishLoading());
             setPremiumTrxTextKey("");
         }
 
-        console.log("signer", signer, "bundleDataInitialized", appContext.data.bundlesInitialized);
+        // console.log("signer", signer);
         if (signer !== undefined && ! (signer instanceof VoidSigner)) {
-            appContext.dispatch({ type: AppActionType.BUNDLE_INITIALIZING });
+            dispatch(startLoading());
             setPremiumTrxTextKey('bundle_loading');
             console.log("got a new signer ... getting bundles");
-            asyncGetBundles(appContext.dispatch);
+            asyncGetBundles();
         }    
     }, [signer]);
     
@@ -297,7 +300,6 @@ export default function Application(props: ApplicationProps) {
                     usd2={props.insurance.usd2}
                     usd2Decimals={props.insurance.usd2Decimals}
                     applicationApi={props.insurance.application}
-                    bundles={appContext.data.bundles}
                     formReadyForApply={formReadyForApply}
                     applyForPolicy={applyForPolicy}
                     premiumTrxTextKey={premiumTrxTextKey}

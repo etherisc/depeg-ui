@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import chainReducer from './slices/chain_slice';
+import bundlesReducer from './slices/bundles_slice';
 
 export const store = configureStore({
     reducer: {
         chain: chainReducer,
+        bundles: bundlesReducer,
     },
 });
 

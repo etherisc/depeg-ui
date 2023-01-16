@@ -1,3 +1,4 @@
+import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { BigNumber, ethers, Signer } from "ethers";
 import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
 import { BundleData } from "./bundle_data";
@@ -39,8 +40,9 @@ export interface ApplicationApi {
     insuredAmountMax: number;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
-    getRiskBundles: 
-        () => Promise<Array<BundleData>>,
+    getRiskBundles: (
+        handleBundle: (bundle: BundleData) => void
+    ) => Promise<void>,
     calculatePremium: 
         (
             walletAddress: string, 

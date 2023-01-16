@@ -2,7 +2,6 @@ import { TextField, InputAdornment, LinearProgress, Typography } from "@mui/mate
 import { useTranslation } from "next-i18next";
 import { Control, Controller } from "react-hook-form";
 import { BundleData } from "../../backend/bundle_data";
-import { INPUT_VARIANT } from "../../config/theme";
 import { IAplicationFormValues } from "./application_form";
 import { BundleList } from "./bundle_list";
 

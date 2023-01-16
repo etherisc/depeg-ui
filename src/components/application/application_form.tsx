@@ -14,11 +14,12 @@ import Premium from './premium';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { DevTool } from "@hookform/devtools";
 import { INPUT_VARIANT } from '../../config/theme';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { ethers } from 'ethers';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -28,7 +29,6 @@ export interface ApplicationFormProperties {
     usd2: string;
     usd2Decimals: number;
     applicationApi: ApplicationApi;
-    bundles: Array<BundleData>;
     premiumTrxTextKey: string|undefined;
     formReadyForApply: (isFormReady: boolean) => void;
     applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => void;
@@ -45,6 +45,8 @@ export type IAplicationFormValues = {
 
 export default function ApplicationForm(props: ApplicationFormProperties) {
     const { t } = useTranslation('application');
+    const bundles = useSelector((state: RootState) => state.bundles.bundles);
+    const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
 
     // update wallet address when it changes
     useEffect(() => {
@@ -119,12 +121,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     //-------------------------------------------------------------------------
     // update min/max sum insured and coverage period when bundles are available
     useEffect(() => {
-        if (props.bundles.length > 0) {
+        if (bundles.length > 0) {
             let minSumInsured = Number.MAX_SAFE_INTEGER;
             let maxSumInsured = 0;
             let minCoverageSecs = Number.MAX_SAFE_INTEGER;
             let maxCoverageSecs = 0;
-            for( let b of props.bundles) {
+            for( let b of bundles) {
                 if (b.minSumInsured < minSumInsured) {
                     minSumInsured = b.minSumInsured;
                 }
@@ -151,7 +153,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setCoverageUntilMax(dayjs().add(maxCoverageDays, 'days'));
 
         }
-    }, [props.bundles, props.usd1Decimals, setValue]);
+    }, [bundles, props.usd1Decimals, setValue]);
 
 
     //-------------------------------------------------------------------------
@@ -170,7 +172,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             return;
         }
 
-        if (props.bundles.length == 0) {
+        if (bundles.length == 0) {
             console.log("No bundles, not calculating premium...");
             setValue("premiumAmount", 0);
             setMatchedBundle(undefined);
@@ -185,7 +187,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         try {
             setPremiumCalculationInProgress(true);
             setShowAvailableBundles(false);
-            const [premium, bundle] = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDays, props.bundles);
+            const [premium, bundle] = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDays, bundles);
             setValue("premiumAmount", premium / Math.pow(10, props.usd1Decimals));
             setMatchedBundle(bundle);
             setPremiumErrorKey("");
@@ -205,7 +207,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         } finally {
             setPremiumCalculationInProgress(false);
         }
-    }, [formState, errors, props.bundles]);
+    }, [formState, errors, bundles]);
 
 
     const [ applicationInProgress, setApplicationInProgress ] = useState(false);
@@ -354,10 +356,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         bundleCurrencyDecimals={props.usd1Decimals}
                         helperText={t(premiumErrorKey, { currency: props.usd2 })}
                         helperTextIsError={premiumErrorKey != ""}
-                        transactionInProgress={(props.premiumTrxTextKey != "") || premiumCalculationInProgress}
+                        transactionInProgress={premiumCalculationInProgress || isLoadingBundles}
                         trxTextKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
                         matchedBundle={matchedBundle}
-                        bundles={props.bundles}
+                        bundles={bundles}
                         showBundles={showAvailableBundles}
                         />
                 </Grid>

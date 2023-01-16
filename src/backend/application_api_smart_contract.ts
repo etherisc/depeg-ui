@@ -43,33 +43,29 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         return this.doNoUseDirectlyDepegRiskpoolApi;
     }
     
-    async getRiskBundles() {
+    async getRiskBundles(handleBundle: (bundle: BundleData) => void) {
         if ((await this.getDepegProductApi())!.isVoidSigner()) {
-            return Promise.resolve([]);
+            return;
         }
 
         console.log("retrieving risk bundles from smart contract");
         console.log(`riskpoolId: ${(await this.getDepegProductApi())!.getRiskpoolId()}`);
         const bundles = await (await this.riskpoolApi()).getBundleData();
 
-        const remainingbundles = [];
-
         for (const bundle of bundles) {
             const capitalSupport = bundle.capitalSupport;
             // if supported amount is undefined, then no staking contract is configured, capital support is ignored and all bundles are used
             if (capitalSupport === undefined) {
-                remainingbundles.push(bundle);
+                handleBundle(bundle);
             } else {
                 // if supported amount is defined, then only bundles with locked capital less than the capital support are used
                 console.log("bundleid", bundle.id, "locked", bundle.locked, "capitalSupport", capitalSupport.toString());
                 if (BigNumber.from(bundle.locked).lt(BigNumber.from(capitalSupport))) {
                     console.log("stakes available", bundle.id);
-                    remainingbundles.push(bundle);
+                    handleBundle(bundle);
                 }    
             }
         }
-
-        return remainingbundles;
     }
 
     async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>): Promise<[number, BundleData]> {
