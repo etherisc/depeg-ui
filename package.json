@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "./extract_version.sh",
     "build": "next build",
     "export": "next build && next export",
     "start": "next start",
