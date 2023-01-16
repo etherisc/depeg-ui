@@ -5,10 +5,12 @@ import { DepegProductApi } from "./depeg_product_api";
 import { hasBalance } from "./erc20";
 import { ApplicationApi } from "./insurance_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
+import StakingApi from "./staking_api";
 
 export class ApplicationApiSmartContract implements ApplicationApi {
     private depegProductApi: DepegProductApi;
     private doNoUseDirectlyDepegRiskpoolApi?: DepegRiskpoolApi;
+    private stakingApi?: StakingApi;
     insuredAmountMin: number;
     insuredAmountMax: number;
     coverageDurationDaysMin: number;
@@ -32,6 +34,18 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         return this.depegProductApi;
     }
 
+    private async getStakingApi(): Promise<StakingApi | undefined> {
+        if (this.stakingApi !== undefined) {
+            return this.stakingApi;
+        }
+        const stakingAddress = process.env.NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS;
+        if (stakingAddress !== undefined) {
+            this.stakingApi = new StakingApi(stakingAddress, (await this.getDepegProductApi()).getSigner(), (await this.getDepegProductApi()).getInstanceService());
+        }
+        return this.stakingApi;
+    }
+
+
     async riskpoolApi(): Promise<DepegRiskpoolApi> {
         if (this.doNoUseDirectlyDepegRiskpoolApi === undefined) {
             this.doNoUseDirectlyDepegRiskpoolApi = new DepegRiskpoolApi(
@@ -50,7 +64,24 @@ export class ApplicationApiSmartContract implements ApplicationApi {
 
         console.log("retrieving risk bundles from smart contract");
         console.log(`riskpoolId: ${(await this.getDepegProductApi())!.getRiskpoolId()}`);
-        return await (await this.riskpoolApi()).getBundleData();
+        const bundles = await (await this.riskpoolApi()).getBundleData();
+
+        if (await this.getStakingApi() === undefined) {
+            return bundles;
+        }
+
+        const remainingbundles = [];
+
+        for (const bundle of bundles) {
+            const supportedAmount = await (await this.getStakingApi())!.getSupportedCapital(bundle.riskpoolId, bundle.id);
+            console.log("bundleid", bundle.id, "locked", bundle.locked, "supported", supportedAmount.toString());
+            if (BigNumber.from(bundle.locked).lt(supportedAmount)) {
+                console.log("stakes available", bundle.id);
+                remainingbundles.push(bundle);
+            }
+        }
+
+        return remainingbundles;
     }
 
     async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>): Promise<[number, BundleData]> {

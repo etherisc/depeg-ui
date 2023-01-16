@@ -54,7 +54,7 @@ export class InsuranceApiSmartContract implements InsuranceApi {
      * @returns lazy loaded DepegProductApi
      */
     private async getProductApi(): Promise<DepegProductApi> {
-        console.log("this.doNoUseDirectlyDepegProductApi", this.doNoUseDirectlyDepegProductApi);
+        // console.log("this.doNoUseDirectlyDepegProductApi", this.doNoUseDirectlyDepegProductApi);
         if (! this.doNoUseDirectlyDepegProductApi.isInitialized()) {
             await this.doNoUseDirectlyDepegProductApi.initialize();
         }
