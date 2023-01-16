@@ -30,7 +30,6 @@ export default function Application(props: ApplicationProps) {
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const dispatch = useDispatch();
 
-    // const appContext = useContext(AppContext);
     const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ walletAddress, setWalletAddress ] = useState("");
