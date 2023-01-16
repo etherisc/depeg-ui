@@ -5,9 +5,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import CssBaseline from '@mui/material/CssBaseline';
-import React, { useReducer } from 'react';
+import React from 'react';
 import Head from 'next/head';
-import { initialAppData, AppContext, signerReducer } from '../context/app_context';
 import { SnackbarProvider } from 'notistack';
 import { appWithTranslation, useTranslation } from 'next-i18next';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -51,7 +50,6 @@ export default appWithTranslation(App);
 
 export function AppWithBlockchainConnection(appProps: AppProps) {
   const { t } = useTranslation('common');
-  const [ data, dispatch ] = useReducer(signerReducer, initialAppData());
   const reduxDispatch = useDispatch();
   const provider = useSelector((state: RootState) => state.chain.provider);
 
@@ -96,12 +94,10 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
   appProps.pageProps.title = t('apptitle_short');
 
   return (
-    <AppContext.Provider value={{ data, dispatch}} >
-      <SnackbarProvider maxSnack={3}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Layout {...appProps} />
-        </LocalizationProvider>
-      </SnackbarProvider>
-    </AppContext.Provider>
+    <SnackbarProvider maxSnack={3}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <Layout {...appProps} />
+      </LocalizationProvider>
+    </SnackbarProvider>
   );
 }
