@@ -106,6 +106,17 @@ export default function Bundles(props: BundlesProps) {
             valueFormatter: (params: GridValueFormatterParams<number>) => t('bundle_state_' + params.value, { ns: 'common'}),
         },
         { 
+            field: 'lifetime', 
+            headerName: t('table.header.lifetime'), 
+            flex: 0.65,
+            valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
+            renderCell: (params: GridRenderCellParams<BundleData>) => {
+                const bundle = params.value!;
+                const lifetime = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 'seconds').unix();
+                return (<Timestamp at={lifetime} />);
+            }
+        },
+        { 
             field: 'capital', 
             headerName: t('table.header.capital'), 
             flex: 0.65,
@@ -125,23 +136,6 @@ export default function Bundles(props: BundlesProps) {
             }
         },
         { 
-            field: 'createdAt', 
-            headerName: t('table.header.created'), 
-            flex: 0.65,
-            renderCell: (params: GridRenderCellParams<number>) => <Timestamp at={params.value ?? 0} />
-        },
-        { 
-            field: 'lifetime', 
-            headerName: t('table.header.lifetime'), 
-            flex: 0.65,
-            valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
-            renderCell: (params: GridRenderCellParams<BundleData>) => {
-                const bundle = params.value!;
-                const lifetime = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 'seconds').unix();
-                return (<Timestamp at={lifetime} />);
-            }
-        },
-        { 
             field: 'policies', 
             headerName: t('table.header.policies'), 
             flex: 0.3
@@ -149,7 +143,7 @@ export default function Bundles(props: BundlesProps) {
     ];
 
     if (isStakingSupported) {
-        columns.splice(5, 0, {
+        columns.splice(6, 0, {
             field: 'stakeUsage', 
             headerName: t('table.header.stake_usage'), 
             flex: 0.3,
