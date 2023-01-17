@@ -61,7 +61,6 @@ export default function Account() {
                         <Balance
                             signer={signer!}
                             currency={tokenSymbol}
-                            usdAggregatorAddress={process.env.NEXT_PUBLIC_CHAINLINK_AGGREGATOR_ETH_USD_ADDRESS!}
                             />
                     </Box>
                 </Box>
