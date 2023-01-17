@@ -100,15 +100,28 @@ export default function Bundles(props: BundlesProps) {
             flex: 1,
         },
         { 
+            field: 'state', 
+            headerName: t('table.header.state'), 
+            flex: 0.3,
+            valueFormatter: (params: GridValueFormatterParams<number>) => t('bundle_state_' + params.value, { ns: 'common'}),
+        },
+        { 
             field: 'capital', 
             headerName: t('table.header.capital'), 
-            flex: 0.85,
-            valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
-                const bundle = params.value;
-                const capital = formatCurrency(bundle.capital, props.insurance.usd2Decimals);
-                const capacity = formatCurrency(bundle.capacity, props.insurance.usd2Decimals);
-                return `${props.insurance.usd2} ${capital} / ${capacity}`
+            flex: 0.65,
+            valueFormatter: (params: GridValueFormatterParams<number>) => {
+                console.log(params.value);
+                const capital = formatCurrency(params.value, props.insurance.usd2Decimals);
+                return `${props.insurance.usd2} ${capital}`;
+            }
+        },
+        { 
+            field: 'capacity', 
+            headerName: t('table.header.capacity'), 
+            flex: 0.65,
+            valueFormatter: (params: GridValueFormatterParams<number>) => {
+                const capacity = formatCurrency(params.value, props.insurance.usd2Decimals);
+                return `${props.insurance.usd2} ${capacity}`
             }
         },
         { 
@@ -133,16 +146,10 @@ export default function Bundles(props: BundlesProps) {
             headerName: t('table.header.policies'), 
             flex: 0.3
         },
-        { 
-            field: 'state', 
-            headerName: t('table.header.state'), 
-            flex: 0.3,
-            valueFormatter: (params: GridValueFormatterParams<number>) => t('bundle_state_' + params.value, { ns: 'common'}),
-        },
     ];
 
     if (isStakingSupported) {
-        columns.push({
+        columns.splice(5, 0, {
             field: 'stakeUsage', 
             headerName: t('table.header.stake_usage'), 
             flex: 0.3,
