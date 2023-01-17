@@ -156,6 +156,7 @@ export default function Policies(props: PoliciesProps) {
                 rowsPerPageOptions={[5, 10, 20, 50]}
                 onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
                 disableSelectionOnClick={true}
+                disableColumnMenu={true}
                 />
         </>
     );
