@@ -1,3 +1,6 @@
+import { BigNumber } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
+
 export const THOUSANDS_SEPARATOR = Intl.NumberFormat().format(11111).replace(/\p{Number}/gu, '');
 export const DECIMAL_SEPARATOR = Intl.NumberFormat().format(1.1).replace(/\p{Number}/gu, '');
 
@@ -10,6 +13,15 @@ export function formatCurrency(value: number | undefined, decimals: number, disp
         return "";
     }
     return (value / Math.pow(10, decimals)).toLocaleString(undefined, { useGrouping: true, 
+        minimumFractionDigits: displayPrecision || DISPLAY_PRECISION,
+        maximumFractionDigits: displayPrecision || DISPLAY_PRECISION });
+}
+
+export function formatCurrencyBN(value: BigNumber, decimals: number, displayPrecision?: number): string {
+    if (value === undefined) {
+        return "";
+    }
+    return parseFloat(formatUnits(value, decimals)).toLocaleString(undefined, { useGrouping: true, 
         minimumFractionDigits: displayPrecision || DISPLAY_PRECISION,
         maximumFractionDigits: displayPrecision || DISPLAY_PRECISION });
 }
