@@ -19,6 +19,8 @@ import dayjs from "dayjs";
 import Timestamp from "../timestamp";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
+import { BigNumber } from "ethers";
+import StakeUsageIndicator from "./stake_usage_indicator";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -30,6 +32,7 @@ export default function Bundles(props: BundlesProps) {
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const provider = useSelector((state: RootState) => state.chain.provider);
+    const isStakingSupported = process.env.NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS !== undefined && process.env.NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS !== "";
 
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [ bundleState, dispatch ] = useReducer(bundleReducer, { bundles: [], loading: false });
@@ -104,8 +107,8 @@ export default function Bundles(props: BundlesProps) {
             valueFormatter: (params: GridValueFormatterParams<BundleData>) => {
                 const bundle = params.value;
                 const capital = formatCurrency(bundle.capital, props.insurance.usd2Decimals);
-                const capitalRemaining = formatCurrency(bundle.capital - bundle.locked, props.insurance.usd2Decimals);
-                return `${props.insurance.usd2} ${capital} / ${capitalRemaining}`
+                const capacity = formatCurrency(bundle.capacity, props.insurance.usd2Decimals);
+                return `${props.insurance.usd2} ${capital} / ${capacity}`
             }
         },
         { 
@@ -137,6 +140,39 @@ export default function Bundles(props: BundlesProps) {
             valueFormatter: (params: GridValueFormatterParams<number>) => t('bundle_state_' + params.value, { ns: 'common'}),
         },
     ];
+
+    if (isStakingSupported) {
+        columns.push({
+            field: 'stakeUsage', 
+            headerName: t('table.header.stake_usage'), 
+            flex: 0.3,
+            valueGetter: (params: GridValueGetterParams<any, BundleData>) => {
+                const capitalSupport = params.row.capitalSupport !== undefined ? BigNumber.from(params.row.capitalSupport) : undefined;
+                const lockedCapital = params.row.locked !== undefined ? BigNumber.from(params.row.locked) : BigNumber.from(0);
+                let stakeUsage = undefined;
+                if (capitalSupport !== undefined) {
+                    if (capitalSupport.gt(0)) {
+                        stakeUsage = lockedCapital.mul(100).div(capitalSupport).toNumber() / 100;
+                    } else {
+                        stakeUsage = BigNumber.from(0);
+                    }
+                }
+                return [ stakeUsage, capitalSupport, lockedCapital, props.insurance.usd2, props.insurance.usd2Decimals ];
+            },
+            renderCell: (params: GridRenderCellParams<[number|undefined, BigNumber, BigNumber, string, number]>) => {
+                const stakeUsage = params.value![0];
+                const supportingAmount = params.value![1];
+                const lockedAmount = params.value![2] !== undefined ? params.value![2] : BigNumber.from(0);
+                return (<StakeUsageIndicator
+                            stakeUsage={stakeUsage}
+                            lockedCapital={lockedAmount}
+                            supportedCapital={supportingAmount}
+                            supportedToken={params.value![3]}
+                            supportedTokenDecimals={params.value![4]}
+                            />);
+            }
+        });
+    }
 
     function GridToolbar() {
         return (

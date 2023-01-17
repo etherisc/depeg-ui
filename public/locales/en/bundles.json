@@ -5,10 +5,11 @@
             "id": "Id",
             "name": "Name",
             "lifetime": "Active until",
-            "capital": "Invested / remaining capital",
+            "capital": "Invested / Capacity",
             "policies": "Policies",
             "state": "State",
-            "created": "Created"
+            "created": "Created",
+            "stake_usage": "Stakes"
         }
     },  
     "action": {
