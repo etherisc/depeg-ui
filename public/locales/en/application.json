@@ -35,5 +35,17 @@
         "capacity": "Capacity",
         "stake_usage": "Stakes"
     },
-    "matched_bundle": "This policy will be protected by bundle '{{name}}' with an APR rate of {{apr}}%."
+    "matched_bundle": "This policy will be protected by bundle '{{name}}' with an APR rate of {{apr}}%.",
+    "confirmation": {
+        "alert": {
+            "title": "Payment for Depeg protection premium confirmed",
+            "text": "Protection is now active."
+        },
+        "title": "Protection details",
+        "id": "Id",
+        "wallet": "Wallet",
+        "amount": "Amount",
+        "end_date": "End date",
+        "continue_link": "Continue to overview"
+    }
 }
