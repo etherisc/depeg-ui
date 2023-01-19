@@ -29,5 +29,10 @@
     "approval_info": "To fund the risk pool bundle, the GIF treasury contract at {{address}} needs permission to transfer {{currency}} {{amount}} to the Depeg Protection riskpool. Please confirm this allowance in your wallet app.",
     "approval_wait": "Treasury allowance created, waiting for onchain confirmation",
     "invest_info": "Please confirm execution of the riskpool investment transaction on contract {{address}} in your wallet app",
-    "invest_wait": "Transaction created, waiting for onchain confirmation"
+    "invest_wait": "Transaction created, waiting for onchain confirmation",
+    "error": {
+        "name": {
+            "pattern": "Name may only include letters, numbers, underscore (_), dash (-) and space"
+        }
+    }
 }

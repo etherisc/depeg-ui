@@ -146,6 +146,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             minLength: 3,
                             maxLength: 32,
+                            pattern: /^[A-Za-z0-9 _-]+$/,
                         }}
                         render={({ field }) => 
                             <TextField 
@@ -156,7 +157,11 @@ export default function InvestForm(props: InvestFormProperties) {
                                 {...field} 
                                 error={errors.bundleName !== undefined}
                                 helperText={errors.bundleName !== undefined 
-                                    ? t(`error.field.${errors.bundleName.type}`, { "ns": "common", "minLength": 3, "maxLength": 32 }) 
+                                    ? 
+                                        (errors.bundleName.type === 'pattern' 
+                                            ? t(`error.name.pattern`)  
+                                            : t(`error.field.${errors.bundleName.type}`, { "ns": "common", "minLength": 3, "maxLength": 32 })
+                                        ) 
                                     : ""
                                 }
                                 />}
