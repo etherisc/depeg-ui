@@ -21,6 +21,7 @@ import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { BigNumber } from "ethers";
 import StakeUsageIndicator from "./stake_usage_indicator";
+import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -32,7 +33,6 @@ export default function Bundles(props: BundlesProps) {
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const provider = useSelector((state: RootState) => state.chain.provider);
-    const isStakingSupported = process.env.NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS !== undefined && process.env.NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS !== "";
 
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [ bundleState, dispatch ] = useReducer(bundleReducer, { bundles: [], loading: false });
@@ -80,19 +80,6 @@ export default function Bundles(props: BundlesProps) {
         getBundles();
     // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [signer, showAllBundles]); // update bundles when signer changes
-
-    function calculateStakeUsage(capitalSupport: BigNumber | undefined, lockedCapital: BigNumber) {
-        if (capitalSupport !== undefined) {
-            if (capitalSupport.gt(0)) {
-                return lockedCapital.mul(100).div(capitalSupport).toNumber() / 100;
-            } else {
-                if (lockedCapital.gt(0)) {
-                    return BigNumber.from(1);
-                }
-            }
-        }
-        return undefined;
-    }
 
     const columns: GridColDef[] = [
         { 
