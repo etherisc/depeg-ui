@@ -1,9 +1,12 @@
 import { Table, TableHead, TableRow, TableCell, TableBody, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
+import { BigNumber } from "ethers";
 import { useTranslation } from "next-i18next";
 import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
+import { calculateStakeUsage } from "../../utils/staking";
+import StakeUsageIndicator from "../bundles/stake_usage_indicator";
 
 interface BundleListProps {
     bundles: Array<BundleData>;
@@ -26,6 +29,7 @@ export function BundleList(props: BundleListProps) {
                             <TableCell align="right">{t('bundles.suminsured', { currency: props.currency })}</TableCell>
                             <TableCell align="right">{t('bundles.duration')}</TableCell>
                             <TableCell align="right">{t('bundles.capacity', { currency: props.currency })}</TableCell>
+                            <TableCell align="right">{t('bundles.stake_usage')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -34,16 +38,25 @@ export function BundleList(props: BundleListProps) {
                             key={bundle.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                            <TableCell scope="row">
-                                {bundle.id}
-                            </TableCell>
-                            <TableCell scope="row">
-                                {bundle.name}
-                            </TableCell>
-                            <TableCell align="right">{bundle.apr}</TableCell>
-                            <TableCell align="right">{formatCurrency(bundle.minSumInsured, props.currencyDecimals)} / {formatCurrency(bundle.maxSumInsured, props.currencyDecimals)} {props.currency}</TableCell>
-                            <TableCell align="right">{bundle.minDuration / 86400 } / {bundle.maxDuration / 86400 } {t('days')}</TableCell>
-                            <TableCell align="right">{formatCurrency(bundle.capacity, props.currencyDecimals)} {props.currency}</TableCell>
+                                <TableCell scope="row">
+                                    {bundle.id}
+                                </TableCell>
+                                <TableCell scope="row">
+                                    {bundle.name}
+                                </TableCell>
+                                <TableCell align="right">{bundle.apr}</TableCell>
+                                <TableCell align="right">{formatCurrency(bundle.minSumInsured, props.currencyDecimals)} / {formatCurrency(bundle.maxSumInsured, props.currencyDecimals)} {props.currency}</TableCell>
+                                <TableCell align="right">{bundle.minDuration / 86400 } / {bundle.maxDuration / 86400 } {t('days')}</TableCell>
+                                <TableCell align="right">{formatCurrency(bundle.capacity, props.currencyDecimals)} {props.currency}</TableCell>
+                                <TableCell align="right">
+                                    <StakeUsageIndicator
+                                        stakeUsage={calculateStakeUsage(BigNumber.from(bundle.capitalSupport), BigNumber.from(bundle.locked))}
+                                        lockedCapital={BigNumber.from(bundle.locked)}
+                                        supportedCapital={BigNumber.from(bundle.capitalSupport)}
+                                        supportedToken={props.currency}
+                                        supportedTokenDecimals={props.currencyDecimals}
+                                        />
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

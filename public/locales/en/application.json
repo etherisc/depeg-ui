@@ -32,7 +32,8 @@
         "suminsured": "Min / max amount",
         "duration": "Min / max duration",
         "apr": "APR (%)",
-        "capacity": "Capacity"
+        "capacity": "Capacity",
+        "stake_usage": "Stakes"
     },
     "matched_bundle": "This policy will be protected by bundle '{{name}}' with an APR rate of {{apr}}%."
 }
