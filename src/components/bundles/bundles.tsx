@@ -81,6 +81,19 @@ export default function Bundles(props: BundlesProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [signer, showAllBundles]); // update bundles when signer changes
 
+    function calculateStakeUsage(capitalSupport: BigNumber | undefined, lockedCapital: BigNumber) {
+        if (capitalSupport !== undefined) {
+            if (capitalSupport.gt(0)) {
+                return lockedCapital.mul(100).div(capitalSupport).toNumber() / 100;
+            } else {
+                if (lockedCapital.gt(0)) {
+                    return BigNumber.from(1);
+                }
+            }
+        }
+        return undefined;
+    }
+
     const columns: GridColDef[] = [
         { 
             field: 'id', 
@@ -121,7 +134,6 @@ export default function Bundles(props: BundlesProps) {
             headerName: t('table.header.capital'), 
             flex: 0.65,
             valueFormatter: (params: GridValueFormatterParams<number>) => {
-                console.log(params.value);
                 const capital = formatCurrency(params.value, props.insurance.usd2Decimals);
                 return `${props.insurance.usd2} ${capital}`;
             }
@@ -150,14 +162,7 @@ export default function Bundles(props: BundlesProps) {
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => {
                 const capitalSupport = params.row.capitalSupport !== undefined ? BigNumber.from(params.row.capitalSupport) : undefined;
                 const lockedCapital = params.row.locked !== undefined ? BigNumber.from(params.row.locked) : BigNumber.from(0);
-                let stakeUsage = undefined;
-                if (capitalSupport !== undefined) {
-                    if (capitalSupport.gt(0)) {
-                        stakeUsage = lockedCapital.mul(100).div(capitalSupport).toNumber() / 100;
-                    } else {
-                        stakeUsage = BigNumber.from(0);
-                    }
-                }
+                let stakeUsage = calculateStakeUsage(capitalSupport, lockedCapital);
                 return [ stakeUsage, capitalSupport, lockedCapital, props.insurance.usd2, props.insurance.usd2Decimals ];
             },
             renderCell: (params: GridRenderCellParams<[number|undefined, BigNumber, BigNumber, string, number]>) => {
