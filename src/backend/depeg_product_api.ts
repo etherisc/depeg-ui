@@ -69,9 +69,9 @@ export class DepegProductApi {
                 const evt = productAbiCoder.decodeEvent(log.topics, log.data);
                 console.log(evt);
                 if (evt.name === 'LogDepegPolicyCreated') {
-                    // console.log(evt);
+                    console.log(evt);
                     // @ts-ignore
-                    processId = evt.values.policyId.toString();
+                    processId = evt.values.processId.toString();
                 }
             } catch (e) {
                 console.log(e);

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { formatAddress } from "../../utils/address";
 
 interface PolicyConfirmationProps {
+    processId: string;
     wallet: string;
     amount: BigNumber;
     currency: string;
@@ -32,6 +33,16 @@ export default function PolicyConfirmation(props: PolicyConfirmationProps) {
                             Protection details
                         </Typography>
                         <Grid container spacing={1} sx={{ mt: 1}}>
+                            <Grid item xs={3}>
+                                <Typography variant="body1">
+                                    Id:
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={9}>
+                                <Typography variant="body1">
+                                    {props.processId}
+                                </Typography>
+                            </Grid>
                             <Grid item xs={3}>
                                 <Typography variant="body1">
                                     Wallet:

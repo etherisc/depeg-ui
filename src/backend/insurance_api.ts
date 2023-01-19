@@ -58,7 +58,7 @@ export interface ApplicationApi {
             premium: number,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void
-        ) => Promise<boolean>;
+        ) => Promise<{ status: boolean, processId: string|undefined}>;
     lastBlockTimestamp(): Promise<number>;
 }
 

@@ -134,7 +134,7 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays, premium) {
             enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationDays})`,  { autoHideDuration: 3000, variant: 'info' });
             await delay(2000);
-            return Promise.resolve(true);
+            return Promise.resolve({ status: true, processId: "0x12345678"});
         },
         lastBlockTimestamp(): Promise<number> {
             return Promise.resolve(dayjs().unix());

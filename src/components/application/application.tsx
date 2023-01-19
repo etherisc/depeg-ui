@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { addBundle, finishLoading, startLoading } from "../../redux/slices/bundles_slice";
 import { BundleData } from "../../backend/bundle_data";
 import PolicyConfirmation from "./policy_confirmation";
-import { parseEther, parseUnits } from "ethers/lib/utils";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -35,7 +34,8 @@ export default function Application(props: ApplicationProps) {
     const [ walletAddress, setWalletAddress ] = useState("");
     const [ readyToBuy, setReadyToBuy ] = useState(false);
     const [ premiumTrxTextKey, setPremiumTrxTextKey ] = useState("");
-    const [ protectionDetails, setProctectionDetails ] = useState(["0x", BigNumber.from(0), 30]);
+    // processId, walletAddress, amount, duration (days)
+    const [ protectionDetails, setProctectionDetails ] = useState(["0x", "0x", BigNumber.from(0), 30]);
 
     async function walletDisconnected() {
         setWalletAddress("");
@@ -157,7 +157,7 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function doApplication(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<boolean> {
+    async function doApplication(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<{ status: boolean, processId: string|undefined}> {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
             return await props.insurance.application.applyForPolicy(
@@ -199,7 +199,7 @@ export default function Application(props: ApplicationProps) {
                         }
                     }
                 );
-                return Promise.resolve(false);
+                return Promise.resolve({ status: false, processId: undefined });
             } else {
                 throw e;
             }
@@ -250,15 +250,15 @@ export default function Application(props: ApplicationProps) {
                 return;
             }
             setActiveStep(4);
-            const applicationSuccess = await doApplication(walletAddress, insuredAmount, coverageDuration, premium);
-            if ( ! applicationSuccess) {
+            const applicationResult = await doApplication(walletAddress, insuredAmount, coverageDuration, premium);
+            if ( ! applicationResult.status ) {
                 setActiveStep(2);
                 showAllowanceNotice();
                 return;
             }
             setActiveStep(5);
             applicationSuccessful();
-            setProctectionDetails([walletAddress, BigNumber.from(insuredAmount), coverageDuration])
+            setProctectionDetails([applicationResult.processId as string, walletAddress, BigNumber.from(insuredAmount), coverageDuration])
         } finally {
             enableUnloadWarning(false);
         }
@@ -291,9 +291,10 @@ export default function Application(props: ApplicationProps) {
     } else {
         content = (
             <PolicyConfirmation
-                wallet={protectionDetails[0] as string}
-                amount={protectionDetails[1] as BigNumber}
-                duration={protectionDetails[2] as number}
+                processId={protectionDetails[0] as string}
+                wallet={protectionDetails[1] as string}
+                amount={protectionDetails[2] as BigNumber}
+                duration={protectionDetails[3] as number}
                 currency={props.insurance.usd1}
                 currencyDecimals={props.insurance.usd1Decimals}
                 />);
