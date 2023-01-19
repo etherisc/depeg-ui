@@ -1,10 +1,11 @@
-import { ContractReceipt, ContractTransaction, Signer } from "ethers";
+import { BigNumber, ContractReceipt, ContractTransaction, Signer } from "ethers";
 import { DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
 import { BundleData } from "./bundle_data";
 import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json'
 import { Coder } from "abi-coder";
 import { TransactionFailedError } from "../utils/error";
 import StakingApi from "./staking_api";
+import { isStakingSupported } from "../utils/staking";
 
 export class DepegRiskpoolApi {
 
@@ -108,6 +109,16 @@ export class DepegRiskpoolApi {
             }
             if (sumInsured > bundle.capacity) {
                 return best;
+            }
+            if (isStakingSupported) {
+                if (bundle.capitalSupport === undefined) {
+                    return best;
+                }
+                const lockedCapital = BigNumber.from(bundle.locked);
+                const stakesRemaining = BigNumber.from(bundle.capitalSupport).sub(lockedCapital)
+                if (BigNumber.from(sumInsured).gt(stakesRemaining)) {
+                    return best;
+                }
             }
             return bundle;
         }, { apr: 100, minDuration: Number.MAX_VALUE, maxDuration: Number.MIN_VALUE, minSumInsured: Number.MAX_VALUE, maxSumInsured: Number.MIN_VALUE } as BundleData);
