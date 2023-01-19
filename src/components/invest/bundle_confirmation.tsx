@@ -6,18 +6,21 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { formatAddress } from "../../utils/address";
 
-interface PolicyConfirmationProps {
-    processId: string;
-    wallet: string;
-    amount: BigNumber;
+interface BundleConfirmationProps {
+    bundleId: string;
     currency: string;
     currencyDecimals: number;
-    duration: number;
+    investedAmount: BigNumber;
+    minSumInsured: BigNumber;
+    maxSumInsured: BigNumber;
+    minCoverage: number;
+    maxCoverage: number;
+    apr: number;
 }
 
-export default function PolicyConfirmation(props: PolicyConfirmationProps) {
+export default function BundleConfirmation(props: BundleConfirmationProps) {
     const router = useRouter();
-    const { t } = useTranslation(['application']);
+    const { t } = useTranslation(['invest']);
 
     return (<>
         <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={2} mt={{ 'xs': 0, 'md': 2 }} 
@@ -42,43 +45,57 @@ export default function PolicyConfirmation(props: PolicyConfirmationProps) {
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography variant="body1">
-                                    {props.processId}
+                                    {props.bundleId}
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
                                 <Typography variant="body1">
-                                    {t('confirmation.wallet')}:
+                                    {t('confirmation.invested_amount')}:
                                 </Typography>
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography variant="body1">
-                                    {formatAddress(props.wallet)}
+                                    {props.currency} {formatUnits(props.investedAmount, props.currencyDecimals)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
                                 <Typography variant="body1">
-                                {t('confirmation.amount')}:
+                                {t('confirmation.sum_insured')}:
                                 </Typography>
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography variant="body1">
-                                    {props.currency} {formatUnits(props.amount, props.currencyDecimals)}
+                                {props.currency} {formatUnits(props.minSumInsured, props.currencyDecimals)}
+                                &nbsp;-&nbsp;
+                                {formatUnits(props.maxSumInsured, props.currencyDecimals)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
                                 <Typography variant="body1">
-                                {t('confirmation.end_date')}:
+                                {t('confirmation.coverage_duration')}:
                                 </Typography>
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography variant="body1">
-                                    {moment().add(props.duration, 'days').format("YYYY-MM-DD")}
+                                {props.minCoverage}
+                                &nbsp;-&nbsp;
+                                {props.maxCoverage} {t('days')}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Typography variant="body1">
+                                {t('confirmation.apr')}:
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={9}>
+                                <Typography variant="body1">
+                                    {props.apr}%
                                 </Typography>
                             </Grid>
                         </Grid>
                     </CardContent>
                     <CardActions>
-                        <Button size="small" variant="text" onClick={() => router.push("/policies")}>
+                        <Button size="small" variant="text" onClick={() => router.push("/bundles")}>
                             {t('confirmation.continue_link')}
                         </Button>
                     </CardActions>

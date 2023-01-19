@@ -74,7 +74,7 @@ export class InvestApiSmartContract implements InvestApi {
         annualPctReturn: number,
         beforeInvestCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void
-    ): Promise<boolean> {
+    ): Promise<{ status: boolean, bundleId: string | undefined}> {
         console.log("invest", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         const [tx, receipt] = await (await this.riskpoolApi()).createBundle(
             name, 
@@ -88,8 +88,11 @@ export class InvestApiSmartContract implements InvestApi {
             annualPctReturn, 
             beforeInvestCallback, 
             beforeWaitCallback);
+        const bundleId = await(await this.riskpoolApi()).extractBundleIdFromApplicationLogs(receipt.logs);
+        console.log("bundleId", bundleId);
+    
         console.log("tx", tx, "receipt", receipt);
-        return Promise.resolve(receipt.status === 1);
+        return { status: receipt.status === 1, bundleId };
     }
 
     async bundleTokenAddress(): Promise<string> {

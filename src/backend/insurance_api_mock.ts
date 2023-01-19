@@ -165,13 +165,13 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
             minDuration: number, 
             maxDuration: number, 
             annualPctReturn: number
-        ): Promise<boolean> {
+        ): Promise<{ status: boolean, bundleId: string | undefined}> {
             enqueueSnackbar(
                 `Riskpool mocked ($name, $lifetime, $investorWalletAddress, $investedAmount, $minSumInsured, $maxSumInsured, $minDuration, $maxDuration, $annualPctReturn)`,
                 { autoHideDuration: 3000, variant: 'info' }
             );
             await delay(2000);
-            return Promise.resolve(true);
+            return Promise.resolve({ status: true, bundleId: "42"});
         },
         bundleTokenAddress(): Promise<string> {
             return Promise.resolve("0x0000000000000000000000000000000000000000");

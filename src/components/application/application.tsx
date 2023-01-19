@@ -90,14 +90,6 @@ export default function Application(props: ApplicationProps) {
     }
 
     function applicationSuccessful() {
-        // enqueueSnackbar(
-        //     t('application_success'),
-        //     { 
-        //         variant: 'success', 
-        //         autoHideDuration: 5000, 
-        //         preventDuplicate: true,
-        //     }
-        // );
         confetti({
             particleCount: 100,
             spread: 70,

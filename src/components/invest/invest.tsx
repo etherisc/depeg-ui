@@ -11,6 +11,8 @@ import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { REVOKE_INFO_URL } from "../application/application";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import BundleConfirmation from "./bundle_confirmation";
+import { BigNumber } from "ethers";
 
 export interface InvestProps {
     insurance: InsuranceApi;
@@ -28,7 +30,7 @@ export default function Invest(props: InvestProps) {
     const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ readyToInvest, setReadyToInvest ] = useState(false);
-
+    const [ investmentDetails, setInvestmentDetails ] = useState(["0", BigNumber.from(0), BigNumber.from(0), BigNumber.from(0), 0, 0, 0 ]);
 
     // change steps according to application state
     useEffect(() => {
@@ -58,21 +60,11 @@ export default function Invest(props: InvestProps) {
     }
 
     function applicationSuccessful() {
-        enqueueSnackbar(
-            t('application_success'),
-            { 
-                variant: 'success', 
-                autoHideDuration: 5000, 
-                preventDuplicate: true,
-            }
-        );
         confetti({
             particleCount: 100,
             spread: 70,
             origin: { y: 0.6 }
         });
-        // redirect to bundle list (/bundles)
-        router.push("/bundles");
     }
 
     async function doApproval(walletAddress: string, investedAmount: number): Promise<Boolean> {
@@ -127,7 +119,12 @@ export default function Invest(props: InvestProps) {
         }
     }
 
-    async function doInvest(name: string, lifetime: number, investorWalletAddress: string, investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
+    async function doInvest(
+        name: string, lifetime: number, investorWalletAddress: string, 
+        investedAmount: number, minSumInsured: number, maxSumInsured: number, 
+        minDuration: number, maxDuration: number, 
+        annualPctReturn: number
+    ): Promise<{ status: boolean, bundleId: string | undefined}> {
         let snackbar: SnackbarKey | undefined = undefined; 
         try {
             return await props.insurance.invest.invest(
@@ -174,7 +171,7 @@ export default function Invest(props: InvestProps) {
                         }
                     }
                 );
-                return Promise.resolve(false);
+                return { status: false, bundleId: undefined};
             } else {
                 throw e;
             }
@@ -229,17 +226,45 @@ export default function Invest(props: InvestProps) {
                 return;
             }
             setActiveStep(4);
-            const investSuccess = await doInvest(name, lifetime, investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
-            if ( ! investSuccess) {
+            const investResult = await doInvest(name, lifetime, investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+            if ( ! investResult.status) {
                 setActiveStep(2);
                 showAllowanceNotice();
                 return;
             }
             setActiveStep(5);
             applicationSuccessful();
+            setInvestmentDetails([investResult.bundleId as string, BigNumber.from(investedAmount), 
+                BigNumber.from(minSumInsured), BigNumber.from(maxSumInsured),
+                minDuration, maxDuration,
+                annualPctReturn]);
         } finally {
             enableUnloadWarning(false);
         }
+    }
+
+    let content;
+    if (activeStep < 5) {
+        content = (<InvestForm 
+                        formDisabled={formDisabled}
+                        usd2={props.insurance.usd2}
+                        usd2Decimals={props.insurance.usd2Decimals}
+                        insurance={props.insurance}
+                        formReadyForInvest={formReadyForInvest}
+                        invest={invest}
+                    />)
+    } else {
+        content = (<BundleConfirmation
+                        bundleId={investmentDetails[0] as string}
+                        currency={props.insurance.usd2}
+                        currencyDecimals={props.insurance.usd2Decimals}
+                        investedAmount={investmentDetails[1] as BigNumber}
+                        minSumInsured={investmentDetails[2] as BigNumber}
+                        maxSumInsured={investmentDetails[3] as BigNumber}
+                        minCoverage={investmentDetails[4] as number}
+                        maxCoverage={investmentDetails[5] as number}
+                        apr={investmentDetails[6] as number}
+                        />);
     }
 
     return (
@@ -261,14 +286,7 @@ export default function Invest(props: InvestProps) {
                     })}
                 </Stepper>
 
-                <InvestForm 
-                    formDisabled={formDisabled}
-                    usd2={props.insurance.usd2}
-                    usd2Decimals={props.insurance.usd2Decimals}
-                    insurance={props.insurance}
-                    formReadyForInvest={formReadyForInvest}
-                    invest={invest}
-                />
+                {content}
             </div>
         </>
     );

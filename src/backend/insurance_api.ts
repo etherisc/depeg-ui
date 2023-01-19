@@ -86,7 +86,7 @@ export interface InvestApi {
             annualPctReturn: number,
             beforeInvestCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void,
-        ) => Promise<boolean>;
+        ) => Promise<{ status: boolean, bundleId: string | undefined}>;
     bundleTokenAddress(): Promise<string>;
     bundleCount(): Promise<number>;
     bundleId(idx: number): Promise<number>;

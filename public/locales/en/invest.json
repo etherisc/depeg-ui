@@ -34,5 +34,18 @@
         "name": {
             "pattern": "Name may only include letters, numbers, underscore (_), dash (-) and space"
         }
+    },
+    "confirmation": {
+        "alert": {
+            "title": "Payment for Depeg riskpool bundle confirmed",
+            "text": "Risk bundle is now active and ready for staking"
+        },
+        "title": "Bundle details",
+        "id": "Bundle Id",
+        "invested_amount": "Invested amount",
+        "sum_insured": "Protected amount",
+        "coverage_duration": "Coverage duration",
+        "apr": "Annual percentage return",
+        "continue_link": "Continue to bundle overview"
     }
 }

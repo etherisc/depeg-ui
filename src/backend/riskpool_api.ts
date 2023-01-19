@@ -158,8 +158,6 @@ export class DepegRiskpoolApi {
                 beforeWaitCallback(riskpoolAddress);
             }
             const receipt = await tx.wait();
-            const bundleId = this.extractBundleIdFromApplicationLogs(receipt.logs);
-            console.log("bundleId", bundleId);
             return Promise.resolve([tx, receipt]);
         } catch (e) {
             console.log("caught error while creating bundle: ", e);
