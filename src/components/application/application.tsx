@@ -4,8 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { InsuranceApi } from "../../backend/insurance_api";
 import { SnackbarKey, useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
-import { Signer, VoidSigner } from "ethers";
-import { useRouter } from 'next/router';
+import { BigNumber, Signer, VoidSigner } from "ethers";
 import { formatCurrency } from "../../utils/numbers";
 import ApplicationForm from "./application_form";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
@@ -13,6 +12,8 @@ import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { addBundle, finishLoading, startLoading } from "../../redux/slices/bundles_slice";
 import { BundleData } from "../../backend/bundle_data";
+import PolicyConfirmation from "./policy_confirmation";
+import { parseEther, parseUnits } from "ethers/lib/utils";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -24,7 +25,6 @@ export const REVOKE_INFO_URL = "https://metamask.zendesk.com/hc/en-us/articles/4
 export default function Application(props: ApplicationProps) {
     const { t } = useTranslation(['application', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-    const router = useRouter();
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
@@ -35,6 +35,7 @@ export default function Application(props: ApplicationProps) {
     const [ walletAddress, setWalletAddress ] = useState("");
     const [ readyToBuy, setReadyToBuy ] = useState(false);
     const [ premiumTrxTextKey, setPremiumTrxTextKey ] = useState("");
+    const [ protectionDetails, setProctectionDetails ] = useState(["0x", BigNumber.from(0), 30]);
 
     async function walletDisconnected() {
         setWalletAddress("");
@@ -89,21 +90,19 @@ export default function Application(props: ApplicationProps) {
     }
 
     function applicationSuccessful() {
-        enqueueSnackbar(
-            t('application_success'),
-            { 
-                variant: 'success', 
-                autoHideDuration: 5000, 
-                preventDuplicate: true,
-            }
-        );
+        // enqueueSnackbar(
+        //     t('application_success'),
+        //     { 
+        //         variant: 'success', 
+        //         autoHideDuration: 5000, 
+        //         preventDuplicate: true,
+        //     }
+        // );
         confetti({
             particleCount: 100,
             spread: 70,
             origin: { y: 0.6 }
         });
-        // redirect to policy list
-        router.push("/policies");
     }
 
     async function doApproval(walletAddress: string, premium: number): Promise<Boolean> {
@@ -259,6 +258,7 @@ export default function Application(props: ApplicationProps) {
             }
             setActiveStep(5);
             applicationSuccessful();
+            setProctectionDetails([walletAddress, BigNumber.from(insuredAmount), coverageDuration])
         } finally {
             enableUnloadWarning(false);
         }
@@ -270,6 +270,33 @@ export default function Application(props: ApplicationProps) {
 
     if (isConnected) {
         updateWalletAddress(signer!);
+    }
+
+    let content;
+    if (activeStep < 5) {
+        content = (
+            <ApplicationForm 
+                formDisabled={formDisabled}
+                walletAddress={walletAddress}
+                usd1={props.insurance.usd1}
+                usd1Decimals={props.insurance.usd1Decimals}
+                usd2={props.insurance.usd2}
+                usd2Decimals={props.insurance.usd2Decimals}
+                applicationApi={props.insurance.application}
+                formReadyForApply={formReadyForApply}
+                applyForPolicy={applyForPolicy}
+                premiumTrxTextKey={premiumTrxTextKey}
+            />
+        );
+    } else {
+        content = (
+            <PolicyConfirmation
+                wallet={protectionDetails[0] as string}
+                amount={protectionDetails[1] as BigNumber}
+                duration={protectionDetails[2] as number}
+                currency={props.insurance.usd1}
+                currencyDecimals={props.insurance.usd1Decimals}
+                />);
     }
 
     return (
@@ -290,19 +317,8 @@ export default function Application(props: ApplicationProps) {
                         );
                     })}
                 </Stepper>
-
-                <ApplicationForm 
-                    formDisabled={formDisabled}
-                    walletAddress={walletAddress}
-                    usd1={props.insurance.usd1}
-                    usd1Decimals={props.insurance.usd1Decimals}
-                    usd2={props.insurance.usd2}
-                    usd2Decimals={props.insurance.usd2Decimals}
-                    applicationApi={props.insurance.application}
-                    formReadyForApply={formReadyForApply}
-                    applyForPolicy={applyForPolicy}
-                    premiumTrxTextKey={premiumTrxTextKey}
-                />
+                
+                {content}
             </div>
         </>
     );
