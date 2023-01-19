@@ -53,18 +53,20 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         const bundles = await (await this.riskpoolApi()).getBundleData();
 
         for (const bundle of bundles) {
-            const capitalSupport = bundle.capitalSupport;
-            // if supported amount is undefined, then no staking contract is configured, capital support is ignored and all bundles are used
-            if (capitalSupport === undefined) {
-                handleBundle(bundle);
-            } else {
-                // if supported amount is defined, then only bundles with locked capital less than the capital support are used
-                console.log("bundleid", bundle.id, "locked", bundle.locked, "capitalSupport", capitalSupport.toString());
-                if (BigNumber.from(bundle.locked).lt(BigNumber.from(capitalSupport))) {
-                    console.log("stakes available", bundle.id);
-                    handleBundle(bundle);
-                }    
+            // less capacity then min protected amount
+            if (BigNumber.from(bundle.minSumInsured).gt(bundle.capacity)) {
+                continue;
             }
+            const capitalSupport = bundle.capitalSupport;
+            if (capitalSupport !== undefined) {
+                // console.log("bundleid", bundle.id, "locked", bundle.locked, "capitalSupport", capitalSupport.toString());
+                // if supported capital is defined, then only bundles with locked capital less than the capital support are used
+                if (BigNumber.from(bundle.locked).gte(BigNumber.from(capitalSupport))) {
+                    continue;
+                }
+                console.log("stakes available", bundle.id);
+            }
+            handleBundle(bundle);
         }
     }
 
