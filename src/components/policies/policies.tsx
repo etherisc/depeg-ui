@@ -2,7 +2,7 @@ import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import { InsuranceApi } from "../../backend/insurance_api";
-import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -18,6 +18,7 @@ import Address from "../address";
 import Timestamp from "../timestamp";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
+import { bigNumberComparator } from "../../utils/bignumber";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -29,7 +30,7 @@ export default function Policies(props: PoliciesProps) {
 
     const [ policies, setPolicies ] = useState<Array<PolicyData>>([]);
     const [ policyRetrievalInProgess , setPolicyRetrievalInProgess ] = useState(false);
-    const [ pageSize, setPageSize ] = useState(5);
+    const [ pageSize, setPageSize ] = useState(8);
 
     const [ showActivePoliciesOnly, setShowActivePoliciesOnly ] = useState<boolean>(false);
     function handleShowActivePoliciesOnlyChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -65,45 +66,50 @@ export default function Policies(props: PoliciesProps) {
             headerName: t('table.header.policyId'), 
             flex: 1,
             renderCell: (params: GridRenderCellParams<string>) => 
-                (<Address address={params.value ?? ""} iconColor="secondary.main" />)
+                (<Address address={params.value ?? ""} iconColor="secondary.main" />),
+            sortComparator: gridStringOrNumberComparator,
         },
         { 
             field: 'owner', 
             headerName: t('table.header.walletAddress'), 
             flex: 1,
             renderCell: (params: GridRenderCellParams<string>) => 
-                (<Address address={params.value ?? ""} iconColor="secondary.main" />)
+                (<Address address={params.value ?? ""} iconColor="secondary.main" />),
+            sortComparator: gridStringOrNumberComparator,
         },
         { 
             field: 'suminsured', 
             headerName: t('table.header.insuredAmount'), 
             flex: 1,
-            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.insurance.usd1} ${formatCurrency(params.value.toNumber(), props.insurance.usd1Decimals)}`
+            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.insurance.usd1} ${formatCurrency(params.value.toNumber(), props.insurance.usd1Decimals)}`,
+            sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2),
         },
         { 
             field: 'createdAt', 
             headerName: t('table.header.createdDate'), 
             flex: 1,
-            renderCell: (params: GridRenderCellParams<BigNumber>) => <Timestamp at={params?.value?.toNumber() ?? 0} />
+            renderCell: (params: GridRenderCellParams<BigNumber>) => <Timestamp at={params?.value?.toNumber() ?? 0} />,
+            sortComparator: gridNumberComparator,
         },
         { 
             field: 'coverageUntil', 
             headerName: t('table.header.coverageUntil'), 
             flex: 1,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
-            renderCell: (params: GridRenderCellParams<PolicyData>) => {
-                const ts = getPolicyExpiration(params.value!);
-                return (<Timestamp at={ts} />);
-            }
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => getPolicyExpiration(params.row),
+            renderCell: (params: GridRenderCellParams<number>) => {
+                return (<Timestamp at={params.value!} />);
+            },
+            sortComparator: gridNumberComparator,
         },
         { 
             field: 'applicationState', 
             headerName: t('table.header.status'), 
             flex: 1,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<PolicyData>) => {
-                return t('application_state_' + getPolicyState(params.value), { ns: 'common'})
-            }
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => getPolicyState(params.row),
+            valueFormatter: (params: GridValueFormatterParams<number>) => {
+                return t('application_state_' + params.value, { ns: 'common'})
+            },
+            sortComparator: gridStringOrNumberComparator,
         },
     ];
 
