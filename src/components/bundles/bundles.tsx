@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getInsuranceApi, InsuranceApi } from "../../backend/insurance_api";
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
@@ -10,7 +10,6 @@ import { LinkBehaviour } from "../link_behaviour";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import { bundleReducer, BundleActionType } from "../../context/bundle_reducer";
 import { useSnackbar } from "notistack";
 import { FormControlLabel, Switch } from "@mui/material";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -18,11 +17,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import dayjs from "dayjs";
 import Timestamp from "../timestamp";
 import { RootState } from "../../redux/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BigNumber } from "ethers";
 import StakeUsageIndicator from "./stake_usage_indicator";
 import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
-import { PanoramaSharp } from "@mui/icons-material";
+import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/bundles_slice";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -32,13 +31,17 @@ export default function Bundles(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
     const { enqueueSnackbar } = useSnackbar();
 
+    const dispatch = useDispatch();
+
     const signer = useSelector((state: RootState) => state.chain.signer);
     const provider = useSelector((state: RootState) => state.chain.provider);
+    const bundles = useSelector((state: RootState) => state.bundles.bundles);
+    const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
 
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
-    const [ bundleState, dispatch ] = useReducer(bundleReducer, { bundles: [], loading: false });
     const [ pageSize, setPageSize ] = useState(8);
     const [ showAllBundles, setShowAllBundles ] = useState(true);
+    // FIXME: use from redux
     const [ address, setAddress ] = useState("");
 
     function handleShowAllBundlesChanged(event: React.ChangeEvent<HTMLInputElement>) {
@@ -46,18 +49,18 @@ export default function Bundles(props: BundlesProps) {
     }
 
     const getBundles = useCallback(async () => {
-        if (bundleState.loading) {
+        if (isLoadingBundles) {
             return;
         }
 
-        dispatch({ type: BundleActionType.START_LOADING });
-        dispatch({ type: BundleActionType.RESET });
-
+        dispatch(startLoading());
+        dispatch(reset());
+        
         const walletAddress = await signer?.getAddress();
         setAddress(walletAddress ?? "");
 
         if (walletAddress === undefined ) {
-            dispatch({ type: BundleActionType.STOP_LOADING });
+            dispatch(finishLoading());
             return;
         }
 
@@ -72,10 +75,10 @@ export default function Bundles(props: BundlesProps) {
                 continue;
             }
             console.log("bundle: ", bundle);
-            dispatch({ type: BundleActionType.ADD, bundle: bundle });
+            dispatch(addBundle(bundle));
         }
-        dispatch({ type: BundleActionType.STOP_LOADING });
-    }, [provider, signer, bundleState.loading, enqueueSnackbar, t, showAllBundles]);
+        dispatch(finishLoading());
+    }, [provider, signer, isLoadingBundles, enqueueSnackbar, t, showAllBundles, dispatch]);
 
     useEffect(() => {
         getBundles();
@@ -195,7 +198,7 @@ export default function Bundles(props: BundlesProps) {
         );
     }
 
-    const loadingBar = bundleState.loading ? <LinearProgress /> : null;
+    const loadingBar = isLoadingBundles ? <LinearProgress /> : null;
 
     return (
         <>
@@ -205,7 +208,7 @@ export default function Bundles(props: BundlesProps) {
 
             <DataGrid 
                 autoHeight
-                rows={bundleState.bundles} 
+                rows={bundles} 
                 columns={columns} 
                 getRowId={(row) => row.id}
                 components={{
