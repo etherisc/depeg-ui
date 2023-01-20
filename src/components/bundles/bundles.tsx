@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 import { BigNumber } from "ethers";
 import StakeUsageIndicator from "./stake_usage_indicator";
 import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
+import { PanoramaSharp } from "@mui/icons-material";
 
 export interface BundlesProps {
     insurance: InsuranceApi;
@@ -36,7 +37,7 @@ export default function Bundles(props: BundlesProps) {
 
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [ bundleState, dispatch ] = useReducer(bundleReducer, { bundles: [], loading: false });
-    const [ pageSize, setPageSize ] = useState(5);
+    const [ pageSize, setPageSize ] = useState(8);
     const [ showAllBundles, setShowAllBundles ] = useState(true);
     const [ address, setAddress ] = useState("");
 
@@ -61,7 +62,7 @@ export default function Bundles(props: BundlesProps) {
         }
 
         // this will return the count for all bundles in the system (right now this is the only way to get to bundles)
-        const iapi = await getInsuranceApi(enqueueSnackbar, t, signer, provider).invest;
+        const iapi = getInsuranceApi(enqueueSnackbar, t, signer, provider).invest;
         const bundlesCount = await iapi.bundleCount();
         for (let i = 0; i < bundlesCount; i++) {
             const bundleId = await iapi.bundleId(i);
@@ -92,7 +93,8 @@ export default function Bundles(props: BundlesProps) {
                     return (<>{params.value?.id} &nbsp; <FontAwesomeIcon icon={faUser} /></>)
                 }
                 return params.value?.id
-            }
+            },
+            sortComparator: (v1: BundleData, v2: BundleData) =>  v1.id - v2.id,
         },
         { 
             field: 'name', 
@@ -114,7 +116,8 @@ export default function Bundles(props: BundlesProps) {
                 const bundle = params.value!;
                 const lifetime = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 'seconds').unix();
                 return (<Timestamp at={lifetime} />);
-            }
+            },
+            sortComparator: (v1: BundleData, v2: BundleData) =>  v1.createdAt - v2.createdAt,
         },
         { 
             field: 'capital', 
@@ -163,7 +166,8 @@ export default function Bundles(props: BundlesProps) {
                             supportedToken={params.value![3]}
                             supportedTokenDecimals={params.value![4]}
                             />);
-            }
+            },
+            sortComparator: (v1: [number|undefined, BigNumber, BigNumber, string, number], v2: [number|undefined, BigNumber, BigNumber, string, number]) => (v1[0] ?? -1) - (v2[0] ?? -1),
         });
     }
 
