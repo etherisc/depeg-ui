@@ -8,7 +8,8 @@
     "build": "next build",
     "export": "next build && next export",
     "start": "next start",
-    "test": "jest --watch",
+    "testLoop": "jest --watch",
+    "test": "jest",
     "lint": "next lint",
     "typechainGifInterfaceTypes": "typechain --target ethers-v5 --out-dir src/contracts/gif-interface './node_modules/@etherisc/gif-interface/build/**/*json'",
     "typechainDepegTypes": "typechain --target ethers-v5 --out-dir src/contracts/depeg-contracts './node_modules/@etherisc/depeg-contracts/build/contracts/**/*json'"
