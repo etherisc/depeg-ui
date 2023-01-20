@@ -3,12 +3,12 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { Amount } from '../../types/amount';
 
 export interface AccountState {
-    account: string | undefined,
+    address: string | undefined,
     balance: Amount | undefined,
 }
 
 const initialState: AccountState = {
-    account: undefined,
+    address: undefined,
     balance: undefined,
 }
 
@@ -17,7 +17,7 @@ export const accountSlice = createSlice({
     initialState,
     reducers: {
         setAccount(state, action: PayloadAction<[string, string, string, number]>) {
-            state.account = action.payload[0];
+            state.address = action.payload[0];
             state.balance = {
                 amount: action.payload[1],
                 currency: action.payload[2],
@@ -25,7 +25,7 @@ export const accountSlice = createSlice({
             } as Amount;
         },
         resetAccount(state) {
-            state.account = undefined;
+            state.address = undefined;
             state.balance = undefined;
         }
     },

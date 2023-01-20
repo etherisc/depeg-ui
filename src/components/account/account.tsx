@@ -14,20 +14,14 @@ export default function Account() {
     const dispatch = useDispatch();
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
-
+    const address = useSelector((state: RootState) => state.account.address);
+    
     const [ loggedIn, setLoggedIn ] = useState(false);
-    const [ address, setAddress ] = useState("");
-    const tokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL ?? "ETH";
 
     useEffect(() => {
         console.log("signer changed");
-        async function updateData() {
-            const address = await signer!.getAddress();
-            setAddress(address!);
-        }
         if (isConnected) {
             setLoggedIn(true);
-            updateData();
         } else {
             setLoggedIn(false);
         }
@@ -58,10 +52,7 @@ export default function Account() {
                     <Address address={address}/>
                     <Box component="span" sx={{ display: { 'xs': 'none', 'md': 'inline-flex'}}}>
                         {NBSP} {DOT} {NBSP}
-                        <Balance
-                            signer={signer!}
-                            currency={tokenSymbol}
-                            />
+                        <Balance />
                     </Box>
                 </Box>
                 <Logout />
