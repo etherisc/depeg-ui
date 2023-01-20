@@ -17,8 +17,9 @@ import { BigNumber } from "ethers";
 import Address from "../address";
 import Timestamp from "../timestamp";
 import { RootState } from "../../redux/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { bigNumberComparator } from "../../utils/bignumber";
+import { addPolicy, finishLoading, reset, startLoading } from "../../redux/slices/policies_slice";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;
@@ -28,8 +29,10 @@ export default function Policies(props: PoliciesProps) {
     const { t } = useTranslation(['policies', 'common']);
     const signer = useSelector((state: RootState) => state.chain.signer);
 
-    const [ policies, setPolicies ] = useState<Array<PolicyData>>([]);
-    const [ policyRetrievalInProgess , setPolicyRetrievalInProgess ] = useState(false);
+    const dispatch = useDispatch();
+    const policies = useSelector((state: RootState) => state.policies.policies);
+    const isLoading = useSelector((state: RootState) => state.policies.isLoading);
+
     const [ pageSize, setPageSize ] = useState(8);
 
     const [ showActivePoliciesOnly, setShowActivePoliciesOnly ] = useState<boolean>(false);
@@ -41,24 +44,23 @@ export default function Policies(props: PoliciesProps) {
         async function getPolicies() {
             const walletAddress = await signer?.getAddress();
             if (walletAddress !== undefined) {
-                setPolicyRetrievalInProgess(true);
-                setPolicies([]);
+                dispatch(startLoading());
+                dispatch(reset());
                 const policiesCount = await props.insurance.policiesCount(walletAddress);
                 for (let i = 0; i < policiesCount; i++) {
                     const policy = await props.insurance.policy(walletAddress, i);
                     if (showActivePoliciesOnly && (policy.applicationState !== 2 || policy.policyState !== 0)) {
                         continue;
                     }
-                    // const rowView = convertPolicyDataToRowView(policy);
-                    setPolicies(policies => [...policies, policy]);
+                    dispatch(addPolicy(policy));
                 }
-                setPolicyRetrievalInProgess(false);
+                dispatch(finishLoading());
             } else {
-                setPolicies([]);
+                dispatch(finishLoading());
             }
         }
         getPolicies();
-    }, [signer, props.insurance, showActivePoliciesOnly, t]);
+    }, [signer, props.insurance, showActivePoliciesOnly, t, dispatch]);
 
     const columns: GridColDef[] = [
         { 
@@ -137,7 +139,7 @@ export default function Policies(props: PoliciesProps) {
         );
     }
 
-    const loadingBar = policyRetrievalInProgess ? <LinearProgress /> : null;
+    const loadingBar = isLoading ? <LinearProgress /> : null;
 
     return (
         <>
