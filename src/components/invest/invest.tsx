@@ -9,10 +9,11 @@ import { useRouter } from "next/router";
 import { formatCurrency } from "../../utils/numbers";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { REVOKE_INFO_URL } from "../application/application";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import BundleConfirmation from "./bundle_confirmation";
 import { BigNumber } from "ethers";
+import { updateAccountBalance } from "../../utils/chain";
 
 export interface InvestProps {
     insurance: InsuranceApi;
@@ -24,6 +25,7 @@ export default function Invest(props: InvestProps) {
     const { t } = useTranslation(['invest', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const router = useRouter();
+    const dispatch = useDispatch();
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
@@ -65,6 +67,8 @@ export default function Invest(props: InvestProps) {
             spread: 70,
             origin: { y: 0.6 }
         });
+
+        updateAccountBalance(signer!, dispatch);
     }
 
     async function doApproval(walletAddress: string, investedAmount: number): Promise<Boolean> {

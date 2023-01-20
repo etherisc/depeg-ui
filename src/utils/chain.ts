@@ -1,7 +1,7 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { providers, Signer } from "ethers";
-import { resetAccount, setAccount } from "../redux/slices/account_slice";
+import { resetAccount, setAccount, updateBalance } from "../redux/slices/account_slice";
 import { ChainState, connectChain, disconnectChain, setBlock, updateSigner as updateSignerSlice } from "../redux/slices/chain_slice";
 import { expectedChain } from "./const";
 import { toHex } from "./numbers";
@@ -58,4 +58,11 @@ export async function setAccountRedux(signer: Signer, dispatch: Dispatch<AnyActi
     const tokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL ?? "ETH";
     const decimals = process.env.NEXT_PUBLIC_CHAIN_TOKEN_DECIMALS ?? "18";
     dispatch(setAccount([address, balance.toString(), tokenSymbol, parseInt(decimals)]));
+}
+
+export async function updateAccountBalance(signer: Signer, dispatch: Dispatch<AnyAction>): Promise<void> {
+    const balance = await signer.getBalance();
+    const tokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL ?? "ETH";
+    const decimals = process.env.NEXT_PUBLIC_CHAIN_TOKEN_DECIMALS ?? "18";
+    dispatch(updateBalance([balance.toString(), tokenSymbol, parseInt(decimals)]));
 }

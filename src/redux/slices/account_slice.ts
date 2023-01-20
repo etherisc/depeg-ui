@@ -24,6 +24,13 @@ export const accountSlice = createSlice({
                 decimals: action.payload[3]
             } as Amount;
         },
+        updateBalance(state, action: PayloadAction<[string, string, number]>) {
+            state.balance = {
+                amount: action.payload[0],
+                currency: action.payload[1],
+                decimals: action.payload[2]
+            } as Amount;
+        },
         resetAccount(state) {
             state.address = undefined;
             state.balance = undefined;
@@ -33,7 +40,8 @@ export const accountSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { 
-    setAccount, resetAccount
+    setAccount, resetAccount,
+    updateBalance
 } = accountSlice.actions;
 
 export default accountSlice.reducer;

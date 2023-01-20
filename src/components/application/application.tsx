@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addBundle, finishLoading, startLoading } from "../../redux/slices/bundles_slice";
 import { BundleData } from "../../backend/bundle_data";
 import PolicyConfirmation from "./policy_confirmation";
+import { updateAccountBalance } from "../../utils/chain";
 
 export interface ApplicationProps {
     insurance: InsuranceApi;
@@ -95,6 +96,8 @@ export default function Application(props: ApplicationProps) {
             spread: 70,
             origin: { y: 0.6 }
         });
+
+        updateAccountBalance(signer!, dispatch);
     }
 
     async function doApproval(walletAddress: string, premium: number): Promise<Boolean> {
