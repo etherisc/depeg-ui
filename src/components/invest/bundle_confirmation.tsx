@@ -1,9 +1,12 @@
-import { Alert, AlertTitle, Button, Card, CardActions, CardContent, Grid, Typography } from "@mui/material";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Alert, AlertTitle, Button, Card, CardActions, CardContent, Grid, Typography, useTheme } from "@mui/material";
 import { BigNumber } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
 import { formatAddress } from "../../utils/address";
 
 interface BundleConfirmationProps {
@@ -21,6 +24,13 @@ interface BundleConfirmationProps {
 export default function BundleConfirmation(props: BundleConfirmationProps) {
     const router = useRouter();
     const { t } = useTranslation(['invest']);
+    const { enqueueSnackbar } = useSnackbar();
+    const theme = useTheme();
+
+    async function copyAddressToClipboard(value: string) {
+        await navigator.clipboard.writeText(value);
+        enqueueSnackbar(t('action.address_copied', { ns: "common" }),  { autoHideDuration: 2000, variant: 'info' });
+    }
 
     return (<>
         <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={2} mt={{ 'xs': 0, 'md': 2 }} 
@@ -46,6 +56,10 @@ export default function BundleConfirmation(props: BundleConfirmationProps) {
                             <Grid item xs={9}>
                                 <Typography variant="body1">
                                     {props.bundleId}
+                                    &nbsp;
+                                    <Typography component="span" color={theme.palette.secondary.main}>
+                                        <FontAwesomeIcon icon={faCopy} className="fa cursor-pointer" onClick={() => copyAddressToClipboard(props.bundleId)} />
+                                    </Typography>
                                 </Typography>
                             </Grid>
                             <Grid item xs={3}>
