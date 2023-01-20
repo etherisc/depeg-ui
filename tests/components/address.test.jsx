@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import Address from "../src/components/address";
+import Address from "../../src/components/address";
 import { SnackbarProvider } from 'notistack';
 import userEvent from '@testing-library/user-event';
 
