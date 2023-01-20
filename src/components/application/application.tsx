@@ -10,7 +10,7 @@ import ApplicationForm from "./application_form";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { addBundle, finishLoading, startLoading } from "../../redux/slices/bundles_slice";
+import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/bundles_slice";
 import { BundleData } from "../../backend/bundle_data";
 import PolicyConfirmation from "./policy_confirmation";
 import { updateAccountBalance } from "../../utils/chain";
@@ -55,11 +55,12 @@ export default function Application(props: ApplicationProps) {
         // console.log("signer", signer);
         if (signer !== undefined && ! (signer instanceof VoidSigner)) {
             dispatch(startLoading());
+            dispatch(reset());
             setPremiumTrxTextKey('bundle_loading');
-            console.log("got a new signer ... getting bundles");
+            // console.log("got a new signer ... getting bundles");
             asyncGetBundles();
         }    
-    }, [signer]);
+    }, [signer, dispatch]);
     
     // change steps according to application state
     useEffect(() => {
