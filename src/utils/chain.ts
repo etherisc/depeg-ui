@@ -1,6 +1,7 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
-import { providers } from "ethers";
+import { providers, Signer } from "ethers";
+import { resetAccount, setAccount } from "../redux/slices/account_slice";
 import { ChainState, connectChain, disconnectChain, setBlock, updateSigner as updateSignerSlice } from "../redux/slices/chain_slice";
 import { expectedChain } from "./const";
 import { toHex } from "./numbers";
@@ -33,17 +34,28 @@ export async function setSigner(dispatch: Dispatch<AnyAction>, provider: provide
     const signer = provider.getSigner(); 
     console.log("set signer", signer);
     dispatch(connectChain(await getChainState(provider)));
+    setAccountRedux(signer, dispatch);
 }
 
-export function updateSigner(dispatch: Dispatch<AnyAction>, provider: providers.Web3Provider) {
+export async function updateSigner(dispatch: Dispatch<AnyAction>, provider: providers.Web3Provider) {
     const signer = provider.getSigner();  
     console.log("update signer", signer);
     dispatch(updateSignerSlice(signer));
+    setAccountRedux(signer, dispatch);
 }
 
 export function removeSigner(dispatch: Dispatch<AnyAction>) {
     // dispatch({ type: AppActionType.UNSET });
     dispatch(disconnectChain());
+    dispatch(resetAccount());
     console.log("unset signer");
     window.localStorage.clear();
+}
+
+export async function setAccountRedux(signer: Signer, dispatch: Dispatch<AnyAction>): Promise<void> {
+    const address = await signer.getAddress();
+    const balance = await signer.getBalance();
+    const tokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL ?? "ETH";
+    const decimals = process.env.NEXT_PUBLIC_CHAIN_TOKEN_DECIMALS ?? "18";
+    dispatch(setAccount([address, balance.toString(), tokenSymbol, parseInt(decimals)]));
 }

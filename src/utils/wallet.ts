@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { walletConnectConfig } from "../config/appConfig";
 import { connectChain } from "../redux/slices/chain_slice";
-import { getAndUpdateBlock, getChainState, updateSigner } from "./chain";
+import { getAndUpdateBlock, getChainState, setAccountRedux, updateSigner } from "./chain";
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 
 
@@ -32,7 +32,8 @@ export async function reconnectWallets(dispatch: Dispatch<AnyAction>) {
         await wcProvider.enable();
         const provider = new ethers.providers.Web3Provider(wcProvider);
         dispatch(connectChain(await getChainState(provider)));
-
+        setAccountRedux(provider.getSigner(), dispatch);
+        
         provider.on("block", (blockNumber: number) => {
             getAndUpdateBlock(dispatch, provider, blockNumber);
         });
@@ -50,6 +51,7 @@ export async function getAndSetWalletAccount(dispatch: Dispatch<AnyAction>) {
     // send ether and pay to change state within the blockchain.
     // For this, you need the account signer...
     dispatch(connectChain(await getChainState(provider)));
+    setAccountRedux(provider.getSigner(), dispatch);
 
     provider.on("block", (blockNumber: number) => {
         getAndUpdateBlock(dispatch, provider, blockNumber);

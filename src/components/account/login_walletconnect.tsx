@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { connectChain } from "../../redux/slices/chain_slice";
-import { getAndUpdateBlock, getChainState, removeSigner, updateSigner } from "../../utils/chain";
+import { getAndUpdateBlock, getChainState, removeSigner, setAccountRedux, updateSigner } from "../../utils/chain";
 
 export default function LoginWithWalletConnectButton(props: any) {
     const { closeDialog } = props;
@@ -60,6 +60,7 @@ export default function LoginWithWalletConnectButton(props: any) {
         // what MetaMask injects as window.ethereum into each page
         const provider = new ethers.providers.Web3Provider(wcProvider);
         dispatch(connectChain(await getChainState(provider)));
+        setAccountRedux(provider.getSigner(), dispatch);
 
         provider.on("block", (blockNumber: number) => {
             getAndUpdateBlock(dispatch, provider, blockNumber);
