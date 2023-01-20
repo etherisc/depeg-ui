@@ -2,12 +2,15 @@ import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Address from "../src/components/address";
 import { SnackbarProvider } from 'notistack';
+import userEvent from '@testing-library/user-event';
 
 const MYADDRESS = "0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729";
 
-jest.mock("react-i18next", () => ({
-    useTranslation: () => ({ t: key => key }),
-}));
+Object.assign(navigator, {
+    clipboard: {
+        writeText: () => {},
+    },
+});
 
 describe('Address', () => {
     it('renders shortened address', () => {
@@ -20,5 +23,26 @@ describe('Address', () => {
         );
 
         expect(screen.getByText(/0x2CeC…4729/)).toBeInTheDocument();
+    })
+
+    it('copies to clipboard when clicking copy button', async () => {
+        const user = userEvent.setup()
+        jest.spyOn(navigator.clipboard, "writeText");
+
+        render(
+            <SnackbarProvider>
+                <Address 
+                    address={MYADDRESS}
+                    />)
+            </SnackbarProvider>
+        );
+
+        const icon = screen.getByTestId("copy-button");
+        expect(icon).toBeInTheDocument();
+
+        await user.click(icon);
+
+        expect(navigator.clipboard.writeText).toBeCalledTimes(1);
+        expect(navigator.clipboard.writeText).toBeCalledWith(MYADDRESS);
     })
 })

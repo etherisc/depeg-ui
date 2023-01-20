@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import { Box, Typography } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
+import { useState } from "react";
 
 export interface AddressProps {
     address: string;
@@ -31,7 +32,7 @@ export default function Address(props: AddressProps) {
                 {abrAdr}
                 {NBSP}
                 <Typography color={iconColor} component="span">
-                    <FontAwesomeIcon icon={faCopy} className="fa cursor-pointer" onClick={copyAddressToClipboard} />
+                    <FontAwesomeIcon icon={faCopy} className="fa cursor-pointer" onClick={copyAddressToClipboard} data-testid="copy-button"/>
                 </Typography>
             </Box>
             <Box component="span" sx={{ display: { 'xs': 'inline', 'md': 'none'}}}>
