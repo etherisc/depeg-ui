@@ -6,7 +6,8 @@
             "invest": "Invest",
             "policies": "Policies",
             "bundles": "Risk bundles",
-            "apply": "Apply"
+            "apply": "Apply",
+            "price": "Price"
         }
     },
     "action": {
