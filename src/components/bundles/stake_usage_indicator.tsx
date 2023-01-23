@@ -22,25 +22,25 @@ export default function StakeUsageIndicator(props: StakeUsageIndicatorProps) {
 
     function statusIcon(stakeUsage: number | undefined) {
         if (stakeUsage === undefined || stakeUsage < 0) {
-            return (<FontAwesomeIcon icon={faCircle} className="fa" style={{ color: grey[500] }} />);
+            return (<FontAwesomeIcon icon={faCircle} className="fa" style={{ color: grey[500] }} data-testid="indidactor-undefined" />);
         } else if (stakeUsage >= 1) {
-            return (<FontAwesomeIcon icon={faCircle} className="fa" style={{ color: theme.palette.error.light }} />);
+            return (<FontAwesomeIcon icon={faCircle} className="fa" style={{ color: theme.palette.error.light }} data-testid="indidactor-error" />);
         } else if (stakeUsage >= 0.9) {
-            return (<FontAwesomeIcon icon={faCircle} className="fa" style={{ color: theme.palette.warning.light }} />);
+            return (<FontAwesomeIcon icon={faCircle} className="fa" style={{ color: theme.palette.warning.light }} data-testid="indidactor-warning" />);
         } else {
-            return (<FontAwesomeIcon icon={faCircle} className="fa" style={{ color: theme.palette.success.light }} />);
+            return (<FontAwesomeIcon icon={faCircle} className="fa" style={{ color: theme.palette.success.light }} data-testid="indidactor-ok"  />);
         }
     }
 
     function stakeUsageTooltip(stakeUsage: number | undefined, supportingAmount: BigNumber, lockedCapital: BigNumber, supportingToken: string, supportingTokenDecimals: number) {
         let usageStr = t('no_stakes');
-        if (stakeUsage !== undefined) {
+        if (stakeUsage !== undefined && stakeUsage >= 0) {
             usageStr = (stakeUsage! * 100).toFixed(0) + "%";
         }
         return (<>
-            {t('stake_usage')}: {usageStr}<br/>
-            {t('locked_capital')}: {formatAmountBN(lockedCapital, supportingToken, supportingTokenDecimals)}<br/>
-            {t('supported_capital')}: {formatAmountBN(supportingAmount, supportingToken, supportingTokenDecimals)}
+            {t('stake_usage')}: <span data-testid="stake-usage">{usageStr}</span><br/>
+            {t('locked_capital')}: <span data-testid="locked-capital">{formatAmountBN(lockedCapital, supportingToken, supportingTokenDecimals)}</span><br/>
+            {t('supported_capital')}: <span data-testid="supported-capital">{formatAmountBN(supportingAmount, supportingToken, supportingTokenDecimals)}</span>
         </>);
     }
 
