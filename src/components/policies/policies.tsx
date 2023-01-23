@@ -19,7 +19,7 @@ import Timestamp from "../timestamp";
 import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { bigNumberComparator } from "../../utils/bignumber";
-import { addPolicy, finishLoading, reset, startLoading } from "../../redux/slices/policies_slice";
+import { addPolicy, finishLoading, reset, startLoading } from "../../redux/slices/policies";
 
 export interface PoliciesProps {
     insurance: InsuranceApi;

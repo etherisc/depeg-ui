@@ -7,7 +7,7 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { connectChain } from "../../redux/slices/chain_slice";
+import { connectChain } from "../../redux/slices/chain";
 import { getAndUpdateBlock, getChainState, removeSigner, setAccountRedux, updateSigner } from "../../utils/chain";
 
 export default function LoginWithWalletConnectButton(props: any) {

@@ -1,8 +1,8 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { providers, Signer } from "ethers";
-import { resetAccount, setAccount, updateBalance } from "../redux/slices/account_slice";
-import { ChainState, connectChain, disconnectChain, setBlock, updateSigner as updateSignerSlice } from "../redux/slices/chain_slice";
+import { resetAccount, setAccount, updateBalance } from "../redux/slices/account";
+import { ChainState, connectChain, disconnectChain, setBlock, updateSigner as updateSignerSlice } from "../redux/slices/chain";
 import { expectedChain } from "./const";
 import { toHex } from "./numbers";
 

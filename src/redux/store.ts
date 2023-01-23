@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import chainReducer from './slices/chain_slice';
-import bundlesReducer from './slices/bundles_slice';
-import accountReducer from './slices/account_slice';
-import policiesReducer from './slices/policies_slice';
+import chainReducer from './slices/chain';
+import bundlesReducer from './slices/bundles';
+import accountReducer from './slices/account';
+import policiesReducer from './slices/policies';
 
 export const store = configureStore({
     reducer: {

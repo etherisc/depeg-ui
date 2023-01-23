@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { walletConnectConfig } from "../config/appConfig";
-import { connectChain } from "../redux/slices/chain_slice";
+import { connectChain } from "../redux/slices/chain";
 import { getAndUpdateBlock, getChainState, setAccountRedux, updateSigner } from "./chain";
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 

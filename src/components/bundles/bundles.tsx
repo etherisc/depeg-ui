@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BigNumber } from "ethers";
 import StakeUsageIndicator from "./stake_usage_indicator";
 import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
-import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/bundles_slice";
+import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/bundles";
 
 export interface BundlesProps {
     insurance: InsuranceApi;

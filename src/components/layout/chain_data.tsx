@@ -1,6 +1,6 @@
 import Typography from '@mui/material/Typography'
 import { useDispatch, useSelector } from "react-redux";
-import { setBlock } from "../../redux/slices/chain_slice";
+import { setBlock } from "../../redux/slices/chain";
 import { RootState } from "../../redux/store";
 import moment from "moment";
 import { Tooltip } from "@mui/material";
