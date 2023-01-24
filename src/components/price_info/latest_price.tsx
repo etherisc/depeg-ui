@@ -27,11 +27,11 @@ export default function LatestPrice(props: LatestPriceProps) {
     const timestampStr = moment.utc(props.timestamp * 1000).format("YYYY-MM-DD HH:mm:ss UTC");
 
     return (<>
-        <Box sx={{ display: 'flex', mb: 2 }}>
+        <Box sx={{ display: 'flex', mb: 2 }} data-testid="currency-info">
             <Typography variant="h5" sx={{ placeSelf: 'baseline' }}>{props.name}</Typography>
             <Typography variant="subtitle1" color={grey[700]} sx={{ ml: 2, placeSelf: 'baseline' }}>{props.symbol}</Typography>
         </Box>
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex' }} data-testid="exchange-rate">
             <Typography variant="h6"  sx={{ placeSelf: 'baseline' }}>
                 <FontAwesomeIcon icon={faDollarSign} className="fa" />&nbsp;{priceStr}
             </Typography>
