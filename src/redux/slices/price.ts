@@ -1,8 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { calculatePriceInfo } from '../../utils/price';
-import Timestamp from '../../components/timestamp';
-import { BigNumber } from 'ethers';
 import { parseUnits } from '@ethersproject/units';
 
 export type PriceState = {
@@ -37,8 +34,8 @@ const initialState: PriceState = {
     }
 }
 
-export const accountSlice = createSlice({
-    name: 'account',
+export const priceSlice = createSlice({
+    name: 'price',
     initialState,
     reducers: {
         setCoin: (state, action: PayloadAction<{ symbol: string, name: string, decimals: number, address: string}>) => {
@@ -48,13 +45,12 @@ export const accountSlice = createSlice({
             state.decimals = action.payload.decimals;
         },
         addPrice: (state, action: PayloadAction<PriceInfo>) => {
+            // check roundid does not yet exist
+            if (state.history.find((p) => p.roundId === action.payload.roundId)) {
+                return;
+            }
             state.latest = action.payload;
             state.history.push(action.payload);
-        },
-        addNewPrice: (state, action: PayloadAction<{ price: string, timestamp: Timestamp }>) => {
-            const priceInfo = calculatePriceInfo(state.latest, action.payload, state.depegParameters);
-            state.latest = priceInfo;
-            state.history.push(priceInfo);
         },
     },
 });
@@ -63,7 +59,7 @@ export const accountSlice = createSlice({
 export const { 
     setCoin,
     addPrice,
-} = accountSlice.actions;
+} = priceSlice.actions;
 
-export default accountSlice.reducer;
+export default priceSlice.reducer;
 

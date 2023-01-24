@@ -15,7 +15,7 @@ import { getAndUpdateWalletAccount } from '../utils/wallet';
 import { ThemeProvider } from '@mui/material/styles';
 import { etheriscTheme } from '../config/theme';
 import Layout from '../components/layout/layout';
-import { faCartShopping, faShieldHalved, faSackDollar, faCoins, faDollarSign } from "@fortawesome/free-solid-svg-icons";
+import { faCartShopping, faShieldHalved, faSackDollar, faCoins, faChartLine } from "@fortawesome/free-solid-svg-icons";
 
 // The following import prevents a Font Awesome icon server-side rendering bug,
 // where the icons flash from a very large icon down to a properly sized one:
@@ -88,7 +88,7 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
     [t('nav.link.policies'), '/policies', faShieldHalved],
     [t('nav.link.invest'), '/invest', faSackDollar],
     [t('nav.link.bundles'), '/bundles', faCoins],
-    [t('nav.link.price'), '/price', faDollarSign],
+    [t('nav.link.price'), '/price', faChartLine],
   ];
 
   appProps.pageProps.items = items;

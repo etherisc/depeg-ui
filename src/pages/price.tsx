@@ -7,7 +7,7 @@ import { getBackendApi } from "../backend/backend_api";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import Price from "../components/price/price";
+import PriceInfo from '../components/price_info/price_info';
 
 export default function PricePage() {
   const { enqueueSnackbar } = useSnackbar();
@@ -28,7 +28,7 @@ export default function PricePage() {
           <title>{t('apptitle')}</title>
       </Head>
       
-      <Price insurance={insurance} />
+      <PriceInfo backend={insurance} />
     </>
   )
 }

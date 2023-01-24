@@ -5,6 +5,7 @@ import { BundleData } from "./bundle_data";
 import { BackendApiMock } from "./backend_api_mock";
 import { BackendApiSmartContract } from "./backend_api_smart_contract";
 import { PolicyData } from "./policy_data";
+import { PriceFeedApi } from "./price_feed/api";
 
 export interface BackendApi {
     usd1: string;
@@ -35,6 +36,7 @@ export interface BackendApi {
         ): Promise<number>;
     application: ApplicationApi;
     invest: InvestApi;
+    priceFeed: PriceFeedApi;
 }
 
 export interface ApplicationApi {
