@@ -9,12 +9,14 @@ export type PriceState = {
     address: string,
     latest: PriceInfo,
     history: Array<PriceInfo>,
+    historyLoading: boolean,
     depegParameters: DepegParameters,
 }
 
 const initialPrice = {
-    price: parseUnits("1.0", 8).toString(),
-    timestamp: new Date().getMilliseconds(),
+    roundId: "0",
+    price: parseUnits("0.0", 8).toString(),
+    timestamp: 0,
 } as PriceInfo;
 
 
@@ -25,6 +27,7 @@ const initialState: PriceState = {
     decimals: 8,
     latest: initialPrice,
     history: [], // no initial history
+    historyLoading: false,
     // TODO: get from config
     depegParameters: {
         decimals: 8,
@@ -45,13 +48,28 @@ export const priceSlice = createSlice({
             state.decimals = action.payload.decimals;
         },
         addPrice: (state, action: PayloadAction<PriceInfo>) => {
-            // check roundid does not yet exist
-            if (state.history.find((p) => p.roundId === action.payload.roundId)) {
-                return;
+            // update latest price if newer price
+            if (action.payload.roundId > state.latest.roundId) {
+                state.latest = action.payload;
             }
-            state.latest = action.payload;
-            state.history.push(action.payload);
+
+            // check if roundid exists in history and insert if not
+            const index = state.history.findIndex((p) => p.roundId === action.payload.roundId);
+            if (index === -1) {
+                const nextRoundIndex = state.history.findIndex((p) => action.payload.roundId < p.roundId );
+                if (nextRoundIndex === -1) {
+                    state.history.push(action.payload);
+                } else {
+                    state.history.splice(nextRoundIndex, 0, action.payload);
+                }
+            }
         },
+        historyLoading: (state) => {
+            state.historyLoading = true;
+        },
+        historyLoadingFinished: (state) => {
+            state.historyLoading = false;
+        }
     },
 });
 
@@ -59,6 +77,8 @@ export const priceSlice = createSlice({
 export const { 
     setCoin,
     addPrice,
+    historyLoading,
+    historyLoadingFinished,
 } = priceSlice.actions;
 
 export default priceSlice.reducer;

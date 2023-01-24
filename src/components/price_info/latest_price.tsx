@@ -17,14 +17,14 @@ interface LatestPriceProps {
 export default function LatestPrice(props: LatestPriceProps) {
     
     function formatWithDecimals(value: BigNumber, decimals: number) {
-        console.log(value.toNumber());
+        // console.log(value.toNumber());
         const v = formatUnits(value, props.decimals);
-        console.log(v);
+        // console.log(v);
         return (+v).toFixed(decimals);
     }
 
     const priceStr = formatWithDecimals(BigNumber.from(props.price), 4);
-    const timestampStr = moment.unix(props.timestamp).format("YYYY-MM-DD HH:mm:ss");
+    const timestampStr = moment.utc(props.timestamp * 1000).format("YYYY-MM-DD HH:mm:ss UTC");
 
     return (<>
         <Box sx={{ display: 'flex', mb: 2 }}>

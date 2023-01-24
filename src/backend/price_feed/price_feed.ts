@@ -1,4 +1,5 @@
 import { BigNumber, Signer } from "ethers";
+import moment from "moment";
 import { AggregatorV3Interface, AggregatorV3Interface__factory } from "../../contracts/chainlink-contracts";
 import { DepegProduct__factory, UsdcPriceDataProvider__factory } from "../../contracts/depeg-contracts";
 import { PriceFeedApi } from "./api";
@@ -43,7 +44,7 @@ export class PriceFeed implements PriceFeedApi {
         };
         priceRetrieved(priceInfo);
     }
-    
+
     async getPrice(roundId: BigNumber, priceRetrieved: (price: PriceInfo) => void): Promise<void> {
         const aggregator = await this.getChainlinkAggregator();
         const roundData = await aggregator.getRoundData(roundId);
@@ -54,4 +55,40 @@ export class PriceFeed implements PriceFeedApi {
         };
         priceRetrieved(priceInfo);
     }
+
+    async getAllPricesAfter(
+        after: number, 
+        priceRetrieved: (price: PriceInfo) => void, 
+        loadingStarted: () => void,
+        loadingFinished: () => void,
+    ): Promise<void> {
+        console.log("starting to get historical prices after " + after);
+        loadingStarted();
+        const aggregator = await this.getChainlinkAggregator();
+        let roundData = await aggregator.latestRoundData();
+        let timestamp = moment.unix(roundData.updatedAt.toNumber());
+        let afterTs = moment.unix(after);
+
+        while (timestamp.isAfter(afterTs)) {
+            priceRetrieved({
+                roundId: roundData.roundId.toString(),
+                price: roundData.answer.toString(),
+                timestamp: roundData.updatedAt.toNumber(),
+            });
+
+            const nextRoundId = roundData.roundId.sub(1);
+            
+            if (nextRoundId.eq(0)) {
+                break;
+            }
+
+            roundData = await aggregator.getRoundData(nextRoundId);
+            timestamp = moment.unix(roundData.updatedAt.toNumber());
+            console.log("got historical price for round " + roundData.roundId.toString() + " at " + timestamp);
+        }
+
+        loadingFinished();
+        console.log("finished getting historical prices");
+    }
+
 }
