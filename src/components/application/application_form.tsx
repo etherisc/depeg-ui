@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField'
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BundleData } from '../../backend/bundle_data';
-import { ApplicationApi } from '../../backend/insurance_api';
+import { ApplicationApi } from '../../backend/backend_api';
 import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
 import Premium from './premium';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

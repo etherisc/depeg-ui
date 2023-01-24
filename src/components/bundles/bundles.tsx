@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useState } from "react";
-import { getInsuranceApi, InsuranceApi } from "../../backend/insurance_api";
+import { getBackendApi, BackendApi } from "../../backend/backend_api";
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleData } from "../../backend/bundle_data";
@@ -24,7 +24,7 @@ import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
 import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/bundles";
 
 export interface BundlesProps {
-    insurance: InsuranceApi;
+    insurance: BackendApi;
 }
 
 export default function Bundles(props: BundlesProps) {
@@ -65,7 +65,7 @@ export default function Bundles(props: BundlesProps) {
         }
 
         // this will return the count for all bundles in the system (right now this is the only way to get to bundles)
-        const iapi = getInsuranceApi(enqueueSnackbar, t, signer, provider).invest;
+        const iapi = getBackendApi(enqueueSnackbar, t, signer, provider).invest;
         const bundlesCount = await iapi.bundleCount();
         for (let i = 0; i < bundlesCount; i++) {
             const bundleId = await iapi.bundleId(i);

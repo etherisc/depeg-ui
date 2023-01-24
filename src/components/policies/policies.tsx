@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
-import { InsuranceApi } from "../../backend/insurance_api";
+import { BackendApi } from "../../backend/backend_api";
 import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -22,7 +22,7 @@ import { bigNumberComparator } from "../../utils/bignumber";
 import { addPolicy, finishLoading, reset, startLoading } from "../../redux/slices/policies";
 
 export interface PoliciesProps {
-    insurance: InsuranceApi;
+    insurance: BackendApi;
 }
 
 export default function Policies(props: PoliciesProps) {

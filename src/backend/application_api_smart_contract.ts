@@ -3,7 +3,7 @@ import { NoBundleFoundError, BalanceTooSmallError } from "../utils/error";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { hasBalance } from "./erc20";
-import { ApplicationApi } from "./insurance_api";
+import { ApplicationApi } from "./backend_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
 
 export class ApplicationApiSmartContract implements ApplicationApi {

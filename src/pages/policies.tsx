@@ -5,7 +5,7 @@ import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
 import Policies from '../components/policies/policies';
 import { useEffect, useMemo } from 'react';
-import { getInsuranceApi } from '../backend/insurance_api';
+import { getBackendApi } from '../backend/backend_api';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
@@ -18,7 +18,7 @@ export default function PoliciesPage() {
     const provider = useSelector((state: RootState) => state.chain.provider);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
 
-    const insurance = useMemo(() => getInsuranceApi(
+    const insurance = useMemo(() => getBackendApi(
         enqueueSnackbar,
         t,
         signer,

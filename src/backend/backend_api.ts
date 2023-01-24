@@ -2,11 +2,11 @@ import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { BigNumber, ethers, Signer } from "ethers";
 import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
 import { BundleData } from "./bundle_data";
-import { insuranceApiMock } from "./insurance_api_mock";
-import { InsuranceApiSmartContract } from "./insurance_api_smart_contract";
+import { BackendApiMock } from "./backend_api_mock";
+import { BackendApiSmartContract } from "./backend_api_smart_contract";
 import { PolicyData } from "./policy_data";
 
-export interface InsuranceApi {
+export interface BackendApi {
     usd1: string;
     usd1Decimals: number;
     usd2: string;
@@ -93,24 +93,24 @@ export interface InvestApi {
     bundle(bundleId: number, walletAddress?: string): Promise<BundleData|undefined>;
 }
 
-export function getInsuranceApi(
+export function getBackendApi(
         enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey, 
         t: (key: string) => string,
         signer?: Signer,
         provider?: ethers.providers.Provider
-        ): InsuranceApi {
+        ): BackendApi {
     
     const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
     if (depegProductContractAddress == null) {
         console.log("Using mock insurance API");
-        return insuranceApiMock(enqueueSnackbar);
+        return BackendApiMock(enqueueSnackbar);
     } else {
         console.log("Using smart contract", depegProductContractAddress);
-        let api: InsuranceApiSmartContract;
+        let api: BackendApiSmartContract;
         if (signer === undefined || provider === undefined) {
-            api = new InsuranceApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress);
+            api = new BackendApiSmartContract(new ethers.VoidSigner(depegProductContractAddress, provider), depegProductContractAddress);
         } else {
-            api = new InsuranceApiSmartContract(signer, depegProductContractAddress);
+            api = new BackendApiSmartContract(signer, depegProductContractAddress);
         }
         return api;
     }

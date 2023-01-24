@@ -5,7 +5,7 @@ import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
 import Invest from '../components/invest/invest';
 import { useMemo } from 'react';
-import { getInsuranceApi } from '../backend/insurance_api';
+import { getBackendApi } from '../backend/backend_api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 
@@ -15,7 +15,7 @@ export default function InvestPage() {
   const signer = useSelector((state: RootState) => state.chain.signer);
   const provider = useSelector((state: RootState) => state.chain.provider);
 
-  const insurance = useMemo(() => getInsuranceApi(
+  const insurance = useMemo(() => getBackendApi(
     enqueueSnackbar,
     t,
     signer,

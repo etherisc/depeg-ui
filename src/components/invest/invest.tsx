@@ -1,7 +1,7 @@
 import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from 'next-i18next';
-import { InsuranceApi } from "../../backend/insurance_api";
+import { BackendApi } from "../../backend/backend_api";
 import { SnackbarKey, useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import InvestForm from "./invest_form";
@@ -16,7 +16,7 @@ import { BigNumber } from "ethers";
 import { updateAccountBalance } from "../../utils/chain";
 
 export interface InvestProps {
-    insurance: InsuranceApi;
+    insurance: BackendApi;
 }
 
 const steps = ['step0', 'step1', 'step2', 'step3', 'step4'];

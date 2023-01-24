@@ -1,12 +1,12 @@
 import { Signer } from "ethers";
-import { ApplicationApi, InsuranceApi, InvestApi } from "./insurance_api";
+import { ApplicationApi, BackendApi, InvestApi } from "./backend_api";
 import { createApprovalForTreasury } from "./treasury";
 import { DepegProductApi } from "./depeg_product_api";
 import { PolicyData } from "./policy_data";
 import { ApplicationApiSmartContract } from "./application_api_smart_contract";
 import { InvestApiSmartContract } from "./invest_api_smart_contract";
 
-export class InsuranceApiSmartContract implements InsuranceApi {
+export class BackendApiSmartContract implements BackendApi {
 
     private signer: Signer;
     private depegProductAddress: string;

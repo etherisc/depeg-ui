@@ -1,12 +1,12 @@
 import { BigNumber } from "ethers/lib/ethers";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
-import { ApplicationApi, InsuranceApi, InvestApi } from "./insurance_api";
+import { ApplicationApi, BackendApi, InvestApi } from "./backend_api";
 import { delay } from "../utils/delay";
 import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
 import dayjs from "dayjs";
 
-export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
+export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
         usd1: 'USDC',
         usd1Decimals: 6,
@@ -28,7 +28,7 @@ export function insuranceApiMock(enqueueSnackbar: (message: SnackbarMessage, opt
         },
         application: applicationMock(enqueueSnackbar),
         invest: investMock(enqueueSnackbar),
-    } as InsuranceApi;
+    } as BackendApi;
 }
 
 const mockPoliciesActive = [

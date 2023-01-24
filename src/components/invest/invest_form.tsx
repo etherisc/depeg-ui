@@ -6,7 +6,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
-import { InsuranceApi } from '../../backend/insurance_api';
+import { BackendApi } from '../../backend/backend_api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -21,7 +21,7 @@ export interface InvestFormProperties {
     formDisabled: boolean;
     usd2: string;
     usd2Decimals: number;
-    insurance: InsuranceApi;
+    insurance: BackendApi;
     formReadyForInvest: (isFormReady: boolean) => void;
     invest: (name: string, lifetime: number, investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) => void;
 }

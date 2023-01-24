@@ -1,6 +1,6 @@
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
-import { InvestApi } from "./insurance_api";
+import { InvestApi } from "./backend_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
 
 export class InvestApiSmartContract implements InvestApi {
