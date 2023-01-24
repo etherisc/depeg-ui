@@ -1,9 +1,9 @@
 import { Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
-import { InsuranceApi } from "../../backend/insurance_api";
+import { BackendApi } from "../../backend/backend_api";
 
 interface PriceProps {
-    insurance: InsuranceApi;
+    insurance: BackendApi;
 }
 
 export default function Price(props: PriceProps) {
