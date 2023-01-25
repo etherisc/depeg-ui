@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report! 
-        By submitting the bug, you will participate in our bug bounty program and have the chance to earn some DIP. 
+        By submitting the bug, you will participate in our [bug bounty program](https://github.com/etherisc/depeg-ui/wiki/Bug-Bounty-Program) and have the chance to earn some DIP. 
         In case your bug gets accepted (in this case we will add the label _accepted_ to the issue) and you are eligible for the bug bounty, please send us a DM  with your wallet address on the channel you first used to disclose the bug (Gitter, Telegram, Discord) and we will send you the DIP reward. 
         Please **do not change any of the preselected labels or assignees**.
   - type: textarea
@@ -65,7 +65,7 @@ body:
     id: terms
     attributes:
       label: Rules
-      description: By submitting this issue, you agree to follow our [Rules](https://github.com/etherisc/depeg-ui/wiki/Bug-Bountry-Program)
+      description: By submitting this issue, you agree to follow our [Rules](https://github.com/etherisc/depeg-ui/wiki/Bug-Bounty-Program)
       options:
         - label: I agree to follow this project's rules
           required: true
