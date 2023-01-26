@@ -36,9 +36,39 @@ export default function PriceHistory(props: PriceHistoryProps) {
                 return {
                     x: price.timestamp * 1000, 
                     y: parseFloat(formatUnits(price.price, props.decimals)) 
+                    // TODO: add product status to the data (once available)
                 }
             }
         );
+    }
+
+    function getPointColor(ctx: any): string {
+        console.log("getPointColor", ctx);
+        const value = ctx?.parsed?.y;
+        if ( value === undefined || ctx.type !== 'data') {
+            return theme.palette.primary.light;
+        }
+        if (value < TRIGGER_PRICE) {
+            return theme.palette.error.dark;
+        }
+        return theme.palette.primary.light;
+    }
+
+
+    function getSegmentColor(ctx: any): string {
+        console.log("getSegmentColor", ctx, ctx.type);
+        if (ctx.type !== 'segment' ) {
+            return theme.palette.primary.light;
+        }
+        const p0 = ctx.p0;
+        const p1 = ctx.p1;
+        console.log(p0, p1);
+        // TODO: if product is depegged, use red color
+        if (p0.parsed.y < TRIGGER_PRICE || p1.parsed.y < TRIGGER_PRICE) {
+            console.log("red");
+            return theme.palette.warning.light;
+        }
+        return theme.palette.primary.light;
     }
 
     const data = {
@@ -47,7 +77,10 @@ export default function PriceHistory(props: PriceHistoryProps) {
             {
                 label: `{props.symbol} price history`,
                 data: dataset,
-                borderColor: theme.palette.primary.light,
+                borderColor: getPointColor,
+                segment: {
+                    borderColor: getSegmentColor,
+                },
             },
             {
                 label: "Trigger",
@@ -80,9 +113,6 @@ export default function PriceHistory(props: PriceHistoryProps) {
         scales: {
             x: {
                 type: 'time' as const,
-                time: {
-                    // unit: 'seconds' as const,
-                },
                 ticks: {
                     autoSkip: true,
                     maxRotation: 30,
@@ -100,7 +130,7 @@ export default function PriceHistory(props: PriceHistoryProps) {
         },
         elements: {
             point: {
-                pointStyle: 'rectRot',
+                pointStyle: 'circle',
             },
         },
         plugins: {
@@ -109,7 +139,7 @@ export default function PriceHistory(props: PriceHistoryProps) {
                     label: function(context: any) {
                         return props.symbol + " " + context.parsed.y;
                     }
-                }
+                },
             },
         }
     }
