@@ -4,6 +4,7 @@ import { CategoryScale, Chart, LinearScale, PointElement, LineElement, Colors, T
 import { LinearProgress } from "@mui/material";
 import FakeData from "./fake_data";
 import 'chartjs-adapter-moment';
+import { useTranslation } from "next-i18next";
 
 
 interface PriceHistoryProps {
@@ -17,6 +18,8 @@ interface PriceHistoryProps {
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Colors, TimeScale, Tooltip);
 
 export default function PriceHistory(props: PriceHistoryProps) {
+    const { t } = useTranslation(['price', 'common']);
+
     let labels = [] as string[];
     let dataset = [] as any;
 
@@ -55,6 +58,10 @@ export default function PriceHistory(props: PriceHistoryProps) {
                 }
             },
             y: {
+                title: {
+                    display: true,
+                    text: t('chart.y.title', { symbol: props.symbol })
+                },
                 suggestedMin: 0.98,
                 suggestedMax: 1.02,
             }
@@ -71,7 +78,7 @@ export default function PriceHistory(props: PriceHistoryProps) {
                         return props.symbol + " " + context.parsed.y;
                     }
                 }
-            }
+            },
         }
     }
 
