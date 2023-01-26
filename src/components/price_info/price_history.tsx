@@ -1,8 +1,10 @@
 import { formatUnits } from "ethers/lib/utils";
 import { Line } from "react-chartjs-2";
-import { CategoryScale, Chart, LinearScale, PointElement, LineElement, Colors, TimeSeriesScale, TimeScale } from 'chart.js'; 
+import { CategoryScale, Chart, LinearScale, PointElement, LineElement, Colors, TimeScale, Tooltip } from 'chart.js'; 
 import { LinearProgress } from "@mui/material";
-import moment from "moment";
+import FakeData from "./fake_data";
+import 'chartjs-adapter-moment';
+
 
 interface PriceHistoryProps {
     name: string;
@@ -12,7 +14,7 @@ interface PriceHistoryProps {
     isLoading: boolean;
 }
 
-Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Colors, TimeSeriesScale, TimeScale);
+Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Colors, TimeScale, Tooltip);
 
 export default function PriceHistory(props: PriceHistoryProps) {
     let labels = [] as string[];
@@ -21,10 +23,10 @@ export default function PriceHistory(props: PriceHistoryProps) {
     if (! props.isLoading) {
         dataset = props.prices.map(
             (price: PriceInfo) => {
-                const ts = moment.utc(price.timestamp * 1000).format("MM-DD HH:mm");
+                // const ts = moment.utc(price.timestamp * 1000).format("MM-DD HH:mm");
                 // const ts = price.timestamp;
                 return { 
-                    x: ts, 
+                    x: price.timestamp * 1000, 
                     y: parseFloat(formatUnits(price.price, props.decimals)) 
                 }
             }
@@ -42,10 +44,10 @@ export default function PriceHistory(props: PriceHistoryProps) {
     const options = {
         scales: {
             x: {
-                // type: 'time',
-                // time: {
-                //     unit: 'second'
-                // },
+                type: 'time' as const,
+                time: {
+                    // unit: 'seconds' as const,
+                },
                 ticks: {
                     autoSkip: true,
                     maxRotation: 30,
@@ -53,16 +55,33 @@ export default function PriceHistory(props: PriceHistoryProps) {
                 }
             },
             y: {
-                suggestedMin: 0.95,
-                suggestedMax: 1.05,
+                suggestedMin: 0.98,
+                suggestedMax: 1.02,
+            }
+        },
+        elements: {
+            point: {
+                pointStyle: 'rectRot',
+            },
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context: any) {
+                        return props.symbol + " " + context.parsed.y;
+                    }
+                }
             }
         }
     }
+
+    const fakeData = process.env.NEXT_PUBLIC_FAKE_PRICE_FEED;
 
     return (<>
         {props.isLoading && <LinearProgress />}
         <Line 
             options={options}
             data={data} />
+        {fakeData && <FakeData />}
     </>);
 }

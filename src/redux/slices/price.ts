@@ -11,6 +11,7 @@ export type PriceState = {
     history: Array<PriceInfo>,
     historyLoading: boolean,
     depegParameters: DepegParameters,
+    noUpdates: boolean,
 }
 
 const initialPrice = {
@@ -34,7 +35,8 @@ const initialState: PriceState = {
         triggerPrice: "0.995",
         recoveryPrice: "0.999",
         recoveryWindow: 24 * 60 * 60, // one day
-    }
+    },
+    noUpdates: false,
 }
 
 export const priceSlice = createSlice({
@@ -48,6 +50,9 @@ export const priceSlice = createSlice({
             state.decimals = action.payload.decimals;
         },
         addPrice: (state, action: PayloadAction<PriceInfo>) => {
+            if (state.noUpdates) {
+                return;
+            }
             // update latest price if newer price
             if (action.payload.roundId > state.latest.roundId) {
                 state.latest = action.payload;
@@ -69,7 +74,12 @@ export const priceSlice = createSlice({
         },
         historyLoadingFinished: (state) => {
             state.historyLoading = false;
-        }
+        },
+        loadPriceFeedHistory: (state, action: PayloadAction<PriceInfo[]>) => {
+            state.history = action.payload;
+            state.latest = action.payload[action.payload.length - 1];
+            state.noUpdates = true;
+        },
     },
 });
 
@@ -79,6 +89,7 @@ export const {
     addPrice,
     historyLoading,
     historyLoadingFinished,
+    loadPriceFeedHistory,
 } = priceSlice.actions;
 
 export default priceSlice.reducer;
