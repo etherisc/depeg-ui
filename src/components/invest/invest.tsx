@@ -221,8 +221,15 @@ export default function Invest(props: InvestProps) {
     ) {
         try {
             enableUnloadWarning(true);
-            setActiveStep(3);
             const investorWalletAddress = await signer!.getAddress();
+            if (! await checkBalance(investorWalletAddress, BigNumber.from(investedAmount))) {
+                enqueueSnackbar(
+                    t('balance_insufficient', { currency: props.insurance.usd2 }),
+                    { variant: "error", autoHideDuration: 3000 }
+                );
+                return;
+            }
+            setActiveStep(3);
             const approvalSuccess = await doApproval(investorWalletAddress, investedAmount);
             if ( ! approvalSuccess) {
                 setActiveStep(2);
@@ -294,4 +301,8 @@ export default function Invest(props: InvestProps) {
             </div>
         </>
     );
+
+    async function checkBalance(walletAddress: string, amount: BigNumber): Promise<boolean> {
+        return await props.insurance.hasUsd2Balance(walletAddress, amount);
+    }
 }

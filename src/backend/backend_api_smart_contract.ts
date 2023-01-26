@@ -1,10 +1,11 @@
-import { Signer } from "ethers";
+import { BigNumber, Signer } from "ethers";
 import { ApplicationApi, BackendApi, InvestApi } from "./backend_api";
 import { createApprovalForTreasury } from "./treasury";
 import { DepegProductApi } from "./depeg_product_api";
 import { PolicyData } from "./policy_data";
 import { ApplicationApiSmartContract } from "./application_api_smart_contract";
 import { InvestApiSmartContract } from "./invest_api_smart_contract";
+import { hasBalanceBN } from "./erc20";
 
 export class BackendApiSmartContract implements BackendApi {
 
@@ -71,6 +72,11 @@ export class BackendApiSmartContract implements BackendApi {
 
     async policiesCount(walletAddress: string): Promise<number> {
         return await (await this.getProductApi()).getPoliciesCount(walletAddress);
+    }
+
+    async hasUsd2Balance(walletAddress: string, amount: BigNumber): Promise<boolean> {
+        const token = await (await this.getProductApi()).getUsd2Address();
+        return await hasBalanceBN(walletAddress, amount, token, this.signer);
     }
 
     async createTreasuryApproval(

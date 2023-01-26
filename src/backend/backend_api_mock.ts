@@ -12,6 +12,9 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
         usd1Decimals: 6,
         usd2: 'USDT',
         usd2Decimals: 6,
+        async hasUsd2Balance(walletAddress: string, amount: BigNumber): Promise<boolean> {
+            return Promise.resolve(true);
+        },
         async createTreasuryApproval(walletAddress: string, premium: number) {
             enqueueSnackbar(`Approval mocked (${walletAddress}, ${premium}`,  { autoHideDuration: 3000, variant: 'info' });
             await delay(2000);

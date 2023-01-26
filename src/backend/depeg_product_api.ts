@@ -60,6 +60,10 @@ export class DepegProductApi {
         return this.instanceService!;
     }
 
+    async getUsd2Address(): Promise<string> {
+        return await this.depegProduct!.getToken();
+    }
+
     extractProcessIdFromApplicationLogs(logs: any[]): string|undefined {
         const productAbiCoder = new Coder(DepegProductBuild.abi);
         let processId = undefined;

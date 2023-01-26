@@ -1,4 +1,4 @@
-import { Signer } from "ethers";
+import { BigNumber, Signer } from "ethers";
 import { IERC20, IERC20__factory } from "../contracts/gif-interface";
 
 export function getErc20Token(address: string, signer: Signer): IERC20 {
@@ -9,6 +9,14 @@ export function getErc20Token(address: string, signer: Signer): IERC20 {
 export async function hasBalance(walletAddress: string, expectedBalance: number, tokenAddress: string, signer: Signer): Promise<boolean> {
     const token = getErc20Token(tokenAddress, signer);
     const balance = await token.balanceOf(walletAddress);
+    return balance.gte(expectedBalance);
+}
+
+/** Checks weather the given wallet has the expected balance */
+export async function hasBalanceBN(walletAddress: string, expectedBalance: BigNumber, tokenAddress: string, signer: Signer): Promise<boolean> {
+    const token = getErc20Token(tokenAddress, signer);
+    const balance = await token.balanceOf(walletAddress);
+    // console.log(balance);
     return balance.gte(expectedBalance);
 }
 

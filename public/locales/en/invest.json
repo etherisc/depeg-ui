@@ -30,6 +30,7 @@
     "approval_wait": "Treasury allowance created, waiting for onchain confirmation",
     "invest_info": "Please confirm execution of the riskpool investment transaction on contract {{address}} in your wallet app",
     "invest_wait": "Transaction created, waiting for onchain confirmation",
+    "balance_insufficient": "{{currency}} balance of wallet is insufficient to fund this riskpool bundle",
     "error": {
         "name": {
             "pattern": "Name may only include letters, numbers, underscore (_), dash (-) and space"
