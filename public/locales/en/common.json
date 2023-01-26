@@ -36,6 +36,7 @@
             "walletType": "This field must contain a ethereum address (0x...)",
             "isAddress": "This field must contain a valid ethereum address",
             "numberType": "This field must contain an integer number",
+            "numberTypeFloat": "This field must contain a decimal number",
             "amountType": "This field must contain an amount",
             "minLength": "This field must be at least {{minLength}} characters",
             "maxLength": "This field must be at most {{maxLength}} characters",

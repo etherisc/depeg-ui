@@ -391,7 +391,12 @@ export default function InvestForm(props: InvestFormProperties) {
                     <Controller
                         name="annualPctReturn"
                         control={control}
-                        rules={{ required: true, min: 0.01, max: maxAnnualPctReturn }}
+                        rules={{ 
+                            required: true, 
+                            min: 0.01, 
+                            max: maxAnnualPctReturn,
+                            pattern: /^[0-9.]+$/,
+                        }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('annualPercentageReturn')}
@@ -404,7 +409,10 @@ export default function InvestForm(props: InvestFormProperties) {
                                 }}
                                 error={errors.annualPctReturn !== undefined}
                                 helperText={errors.annualPctReturn !== undefined 
-                                    ? t(`error.field.${errors.annualPctReturn.type}`, { "ns": "common", "minValue": 0.01, "maxValue": maxAnnualPctReturn }) 
+                                    ? ( errors.annualPctReturn.type == 'pattern' 
+                                        ? t(`error.field.numberTypeFloat`, { "ns": "common"})
+                                        : t(`error.field.${errors.annualPctReturn.type}`, { "ns": "common", "minValue": 0.01, "maxValue": maxAnnualPctReturn })
+                                    )
                                     : ""}
                                 />}
                         />
