@@ -14,6 +14,7 @@ import { TextField } from '@mui/material';
 import { INPUT_VARIANT } from '../../config/theme';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import { BigNumber } from 'ethers';
 
 const formInputVariant = 'outlined';
 
@@ -228,7 +229,14 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: minInvestedAmount, 
                             max: maxInvestedAmount,
-                            pattern: /^[0-9.]+$/
+                            pattern: /^[0-9.]+$/,
+                            validate: {
+                                balance: async (value) => {
+                                    const walletAddress = await props.insurance.getWalletAddress();
+                                    const investedAmount = BigNumber.from(parseFloat(value) * Math.pow(10, props.usd2Decimals));
+                                    return  props.insurance.hasUsd2Balance(walletAddress, investedAmount);
+                                }
+                            }
                         }}
                         render={({ field }) => 
                             <TextField 

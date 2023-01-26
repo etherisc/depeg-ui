@@ -74,6 +74,10 @@ export class BackendApiSmartContract implements BackendApi {
         return await (await this.getProductApi()).getPoliciesCount(walletAddress);
     }
 
+    async getWalletAddress(): Promise<string> {
+        return await this.signer.getAddress();
+    }
+
     async hasUsd2Balance(walletAddress: string, amount: BigNumber): Promise<boolean> {
         const token = await (await this.getProductApi()).getUsd2Address();
         return await hasBalanceBN(walletAddress, amount, token, this.signer);

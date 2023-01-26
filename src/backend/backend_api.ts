@@ -11,6 +11,7 @@ export interface BackendApi {
     usd1Decimals: number;
     usd2: string;
     usd2Decimals: number;
+    getWalletAddress(): Promise<string>;
     hasUsd2Balance: (walletAddress: string, amount: BigNumber) => Promise<boolean>;
     createTreasuryApproval: 
         (

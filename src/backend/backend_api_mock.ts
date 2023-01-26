@@ -12,6 +12,9 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
         usd1Decimals: 6,
         usd2: 'USDT',
         usd2Decimals: 6,
+        getWalletAddress(): Promise<string> {
+            return Promise.resolve("0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729");
+        },
         async hasUsd2Balance(walletAddress: string, amount: BigNumber): Promise<boolean> {
             return Promise.resolve(true);
         },
