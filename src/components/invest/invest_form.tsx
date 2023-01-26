@@ -80,11 +80,17 @@ export default function InvestForm(props: InvestFormProperties) {
     // handle changes in lifetime duration / end date and update the other field accordingly
     const watchLifetime = watch("lifetime");
     useEffect(() => {
+        if (watchLifetime === "") {
+            return;
+        }
         setValue("lifetimeEndDate", dayjs().startOf('day').add(parseInt(watchLifetime), 'days').format("YYYY-MM-DD"));
     }, [watchLifetime, setValue]);
 
     const watchLifetimeEndDate = watch("lifetimeEndDate");
     useEffect(() => {
+        if (watchLifetime === "") {
+            return;
+        }
         setValue("lifetime", dayjs(watchLifetimeEndDate).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
     }, [watchLifetimeEndDate, setValue]);
 
