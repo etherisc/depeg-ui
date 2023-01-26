@@ -56,6 +56,10 @@ export default function PriceHistory(props: PriceHistoryProps) {
                     { x: props.prices[props.prices.length - 1].timestamp * 1000, y: TRIGGER_PRICE },
                 ] : [],
                 borderColor: Color(theme.palette.error.light).fade(0.7).hexa(),
+                // no point, no hover, no hit
+                radius: 0,
+                hoverRadius: 0,
+                hitRadius: 0,
             },
             {
                 label: "Recovery",
@@ -64,6 +68,10 @@ export default function PriceHistory(props: PriceHistoryProps) {
                     { x: props.prices[props.prices.length - 1].timestamp * 1000, y: RECOVERY_PRICE },
                 ] : [],
                 borderColor: Color(theme.palette.success.light).fade(0.7).hexa(),
+                // no point, no hover, no hit
+                radius: 0,
+                hoverRadius: 0,
+                hitRadius: 0,
             },
         ]
     };
