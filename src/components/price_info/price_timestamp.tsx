@@ -26,12 +26,12 @@ export default function PriceTimestamp(props: PriceTimestampProps) {
         </Typography>
         { props.triggeredAt > 0 && props.depeggedAt == 0 &&
             <Typography variant="body2" color={grey[700]} sx={{ placeSelf: 'baseline' }}>
-                &nbsp;/&nbsp;{t('timestamp.triggered')} {timestampStr}
+                &nbsp;/&nbsp;{t('timestamp.triggered')} {triggeredAtStr}
             </Typography>
         }
         { props.depeggedAt > 0 &&
             <Typography variant="body2" color={grey[700]} sx={{ placeSelf: 'baseline' }}>
-                &nbsp;/&nbsp;{t('timestamp.depegged')} {timestampStr}
+                &nbsp;/&nbsp;{t('timestamp.depegged')} {depeggedAtStr}
             </Typography>
         }   
     </Box>)
