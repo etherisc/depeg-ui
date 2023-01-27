@@ -16,6 +16,8 @@ interface PriceHistoryProps {
     symbol: string;
     decimals: number;
     prices: PriceInfo[];
+    triggeredAt: number;
+    depeggedAt: number;
     isLoading: boolean;
 }
 
@@ -35,7 +37,7 @@ export default function PriceHistory(props: PriceHistoryProps) {
                 // const ts = price.timestamp;
                 return {
                     x: price.timestamp * 1000, 
-                    y: parseFloat(formatUnits(price.price, props.decimals)) 
+                    y: parseFloat(formatUnits(price.price, props.decimals)),
                     // TODO: add product status to the data (once available)
                 }
             }
@@ -47,6 +49,10 @@ export default function PriceHistory(props: PriceHistoryProps) {
         const value = ctx?.parsed?.y;
         if ( value === undefined || ctx.type !== 'data') {
             return theme.palette.primary.light;
+        }
+        const ts = ctx.parsed.x * 1000;
+        if (props.depeggedAt != 0 && ts >= props.depeggedAt) {
+            return theme.palette.error.dark;
         }
         if (value < TRIGGER_PRICE) {
             return theme.palette.error.dark;
@@ -63,7 +69,15 @@ export default function PriceHistory(props: PriceHistoryProps) {
         const p0 = ctx.p0;
         const p1 = ctx.p1;
         console.log(p0, p1);
-        // TODO: if product is depegged, use red color
+        
+        const ts0 = p0.parsed.x;
+        const ts1 = p1.parsed.x;
+
+        if (props.depeggedAt > 0 && (ts0 >= props.depeggedAt || ts1 >= props.depeggedAt)) {
+            return theme.palette.error.light;
+        }
+        
+        
         if (p0.parsed.y <= TRIGGER_PRICE || p1.parsed.y <= TRIGGER_PRICE) {
             console.log("red");
             return theme.palette.warning.light;

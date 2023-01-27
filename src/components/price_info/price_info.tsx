@@ -80,6 +80,8 @@ export default function PriceInfo(props: PriceInfoProps) {
                 symbol={coinSymbol}
                 decimals={coinDecimals}
                 prices={priceHistory}
+                triggeredAt={triggeredAt}
+                depeggedAt={depeggedAt}
                 isLoading={priceHistoryLoading}
                 />
         </Box>
