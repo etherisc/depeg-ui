@@ -30,6 +30,8 @@ export default function PriceInfo(props: PriceInfoProps) {
     const latestPriceTimestamp = useSelector((state: RootState) => state.price.latest.timestamp);
     const triggeredAt = useSelector((state: RootState) => state.price.triggeredAt);
     const depeggedAt = useSelector((state: RootState) => state.price.depeggedAt);
+    // used to block periodic price updates when using fake data
+    const noUpdates = useSelector((state: RootState) => state.price.noUpdates);
 
     const priceHistory = useSelector((state: RootState) => state.price.history);
     const priceHistoryLoading = useSelector((state: RootState) => state.price.historyLoading);
@@ -45,6 +47,7 @@ export default function PriceInfo(props: PriceInfoProps) {
                 });    
                 // get price update every minute
                 setInterval(async () => {
+                    if (noUpdates) return;
                     await priceFeedApi.getLatestPrice((price: PriceInfo, triggeredAt: number, depeggedAt: number) => {
                         dispatch(addPrice(price));
                         dispatch(setTriggeredAt(triggeredAt));

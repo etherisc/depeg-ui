@@ -55,9 +55,6 @@ export const priceSlice = createSlice({
             state.decimals = action.payload.decimals;
         },
         addPrice: (state, action: PayloadAction<PriceInfo>) => {
-            if (state.noUpdates) {
-                return;
-            }
             // update latest price if newer price
             if (action.payload.roundId > state.latest.roundId) {
                 state.latest = action.payload;

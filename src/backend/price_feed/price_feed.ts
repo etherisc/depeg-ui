@@ -63,7 +63,7 @@ export class PriceFeed implements PriceFeedApi {
             price: price.toString(),
             timestamp: updatedAt.toNumber(),
         };
-        console.log(priceInfo, triggeredAt.toNumber(), depeggedAt.toNumber());
+        // console.log(priceInfo, triggeredAt.toNumber(), depeggedAt.toNumber());
         priceRetrieved(priceInfo, triggeredAt.toNumber(), depeggedAt.toNumber());
     }
 

@@ -72,8 +72,10 @@ export default function PriceHistory(props: PriceHistoryProps) {
         
         const ts0 = p0.parsed.x;
         const ts1 = p1.parsed.x;
+        const depeggedAt = props.depeggedAt * 1000;
+        console.log("depeggedAt", depeggedAt, ts0, ts1);
 
-        if (props.depeggedAt > 0 && (ts0 >= props.depeggedAt || ts1 >= props.depeggedAt)) {
+        if (depeggedAt > 0 && (ts0 >= depeggedAt || ts1 >= depeggedAt)) {
             return theme.palette.error.light;
         }
         

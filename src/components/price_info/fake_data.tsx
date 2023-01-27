@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { loadPriceFeedHistory } from "../../redux/slices/price";
+import { loadPriceFeedHistory, setDepeggedAt, setTriggeredAt } from "../../redux/slices/price";
 
 export default function FakeData() {
 
@@ -49,9 +49,41 @@ export default function FakeData() {
         ];
 
         dispatch(loadPriceFeedHistory(fakeData));
+        dispatch(setTriggeredAt(0));
+        dispatch(setDepeggedAt(0));
     }
 
     function loadFakeDataTriggered() {
+        const fakeData = [
+            { roundId: "36893488147419103935", price: "100062746", timestamp: 1668040163 - (86400 * 4.6)},
+            { roundId: "36893488147419103936", price: "100162746", timestamp: 1668040019 - (86400 * 4.2)},
+            { roundId: "36893488147419103937", price: "100062746", timestamp: 1668040019 - (86400 * 4)},
+            { roundId: "36893488147419103938", price: "100162746", timestamp: 1668040019 - (86400 * 3.4)},
+            { roundId: "36893488147419103939", price: "100062746", timestamp: 1668040019 - (86400 * 3)},
+            { roundId: "36893488147419103940", price: "100092746", timestamp: 1668040019 - (86400 * 2.6)},
+            { roundId: "36893488147419103941", price: "100162746", timestamp: 1668040019 - (86400 * 2)},
+            { roundId: "36893488147419103942", price: "100262746", timestamp: 1668040019 - (86400 * 1.5)},
+            { roundId: "36893488147419103943", price: "100162746", timestamp: 1668040019 - (86400 * 1)},
+            { roundId: "36893488147419103944", price: "100062746", timestamp: 1668040019 - (86400 * 0.5)},
+            { roundId: "36893488147419103945", price: "099862746", timestamp: 1668040019},
+            { roundId: "36893488147419103946", price: "099793098", timestamp: 1668040163},
+            { roundId: "36893488147419103947", price: "099172218", timestamp: 1668040379},
+            { roundId: "36893488147419103948", price: "099120456", timestamp: 1668040487},
+            { roundId: "36893488147419103949", price: "089144777", timestamp: 1668045803},
+            { roundId: "36893488147419103950", price: "087101944", timestamp: 1668046043},
+            { roundId: "36893488147419103951", price: "080000000", timestamp: 1668056339},
+            { roundId: "36893488147419103952", price: "082006206", timestamp: 1668056375},
+            { roundId: "36893488147419103953", price: "083028722", timestamp: 1668063815},
+            { roundId: "36893488147419103954", price: "079075597", timestamp: 1668064739},
+            { roundId: "36893488147419103955", price: "079974588", timestamp: 1668079607},
+        ];
+
+        dispatch(loadPriceFeedHistory(fakeData));
+        dispatch(setTriggeredAt(1668040379));
+        dispatch(setDepeggedAt(0));
+    }
+
+    function loadFakeDataTriggeredAndRecovered() {
         const fakeData = [
             { roundId: "36893488147419103935", price: "100062746", timestamp: 1668040163 - (86400 * 4.6)},
             { roundId: "36893488147419103936", price: "100162746", timestamp: 1668040019 - (86400 * 4.2)},
@@ -94,6 +126,8 @@ export default function FakeData() {
         ];
 
         dispatch(loadPriceFeedHistory(fakeData));
+        dispatch(setTriggeredAt(0));
+        dispatch(setDepeggedAt(0));
     }
 
     function loadFakeDataDepegged() {
@@ -139,12 +173,15 @@ export default function FakeData() {
         ];
 
         dispatch(loadPriceFeedHistory(fakeData));
+        dispatch(setTriggeredAt(1668040379));
+        dispatch(setDepeggedAt(1668143087));
     }
 
 
     return (<Box sx={{ mt: 2 }}>
         <Button onClick={loadFakeDataHealthy}>Load healthy data</Button>
-        <Button onClick={loadFakeDataTriggered}>Load triggered and recovered data</Button>
+        <Button onClick={loadFakeDataTriggered}>Load triggered</Button>
+        <Button onClick={loadFakeDataTriggeredAndRecovered}>Load triggered and recovered data</Button>
         <Button onClick={loadFakeDataDepegged}>Load triggered and depegged data</Button>
     </Box>);
 }
