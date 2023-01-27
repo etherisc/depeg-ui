@@ -4,6 +4,8 @@ import { AggregatorV3Interface, AggregatorV3Interface__factory } from "../../con
 import { DepegProduct__factory, IPriceDataProvider, UsdcPriceDataProvider, UsdcPriceDataProvider__factory } from "../../contracts/depeg-contracts";
 import { PriceFeedApi } from "./api";
 
+const MAX_DATAPOINTS = 100;
+
 export class PriceFeed implements PriceFeedApi {
 
     private productAddress: string;
@@ -90,8 +92,9 @@ export class PriceFeed implements PriceFeedApi {
         let roundData = await aggregator.latestRoundData();
         let timestamp = moment.unix(roundData.updatedAt.toNumber());
         let afterTs = moment.unix(after);
+        let i = 0;
 
-        while (timestamp.isAfter(afterTs)) {
+        while (timestamp.isAfter(afterTs) && i++ < MAX_DATAPOINTS) {
             priceRetrieved({
                 roundId: roundData.roundId.toString(),
                 price: roundData.answer.toString(),

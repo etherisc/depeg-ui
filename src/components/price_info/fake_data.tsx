@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { loadPriceFeedHistory, setDepeggedAt, setTriggeredAt } from "../../redux/slices/price";
+import { loadPriceFeedHistory, setDepeggedAt, setNoUpdates, setTriggeredAt } from "../../redux/slices/price";
 
 export default function FakeData() {
 
@@ -48,9 +48,11 @@ export default function FakeData() {
             { roundId: "36893488147419103972", price: "100028750", timestamp: 1668402839},
         ];
 
+        dispatch(setNoUpdates(false));
         dispatch(loadPriceFeedHistory(fakeData));
         dispatch(setTriggeredAt(0));
         dispatch(setDepeggedAt(0));
+        dispatch(setNoUpdates(true));
     }
 
     function loadFakeDataTriggered() {
@@ -78,9 +80,11 @@ export default function FakeData() {
             { roundId: "36893488147419103955", price: "079974588", timestamp: 1668079607},
         ];
 
+        dispatch(setNoUpdates(false));
         dispatch(loadPriceFeedHistory(fakeData));
         dispatch(setTriggeredAt(1668040379));
         dispatch(setDepeggedAt(0));
+        dispatch(setNoUpdates(true));
     }
 
     function loadFakeDataTriggeredAndRecovered() {
@@ -125,9 +129,11 @@ export default function FakeData() {
             { roundId: "36893488147419103972", price: "100028750", timestamp: 1668402839},
         ];
 
+        dispatch(setNoUpdates(false));
         dispatch(loadPriceFeedHistory(fakeData));
         dispatch(setTriggeredAt(0));
         dispatch(setDepeggedAt(0));
+        dispatch(setNoUpdates(true));
     }
 
     function loadFakeDataDepegged() {
@@ -172,9 +178,11 @@ export default function FakeData() {
             { roundId: "36893488147419103972", price: "080123524", timestamp: 1668402839},
         ];
 
+        dispatch(setNoUpdates(false));
         dispatch(loadPriceFeedHistory(fakeData));
         dispatch(setTriggeredAt(1668040379));
         dispatch(setDepeggedAt(1668143087));
+        dispatch(setNoUpdates(true));
     }
 
 

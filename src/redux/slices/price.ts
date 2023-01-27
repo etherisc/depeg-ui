@@ -55,6 +55,7 @@ export const priceSlice = createSlice({
             state.decimals = action.payload.decimals;
         },
         addPrice: (state, action: PayloadAction<PriceInfo>) => {
+            if (state.noUpdates) return;
             // update latest price if newer price
             if (action.payload.roundId > state.latest.roundId) {
                 state.latest = action.payload;
@@ -64,6 +65,7 @@ export const priceSlice = createSlice({
             const index = state.history.findIndex((p) => p.roundId === action.payload.roundId);
             if (index === -1) {
                 const nextRoundIndex = state.history.findIndex((p) => action.payload.roundId < p.roundId );
+                console.log(nextRoundIndex);
                 if (nextRoundIndex === -1) {
                     state.history.push(action.payload);
                 } else {
@@ -80,13 +82,17 @@ export const priceSlice = createSlice({
         loadPriceFeedHistory: (state, action: PayloadAction<PriceInfo[]>) => {
             state.history = action.payload;
             state.latest = action.payload[action.payload.length - 1];
-            state.noUpdates = true;
         },
         setTriggeredAt: (state, action: PayloadAction<number>) => {
+            if (state.noUpdates) return;
             state.triggeredAt = action.payload;
         },
         setDepeggedAt: (state, action: PayloadAction<number>) => {  
+            if (state.noUpdates) return;
             state.depeggedAt = action.payload;
+        },
+        setNoUpdates: (state, action: PayloadAction<boolean>) => {
+            state.noUpdates = action.payload;
         },
     },
 });
@@ -100,6 +106,7 @@ export const {
     loadPriceFeedHistory,
     setTriggeredAt,
     setDepeggedAt,
+    setNoUpdates,
 } = priceSlice.actions;
 
 export default priceSlice.reducer;
