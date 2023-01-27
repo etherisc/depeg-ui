@@ -1,7 +1,7 @@
 import { formatUnits } from "ethers/lib/utils";
 import { Line } from "react-chartjs-2";
 import { CategoryScale, Chart, LinearScale, PointElement, LineElement, Colors, TimeScale, Tooltip } from 'chart.js'; 
-import { Box, Button, LinearProgress, useTheme } from "@mui/material";
+import { LinearProgress, useTheme } from "@mui/material";
 import FakeData from "./fake_data";
 import 'chartjs-adapter-moment';
 import { useTranslation } from "next-i18next";
@@ -33,12 +33,9 @@ export default function PriceHistory(props: PriceHistoryProps) {
     if (! props.isLoading) {
         dataset = props.prices.map(
             (price: PriceInfo) => {
-                // const ts = moment.utc(price.timestamp * 1000).format("MM-DD HH:mm");
-                // const ts = price.timestamp;
                 return {
                     x: price.timestamp * 1000, 
                     y: parseFloat(formatUnits(price.price, props.decimals)),
-                    // TODO: add product status to the data (once available)
                 }
             }
         );

@@ -1,6 +1,5 @@
 import { Box, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
-import moment from "moment";
 import PriceAndStability from "./price_and_stability";
 import PriceTimestamp from "./price_timestamp";
 
