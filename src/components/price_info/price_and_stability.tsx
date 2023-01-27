@@ -5,14 +5,14 @@ import { BigNumber } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
 
-interface RateAndStabilityProps {
+interface PriceAndStabilityProps {
     price: string;
     decimals: number;
     triggeredAt: number;
     depeggedAt: number;
 }
 
-export default function RateAndStability(props: RateAndStabilityProps) {
+export default function PriceAndStability(props: PriceAndStabilityProps) {
     const { t } = useTranslation(['price', 'common']);
     const theme = useTheme();
 

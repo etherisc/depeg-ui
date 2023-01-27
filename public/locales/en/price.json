@@ -11,5 +11,10 @@
         "stable": "Stable",
         "triggered": "Triggered",
         "depegged": "Depegged"
+    },
+    "timestamp": {
+        "latest": "Latest price at",
+        "triggered": "Triggered at",
+        "depegged": "Depegged at"
     }
 }
