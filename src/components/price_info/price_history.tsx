@@ -72,10 +72,8 @@ export default function PriceHistory(props: PriceHistoryProps) {
         const depeggedAt = props.depeggedAt * 1000;
         console.log("depeggedAt", depeggedAt, ts0, ts1);
 
-
-        // FIXME: first segment only AFTER depeggedAt
-        if (depeggedAt > 0 && (ts0 >= depeggedAt || ts1 >= depeggedAt)) {
-            return theme.palette.error.light;
+        if (depeggedAt > 0 && (ts0 >= depeggedAt && ts1 >= depeggedAt)) {
+            return theme.palette.error.main;
         }
         
         
