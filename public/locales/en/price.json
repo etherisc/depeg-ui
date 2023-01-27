@@ -4,5 +4,12 @@
         "y": {
             "title": "{{symbol}} price"
         }
+    },
+    "rate": "Price",
+    "stability": "Stability",
+    "state": {
+        "stable": "Stable",
+        "triggered": "Triggered",
+        "depegged": "Depegged"
     }
 }
