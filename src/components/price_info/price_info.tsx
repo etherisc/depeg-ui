@@ -42,7 +42,7 @@ export default function PriceInfo(props: PriceInfoProps) {
                     await priceFeedApi.getLatestPrice((price: PriceInfo) => dispatch(addPrice(price)));    
                 }, ONE_MINUTE);    
 
-                await priceFeedApi.getAllPricesAfter(moment().add(-2, "w").unix(), 
+                await priceFeedApi.getAllPricesAfter(moment().add(-2, "d").unix(), 
                     (price: PriceInfo) => dispatch(addPrice(price)),
                     () => dispatch(historyLoading()),
                     () => dispatch(historyLoadingFinished())

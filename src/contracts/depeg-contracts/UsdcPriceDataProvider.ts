@@ -33,6 +33,7 @@ export declare namespace IPriceDataProvider {
     price: PromiseOrValue<BigNumberish>;
     compliance: PromiseOrValue<BigNumberish>;
     stability: PromiseOrValue<BigNumberish>;
+    eventType: PromiseOrValue<BigNumberish>;
     triggeredAt: PromiseOrValue<BigNumberish>;
     depeggedAt: PromiseOrValue<BigNumberish>;
     createdAt: PromiseOrValue<BigNumberish>;
@@ -43,6 +44,7 @@ export declare namespace IPriceDataProvider {
     BigNumber,
     number,
     number,
+    number,
     BigNumber,
     BigNumber,
     BigNumber
@@ -51,6 +53,7 @@ export declare namespace IPriceDataProvider {
     price: BigNumber;
     compliance: number;
     stability: number;
+    eventType: number;
     triggeredAt: BigNumber;
     depeggedAt: BigNumber;
     createdAt: BigNumber;
@@ -73,14 +76,19 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     "GANACHE2()": FunctionFragment;
     "MAINNET()": FunctionFragment;
     "MUMBAI()": FunctionFragment;
+    "PRICE_HISTORY_SIZE()": FunctionFragment;
     "PRICE_INFO_HISTORY_DURATION()": FunctionFragment;
     "USDC_CONTACT_ADDRESS()": FunctionFragment;
+    "addRoundData(int256,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "description()": FunctionFragment;
     "deviation()": FunctionFragment;
     "forceDepegForNextPriceInfo()": FunctionFragment;
     "getAggregatorAddress()": FunctionFragment;
+    "getAnswer(uint256)": FunctionFragment;
     "getChainlinkAggregatorAddress()": FunctionFragment;
+    "getCompliance(uint80,uint256,uint256)": FunctionFragment;
+    "getComplianceState(uint256,uint256,uint256)": FunctionFragment;
     "getDecimals()": FunctionFragment;
     "getDepegPriceInfo()": FunctionFragment;
     "getDepeggedAt()": FunctionFragment;
@@ -89,18 +97,23 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     "getLatestPriceInfo()": FunctionFragment;
     "getOwner()": FunctionFragment;
     "getRoundData(uint80)": FunctionFragment;
+    "getStability(uint256,uint256,uint256)": FunctionFragment;
+    "getTimestamp(uint256)": FunctionFragment;
     "getToken()": FunctionFragment;
     "getTriggeredAt()": FunctionFragment;
-    "hasNewPriceInfo()": FunctionFragment;
     "heartbeat()": FunctionFragment;
     "heartbeatMargin()": FunctionFragment;
     "isExceedingDeviation(uint256,uint256)": FunctionFragment;
     "isExceedingHeartbeat(uint256,uint256)": FunctionFragment;
     "isMainnet()": FunctionFragment;
     "isMainnetProvider()": FunctionFragment;
+    "isNewPriceInfoEventAvailable()": FunctionFragment;
     "isTestnet()": FunctionFragment;
     "isTestnetProvider()": FunctionFragment;
+    "latestAnswer()": FunctionFragment;
+    "latestRound()": FunctionFragment;
     "latestRoundData()": FunctionFragment;
+    "latestTimestamp()": FunctionFragment;
     "owner()": FunctionFragment;
     "processLatestPriceInfo()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -126,14 +139,19 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
       | "GANACHE2"
       | "MAINNET"
       | "MUMBAI"
+      | "PRICE_HISTORY_SIZE"
       | "PRICE_INFO_HISTORY_DURATION"
       | "USDC_CONTACT_ADDRESS"
+      | "addRoundData"
       | "decimals"
       | "description"
       | "deviation"
       | "forceDepegForNextPriceInfo"
       | "getAggregatorAddress"
+      | "getAnswer"
       | "getChainlinkAggregatorAddress"
+      | "getCompliance"
+      | "getComplianceState"
       | "getDecimals"
       | "getDepegPriceInfo"
       | "getDepeggedAt"
@@ -142,18 +160,23 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
       | "getLatestPriceInfo"
       | "getOwner"
       | "getRoundData"
+      | "getStability"
+      | "getTimestamp"
       | "getToken"
       | "getTriggeredAt"
-      | "hasNewPriceInfo"
       | "heartbeat"
       | "heartbeatMargin"
       | "isExceedingDeviation"
       | "isExceedingHeartbeat"
       | "isMainnet"
       | "isMainnetProvider"
+      | "isNewPriceInfoEventAvailable"
       | "isTestnet"
       | "isTestnetProvider"
+      | "latestAnswer"
+      | "latestRound"
       | "latestRoundData"
+      | "latestTimestamp"
       | "owner"
       | "processLatestPriceInfo"
       | "renounceOwnership"
@@ -208,12 +231,20 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "MAINNET", values?: undefined): string;
   encodeFunctionData(functionFragment: "MUMBAI", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "PRICE_HISTORY_SIZE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "PRICE_INFO_HISTORY_DURATION",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "USDC_CONTACT_ADDRESS",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addRoundData",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
@@ -230,8 +261,28 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getAnswer",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getChainlinkAggregatorAddress",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCompliance",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComplianceState",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getDecimals",
@@ -262,13 +313,21 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     functionFragment: "getRoundData",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getStability",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTimestamp",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "getToken", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getTriggeredAt",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "hasNewPriceInfo",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "heartbeat", values?: undefined): string;
@@ -289,13 +348,29 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     functionFragment: "isMainnetProvider",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "isNewPriceInfoEventAvailable",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "isTestnet", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "isTestnetProvider",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "latestAnswer",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "latestRound",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "latestRoundData",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "latestTimestamp",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -372,11 +447,19 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "MAINNET", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "MUMBAI", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "PRICE_HISTORY_SIZE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "PRICE_INFO_HISTORY_DURATION",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "USDC_CONTACT_ADDRESS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addRoundData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
@@ -393,8 +476,17 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     functionFragment: "getAggregatorAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getAnswer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getChainlinkAggregatorAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCompliance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getComplianceState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -426,13 +518,17 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     functionFragment: "getRoundData",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getToken", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getTriggeredAt",
+    functionFragment: "getStability",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "hasNewPriceInfo",
+    functionFragment: "getTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTriggeredAt",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "heartbeat", data: BytesLike): Result;
@@ -453,13 +549,29 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     functionFragment: "isMainnetProvider",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "isNewPriceInfoEventAvailable",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "isTestnet", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isTestnetProvider",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "latestAnswer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "latestRound",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "latestRoundData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "latestTimestamp",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -483,16 +595,20 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
 
   events: {
+    "AnswerUpdated(int256,uint256,uint256)": EventFragment;
     "LogPriceDataDepegged(uint256,uint256,uint256,uint256)": EventFragment;
     "LogPriceDataDeviationExceeded(uint256,uint256,uint256,uint256)": EventFragment;
     "LogPriceDataHeartbeatExceeded(uint256,uint256,uint256,uint256)": EventFragment;
+    "LogPriceDataProcessed(uint256,uint256,uint256)": EventFragment;
     "LogPriceDataRecovered(uint256,uint256,uint256,uint256)": EventFragment;
     "LogPriceDataTriggered(uint256,uint256,uint256)": EventFragment;
     "LogUsdcProviderForcedDepeg(uint256,uint256)": EventFragment;
     "LogUsdcProviderResetDepeg(uint256)": EventFragment;
+    "NewRound(uint256,address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "AnswerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogPriceDataDepegged"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "LogPriceDataDeviationExceeded"
@@ -500,12 +616,26 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   getEvent(
     nameOrSignatureOrTopic: "LogPriceDataHeartbeatExceeded"
   ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogPriceDataProcessed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogPriceDataRecovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogPriceDataTriggered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogUsdcProviderForcedDepeg"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogUsdcProviderResetDepeg"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewRound"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export interface AnswerUpdatedEventObject {
+  current: BigNumber;
+  roundId: BigNumber;
+  updatedAt: BigNumber;
+}
+export type AnswerUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber],
+  AnswerUpdatedEventObject
+>;
+
+export type AnswerUpdatedEventFilter = TypedEventFilter<AnswerUpdatedEvent>;
 
 export interface LogPriceDataDepeggedEventObject {
   priceId: BigNumber;
@@ -548,6 +678,19 @@ export type LogPriceDataHeartbeatExceededEvent = TypedEvent<
 
 export type LogPriceDataHeartbeatExceededEventFilter =
   TypedEventFilter<LogPriceDataHeartbeatExceededEvent>;
+
+export interface LogPriceDataProcessedEventObject {
+  priceId: BigNumber;
+  price: BigNumber;
+  createdAt: BigNumber;
+}
+export type LogPriceDataProcessedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber],
+  LogPriceDataProcessedEventObject
+>;
+
+export type LogPriceDataProcessedEventFilter =
+  TypedEventFilter<LogPriceDataProcessedEvent>;
 
 export interface LogPriceDataRecoveredEventObject {
   priceId: BigNumber;
@@ -598,6 +741,18 @@ export type LogUsdcProviderResetDepegEvent = TypedEvent<
 
 export type LogUsdcProviderResetDepegEventFilter =
   TypedEventFilter<LogUsdcProviderResetDepegEvent>;
+
+export interface NewRoundEventObject {
+  roundId: BigNumber;
+  startedBy: string;
+  startedAt: BigNumber;
+}
+export type NewRoundEvent = TypedEvent<
+  [BigNumber, string, BigNumber],
+  NewRoundEventObject
+>;
+
+export type NewRoundEventFilter = TypedEventFilter<NewRoundEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -672,11 +827,19 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     MUMBAI(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    PRICE_HISTORY_SIZE(overrides?: CallOverrides): Promise<[number]>;
+
     PRICE_INFO_HISTORY_DURATION(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     USDC_CONTACT_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
+
+    addRoundData(
+      answer: PromiseOrValue<BigNumberish>,
+      startedAt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
@@ -692,7 +855,33 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { priceInfoSourceAddress: string }>;
 
+    getAnswer(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<[string]>;
+
+    getCompliance(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, boolean, BigNumber, BigNumber] & {
+        priceDeviationIsValid: boolean;
+        heartbeetIsValid: boolean;
+        previousPrice: BigNumber;
+        previousUpdatedAt: BigNumber;
+      }
+    >;
+
+    getComplianceState(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[number] & { compliance: number }>;
 
     getDecimals(
       overrides?: CallOverrides
@@ -741,21 +930,23 @@ export interface UsdcPriceDataProvider extends BaseContract {
       }
     >;
 
+    getStability(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[number] & { stability: number }>;
+
+    getTimestamp(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getToken(overrides?: CallOverrides): Promise<[string]>;
 
     getTriggeredAt(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { triggeredAt: BigNumber }>;
-
-    hasNewPriceInfo(
-      overrides?: CallOverrides
-    ): Promise<
-      [boolean, BigNumber, BigNumber] & {
-        newInfoAvailable: boolean;
-        priceId: BigNumber;
-        timeDelta: BigNumber;
-      }
-    >;
 
     heartbeat(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -777,9 +968,23 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     isMainnetProvider(overrides?: CallOverrides): Promise<[boolean]>;
 
+    isNewPriceInfoEventAvailable(
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, IPriceDataProvider.PriceInfoStructOutput, BigNumber] & {
+        newEvent: boolean;
+        priceInfo: IPriceDataProvider.PriceInfoStructOutput;
+        timeSinceEvent: BigNumber;
+      }
+    >;
+
     isTestnet(overrides?: CallOverrides): Promise<[boolean]>;
 
     isTestnetProvider(overrides?: CallOverrides): Promise<[boolean]>;
+
+    latestAnswer(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    latestRound(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     latestRoundData(
       overrides?: CallOverrides
@@ -792,6 +997,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
         answeredInRound: BigNumber;
       }
     >;
+
+    latestTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -852,9 +1059,17 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
   MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
 
+  PRICE_HISTORY_SIZE(overrides?: CallOverrides): Promise<number>;
+
   PRICE_INFO_HISTORY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
   USDC_CONTACT_ADDRESS(overrides?: CallOverrides): Promise<string>;
+
+  addRoundData(
+    answer: PromiseOrValue<BigNumberish>,
+    startedAt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -868,7 +1083,33 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
   getAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
+  getAnswer(
+    roundId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<string>;
+
+  getCompliance(
+    roundId: PromiseOrValue<BigNumberish>,
+    price: PromiseOrValue<BigNumberish>,
+    updatedAt: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [boolean, boolean, BigNumber, BigNumber] & {
+      priceDeviationIsValid: boolean;
+      heartbeetIsValid: boolean;
+      previousPrice: BigNumber;
+      previousUpdatedAt: BigNumber;
+    }
+  >;
+
+  getComplianceState(
+    roundId: PromiseOrValue<BigNumberish>,
+    price: PromiseOrValue<BigNumberish>,
+    updatedAt: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<number>;
 
   getDecimals(overrides?: CallOverrides): Promise<number>;
 
@@ -901,19 +1142,21 @@ export interface UsdcPriceDataProvider extends BaseContract {
     }
   >;
 
+  getStability(
+    roundId: PromiseOrValue<BigNumberish>,
+    price: PromiseOrValue<BigNumberish>,
+    updatedAt: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
+  getTimestamp(
+    roundId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getToken(overrides?: CallOverrides): Promise<string>;
 
   getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
-
-  hasNewPriceInfo(
-    overrides?: CallOverrides
-  ): Promise<
-    [boolean, BigNumber, BigNumber] & {
-      newInfoAvailable: boolean;
-      priceId: BigNumber;
-      timeDelta: BigNumber;
-    }
-  >;
 
   heartbeat(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -935,9 +1178,23 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
   isMainnetProvider(overrides?: CallOverrides): Promise<boolean>;
 
+  isNewPriceInfoEventAvailable(
+    overrides?: CallOverrides
+  ): Promise<
+    [boolean, IPriceDataProvider.PriceInfoStructOutput, BigNumber] & {
+      newEvent: boolean;
+      priceInfo: IPriceDataProvider.PriceInfoStructOutput;
+      timeSinceEvent: BigNumber;
+    }
+  >;
+
   isTestnet(overrides?: CallOverrides): Promise<boolean>;
 
   isTestnetProvider(overrides?: CallOverrides): Promise<boolean>;
+
+  latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
+
+  latestRound(overrides?: CallOverrides): Promise<BigNumber>;
 
   latestRoundData(
     overrides?: CallOverrides
@@ -950,6 +1207,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
       answeredInRound: BigNumber;
     }
   >;
+
+  latestTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -1010,9 +1269,17 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
 
+    PRICE_HISTORY_SIZE(overrides?: CallOverrides): Promise<number>;
+
     PRICE_INFO_HISTORY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
     USDC_CONTACT_ADDRESS(overrides?: CallOverrides): Promise<string>;
+
+    addRoundData(
+      answer: PromiseOrValue<BigNumberish>,
+      startedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
@@ -1024,7 +1291,33 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     getAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
+    getAnswer(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<string>;
+
+    getCompliance(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, boolean, BigNumber, BigNumber] & {
+        priceDeviationIsValid: boolean;
+        heartbeetIsValid: boolean;
+        previousPrice: BigNumber;
+        previousUpdatedAt: BigNumber;
+      }
+    >;
+
+    getComplianceState(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     getDecimals(overrides?: CallOverrides): Promise<number>;
 
@@ -1057,19 +1350,21 @@ export interface UsdcPriceDataProvider extends BaseContract {
       }
     >;
 
+    getStability(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    getTimestamp(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getToken(overrides?: CallOverrides): Promise<string>;
 
     getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    hasNewPriceInfo(
-      overrides?: CallOverrides
-    ): Promise<
-      [boolean, BigNumber, BigNumber] & {
-        newInfoAvailable: boolean;
-        priceId: BigNumber;
-        timeDelta: BigNumber;
-      }
-    >;
 
     heartbeat(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1091,9 +1386,23 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     isMainnetProvider(overrides?: CallOverrides): Promise<boolean>;
 
+    isNewPriceInfoEventAvailable(
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, IPriceDataProvider.PriceInfoStructOutput, BigNumber] & {
+        newEvent: boolean;
+        priceInfo: IPriceDataProvider.PriceInfoStructOutput;
+        timeSinceEvent: BigNumber;
+      }
+    >;
+
     isTestnet(overrides?: CallOverrides): Promise<boolean>;
 
     isTestnetProvider(overrides?: CallOverrides): Promise<boolean>;
+
+    latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    latestRound(overrides?: CallOverrides): Promise<BigNumber>;
 
     latestRoundData(
       overrides?: CallOverrides
@@ -1106,6 +1415,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
         answeredInRound: BigNumber;
       }
     >;
+
+    latestTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -1135,6 +1446,17 @@ export interface UsdcPriceDataProvider extends BaseContract {
   };
 
   filters: {
+    "AnswerUpdated(int256,uint256,uint256)"(
+      current?: PromiseOrValue<BigNumberish> | null,
+      roundId?: PromiseOrValue<BigNumberish> | null,
+      updatedAt?: null
+    ): AnswerUpdatedEventFilter;
+    AnswerUpdated(
+      current?: PromiseOrValue<BigNumberish> | null,
+      roundId?: PromiseOrValue<BigNumberish> | null,
+      updatedAt?: null
+    ): AnswerUpdatedEventFilter;
+
     "LogPriceDataDepegged(uint256,uint256,uint256,uint256)"(
       priceId?: null,
       price?: null,
@@ -1173,6 +1495,17 @@ export interface UsdcPriceDataProvider extends BaseContract {
       currentCreatedAt?: null,
       lastCreatedAt?: null
     ): LogPriceDataHeartbeatExceededEventFilter;
+
+    "LogPriceDataProcessed(uint256,uint256,uint256)"(
+      priceId?: null,
+      price?: null,
+      createdAt?: null
+    ): LogPriceDataProcessedEventFilter;
+    LogPriceDataProcessed(
+      priceId?: null,
+      price?: null,
+      createdAt?: null
+    ): LogPriceDataProcessedEventFilter;
 
     "LogPriceDataRecovered(uint256,uint256,uint256,uint256)"(
       priceId?: null,
@@ -1213,6 +1546,17 @@ export interface UsdcPriceDataProvider extends BaseContract {
     LogUsdcProviderResetDepeg(
       resetDepegAt?: null
     ): LogUsdcProviderResetDepegEventFilter;
+
+    "NewRound(uint256,address,uint256)"(
+      roundId?: PromiseOrValue<BigNumberish> | null,
+      startedBy?: PromiseOrValue<string> | null,
+      startedAt?: null
+    ): NewRoundEventFilter;
+    NewRound(
+      roundId?: PromiseOrValue<BigNumberish> | null,
+      startedBy?: PromiseOrValue<string> | null,
+      startedAt?: null
+    ): NewRoundEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
@@ -1255,9 +1599,17 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
 
+    PRICE_HISTORY_SIZE(overrides?: CallOverrides): Promise<BigNumber>;
+
     PRICE_INFO_HISTORY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
     USDC_CONTACT_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    addRoundData(
+      answer: PromiseOrValue<BigNumberish>,
+      startedAt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1271,7 +1623,26 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     getAggregatorAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getAnswer(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getChainlinkAggregatorAddress(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCompliance(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getComplianceState(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1294,11 +1665,21 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getStability(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTimestamp(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
-
-    hasNewPriceInfo(overrides?: CallOverrides): Promise<BigNumber>;
 
     heartbeat(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1320,11 +1701,19 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     isMainnetProvider(overrides?: CallOverrides): Promise<BigNumber>;
 
+    isNewPriceInfoEventAvailable(overrides?: CallOverrides): Promise<BigNumber>;
+
     isTestnet(overrides?: CallOverrides): Promise<BigNumber>;
 
     isTestnetProvider(overrides?: CallOverrides): Promise<BigNumber>;
 
+    latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    latestRound(overrides?: CallOverrides): Promise<BigNumber>;
+
     latestRoundData(overrides?: CallOverrides): Promise<BigNumber>;
+
+    latestTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1406,12 +1795,22 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     MUMBAI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    PRICE_HISTORY_SIZE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     PRICE_INFO_HISTORY_DURATION(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     USDC_CONTACT_ADDRESS(
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    addRoundData(
+      answer: PromiseOrValue<BigNumberish>,
+      startedAt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1428,7 +1827,26 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getAnswer(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getChainlinkAggregatorAddress(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getCompliance(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getComplianceState(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1453,11 +1871,21 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getStability(
+      roundId: PromiseOrValue<BigNumberish>,
+      price: PromiseOrValue<BigNumberish>,
+      updatedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTimestamp(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTriggeredAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    hasNewPriceInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     heartbeat(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1479,11 +1907,21 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     isMainnetProvider(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    isNewPriceInfoEventAvailable(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isTestnet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     isTestnetProvider(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    latestAnswer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    latestRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     latestRoundData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    latestTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

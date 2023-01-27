@@ -203,7 +203,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "getOneYearDuration()": FunctionFragment;
     "getOwner()": FunctionFragment;
     "getRegistry()": FunctionFragment;
-    "getStakingDataProvider()": FunctionFragment;
+    "getStaking()": FunctionFragment;
     "getState()": FunctionFragment;
     "getSumOfSumInsuredCap()": FunctionFragment;
     "getSupportedCapitalAmount(uint256)": FunctionFragment;
@@ -225,7 +225,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "resumeCallback()": FunctionFragment;
     "setId(uint256)": FunctionFragment;
     "setMaximumNumberOfActiveBundles(uint256)": FunctionFragment;
-    "setStakingDataProvider(address)": FunctionFragment;
+    "setStakingAddress(address)": FunctionFragment;
     "suspendCallback()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unlockBundle(uint256)": FunctionFragment;
@@ -285,7 +285,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "getOneYearDuration"
       | "getOwner"
       | "getRegistry"
-      | "getStakingDataProvider"
+      | "getStaking"
       | "getState"
       | "getSumOfSumInsuredCap"
       | "getSupportedCapitalAmount"
@@ -307,7 +307,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "resumeCallback"
       | "setId"
       | "setMaximumNumberOfActiveBundles"
-      | "setStakingDataProvider"
+      | "setStakingAddress"
       | "suspendCallback"
       | "transferOwnership"
       | "unlockBundle"
@@ -529,7 +529,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getStakingDataProvider",
+    functionFragment: "getStaking",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getState", values?: undefined): string;
@@ -599,7 +599,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setStakingDataProvider",
+    functionFragment: "setStakingAddress",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -796,10 +796,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     functionFragment: "getRegistry",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getStakingDataProvider",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "getStaking", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getState", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getSumOfSumInsuredCap",
@@ -858,7 +855,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setStakingDataProvider",
+    functionFragment: "setStakingAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1586,9 +1583,9 @@ export interface DepegRiskpool extends BaseContract {
 
     getRegistry(overrides?: CallOverrides): Promise<[string]>;
 
-    getStakingDataProvider(
+    getStaking(
       overrides?: CallOverrides
-    ): Promise<[string] & { stakingDataProvider: string }>;
+    ): Promise<[string] & { staking: string }>;
 
     getState(overrides?: CallOverrides): Promise<[number]>;
 
@@ -1667,8 +1664,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setStakingDataProvider(
-      dataProviderAddress: PromiseOrValue<string>,
+    setStakingAddress(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1905,7 +1902,7 @@ export interface DepegRiskpool extends BaseContract {
 
   getRegistry(overrides?: CallOverrides): Promise<string>;
 
-  getStakingDataProvider(overrides?: CallOverrides): Promise<string>;
+  getStaking(overrides?: CallOverrides): Promise<string>;
 
   getState(overrides?: CallOverrides): Promise<number>;
 
@@ -1984,8 +1981,8 @@ export interface DepegRiskpool extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setStakingDataProvider(
-    dataProviderAddress: PromiseOrValue<string>,
+  setStakingAddress(
+    stakingAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2218,7 +2215,7 @@ export interface DepegRiskpool extends BaseContract {
 
     getRegistry(overrides?: CallOverrides): Promise<string>;
 
-    getStakingDataProvider(overrides?: CallOverrides): Promise<string>;
+    getStaking(overrides?: CallOverrides): Promise<string>;
 
     getState(overrides?: CallOverrides): Promise<number>;
 
@@ -2289,8 +2286,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setStakingDataProvider(
-      dataProviderAddress: PromiseOrValue<string>,
+    setStakingAddress(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2733,7 +2730,7 @@ export interface DepegRiskpool extends BaseContract {
 
     getRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getStakingDataProvider(overrides?: CallOverrides): Promise<BigNumber>;
+    getStaking(overrides?: CallOverrides): Promise<BigNumber>;
 
     getState(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2812,8 +2809,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setStakingDataProvider(
-      dataProviderAddress: PromiseOrValue<string>,
+    setStakingAddress(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3055,9 +3052,7 @@ export interface DepegRiskpool extends BaseContract {
 
     getRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getStakingDataProvider(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    getStaking(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -3140,8 +3135,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setStakingDataProvider(
-      dataProviderAddress: PromiseOrValue<string>,
+    setStakingAddress(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -1,7 +1,7 @@
 import { formatUnits } from "ethers/lib/utils";
 import { Line } from "react-chartjs-2";
 import { CategoryScale, Chart, LinearScale, PointElement, LineElement, Colors, TimeScale, Tooltip } from 'chart.js'; 
-import { LinearProgress, useTheme } from "@mui/material";
+import { Box, Button, LinearProgress, useTheme } from "@mui/material";
 import FakeData from "./fake_data";
 import 'chartjs-adapter-moment';
 import { useTranslation } from "next-i18next";
