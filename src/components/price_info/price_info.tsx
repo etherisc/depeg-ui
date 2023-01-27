@@ -40,7 +40,7 @@ export default function PriceInfo(props: PriceInfoProps) {
                 // get price update every minute
                 setInterval(async () => {
                     await priceFeedApi.getLatestPrice((price: PriceInfo) => dispatch(addPrice(price)));    
-                }, ONE_MINUTE);    
+                }, 5000);    
 
                 await priceFeedApi.getAllPricesAfter(moment().add(-2, "d").unix(), 
                     (price: PriceInfo) => dispatch(addPrice(price)),
