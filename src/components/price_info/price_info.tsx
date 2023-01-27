@@ -34,6 +34,8 @@ export default function PriceInfo(props: PriceInfoProps) {
     const priceHistory = useSelector((state: RootState) => state.price.history);
     const priceHistoryLoading = useSelector((state: RootState) => state.price.historyLoading);
 
+    const disablePriceHistory = process.env.NEXT_PUBLIC_DISABLE_PRICE_HISTORY === 'true' || false;
+
     useEffect(() => {
         async function getPrices() {
             if (isConnected) {
@@ -44,11 +46,13 @@ export default function PriceInfo(props: PriceInfoProps) {
                     dispatch(setDepeggedAt(depeggedAt));
                 });    
 
-                await priceFeedApi.getAllPricesAfter(moment().add(-2, "d").unix(), 
-                    (price: PriceInfo) => dispatch(addPrice(price)),
-                    () => dispatch(historyLoading()),
-                    () => dispatch(historyLoadingFinished())
-                );
+                if ( ! disablePriceHistory) {
+                    await priceFeedApi.getAllPricesAfter(moment().add(-2, "d").unix(), 
+                        (price: PriceInfo) => dispatch(addPrice(price)),
+                        () => dispatch(historyLoading()),
+                        () => dispatch(historyLoadingFinished())
+                    );
+                }
 
                 // get price update every minute
                 setInterval(async () => {
@@ -62,7 +66,7 @@ export default function PriceInfo(props: PriceInfoProps) {
             }
         }
         getPrices();
-    }, [isConnected, dispatch, priceFeedApi]);
+    }, [isConnected, dispatch, priceFeedApi, disablePriceHistory]);
 
     return (<>
         <LatestPrice 
@@ -74,7 +78,7 @@ export default function PriceInfo(props: PriceInfoProps) {
             triggeredAt={triggeredAt}
             depeggedAt={depeggedAt}
             />
-        <Box sx={{ mt: 4, height: 600, width: 800 }}>
+        {! disablePriceHistory && <Box sx={{ mt: 4, height: 600, width: 800 }}>
             <PriceHistory 
                 name={coinName}  
                 symbol={coinSymbol}
@@ -84,6 +88,6 @@ export default function PriceInfo(props: PriceInfoProps) {
                 depeggedAt={depeggedAt}
                 isLoading={priceHistoryLoading}
                 />
-        </Box>
+        </Box>}
     </>);
 }
