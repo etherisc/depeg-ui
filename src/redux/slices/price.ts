@@ -7,13 +7,11 @@ export type PriceState = {
     symbol: string,
     name: string,
     decimals: number,
-    address: string,
     latest: PriceInfo,
     triggeredAt: number,
     depeggedAt: number,
     history: Array<PriceInfo>,
     historyLoading: boolean,
-    depegParameters: DepegParameters,
     noUpdates: boolean,
 }
 
@@ -27,20 +25,12 @@ const initialPrice = {
 const initialState: PriceState = {
     symbol: "USDC",
     name: "USD Coin",
-    address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     decimals: 8,
     latest: initialPrice,
     triggeredAt: 0,
     depeggedAt: 0,
     history: [], // no initial history
     historyLoading: false,
-    // TODO: get from config
-    depegParameters: {
-        decimals: 8,
-        triggerPrice: "0.995",
-        recoveryPrice: "0.999",
-        recoveryWindow: 24 * 60 * 60, // one day
-    },
     noUpdates: false,
 }
 
@@ -48,10 +38,9 @@ export const priceSlice = createSlice({
     name: 'price',
     initialState,
     reducers: {
-        setCoin: (state, action: PayloadAction<{ symbol: string, name: string, decimals: number, address: string}>) => {
+        setCoin: (state, action: PayloadAction<{ symbol: string, name: string, decimals: number}>) => {
             state.symbol = action.payload.symbol;
             state.name = action.payload.name;
-            state.address = action.payload.address;
             state.decimals = action.payload.decimals;
         },
         addPrice: (state, action: PayloadAction<PriceInfo>) => {
