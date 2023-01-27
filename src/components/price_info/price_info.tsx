@@ -64,8 +64,6 @@ export default function PriceInfo(props: PriceInfoProps) {
         getPrices();
     }, [isConnected, dispatch, priceFeedApi]);
 
-    // TODO: call set coin
-
     return (<>
         <LatestPrice 
             name={coinName}  
