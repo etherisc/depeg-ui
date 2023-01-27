@@ -64,7 +64,7 @@ export default function PriceHistory(props: PriceHistoryProps) {
         const p1 = ctx.p1;
         console.log(p0, p1);
         // TODO: if product is depegged, use red color
-        if (p0.parsed.y < TRIGGER_PRICE || p1.parsed.y < TRIGGER_PRICE) {
+        if (p0.parsed.y <= TRIGGER_PRICE || p1.parsed.y <= TRIGGER_PRICE) {
             console.log("red");
             return theme.palette.warning.light;
         }

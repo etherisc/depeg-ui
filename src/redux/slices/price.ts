@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { parseUnits } from '@ethersproject/units';
+import { PriceFeedState } from '../../types/price_feed_state';
 
 export type PriceState = {
     symbol: string,
@@ -8,6 +9,8 @@ export type PriceState = {
     decimals: number,
     address: string,
     latest: PriceInfo,
+    triggeredAt: number,
+    depeggedAt: number,
     history: Array<PriceInfo>,
     historyLoading: boolean,
     depegParameters: DepegParameters,
@@ -27,6 +30,8 @@ const initialState: PriceState = {
     address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     decimals: 8,
     latest: initialPrice,
+    triggeredAt: 0,
+    depeggedAt: 0,
     history: [], // no initial history
     historyLoading: false,
     // TODO: get from config
@@ -80,6 +85,12 @@ export const priceSlice = createSlice({
             state.latest = action.payload[action.payload.length - 1];
             state.noUpdates = true;
         },
+        setTriggeredAt: (state, action: PayloadAction<number>) => {
+            state.triggeredAt = action.payload;
+        },
+        setDepeggedAt: (state, action: PayloadAction<number>) => {  
+            state.depeggedAt = action.payload;
+        },
     },
 });
 
@@ -90,6 +101,8 @@ export const {
     historyLoading,
     historyLoadingFinished,
     loadPriceFeedHistory,
+    setTriggeredAt,
+    setDepeggedAt,
 } = priceSlice.actions;
 
 export default priceSlice.reducer;

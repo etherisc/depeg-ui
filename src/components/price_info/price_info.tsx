@@ -5,7 +5,7 @@ import { useTranslation } from "next-i18next";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
-import { addPrice, historyLoading, historyLoadingFinished } from "../../redux/slices/price";
+import { addPrice, historyLoading, historyLoadingFinished, setDepeggedAt, setTriggeredAt } from "../../redux/slices/price";
 import { RootState } from "../../redux/store";
 import LatestPrice from "./latest_price";
 import PriceHistory from "./price_history";
@@ -28,6 +28,8 @@ export default function PriceInfo(props: PriceInfoProps) {
     const coinDecimals = useSelector((state: RootState) => state.price.decimals);
     const latestPrice = useSelector((state: RootState) => state.price.latest.price);
     const latestPriceTimestamp = useSelector((state: RootState) => state.price.latest.timestamp);
+    const triggeredAt = useSelector((state: RootState) => state.price.triggeredAt);
+    const depeggedAt = useSelector((state: RootState) => state.price.depeggedAt);
 
     const priceHistory = useSelector((state: RootState) => state.price.history);
     const priceHistoryLoading = useSelector((state: RootState) => state.price.historyLoading);
@@ -36,10 +38,18 @@ export default function PriceInfo(props: PriceInfoProps) {
         async function getPrices() {
             if (isConnected) {
                 // get latest price
-                await priceFeedApi.getLatestPrice((price: PriceInfo) => dispatch(addPrice(price)));    
+                await priceFeedApi.getLatestPrice((price: PriceInfo, triggeredAt: number, depeggedAt: number) => {
+                    dispatch(addPrice(price))
+                    dispatch(setTriggeredAt(triggeredAt));
+                    dispatch(setDepeggedAt(depeggedAt));
+                });    
                 // get price update every minute
                 setInterval(async () => {
-                    await priceFeedApi.getLatestPrice((price: PriceInfo) => dispatch(addPrice(price)));    
+                    await priceFeedApi.getLatestPrice((price: PriceInfo, triggeredAt: number, depeggedAt: number) => {
+                        dispatch(addPrice(price));
+                        dispatch(setTriggeredAt(triggeredAt));
+                        dispatch(setDepeggedAt(depeggedAt));
+                    })
                 }, 5000);    
 
                 await priceFeedApi.getAllPricesAfter(moment().add(-2, "d").unix(), 
@@ -61,6 +71,8 @@ export default function PriceInfo(props: PriceInfoProps) {
             decimals={coinDecimals}
             price={latestPrice}
             timestamp={latestPriceTimestamp}
+            triggeredAt={triggeredAt}
+            depeggedAt={depeggedAt}
             />
         <Box sx={{ mt: 4, height: 600, width: 800 }}>
             <PriceHistory 

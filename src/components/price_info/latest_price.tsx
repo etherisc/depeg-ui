@@ -12,6 +12,8 @@ interface LatestPriceProps {
     decimals: number;
     price: string;
     timestamp: number;
+    triggeredAt: number;
+    depeggedAt: number;
 }
 
 export default function LatestPrice(props: LatestPriceProps) {
@@ -21,6 +23,16 @@ export default function LatestPrice(props: LatestPriceProps) {
         const v = formatUnits(value, props.decimals);
         // console.log(v);
         return (+v).toFixed(decimals);
+    }
+
+    function stability() {
+        if (props.depeggedAt > 0) {
+            return "Depegged";
+        }
+        if (props.triggeredAt > 0) {
+            return "Triggered";
+        }
+        return "Stable";
     }
 
     const priceStr = formatWithDecimals(BigNumber.from(props.price), 4);
@@ -37,6 +49,11 @@ export default function LatestPrice(props: LatestPriceProps) {
             </Typography>
             <Typography variant="body2" color={grey[700]} sx={{ ml: 2, placeSelf: 'baseline' }}>
                 ({timestampStr})
+            </Typography>
+        </Box>
+        <Box sx={{ display: 'flex' }} data-testid="stability">
+            <Typography variant="h6"  sx={{ placeSelf: 'baseline' }}>
+                Stability: {stability()}
             </Typography>
         </Box>
     </>);

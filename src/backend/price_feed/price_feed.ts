@@ -1,7 +1,7 @@
 import { BigNumber, Signer } from "ethers";
 import moment from "moment";
 import { AggregatorV3Interface, AggregatorV3Interface__factory } from "../../contracts/chainlink-contracts";
-import { DepegProduct__factory, UsdcPriceDataProvider__factory } from "../../contracts/depeg-contracts";
+import { DepegProduct__factory, IPriceDataProvider, UsdcPriceDataProvider, UsdcPriceDataProvider__factory } from "../../contracts/depeg-contracts";
 import { PriceFeedApi } from "./api";
 
 export class PriceFeed implements PriceFeedApi {
@@ -10,6 +10,7 @@ export class PriceFeed implements PriceFeedApi {
     private signer: Signer;
     private chainlinkAggregatorAddress: string | undefined;
     private aggregator: AggregatorV3Interface | undefined;
+    private priceDataProvider: UsdcPriceDataProvider | undefined;
 
     constructor(productAddress: string, signer: Signer) {
         this.productAddress = productAddress;
@@ -22,31 +23,52 @@ export class PriceFeed implements PriceFeedApi {
             return this.aggregator;
         }
 
+        await this.init();
+        return this.aggregator!;
+    }
+
+    async init() {
         let address = this.chainlinkAggregatorAddress;
         if (address === undefined) {
             const depegProduct = DepegProduct__factory.connect(this.productAddress, this.signer);
             const priceDataProviderAddress = await depegProduct.getPriceDataProvider();
-            const priceDataProvider = UsdcPriceDataProvider__factory.connect(priceDataProviderAddress, this.signer);
-            address = await priceDataProvider.getChainlinkAggregatorAddress();
+            this.priceDataProvider = UsdcPriceDataProvider__factory.connect(priceDataProviderAddress, this.signer);
+            address = await this.priceDataProvider.getChainlinkAggregatorAddress();
         }
 
         this.aggregator = AggregatorV3Interface__factory.connect(address, this.signer);
-        return this.aggregator;
     }
 
-    async getLatestPrice(priceRetrieved: (price: PriceInfo) => void): Promise<void> {
-        const aggregator = await this.getChainlinkAggregator();
-        const latestRoundData = await aggregator.latestRoundData();
+    async getPriceDataProvider(): Promise<UsdcPriceDataProvider> {
+        if (this.priceDataProvider !== undefined) {
+            return this.priceDataProvider;
+        }
+
+        await this.init();
+        return this.priceDataProvider!;
+    }
+
+    async getLatestPrice(priceRetrieved: (price: PriceInfo, triggeredAt: number, depeggedAt: number) => void): Promise<void> {
+        const aggregator = await this.getPriceDataProvider();
+        const [ roundId,
+            price,
+            compliance,
+            stability,
+            eventType,
+            triggeredAt,
+            depeggedAt,
+            updatedAt ] = await aggregator.getLatestPriceInfo();
         const priceInfo: PriceInfo = {
-            roundId: latestRoundData.roundId.toString(),
-            price: latestRoundData.answer.toString(),
-            timestamp: latestRoundData.updatedAt.toNumber(),
+            roundId: roundId.toString(),
+            price: price.toString(),
+            timestamp: updatedAt.toNumber(),
         };
-        priceRetrieved(priceInfo);
+        console.log(priceInfo, triggeredAt.toNumber(), depeggedAt.toNumber());
+        priceRetrieved(priceInfo, triggeredAt.toNumber(), depeggedAt.toNumber());
     }
 
     async getPrice(roundId: BigNumber, priceRetrieved: (price: PriceInfo) => void): Promise<void> {
-        const aggregator = await this.getChainlinkAggregator();
+        const aggregator = await this.getPriceDataProvider();
         const roundData = await aggregator.getRoundData(roundId);
         const priceInfo: PriceInfo = {
             roundId: roundData.roundId.toString(),
