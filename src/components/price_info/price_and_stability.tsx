@@ -41,13 +41,13 @@ export default function PriceAndStability(props: PriceAndStabilityProps) {
         <Typography variant="subtitle1"  sx={{ placeSelf: 'baseline' }}>
             {t('rate')}:
         </Typography>
-        <Typography variant="h6"  sx={{ placeSelf: 'baseline', ml: 1 }} color={color}>
+        <Typography variant="h6"  sx={{ placeSelf: 'baseline', ml: 1 }} color={color} data-testid="price">
             <FontAwesomeIcon icon={faDollarSign} className="fa" />{priceStr}
         </Typography>
         <Typography variant="subtitle1"  sx={{ placeSelf: 'baseline', ml: 2 }}>
             {t('stability')}:
         </Typography>
-        <Typography variant="h6"  sx={{ placeSelf: 'baseline', ml: 2 }} color={color}>
+        <Typography variant="h6"  sx={{ placeSelf: 'baseline', ml: 2 }} color={color} data-testid="stability">
             {stability}
         </Typography>
     </>)

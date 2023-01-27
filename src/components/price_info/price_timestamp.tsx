@@ -21,16 +21,16 @@ export default function PriceTimestamp(props: PriceTimestampProps) {
         : undefined;
 
     return(<Box sx={{ display: 'inline-flex'}}>
-        <Typography variant="body2" color={grey[700]} sx={{ placeSelf: 'baseline' }}>
+        <Typography variant="body2" color={grey[700]} sx={{ placeSelf: 'baseline' }} data-testid="timestamp">
             {t('timestamp.latest')} {timestampStr}
         </Typography>
         { props.triggeredAt > 0 && props.depeggedAt == 0 &&
-            <Typography variant="body2" color={grey[700]} sx={{ placeSelf: 'baseline' }}>
+            <Typography variant="body2" color={grey[700]} sx={{ placeSelf: 'baseline' }}  data-testid="timestamp-triggered"> 
                 &nbsp;/&nbsp;{t('timestamp.triggered')} {triggeredAtStr}
             </Typography>
         }
         { props.depeggedAt > 0 &&
-            <Typography variant="body2" color={grey[700]} sx={{ placeSelf: 'baseline' }}>
+            <Typography variant="body2" color={grey[700]} sx={{ placeSelf: 'baseline' }} data-testid="timestamp-depegged">
                 &nbsp;/&nbsp;{t('timestamp.depegged')} {depeggedAtStr}
             </Typography>
         }   

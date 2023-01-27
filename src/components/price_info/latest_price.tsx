@@ -20,7 +20,7 @@ export default function LatestPrice(props: LatestPriceProps) {
             <Typography variant="h5" sx={{ placeSelf: 'baseline' }}>{props.name}</Typography>
             <Typography variant="subtitle1" color={grey[700]} sx={{ ml: 2, placeSelf: 'baseline' }}>{props.symbol}</Typography>
         </Box>
-        <Box sx={{ display: 'flex' }} data-testid="exchange-rate">
+        <Box sx={{ display: 'flex' }} >
             <PriceAndStability 
                 price={props.price}
                 decimals={props.decimals}
