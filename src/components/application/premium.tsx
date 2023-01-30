@@ -3,7 +3,7 @@ import { useTranslation } from "next-i18next";
 import { Control, Controller } from "react-hook-form";
 import { BundleData } from "../../backend/bundle_data";
 import { IAplicationFormValues } from "./application_form";
-import { BundleList } from "./bundle_list";
+import { AvailableBundleList } from "./available_bundle_list";
 
 export interface PremiumProps {
     disabled: boolean;
@@ -27,7 +27,7 @@ export default function Premium(props: PremiumProps) {
     let bundles = undefined;
 
     if (props.showBundles) {
-        bundles = (<BundleList 
+        bundles = (<AvailableBundleList 
             currency={props.bundleCurrency}
             currencyDecimals={props.bundleCurrencyDecimals}
             bundles={props.bundles} />);
