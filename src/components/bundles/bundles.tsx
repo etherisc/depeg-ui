@@ -224,7 +224,7 @@ export default function Bundles(props: BundlesProps) {
                 }}
                 initialState={{
                     sorting: {
-                        sortModel: [{ field: 'coverageUntil', sort: 'asc' }],
+                        sortModel: [{ field: 'apr', sort: 'asc' }, { field: 'coverageUntil', sort: 'asc' }],
                     },
                 }}
                 pageSize={pageSize}
