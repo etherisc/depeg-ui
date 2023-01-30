@@ -157,13 +157,11 @@ export default function PriceHistory(props: PriceHistoryProps) {
         }
     }
 
-    const fakeData = process.env.NEXT_PUBLIC_FAKE_PRICE_FEED;
-
     return (<>
         {props.isLoading && <LinearProgress />}
         <Line 
             options={options}
             data={data} />
-        {fakeData && <FakeData />}
+        {process.env.NEXT_PUBLIC_PRICE_HISTORY_FAKE_DATA === 'true' && <FakeData />}
     </>);
 }

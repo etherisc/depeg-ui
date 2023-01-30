@@ -88,8 +88,11 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
     [t('nav.link.policies'), '/policies', faShieldHalved],
     [t('nav.link.invest'), '/invest', faSackDollar],
     [t('nav.link.bundles'), '/bundles', faCoins],
-    [t('nav.link.price'), '/price', faChartLine],
   ];
+
+  if (process.env.NEXT_PUBLIC_PRICE === 'true') {
+    items.push([t('nav.link.price'), '/price', faChartLine]);
+  }
 
   appProps.pageProps.items = items;
   appProps.pageProps.title = t('apptitle_short');
