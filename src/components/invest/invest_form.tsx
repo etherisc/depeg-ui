@@ -199,7 +199,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                     ? ( errors.lifetime.type == 'pattern' 
                                             ? t(`error.field.numberType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.lifetime.type}`, { "ns": "common", "minValue": minLifetimeDays, "maxValue": maxLifetimeDays }) 
-                                    ) : ""}
+                                    ) : t('lifetime_hint')}
                                 />}
                         />
                 </Grid>
@@ -389,7 +389,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                         ? t(`error.field.numberType`, { "ns": "common"})
                                         : t(`error.field.${errors.coverageDurationMax.type}`, { "ns": "common", "minValue": minCoverageDuration, "maxValue": maxCoverageDuration }) 
                                     )
-                                    : ""}
+                                    : t('max_duration_hint')}
                                 />}
                         />
                 </Grid>

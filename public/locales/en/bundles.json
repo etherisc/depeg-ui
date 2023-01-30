@@ -4,7 +4,7 @@
         "header": {
             "id": "Id",
             "name": "Name",
-            "lifetime": "Active until",
+            "lifetime": "Open until",
             "capital": "Staked capital",
             "capacity": "Capacity",
             "policies": "Policies",
