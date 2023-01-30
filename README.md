@@ -51,9 +51,9 @@ NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN_MAXIMUM=10
 
 ### Feature flags
 
-- `NEXT_PUBLIC_PRICE` - show latest price of the protected coin
-- `NEXT_PUBLIC_PRICE_HISTORY` - show price history of the protected coin
-- `NEXT_PUBLIC_PRICE_HISTORY_FAKE_DATA` - enable loading of fake data for price history
+- `NEXT_PUBLIC_FEATURE_PRICE` - show latest price of the protected coin
+- `NEXT_PUBLIC_FEATURE_PRICE_HISTORY` - show price history of the protected coin
+- `NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA` - enable loading of fake data for price history
 
 
 ### Faucet 

@@ -90,7 +90,7 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
     [t('nav.link.bundles'), '/bundles', faCoins],
   ];
 
-  if (process.env.NEXT_PUBLIC_PRICE === 'true') {
+  if (process.env.NEXT_PUBLIC_FEATURE_PRICE === 'true') {
     items.push([t('nav.link.price'), '/price', faChartLine]);
   }
 

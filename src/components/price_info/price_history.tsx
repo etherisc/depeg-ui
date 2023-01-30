@@ -162,6 +162,6 @@ export default function PriceHistory(props: PriceHistoryProps) {
         <Line 
             options={options}
             data={data} />
-        {process.env.NEXT_PUBLIC_PRICE_HISTORY_FAKE_DATA === 'true' && <FakeData />}
+        {process.env.NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA === 'true' && <FakeData />}
     </>);
 }

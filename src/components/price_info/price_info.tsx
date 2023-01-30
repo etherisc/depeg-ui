@@ -78,7 +78,7 @@ export default function PriceInfo(props: PriceInfoProps) {
             triggeredAt={triggeredAt}
             depeggedAt={depeggedAt}
             />
-        { process.env.NEXT_PUBLIC_PRICE_HISTORY === 'true' && <Box sx={{ mt: 4, height: 600, width: 800 }}>
+        { process.env.NEXT_PUBLIC_FEATURE_PRICE_HISTORY === 'true' && <Box sx={{ mt: 4, height: 600, width: 800 }}>
             <PriceHistory 
                 name={coinName}  
                 symbol={coinSymbol}
