@@ -39,7 +39,7 @@ export default function Bundles(props: BundlesProps) {
     const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
 
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
-    const [ pageSize, setPageSize ] = useState(8);
+    const [ pageSize, setPageSize ] = useState(10);
     const [ showAllBundles, setShowAllBundles ] = useState(true);
     // FIXME: use from redux
     const [ address, setAddress ] = useState("");
