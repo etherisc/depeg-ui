@@ -2,7 +2,6 @@ import { Table, TableHead, TableRow, TableCell, TableBody, Typography } from "@m
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import { BigNumber } from "ethers";
-import { formatUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
 import { BundleData } from "../../backend/bundle_data";
 import { formatCurrency } from "../../utils/numbers";
@@ -67,17 +66,17 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
         key={bundle.id}
         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
         >
-            <TableCell scope="row">
+            <TableCell scope="row" data-testid="bundle-id">
                 {bundle.id}
             </TableCell>
-            <TableCell scope="row">
+            <TableCell scope="row" data-testid="bundle-name">
                 {bundle.name}
             </TableCell>
-            <TableCell align="right">{bundle.apr}</TableCell>
-            <TableCell align="right">{currency} {formatCurrency(bundle.minSumInsured, currencyDecimals)} / {formatCurrency(bundle.maxSumInsured, currencyDecimals)}</TableCell>
-            <TableCell align="right">{bundle.minDuration / 86400 } / {bundle.maxDuration / 86400 } {t('days')}</TableCell>
-            <TableCell align="right">{remainingCapacity(bundle)}</TableCell>
-            <TableCell align="right">
+            <TableCell align="right" data-testid="bundle-apr">{bundle.apr}%</TableCell>
+            <TableCell align="right" data-testid="bundle-suminsured">{currency} {formatCurrency(bundle.minSumInsured, currencyDecimals)} / {formatCurrency(bundle.maxSumInsured, currencyDecimals)}</TableCell>
+            <TableCell align="right" data-testid="bundle-duration">{bundle.minDuration / 86400 } / {bundle.maxDuration / 86400 } {t('days')}</TableCell>
+            <TableCell align="right" data-testid="bundle-capacity">{remainingCapacity(bundle)}</TableCell>
+            <TableCell align="right" data-testid="bundle-stakeusage">
                 <StakeUsageIndicator
                     stakeUsage={calculateStakeUsage(BigNumber.from(bundle.capitalSupport), BigNumber.from(bundle.locked))}
                     lockedCapital={BigNumber.from(bundle.locked)}
