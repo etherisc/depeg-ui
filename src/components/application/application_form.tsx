@@ -20,6 +20,7 @@ import dayjs from 'dayjs';
 import { ethers } from 'ethers';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { REGEX_PATTERN_NUMBER_WITH_DECIMALS } from '../../config/appConfig';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -276,7 +277,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Controller
                         name="insuredAmount"
                         control={control}
-                        rules={{ required: true, min: insuredAmountMin, max: insuredAmountMax, pattern: /^[0-9.]+$/ }}
+                        rules={{ required: true, min: insuredAmountMin, max: insuredAmountMax, pattern: REGEX_PATTERN_NUMBER_WITH_DECIMALS  }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('insuredAmount')}

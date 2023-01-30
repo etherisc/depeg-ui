@@ -15,6 +15,7 @@ import { INPUT_VARIANT } from '../../config/theme';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
+import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_DECIMALS } from '../../config/appConfig';
 
 const formInputVariant = 'outlined';
 
@@ -235,7 +236,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: minInvestedAmount, 
                             max: maxInvestedAmount,
-                            pattern: /^[0-9.]+$/,
+                            pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS,
                             validate: {
                                 balance: async (value) => {
                                     const walletAddress = await props.insurance.getWalletAddress();
@@ -271,7 +272,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: minSumInsured, 
                             max: maxSumInsured,
-                            pattern: /^[0-9.]+$/,
+                            pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS,
                             validate: {
                                 minmax: (v: string) => parseFloat(v) <= parseFloat(watchInsuredAmountMax)
                             }
@@ -303,7 +304,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: minSumInsured, 
                             max: maxSumInsured,
-                            pattern: /^[0-9.]+$/,
+                            pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS,
                             validate: {
                                 minmax: (v: string) => parseFloat(watchInsuredAmountMin) <= parseFloat(v)
                             }                        
@@ -401,7 +402,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: 0.01, 
                             max: maxAnnualPctReturn,
-                            pattern: /^[0-9.]+$/,
+                            pattern: REGEX_PATTERN_NUMBER_WITH_DECIMALS,
                         }}
                         render={({ field }) => 
                             <TextField 

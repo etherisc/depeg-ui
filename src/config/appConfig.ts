@@ -16,3 +16,6 @@ export const walletConnectConfig = {
         chainId: chainUrl, // main chain connection
     },
 };
+
+export const REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS = /^[0-9]+$/;
+export const REGEX_PATTERN_NUMBER_WITH_DECIMALS = /^[0-9]+(\.[0-9]*)?$/;
