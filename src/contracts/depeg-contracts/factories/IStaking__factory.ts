@@ -30,9 +30,9 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint256",
+        internalType: "int256",
         name: "reserves",
-        type: "uint256",
+        type: "int256",
       },
     ],
     name: "LogStakingDipBalanceChanged",
@@ -599,6 +599,19 @@ const _abi = [
         internalType: "struct IStakingDataProvider.StakeInfo",
         name: "info",
         type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getReserveBalance",
+    outputs: [
+      {
+        internalType: "int256",
+        name: "reserves",
+        type: "int256",
       },
     ],
     stateMutability: "view",

@@ -22,7 +22,7 @@ export function HeaderLink(props: any) {
                 variant={variant ?? "subtitle1"}
                 noWrap
                 sx={{
-                    ml: 2,
+                    ml: 0,
                     mr: 2,
                     display: { xs: 'none', md: 'inline-flex' },
                     color: '#eee',

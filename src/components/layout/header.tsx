@@ -96,7 +96,9 @@ export default function Header(props: HeaderProps) {
                         <Box sx={{ display: { xs: 'inherit', md: 'none'}}}>
                             <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={28} height={22} />
                         </Box>
-                        <HeaderLink text={props.title} href="/" variant="h6" sx={{ display: { xs: 'none', md: 'block'}}} />
+                        <Box sx={{ ml: 2 }}>
+                            <HeaderLink text={props.title} href="/" variant="h6" sx={{ display: { xs: 'none', md: 'block'}}} />
+                        </Box>
 
                         {/* links only shown on desktop */}
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 1 }}>

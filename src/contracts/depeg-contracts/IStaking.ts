@@ -93,6 +93,7 @@ export interface IStakingInterface extends utils.Interface {
     "fromRate(uint256)": FunctionFragment;
     "getBundleRegistry()": FunctionFragment;
     "getInfo(bytes32,address)": FunctionFragment;
+    "getReserveBalance()": FunctionFragment;
     "getRewardBalance()": FunctionFragment;
     "getRewardRate()": FunctionFragment;
     "getRewardReserves()": FunctionFragment;
@@ -136,6 +137,7 @@ export interface IStakingInterface extends utils.Interface {
       | "fromRate"
       | "getBundleRegistry"
       | "getInfo"
+      | "getReserveBalance"
       | "getRewardBalance"
       | "getRewardRate"
       | "getRewardReserves"
@@ -211,6 +213,10 @@ export interface IStakingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getInfo",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getReserveBalance",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getRewardBalance",
@@ -372,6 +378,10 @@ export interface IStakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getInfo", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getReserveBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getRewardBalance",
     data: BytesLike
   ): Result;
@@ -463,7 +473,7 @@ export interface IStakingInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "LogStakingDipBalanceChanged(uint256,uint256,uint256,uint256)": EventFragment;
+    "LogStakingDipBalanceChanged(uint256,uint256,uint256,int256)": EventFragment;
     "LogStakingRewardRateSet(uint256,uint256)": EventFragment;
     "LogStakingRewardReservesIncreased(address,uint256,uint256)": EventFragment;
     "LogStakingRewardsClaimed(address,bytes32,bytes32,uint256,uint256,uint256,uint256)": EventFragment;
@@ -708,6 +718,10 @@ export interface IStaking extends BaseContract {
       }
     >;
 
+    getReserveBalance(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { reserves: BigNumber }>;
+
     getRewardBalance(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { rewardReserves: BigNumber }>;
@@ -926,6 +940,8 @@ export interface IStaking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<IStakingDataProvider.StakeInfoStructOutput>;
 
+  getReserveBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
   getRewardBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
   getRewardRate(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1128,6 +1144,8 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<IStakingDataProvider.StakeInfoStructOutput>;
 
+    getReserveBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
     getRewardBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRewardRate(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1281,7 +1299,7 @@ export interface IStaking extends BaseContract {
   };
 
   filters: {
-    "LogStakingDipBalanceChanged(uint256,uint256,uint256,uint256)"(
+    "LogStakingDipBalanceChanged(uint256,uint256,uint256,int256)"(
       stakeBalance?: null,
       rewardBalance?: null,
       actualBalance?: null,
@@ -1467,6 +1485,8 @@ export interface IStaking extends BaseContract {
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getReserveBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRewardBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1663,6 +1683,8 @@ export interface IStaking extends BaseContract {
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getReserveBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRewardBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

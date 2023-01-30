@@ -257,6 +257,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getReserveBalance",
+    outputs: [
+      {
+        internalType: "int256",
+        name: "reserves",
+        type: "int256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getRewardBalance",
     outputs: [
       {

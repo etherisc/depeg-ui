@@ -3,6 +3,7 @@ import chainReducer from './slices/chain';
 import bundlesReducer from './slices/bundles';
 import accountReducer from './slices/account';
 import policiesReducer from './slices/policies';
+import priceReducer from './slices/price';
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         account: accountReducer,
         bundles: bundlesReducer,
         policies: policiesReducer,
+        price: priceReducer,
     },
 });
 

@@ -6,6 +6,8 @@ import { PolicyData } from "./policy_data";
 import { ApplicationApiSmartContract } from "./application_api_smart_contract";
 import { InvestApiSmartContract } from "./invest_api_smart_contract";
 import { hasBalanceBN } from "./erc20";
+import { PriceFeed } from "./price_feed/price_feed";
+import { PriceFeedApi } from "./price_feed/api";
 
 export class BackendApiSmartContract implements BackendApi {
 
@@ -22,6 +24,7 @@ export class BackendApiSmartContract implements BackendApi {
     usd2Decimals: number;
     application: ApplicationApi;
     invest: InvestApi;
+    priceFeed: PriceFeedApi;
 
     constructor(
         signer: Signer,
@@ -48,6 +51,7 @@ export class BackendApiSmartContract implements BackendApi {
         this.doNoUseDirectlyDepegProductApi = new DepegProductApi(this.depegProductAddress, this.signer);
         this.application = new ApplicationApiSmartContract(this.doNoUseDirectlyDepegProductApi, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax);
         this.invest = new InvestApiSmartContract(this.doNoUseDirectlyDepegProductApi, minLifetime, maxLifetime, investedAmountMin, investedAmountMax, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, annualPctReturn, annualPctReturnMax);
+        this.priceFeed = new PriceFeed(this.depegProductAddress, this.signer);
     }
 
     /**

@@ -1,0 +1,20 @@
+{
+    "title": "Price",
+    "chart": {
+        "y": {
+            "title": "{{symbol}} price"
+        }
+    },
+    "rate": "Price",
+    "stability": "Stability",
+    "state": {
+        "stable": "Stable",
+        "triggered": "Triggered",
+        "depegged": "Depegged"
+    },
+    "timestamp": {
+        "latest": "Latest price at",
+        "triggered": "Triggered at",
+        "depegged": "Depegged at"
+    }
+}

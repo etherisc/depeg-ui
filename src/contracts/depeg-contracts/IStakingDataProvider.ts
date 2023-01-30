@@ -86,6 +86,7 @@ export interface IStakingDataProviderInterface extends utils.Interface {
     "fromRate(uint256)": FunctionFragment;
     "getBundleRegistry()": FunctionFragment;
     "getInfo(bytes32,address)": FunctionFragment;
+    "getReserveBalance()": FunctionFragment;
     "getRewardBalance()": FunctionFragment;
     "getRewardRate()": FunctionFragment;
     "getRewardReserves()": FunctionFragment;
@@ -121,6 +122,7 @@ export interface IStakingDataProviderInterface extends utils.Interface {
       | "fromRate"
       | "getBundleRegistry"
       | "getInfo"
+      | "getReserveBalance"
       | "getRewardBalance"
       | "getRewardRate"
       | "getRewardReserves"
@@ -185,6 +187,10 @@ export interface IStakingDataProviderInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getInfo",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getReserveBalance",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getRewardBalance",
@@ -309,6 +315,10 @@ export interface IStakingDataProviderInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getInfo", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getReserveBalance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getRewardBalance",
     data: BytesLike
@@ -461,6 +471,10 @@ export interface IStakingDataProvider extends BaseContract {
         info: IStakingDataProvider.StakeInfoStructOutput;
       }
     >;
+
+    getReserveBalance(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { reserves: BigNumber }>;
 
     getRewardBalance(
       overrides?: CallOverrides
@@ -635,6 +649,8 @@ export interface IStakingDataProvider extends BaseContract {
     overrides?: CallOverrides
   ): Promise<IStakingDataProvider.StakeInfoStructOutput>;
 
+  getReserveBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
   getRewardBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
   getRewardRate(overrides?: CallOverrides): Promise<BigNumber>;
@@ -791,6 +807,8 @@ export interface IStakingDataProvider extends BaseContract {
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<IStakingDataProvider.StakeInfoStructOutput>;
+
+    getReserveBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRewardBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -950,6 +968,8 @@ export interface IStakingDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getReserveBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
     getRewardBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRewardRate(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1100,6 +1120,8 @@ export interface IStakingDataProvider extends BaseContract {
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getReserveBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRewardBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

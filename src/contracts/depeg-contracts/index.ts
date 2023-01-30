@@ -115,6 +115,10 @@ export type { Ownable } from "./dependencies/OpenZeppelin/openzeppelin-contracts
 export { Ownable__factory } from "./factories/dependencies/OpenZeppelin/openzeppelin-contracts@4.7.3/Ownable__factory";
 export type { Pausable } from "./dependencies/OpenZeppelin/openzeppelin-contracts@4.7.3/Pausable";
 export { Pausable__factory } from "./factories/dependencies/OpenZeppelin/openzeppelin-contracts@4.7.3/Pausable__factory";
+export type { AggregatorInterface } from "./dependencies/smartcontractkit/chainlink@1.10.0/AggregatorInterface";
+export { AggregatorInterface__factory } from "./factories/dependencies/smartcontractkit/chainlink@1.10.0/AggregatorInterface__factory";
+export type { AggregatorV2V3Interface } from "./dependencies/smartcontractkit/chainlink@1.10.0/AggregatorV2V3Interface";
+export { AggregatorV2V3Interface__factory } from "./factories/dependencies/smartcontractkit/chainlink@1.10.0/AggregatorV2V3Interface__factory";
 export type { AggregatorV3Interface } from "./dependencies/smartcontractkit/chainlink@1.10.0/AggregatorV3Interface";
 export { AggregatorV3Interface__factory } from "./factories/dependencies/smartcontractkit/chainlink@1.10.0/AggregatorV3Interface__factory";
 export { DIP__factory } from "./factories/DIP__factory";

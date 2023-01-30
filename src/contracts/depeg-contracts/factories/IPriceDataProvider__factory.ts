@@ -121,6 +121,31 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
+        name: "createdAt",
+        type: "uint256",
+      },
+    ],
+    name: "LogPriceDataProcessed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "priceId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
         name: "triggeredAt",
         type: "uint256",
       },
@@ -157,6 +182,38 @@ const _abi = [
       },
     ],
     name: "LogPriceDataTriggered",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "updatedTriggeredAt",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "forcedDepegAt",
+        type: "uint256",
+      },
+    ],
+    name: "LogUsdcProviderForcedDepeg",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "resetDepegAt",
+        type: "uint256",
+      },
+    ],
+    name: "LogUsdcProviderResetDepeg",
     type: "event",
   },
   {
@@ -216,6 +273,11 @@ const _abi = [
           {
             internalType: "enum IPriceDataProvider.StabilityState",
             name: "stability",
+            type: "uint8",
+          },
+          {
+            internalType: "enum IPriceDataProvider.EventType",
+            name: "eventType",
             type: "uint8",
           },
           {
@@ -308,6 +370,11 @@ const _abi = [
             type: "uint8",
           },
           {
+            internalType: "enum IPriceDataProvider.EventType",
+            name: "eventType",
+            type: "uint8",
+          },
+          {
             internalType: "uint256",
             name: "triggeredAt",
             type: "uint256",
@@ -372,22 +439,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "hasNewPriceInfo",
+    name: "isMainnetProvider",
     outputs: [
       {
         internalType: "bool",
-        name: "newInfoAvailable",
+        name: "",
         type: "bool",
-      },
-      {
-        internalType: "uint256",
-        name: "priceId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "timeSinceLastUpdate",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -395,12 +452,64 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "isMainnetProvider",
+    name: "isNewPriceInfoEventAvailable",
     outputs: [
       {
         internalType: "bool",
-        name: "",
+        name: "newEvent",
         type: "bool",
+      },
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "id",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "price",
+            type: "uint256",
+          },
+          {
+            internalType: "enum IPriceDataProvider.ComplianceState",
+            name: "compliance",
+            type: "uint8",
+          },
+          {
+            internalType: "enum IPriceDataProvider.StabilityState",
+            name: "stability",
+            type: "uint8",
+          },
+          {
+            internalType: "enum IPriceDataProvider.EventType",
+            name: "eventType",
+            type: "uint8",
+          },
+          {
+            internalType: "uint256",
+            name: "triggeredAt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "depeggedAt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "createdAt",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IPriceDataProvider.PriceInfo",
+        name: "priceInfo",
+        type: "tuple",
+      },
+      {
+        internalType: "uint256",
+        name: "timeSinceEvent",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -443,6 +552,11 @@ const _abi = [
           {
             internalType: "enum IPriceDataProvider.StabilityState",
             name: "stability",
+            type: "uint8",
+          },
+          {
+            internalType: "enum IPriceDataProvider.EventType",
+            name: "eventType",
             type: "uint8",
           },
           {
