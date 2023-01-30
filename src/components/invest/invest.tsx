@@ -1,4 +1,4 @@
-import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { Alert, Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from 'next-i18next';
 import { BackendApi } from "../../backend/backend_api";
@@ -29,10 +29,31 @@ export default function Invest(props: InvestProps) {
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    const [ maxBundlesUsed, setMaxBundlesUsed ] = useState(false);
     const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ readyToInvest, setReadyToInvest ] = useState(false);
     const [ investmentDetails, setInvestmentDetails ] = useState(["0", BigNumber.from(0), BigNumber.from(0), BigNumber.from(0), 0, 0, 0 ]);
+
+    useEffect(() => {
+        async function checkMaxBundles() {
+            if (isConnected) {
+                const bundleCount = await props.insurance.invest.bundleCount();
+                const maxBundles = await props.insurance.invest.maxBundles();
+                console.log("bundleCount", bundleCount, "maxBundles", maxBundles);
+                if (bundleCount >= maxBundles) {
+                    setMaxBundlesUsed(true);
+                    setFormDisabled(true);
+                } else {
+                    setMaxBundlesUsed(false);
+                    setFormDisabled(false);
+                }
+            }    
+        }
+        checkMaxBundles();
+    }, [isConnected, props.insurance.invest]);
+
+            
 
     // change steps according to application state
     useEffect(() => {
@@ -296,6 +317,8 @@ export default function Invest(props: InvestProps) {
                         );
                     })}
                 </Stepper>
+
+                { maxBundlesUsed && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.max_bundles')}</Alert>)}
 
                 {content}
             </div>

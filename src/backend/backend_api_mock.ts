@@ -191,6 +191,9 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         bundle(bundleId: number, walletAddress: string): Promise<BundleData|undefined> {
             // TODO: return mock
             return Promise.resolve(undefined);
-        }
+        },
+        maxBundles(): Promise<number> {
+            return Promise.resolve(100);
+        },
     } as InvestApi;
 };

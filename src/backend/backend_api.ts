@@ -95,6 +95,7 @@ export interface InvestApi {
     bundleCount(): Promise<number>;
     bundleId(idx: number): Promise<number>;
     bundle(bundleId: number, walletAddress?: string): Promise<BundleData|undefined>;
+    maxBundles(): Promise<number>;
 }
 
 export function getBackendApi(

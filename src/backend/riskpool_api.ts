@@ -225,5 +225,9 @@ export class DepegRiskpoolApi {
         return bundle;
     }
 
+    async getMaxBundles(): Promise<number> {
+        return (await this.instanceService.getMaximumNumberOfActiveBundles(this.riskpoolId)).toNumber();
+    }
+
 }
 

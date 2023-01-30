@@ -2,6 +2,7 @@ import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { InvestApi } from "./backend_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
+import { getInstanceService } from "./gif_registry";
 
 export class InvestApiSmartContract implements InvestApi {
     private doNoUseDirectlydepegRiskpoolApi?: DepegRiskpoolApi;
@@ -109,6 +110,10 @@ export class InvestApiSmartContract implements InvestApi {
 
     async bundle(bundleId: number, walletAddress?: string): Promise<BundleData|undefined> {
         return await(await this.riskpoolApi()).getBundle(bundleId, walletAddress);
+    }
+
+    async maxBundles(): Promise<number> {
+        return await(await this.riskpoolApi()).getMaxBundles();
     }
 
 }
