@@ -10,7 +10,8 @@
             "policies": "Policies",
             "state": "State",
             "created": "Created",
-            "stake_usage": "Stakes"
+            "stake_usage": "Stakes",
+            "apr": "APR"
         }
     },  
     "action": {

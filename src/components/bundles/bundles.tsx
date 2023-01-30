@@ -113,7 +113,7 @@ export default function Bundles(props: BundlesProps) {
         { 
             field: 'lifetime', 
             headerName: t('table.header.lifetime'), 
-            flex: 0.65,
+            flex: 0.7,
             valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
             renderCell: (params: GridRenderCellParams<BundleData>) => {
                 const bundle = params.value!;
@@ -121,6 +121,14 @@ export default function Bundles(props: BundlesProps) {
                 return (<Timestamp at={lifetime} />);
             },
             sortComparator: (v1: BundleData, v2: BundleData) =>  v1.createdAt - v2.createdAt,
+        },
+        {
+            field: 'apr',
+            headerName: t('table.header.apr'),
+            flex: 0.3,
+            valueFormatter: (params: GridValueFormatterParams<number>) => {
+                return `${params.value.toFixed(2)}%`
+            }
         },
         { 
             field: 'capital', 
@@ -148,7 +156,7 @@ export default function Bundles(props: BundlesProps) {
     ];
 
     if (isStakingSupported) {
-        columns.splice(6, 0, {
+        columns.splice(7, 0, {
             field: 'stakeUsage', 
             headerName: t('table.header.stake_usage'), 
             flex: 0.3,
