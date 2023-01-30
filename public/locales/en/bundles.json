@@ -5,7 +5,7 @@
             "id": "Id",
             "name": "Name",
             "lifetime": "Active until",
-            "capital": "Invested capital",
+            "capital": "Staked capital",
             "capacity": "Capacity",
             "policies": "Policies",
             "state": "State",

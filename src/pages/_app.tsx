@@ -86,7 +86,7 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
   let items = [
     [t('nav.link.apply'), '/', faCartShopping],
     [t('nav.link.policies'), '/policies', faShieldHalved],
-    [t('nav.link.invest'), '/invest', faSackDollar],
+    [t('nav.link.invest'), '/stake', faSackDollar],
     [t('nav.link.bundles'), '/bundles', faCoins],
   ];
 
