@@ -17,10 +17,11 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { INPUT_VARIANT } from '../../config/theme';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { REGEX_PATTERN_NUMBER_WITH_DECIMALS } from '../../config/appConfig';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -32,7 +33,7 @@ export interface ApplicationFormProperties {
     applicationApi: ApplicationApi;
     premiumTrxTextKey: string|undefined;
     formReadyForApply: (isFormReady: boolean) => void;
-    applyForPolicy: (walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) => void;
+    applyForPolicy: (walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber) => void;
 }
 
 export type IAplicationFormValues = {
@@ -54,8 +55,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         setValue("insuredWallet", props.walletAddress);
     }, [props.walletAddress]);
 
-    const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin);
-    const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax);
+    const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin.toNumber());
+    const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax.toNumber());
 
     // coverage period (days and date)
     const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
@@ -103,16 +104,19 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // update min/max sum insured and coverage period when bundles are available
     useEffect(() => {
         if (bundles.length > 0) {
-            let minSumInsured = Number.MAX_SAFE_INTEGER;
-            let maxSumInsured = 0;
+            let minSumInsured = BigNumber.from(Number.MAX_SAFE_INTEGER - 1);
+            let maxSumInsured = BigNumber.from(0);
             let minCoverageSecs = Number.MAX_SAFE_INTEGER;
             let maxCoverageSecs = 0;
             for( let b of bundles) {
-                if (b.minSumInsured < minSumInsured) {
-                    minSumInsured = b.minSumInsured;
+                const bminSumInsured = BigNumber.from(b.minSumInsured);
+                const bmaxSumInsured = BigNumber.from(b.maxSumInsured);
+
+                if (bminSumInsured.lt(minSumInsured)) {
+                    minSumInsured = bminSumInsured;
                 }
-                if (b.maxSumInsured > maxSumInsured) {
-                    maxSumInsured = b.maxSumInsured;
+                if (bmaxSumInsured.gt(maxSumInsured)) {
+                    maxSumInsured = bmaxSumInsured;
                 }
                 if (b.minDuration < minCoverageSecs) {
                     minCoverageSecs = b.minDuration;
@@ -121,8 +125,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     maxCoverageSecs = b.maxDuration;
                 }
             }
-            setInsuredAmountMin(minSumInsured / Math.pow(10, props.usd1Decimals));
-            setInsuredAmountMax(maxSumInsured / Math.pow(10, props.usd1Decimals));
+            setInsuredAmountMin(parseInt(formatUnits(minSumInsured, props.usd1Decimals)));
+            setInsuredAmountMax(parseInt(formatUnits(maxSumInsured, props.usd1Decimals)));
             const minCoverageDays = minCoverageSecs / 86400;
             const maxCoverageDays = maxCoverageSecs / 86400;
             setCoverageDaysMin(minCoverageDays);
@@ -161,7 +165,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
 
         const walletAddress = values.insuredWallet;
-        const insuredAmount = parseFloat(values.insuredAmount) * Math.pow(10, props.usd1Decimals);
+        const insuredAmount = parseUnits(values.insuredAmount, props.usd1Decimals);
         const coverageDays = parseInt(values.coverageDuration);
 
         console.log("Calculating premium...");
@@ -169,7 +173,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setPremiumCalculationInProgress(true);
             setShowAvailableBundles(false);
             const [premium, bundle] = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDays, bundles);
-            setValue("premiumAmount", premium / Math.pow(10, props.usd1Decimals));
+            setValue("premiumAmount", parseFloat(formatUnits(premium, props.usd1Decimals)));
             setMatchedBundle(bundle);
             setPremiumErrorKey("");
         } catch (e) {
@@ -200,9 +204,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         try {
             const values = getValues();
             const walletAddress = values.insuredWallet;
-            const insuredAmountWei = parseFloat(values.insuredAmount) * Math.pow(10, props.usd1Decimals);
+            const insuredAmountWei = parseUnits(values.insuredAmount, props.usd1Decimals);
             const coverageDays = parseInt(values.coverageDuration);
-            const premiumWei = values.premiumAmount * Math.pow(10, props.usd2Decimals);
+            const premiumWei = parseUnits(values.premiumAmount.toString(), props.usd1Decimals);
             await props.applyForPolicy(walletAddress, insuredAmountWei, coverageDays, premiumWei);
         } finally {
             setApplicationInProgress(false);

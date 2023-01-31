@@ -80,7 +80,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         console.log("calculatePremium", walletAddress, insuredAmount, coverageDurationDays);
         console.log("bundleData", bundles);
         const bestBundle = (await this.riskpoolApi()).getBestQuote(bundles, insuredAmount, durationSecs, await this.lastBlockTimestamp());
-        if (bestBundle.minDuration == Number.MAX_VALUE) { 
+        if (bestBundle.minDuration == Number.MAX_SAFE_INTEGER) { 
             throw new NoBundleFoundError();
         }
         

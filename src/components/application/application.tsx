@@ -5,7 +5,7 @@ import { BackendApi } from "../../backend/backend_api";
 import { SnackbarKey, useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import { BigNumber, Signer, VoidSigner } from "ethers";
-import { formatCurrency } from "../../utils/numbers";
+import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
 import ApplicationForm from "./application_form";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { RootState } from "../../redux/store";
@@ -101,7 +101,7 @@ export default function Application(props: ApplicationProps) {
         updateAccountBalance(signer!, dispatch);
     }
 
-    async function doApproval(walletAddress: string, premium: number): Promise<Boolean> {
+    async function doApproval(walletAddress: string, premium: BigNumber): Promise<Boolean> {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
             return await props.insurance.createTreasuryApproval(
@@ -109,7 +109,7 @@ export default function Application(props: ApplicationProps) {
                 premium, 
                 (address, currency, amount) => {
                     snackbar = enqueueSnackbar(
-                        t('approval_info', { address, currency, amount: formatCurrency(amount, props.insurance.usd1Decimals) }),
+                        t('approval_info', { address, currency, amount: formatCurrencyBN(amount, props.insurance.usd1Decimals) }),
                         { variant: "warning", persist: true }
                     );
                 },
@@ -153,7 +153,7 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function doApplication(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number): Promise<{ status: boolean, processId: string|undefined}> {
+    async function doApplication(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber): Promise<{ status: boolean, processId: string|undefined}> {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
             return await props.insurance.application.applyForPolicy(
@@ -234,7 +234,7 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function applyForPolicy(walletAddress: string, insuredAmount: number, coverageDuration: number, premium: number) {
+    async function applyForPolicy(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber) {
         try {
             enableUnloadWarning(true);
 
@@ -254,7 +254,7 @@ export default function Application(props: ApplicationProps) {
             }
             setActiveStep(5);
             applicationSuccessful();
-            setProctectionDetails([applicationResult.processId as string, walletAddress, BigNumber.from(insuredAmount), coverageDuration])
+            setProctectionDetails([applicationResult.processId as string, walletAddress, insuredAmount, coverageDuration])
         } finally {
             enableUnloadWarning(false);
         }

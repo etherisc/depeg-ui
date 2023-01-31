@@ -119,12 +119,13 @@ export class DepegRiskpoolApi {
                 }
                 const lockedCapital = BigNumber.from(bundle.locked);
                 const stakesRemaining = BigNumber.from(bundle.capitalSupport).sub(lockedCapital)
+                // FIXME: this might lead to different bundle being chosen. should be: if stakes are remaining instead if limited to < stakes remaining
                 if (BigNumber.from(sumInsured).gt(stakesRemaining)) {
                     return best;
                 }
             }
             return bundle;
-        }, { apr: 100, minDuration: Number.MAX_VALUE, maxDuration: Number.MIN_VALUE, minSumInsured: BigNumber.from(Number.MAX_VALUE).toString(), maxSumInsured: BigNumber.from(Number.MIN_VALUE).toString() } as BundleData);
+        }, { apr: 100, minDuration: Number.MAX_SAFE_INTEGER, maxDuration: Number.MIN_SAFE_INTEGER + 1, minSumInsured: BigNumber.from(Number.MAX_SAFE_INTEGER - 1).toString(), maxSumInsured: BigNumber.from(Number.MIN_SAFE_INTEGER + 1).toString() } as BundleData);
     }
     
     async createBundle(
