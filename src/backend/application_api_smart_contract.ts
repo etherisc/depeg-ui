@@ -53,8 +53,13 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         const bundles = await (await this.riskpoolApi()).getBundleData();
 
         for (const bundle of bundles) {
-            // less capacity then min protected amount
-            if (BigNumber.from(bundle.minSumInsured).gt(bundle.capacity)) {
+            const capacity = BigNumber.from(bundle.capacity);
+            // ignore bundles with no capacity
+            if (capacity.lte(0)) {
+                continue;
+            }
+            // ignore bundles with less capacity then min protected amount (inconsistent)
+            if (BigNumber.from(bundle.minSumInsured).gt(capacity)) {
                 continue;
             }
             const capitalSupport = bundle.capitalSupport;

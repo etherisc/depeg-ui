@@ -56,10 +56,6 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
     const currency = compProps.currency;
     const currencyDecimals = compProps.currencyDecimals;
 
-    // FIXME: sort bundles by apr
-    // FIXME: don't show bundles with capacity 0
-    // FIXME: negative capacity -> display as 0
-
     function remainingCapacity(bundle: BundleData): string {
         const capacity = bundle.capacity;
         const capitalSupport = BigNumber.from(bundle.capitalSupport);
