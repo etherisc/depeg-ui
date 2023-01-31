@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { ethers, Signer } from 'ethers';
-import { parseEther } from 'ethers/lib/utils';
+import { parseEther, parseUnits } from 'ethers/lib/utils';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { transferAmount } from '../../backend/erc20';
 
@@ -35,7 +35,7 @@ export default async function handler(
     }
 
     if (process.env.NEXT_FAUCET_SEND_TESTCOIN === "true") {
-        const amount = 1000000 * Math.pow(10, currencyDecimals); // 1'000'000 USD2
+        const amount = parseUnits(process.env.NEXT_FAUCET_SEND_TESTCOIN_AMOUNT ?? "1000000", currencyDecimals); // 1'000'000 USD2
         console.log("sending", currency, address);
         // transfer 1'000'000 testcoin
         const tokenAddress = process.env.NEXT_PUBLIC_FAUCET_COIN_ADDRESS ?? "";
