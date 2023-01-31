@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { parseUnits } from '@ethersproject/units';
 import { PriceFeedState } from '../../types/price_feed_state';
+import { ProductState } from '../../types/product_state';
 
 export type PriceState = {
     symbol: string,
@@ -13,6 +14,7 @@ export type PriceState = {
     history: Array<PriceInfo>,
     historyLoading: boolean,
     noUpdates: boolean,
+    productState: ProductState,
 }
 
 const initialPrice = {
@@ -32,6 +34,7 @@ const initialState: PriceState = {
     history: [], // no initial history
     historyLoading: false,
     noUpdates: false,
+    productState: ProductState.Active,
 }
 
 export const priceSlice = createSlice({
@@ -83,6 +86,10 @@ export const priceSlice = createSlice({
         setNoUpdates: (state, action: PayloadAction<boolean>) => {
             state.noUpdates = action.payload;
         },
+        setProductState: (state, action: PayloadAction<ProductState>) => {
+            if (state.noUpdates) return;
+            state.productState = action.payload;
+        },
     },
 });
 
@@ -96,6 +103,7 @@ export const {
     setTriggeredAt,
     setDepeggedAt,
     setNoUpdates,
+    setProductState,
 } = priceSlice.actions;
 
 export default priceSlice.reducer;

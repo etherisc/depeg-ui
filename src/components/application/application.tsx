@@ -1,11 +1,11 @@
-import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { Alert, Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from 'next-i18next';
 import { BackendApi } from "../../backend/backend_api";
 import { SnackbarKey, useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
-import { BigNumber, Signer, VoidSigner } from "ethers";
-import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
+import { BigNumber, Signer } from "ethers";
+import { formatCurrencyBN } from "../../utils/numbers";
 import ApplicationForm from "./application_form";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { RootState } from "../../redux/store";
@@ -14,6 +14,8 @@ import { addBundle, finishLoading, reset, startLoading } from "../../redux/slice
 import { BundleData } from "../../backend/bundle_data";
 import PolicyConfirmation from "./policy_confirmation";
 import { updateAccountBalance } from "../../utils/chain";
+import { setProductState } from "../../redux/slices/price";
+import { ProductState } from "../../types/product_state";
 
 export interface ApplicationProps {
     insurance: BackendApi;
@@ -28,6 +30,7 @@ export default function Application(props: ApplicationProps) {
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    const productState = useSelector((state: RootState) => state.price.productState);
     const dispatch = useDispatch();
 
     const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
@@ -44,7 +47,9 @@ export default function Application(props: ApplicationProps) {
 
     // get bundle data once the wallet is connected
     useEffect(() => {
-        async function asyncGetBundles() {
+        async function asyncGetProductStateAndBundles() {
+            let productState = await props.insurance.getProductState();
+            dispatch(setProductState(productState));
             await props.insurance.application.getRiskBundles(
                 (bundle: BundleData) => dispatch(addBundle(bundle)) 
             );
@@ -53,14 +58,13 @@ export default function Application(props: ApplicationProps) {
         }
 
         // console.log("signer", signer);
-        if (signer !== undefined && ! (signer instanceof VoidSigner)) {
+        if (isConnected) {
             dispatch(startLoading());
             dispatch(reset());
             setPremiumTrxTextKey('bundle_loading');
-            // console.log("got a new signer ... getting bundles");
-            asyncGetBundles();
+            asyncGetProductStateAndBundles();
         }    
-    }, [signer, dispatch]);
+    }, [isConnected, dispatch]);
     
     // change steps according to application state
     useEffect(() => {
@@ -272,7 +276,7 @@ export default function Application(props: ApplicationProps) {
     if (activeStep < 5) {
         content = (
             <ApplicationForm 
-                formDisabled={formDisabled}
+                formDisabled={formDisabled || productState !== ProductState.Active}
                 walletAddress={walletAddress}
                 usd1={props.insurance.usd1}
                 usd1Decimals={props.insurance.usd1Decimals}
@@ -314,6 +318,8 @@ export default function Application(props: ApplicationProps) {
                         );
                     })}
                 </Stepper>
+
+                { productState !== ProductState.Active && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.product_not_active')}</Alert>)}
                 
                 {content}
             </div>

@@ -5,6 +5,7 @@ import { DepegProductApi } from "./depeg_product_api";
 import { hasBalance } from "./erc20";
 import { ApplicationApi } from "./backend_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
+import { ProductState } from "../types/product_state";
 
 export class ApplicationApiSmartContract implements ApplicationApi {
     private depegProductApi: DepegProductApi;

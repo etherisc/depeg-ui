@@ -6,6 +6,7 @@ import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { IInstanceService } from "../contracts/gif-interface";
 import { APPLICATION_STATE_UNDERWRITTEN, PolicyData } from "./policy_data";
 import { TransactionFailedError } from "../utils/error";
+import { ProductState } from "../types/product_state";
 
 export class DepegProductApi {
 
@@ -175,6 +176,12 @@ export class DepegProductApi {
             suminsured: suminsured.toString(),
             duration: duration.toNumber(),
         } as PolicyData;
+    }
+
+    async getProductState(): Promise<ProductState> {
+        // return (await this.getDepegProductApi())!.getProductState();
+        // TODO: implement
+        return ProductState.Active;
     }
 
 }

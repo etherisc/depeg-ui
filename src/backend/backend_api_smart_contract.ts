@@ -8,6 +8,7 @@ import { InvestApiSmartContract } from "./invest_api_smart_contract";
 import { hasBalance } from "./erc20";
 import { PriceFeed } from "./price_feed/price_feed";
 import { PriceFeedApi } from "./price_feed/api";
+import { ProductState } from "../types/product_state";
 
 export class BackendApiSmartContract implements BackendApi {
 
@@ -99,6 +100,10 @@ export class BackendApiSmartContract implements BackendApi {
         const [tx, receipt] = await createApprovalForTreasury(await depegProduct.getToken(), this.signer, premium, await depegProduct.getRegistry(), beforeApprovalCallback, beforeWaitCallback);
         console.log("tx", tx, "receipt", receipt);
         return Promise.resolve(receipt.status === 1);
+    }
+
+    async getProductState(): Promise<ProductState> {
+        return await (await this.getProductApi()).getProductState();
     }
 }
 

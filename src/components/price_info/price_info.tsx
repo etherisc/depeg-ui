@@ -61,7 +61,7 @@ export default function PriceInfo(props: PriceInfoProps) {
                         dispatch(setTriggeredAt(triggeredAt));
                         dispatch(setDepeggedAt(depeggedAt));
                     })
-                }, 10000);    
+                }, 60000);    
                 
             }
         }

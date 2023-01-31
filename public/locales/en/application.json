@@ -47,5 +47,8 @@
         "amount": "Amount",
         "end_date": "End date",
         "continue_link": "Continue to overview"
+    },
+    "alert": {
+        "product_not_active": "Depeg Protection is not available for purchase at the moment. Please try again later."
     }
 }

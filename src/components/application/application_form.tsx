@@ -165,7 +165,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
 
         const walletAddress = values.insuredWallet;
-        const insuredAmount = parseUnits(values.insuredAmount, props.usd1Decimals);
+        const insuredAmount = parseUnits(values.insuredAmount ?? "0", props.usd1Decimals);
         const coverageDays = parseInt(values.coverageDuration);
 
         console.log("Calculating premium...");
