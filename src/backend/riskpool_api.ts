@@ -41,7 +41,7 @@ export class DepegRiskpoolApi {
     
         for (let i = 0; i < activeBundleIds.length; i++) {
             const bundleId = activeBundleIds[i].toNumber();
-            console.log('bundleId', bundleId);
+            // console.log('bundleId', bundleId);
             const bundle = await this.getBundleDataByBundleId(bundleId);
             bundleData.push(bundle);
         }
@@ -202,7 +202,7 @@ export class DepegRiskpoolApi {
     }
     
     async getBundleId(idx: number): Promise<number> {
-        console.log("getBundleId");
+        // console.log("getBundleId");
         return (await this.depegRiskpool.getBundleId(idx)).toNumber();
     }
     
@@ -218,9 +218,9 @@ export class DepegRiskpoolApi {
         bundleId: number,
         walletAddress?: string, 
     ): Promise<BundleData|undefined> {
-        console.log("getBundle", bundleId);
+        // console.log("getBundle", bundleId);
         const bundle = await this.getBundleDataByBundleId(bundleId);
-        console.log(bundle);
+        // console.log(bundle);
         if (walletAddress !== undefined && bundle.owner !== walletAddress) {
             // owner mismatch
             console.log("owner mismatch");
