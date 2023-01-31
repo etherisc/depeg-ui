@@ -65,14 +65,14 @@ export class DepegRiskpoolApi {
             riskpoolId: this.riskpoolId,
             owner: owner,
             apr: apr,
-            minSumInsured: minSumInsured.toNumber(),
-            maxSumInsured: maxSumInsured.toNumber(),
+            minSumInsured: minSumInsured.toString(),
+            maxSumInsured: maxSumInsured.toString(),
             minDuration: minDuration.toNumber(),
             maxDuration: maxDuration.toNumber(),
-            capital: capital.toNumber(),
-            locked: lockedCapital.toNumber(),
+            capital: capital.toString(),
+            locked: lockedCapital.toString(),
             capitalSupport: capitalSupport?.toString(),
-            capacity: capital.toNumber() - lockedCapital.toNumber(),
+            capacity: capital.sub(lockedCapital).toString(),
             policies: policies.toNumber(),
             state: state,
             tokenId: tokenId.toNumber(),
@@ -84,7 +84,7 @@ export class DepegRiskpoolApi {
     
     getBestQuote(
         bundleData: Array<BundleData>, 
-        sumInsured: number, 
+        sumInsured: BigNumber, 
         duration: number,
         lastBlockTimestamp: number
     ): BundleData {
@@ -92,10 +92,12 @@ export class DepegRiskpoolApi {
             if (lastBlockTimestamp > (bundle.createdAt + parseInt(bundle.lifetime))) {
                 return best;
             }
-            if (sumInsured < bundle.minSumInsured) {
+            const minSumInsured = BigNumber.from(bundle.minSumInsured);
+            const maxSumInsured = BigNumber.from(bundle.maxSumInsured);
+            if (sumInsured.lt(minSumInsured)) {
                 return best;
             }
-            if (sumInsured > bundle.maxSumInsured) {
+            if (sumInsured.gt(maxSumInsured)) {
                 return best;
             }
             if (duration < bundle.minDuration) {
@@ -107,7 +109,8 @@ export class DepegRiskpoolApi {
             if (best.apr < bundle.apr) {
                 return best;
             }
-            if (sumInsured > bundle.capacity) {
+            const capacity = BigNumber.from(bundle.capacity);
+            if (sumInsured.gt(capacity)) {
                 return best;
             }
             if (isStakingSupported) {
@@ -121,16 +124,16 @@ export class DepegRiskpoolApi {
                 }
             }
             return bundle;
-        }, { apr: 100, minDuration: Number.MAX_VALUE, maxDuration: Number.MIN_VALUE, minSumInsured: Number.MAX_VALUE, maxSumInsured: Number.MIN_VALUE } as BundleData);
+        }, { apr: 100, minDuration: Number.MAX_VALUE, maxDuration: Number.MIN_VALUE, minSumInsured: BigNumber.from(Number.MAX_VALUE).toString(), maxSumInsured: BigNumber.from(Number.MIN_VALUE).toString() } as BundleData);
     }
     
     async createBundle(
         name: string,
         lifetime: number,
         investorWalletAddress: string, 
-        investedAmount: number, 
-        minSumInsured: number, 
-        maxSumInsured: number, 
+        investedAmount: BigNumber, 
+        minSumInsured: BigNumber, 
+        maxSumInsured: BigNumber, 
         minDuration: number, 
         maxDuration: number, 
         annualPctReturn: number,

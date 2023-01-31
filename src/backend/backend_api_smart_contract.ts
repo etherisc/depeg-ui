@@ -39,12 +39,12 @@ export class BackendApiSmartContract implements BackendApi {
 
         const minLifetime = parseInt(process.env.NEXT_PUBLIC_DEPEG_LIFETIME_DAYS_MINIMUM || "14");
         const maxLifetime = parseInt(process.env.NEXT_PUBLIC_DEPEG_LIFETIME_DAYS_MAXIMUM || "365");
-        const insuredAmountMin = parseInt(process.env.NEXT_PUBLIC_DEPEG_SUMINSURED_MINIMUM || "0");
-        const insuredAmountMax = parseInt(process.env.NEXT_PUBLIC_DEPEG_SUMINSURED_MAXIMUM || "0");
+        const insuredAmountMin = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_SUMINSURED_MINIMUM || "0");
+        const insuredAmountMax = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_SUMINSURED_MAXIMUM || "0");
         const coverageDurationDaysMin = parseInt(process.env.NEXT_PUBLIC_DEPEG_COVERAGE_DURATION_DAYS_MINIMUM || "0");
         const coverageDurationDaysMax = parseInt(process.env.NEXT_PUBLIC_DEPEG_COVERAGE_DURATION_DAYS_MAXIMUM || "0");
-        const investedAmountMin = parseInt(process.env.NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MINIMUM || "0");
-        const investedAmountMax = parseInt(process.env.NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MAXIMUM || "0");
+        const investedAmountMin = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MINIMUM || "0");
+        const investedAmountMax = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MAXIMUM || "0");
         const annualPctReturn = parseInt(process.env.NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN || "0");
         const annualPctReturnMax = parseInt(process.env.NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN_MAXIMUM || "0");
 
@@ -89,9 +89,9 @@ export class BackendApiSmartContract implements BackendApi {
 
     async createTreasuryApproval(
         walletAddress: string, 
-        premium: number, 
-        beforeApprovalCallback?: (address: string, currency: string, amount: number) => void,
-        beforeWaitCallback?: (address: string, currency: string, amount: number) => void,
+        premium: BigNumber, 
+        beforeApprovalCallback?: (address: string, currency: string, amount: BigNumber) => void,
+        beforeWaitCallback?: (address: string, currency: string, amount: BigNumber) => void,
     ): Promise<boolean> {
         console.log("createApproval", walletAddress, premium);
         // TODO: avoid this

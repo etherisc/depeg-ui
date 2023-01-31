@@ -1,6 +1,6 @@
 import { Coder } from "abi-coder";
 import DepegProductBuild from '@etherisc/depeg-contracts/build/contracts/DepegProduct.json';
-import { ContractReceipt, ContractTransaction, Signer, VoidSigner } from "ethers";
+import { BigNumber, ContractReceipt, ContractTransaction, Signer, VoidSigner } from "ethers";
 import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../contracts/depeg-contracts";
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { IInstanceService } from "../contracts/gif-interface";
@@ -87,9 +87,9 @@ export class DepegProductApi {
     
     async applyForDepegPolicy(
         walletAddress: string,
-        insuredAmount: number, 
+        insuredAmount: BigNumber, 
         coverageDurationDays: number, 
-        premium: number, 
+        premium: BigNumber, 
         beforeApplyCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void
     ): Promise<[ContractTransaction, ContractReceipt]> {

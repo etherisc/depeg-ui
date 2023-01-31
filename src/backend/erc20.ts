@@ -6,21 +6,19 @@ export function getErc20Token(address: string, signer: Signer): IERC20 {
 }
 
 /** Checks weather the given wallet has the expected balance */
-export async function hasBalance(walletAddress: string, expectedBalance: number, tokenAddress: string, signer: Signer): Promise<boolean> {
+export async function hasBalance(walletAddress: string, expectedBalance: BigNumber, tokenAddress: string, signer: Signer): Promise<boolean> {
     const token = getErc20Token(tokenAddress, signer);
     const balance = await token.balanceOf(walletAddress);
     return balance.gte(expectedBalance);
 }
 
+// FIXME: remote this method
 /** Checks weather the given wallet has the expected balance */
 export async function hasBalanceBN(walletAddress: string, expectedBalance: BigNumber, tokenAddress: string, signer: Signer): Promise<boolean> {
-    const token = getErc20Token(tokenAddress, signer);
-    const balance = await token.balanceOf(walletAddress);
-    // console.log(balance);
-    return balance.gte(expectedBalance);
+    return hasBalance(walletAddress, expectedBalance, tokenAddress, signer);
 }
 
-export async function transferAmount(walletAddress: string, amountToTransfer: number, tokenAddress: string, signer: Signer): Promise<boolean> {
+export async function transferAmount(walletAddress: string, amountToTransfer: BigNumber, tokenAddress: string, signer: Signer): Promise<boolean> {
     console.log(`Transferring ${amountToTransfer} from ${walletAddress} to ${tokenAddress}`);
     const token = getErc20Token(tokenAddress, signer);
     const tx = await token.transfer(walletAddress, amountToTransfer, { gasLimit: 100000});
