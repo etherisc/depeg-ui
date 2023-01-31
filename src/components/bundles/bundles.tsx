@@ -5,7 +5,7 @@ import { getBackendApi, BackendApi } from "../../backend/backend_api";
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleData } from "../../backend/bundle_data";
-import { formatCurrency } from "../../utils/numbers";
+import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
 import { LinkBehaviour } from "../link_behaviour";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
@@ -35,15 +35,14 @@ export default function Bundles(props: BundlesProps) {
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const provider = useSelector((state: RootState) => state.chain.provider);
+    const address = useSelector((state: RootState) => state.account.address);
     const bundles = useSelector((state: RootState) => state.bundles.bundles);
     const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
 
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [ pageSize, setPageSize ] = useState(10);
     const [ showAllBundles, setShowAllBundles ] = useState(true);
-    // FIXME: use from redux
-    const [ address, setAddress ] = useState("");
-
+    
     function handleShowAllBundlesChanged(event: React.ChangeEvent<HTMLInputElement>) {
         setShowAllBundles(!showAllBundles);
     }
@@ -56,10 +55,7 @@ export default function Bundles(props: BundlesProps) {
         dispatch(startLoading());
         dispatch(reset());
         
-        const walletAddress = await signer?.getAddress();
-        setAddress(walletAddress ?? "");
-
-        if (walletAddress === undefined ) {
+        if (address === undefined ) {
             dispatch(finishLoading());
             return;
         }
@@ -69,12 +65,12 @@ export default function Bundles(props: BundlesProps) {
         const bundlesCount = await iapi.bundleCount();
         for (let i = 0; i < bundlesCount; i++) {
             const bundleId = await iapi.bundleId(i);
-            const bundle = await iapi.bundle(bundleId, showAllBundles ? undefined : walletAddress);
+            const bundle = await iapi.bundle(bundleId, showAllBundles ? undefined : address);
             // bundle() will return undefined if bundles is not owned by the wallet address
             if (bundle === undefined ) {
                 continue;
             }
-            console.log("bundle: ", bundle);
+            // console.log("bundle: ", bundle);
             dispatch(addBundle(bundle));
         }
         dispatch(finishLoading());
@@ -134,8 +130,9 @@ export default function Bundles(props: BundlesProps) {
             field: 'capital', 
             headerName: t('table.header.capital'), 
             flex: 0.65,
-            valueFormatter: (params: GridValueFormatterParams<number>) => {
-                const capital = formatCurrency(params.value, props.insurance.usd2Decimals);
+            valueGetter: (params: GridValueGetterParams<string, BundleData>) => BigNumber.from(params.value),
+            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
+                const capital = formatCurrencyBN(params.value, props.insurance.usd2Decimals);
                 return `${props.insurance.usd2} ${capital}`;
             }
         },
@@ -143,8 +140,9 @@ export default function Bundles(props: BundlesProps) {
             field: 'capacity', 
             headerName: t('table.header.capacity'), 
             flex: 0.65,
-            valueFormatter: (params: GridValueFormatterParams<number>) => {
-                const capacity = formatCurrency(params.value, props.insurance.usd2Decimals);
+            valueGetter: (params: GridValueGetterParams<string, BundleData>) => BigNumber.from(params.value),
+            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
+                const capacity = formatCurrencyBN(params.value, props.insurance.usd2Decimals);
                 return `${props.insurance.usd2} ${capacity}`
             }
         },

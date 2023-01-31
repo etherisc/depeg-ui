@@ -33,7 +33,7 @@ export default function Policies(props: PoliciesProps) {
     const policies = useSelector((state: RootState) => state.policies.policies);
     const isLoading = useSelector((state: RootState) => state.policies.isLoading);
 
-    const [ pageSize, setPageSize ] = useState(8);
+    const [ pageSize, setPageSize ] = useState(10);
 
     const [ showActivePoliciesOnly, setShowActivePoliciesOnly ] = useState<boolean>(false);
     function handleShowActivePoliciesOnlyChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -83,6 +83,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'suminsured', 
             headerName: t('table.header.insuredAmount'), 
             flex: 1,
+            valueGetter: (params: GridValueGetterParams<string, PolicyData>) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.insurance.usd1} ${formatCurrency(params.value.toNumber(), props.insurance.usd1Decimals)}`,
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2),
         },
@@ -90,7 +91,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'createdAt', 
             headerName: t('table.header.createdDate'), 
             flex: 1,
-            renderCell: (params: GridRenderCellParams<BigNumber>) => <Timestamp at={params?.value?.toNumber() ?? 0} />,
+            renderCell: (params: GridRenderCellParams<number>) => <Timestamp at={params?.value ?? 0} />,
             sortComparator: gridNumberComparator,
         },
         { 

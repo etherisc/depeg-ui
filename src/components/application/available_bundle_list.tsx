@@ -4,7 +4,8 @@ import TableContainer from "@mui/material/TableContainer";
 import { BigNumber } from "ethers";
 import { useTranslation } from "next-i18next";
 import { BundleData } from "../../backend/bundle_data";
-import { formatCurrency } from "../../utils/numbers";
+import { minBigNumber } from "../../utils/bignumber";
+import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
 import { calculateStakeUsage } from "../../utils/staking";
 import StakeUsageIndicator from "../bundles/stake_usage_indicator";
 
@@ -57,9 +58,9 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
 
     function remainingCapacity(bundle: BundleData): string {
         const capacity = bundle.capacity;
-        const capitalSupport = BigNumber.from(bundle.capitalSupport).toNumber();
-        const capitalRemaining = capitalSupport - bundle.locked;
-        return currency + " " + formatCurrency(Math.min(capacity, capitalRemaining), currencyDecimals); 
+        const capitalSupport = BigNumber.from(bundle.capitalSupport);
+        const capitalRemaining = capitalSupport.sub(BigNumber.from(bundle.locked));
+        return currency + " " + formatCurrencyBN(minBigNumber(BigNumber.from(capacity), capitalRemaining), currencyDecimals); 
     }
 
     return (<TableRow
@@ -73,7 +74,7 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
                 {bundle.name}
             </TableCell>
             <TableCell align="right" data-testid="bundle-apr">{bundle.apr}%</TableCell>
-            <TableCell align="right" data-testid="bundle-suminsured">{currency} {formatCurrency(bundle.minSumInsured, currencyDecimals)} / {formatCurrency(bundle.maxSumInsured, currencyDecimals)}</TableCell>
+            <TableCell align="right" data-testid="bundle-suminsured">{currency} {formatCurrencyBN(BigNumber.from(bundle.minSumInsured), currencyDecimals)} / {formatCurrencyBN(BigNumber.from(bundle.maxSumInsured), currencyDecimals)}</TableCell>
             <TableCell align="right" data-testid="bundle-duration">{bundle.minDuration / 86400 } / {bundle.maxDuration / 86400 } {t('days')}</TableCell>
             <TableCell align="right" data-testid="bundle-capacity">{remainingCapacity(bundle)}</TableCell>
             <TableCell align="right" data-testid="bundle-stakeusage">

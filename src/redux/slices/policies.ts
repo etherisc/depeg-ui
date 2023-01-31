@@ -17,8 +17,8 @@ export const policiesSlice = createSlice({
     initialState,
     reducers: {
         addPolicy: (state, action: PayloadAction<PolicyData>) => {
-            const hasBundle = state.policies.find((p) => p.id === action.payload.id) !== undefined;
-            if (!hasBundle) {
+            const hasPolicy = state.policies.find((p) => p.id === action.payload.id) !== undefined;
+            if (!hasPolicy) {
                 state.policies.push(action.payload);
             }
         },

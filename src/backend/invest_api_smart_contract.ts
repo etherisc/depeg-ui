@@ -3,6 +3,7 @@ import { DepegProductApi } from "./depeg_product_api";
 import { InvestApi } from "./backend_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
 import { getInstanceService } from "./gif_registry";
+import { BigNumber } from "ethers";
 
 export class InvestApiSmartContract implements InvestApi {
     private doNoUseDirectlydepegRiskpoolApi?: DepegRiskpoolApi;
@@ -10,10 +11,10 @@ export class InvestApiSmartContract implements InvestApi {
 
     minLifetime: number;
     maxLifetime: number;
-    minInvestedAmount: number;
-    maxInvestedAmount: number;
-    minSumInsured: number;
-    maxSumInsured: number;
+    minInvestedAmount: BigNumber;
+    maxInvestedAmount: BigNumber;
+    minSumInsured: BigNumber;
+    maxSumInsured: BigNumber;
     minCoverageDuration: number;
     maxCoverageDuration: number;
     annualPctReturn: number;
@@ -21,8 +22,8 @@ export class InvestApiSmartContract implements InvestApi {
 
     constructor(depegProductApi: DepegProductApi, 
         minLifetime: number, maxLifetime: number, 
-        minInvestedAmount: number, maxInvestedAmount: number, 
-        minSumInsured: number, maxSumInsured: number, 
+        minInvestedAmount: BigNumber, maxInvestedAmount: BigNumber, 
+        minSumInsured: BigNumber, maxSumInsured: BigNumber, 
         minCoverageDuration: number, maxCoverageDuration: number, 
         annualPctReturn: number, maxAnnualPctReturn: number
     ) {
@@ -67,9 +68,9 @@ export class InvestApiSmartContract implements InvestApi {
         name: string,
         lifetime: number,
         investorWalletAddress: string, 
-        investedAmount: number, 
-        minSumInsured: number, 
-        maxSumInsured: number, 
+        investedAmount: BigNumber, 
+        minSumInsured: BigNumber, 
+        maxSumInsured: BigNumber, 
         minDuration: number, 
         maxDuration: number, 
         annualPctReturn: number,

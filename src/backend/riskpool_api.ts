@@ -41,7 +41,7 @@ export class DepegRiskpoolApi {
     
         for (let i = 0; i < activeBundleIds.length; i++) {
             const bundleId = activeBundleIds[i].toNumber();
-            console.log('bundleId', bundleId);
+            // console.log('bundleId', bundleId);
             const bundle = await this.getBundleDataByBundleId(bundleId);
             bundleData.push(bundle);
         }
@@ -65,14 +65,14 @@ export class DepegRiskpoolApi {
             riskpoolId: this.riskpoolId,
             owner: owner,
             apr: apr,
-            minSumInsured: minSumInsured.toNumber(),
-            maxSumInsured: maxSumInsured.toNumber(),
+            minSumInsured: minSumInsured.toString(),
+            maxSumInsured: maxSumInsured.toString(),
             minDuration: minDuration.toNumber(),
             maxDuration: maxDuration.toNumber(),
-            capital: capital.toNumber(),
-            locked: lockedCapital.toNumber(),
+            capital: capital.toString(),
+            locked: lockedCapital.toString(),
             capitalSupport: capitalSupport?.toString(),
-            capacity: capital.toNumber() - lockedCapital.toNumber(),
+            capacity: capital.sub(lockedCapital).toString(),
             policies: policies.toNumber(),
             state: state,
             tokenId: tokenId.toNumber(),
@@ -84,7 +84,7 @@ export class DepegRiskpoolApi {
     
     getBestQuote(
         bundleData: Array<BundleData>, 
-        sumInsured: number, 
+        sumInsured: BigNumber, 
         duration: number,
         lastBlockTimestamp: number
     ): BundleData {
@@ -92,45 +92,57 @@ export class DepegRiskpoolApi {
             if (lastBlockTimestamp > (bundle.createdAt + parseInt(bundle.lifetime))) {
                 return best;
             }
-            if (sumInsured < bundle.minSumInsured) {
+            const minSumInsured = BigNumber.from(bundle.minSumInsured);
+            const maxSumInsured = BigNumber.from(bundle.maxSumInsured);
+            if (sumInsured.lt(minSumInsured)) {
+                console.log("sumInsured less that min sum insured", sumInsured, bundle);
                 return best;
             }
-            if (sumInsured > bundle.maxSumInsured) {
+            if (sumInsured.gt(maxSumInsured)) {
+                console.log("sumInsured greater that max sum insured", sumInsured, bundle);
                 return best;
             }
             if (duration < bundle.minDuration) {
+                console.log("duration less that min duration", duration, bundle);
                 return best;
             }
             if (duration > bundle.maxDuration) {
+                console.log("duration greater that max duration", duration, bundle);
                 return best;
             }
             if (best.apr < bundle.apr) {
+                console.log("bundle apr larger than best apr so far (best, bundle)", best, bundle);
                 return best;
             }
-            if (sumInsured > bundle.capacity) {
+            const capacity = BigNumber.from(bundle.capacity);
+            if (sumInsured.gt(capacity)) {
+                console.log("sumInsured greater than capacity", sumInsured, bundle);
                 return best;
             }
             if (isStakingSupported) {
                 if (bundle.capitalSupport === undefined) {
+                    console.log("no stakes defined on bundle", bundle);
                     return best;
                 }
                 const lockedCapital = BigNumber.from(bundle.locked);
                 const stakesRemaining = BigNumber.from(bundle.capitalSupport).sub(lockedCapital)
-                if (BigNumber.from(sumInsured).gt(stakesRemaining)) {
+                if (stakesRemaining.lte(0)) {
+                    console.log("no stakes remaining on bundle", bundle);
                     return best;
                 }
             }
+            console.log("bundle selected", bundle);
             return bundle;
-        }, { apr: 100, minDuration: Number.MAX_VALUE, maxDuration: Number.MIN_VALUE, minSumInsured: Number.MAX_VALUE, maxSumInsured: Number.MIN_VALUE } as BundleData);
+        }, { apr: 100, minDuration: Number.MAX_SAFE_INTEGER, maxDuration: Number.MIN_SAFE_INTEGER + 1, minSumInsured: BigNumber.from(Number.MAX_SAFE_INTEGER - 1).toString(), maxSumInsured: BigNumber.from(Number.MIN_SAFE_INTEGER + 1).toString() } as BundleData);
     }
     
     async createBundle(
         name: string,
         lifetime: number,
         investorWalletAddress: string, 
-        investedAmount: number, 
-        minSumInsured: number, 
-        maxSumInsured: number, 
+        investedAmount: BigNumber, 
+        minSumInsured: BigNumber, 
+        maxSumInsured: BigNumber, 
         minDuration: number, 
         maxDuration: number, 
         annualPctReturn: number,
@@ -198,7 +210,7 @@ export class DepegRiskpoolApi {
     }
     
     async getBundleId(idx: number): Promise<number> {
-        console.log("getBundleId");
+        // console.log("getBundleId");
         return (await this.depegRiskpool.getBundleId(idx)).toNumber();
     }
     
@@ -214,9 +226,9 @@ export class DepegRiskpoolApi {
         bundleId: number,
         walletAddress?: string, 
     ): Promise<BundleData|undefined> {
-        console.log("getBundle", bundleId);
+        // console.log("getBundle", bundleId);
         const bundle = await this.getBundleDataByBundleId(bundleId);
-        console.log(bundle);
+        // console.log(bundle);
         if (walletAddress !== undefined && bundle.owner !== walletAddress) {
             // owner mismatch
             console.log("owner mismatch");

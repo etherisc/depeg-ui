@@ -9,12 +9,12 @@ import { DepegRiskpoolApi } from "./riskpool_api";
 export class ApplicationApiSmartContract implements ApplicationApi {
     private depegProductApi: DepegProductApi;
     private doNoUseDirectlyDepegRiskpoolApi?: DepegRiskpoolApi;
-    insuredAmountMin: number;
-    insuredAmountMax: number;
+    insuredAmountMin: BigNumber;
+    insuredAmountMax: BigNumber;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
     
-    constructor(depegProductApi: DepegProductApi, insuredAmountMin: number, insuredAmountMax: number, coverageDurationDaysMin: number, coverageDurationDaysMax: number) {
+    constructor(depegProductApi: DepegProductApi, insuredAmountMin: BigNumber, insuredAmountMax: BigNumber, coverageDurationDaysMin: number, coverageDurationDaysMax: number) {
         this.insuredAmountMin = insuredAmountMin;
         this.insuredAmountMax = insuredAmountMax;
         this.coverageDurationDaysMin = coverageDurationDaysMin;
@@ -53,8 +53,13 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         const bundles = await (await this.riskpoolApi()).getBundleData();
 
         for (const bundle of bundles) {
-            // less capacity then min protected amount
-            if (BigNumber.from(bundle.minSumInsured).gt(bundle.capacity)) {
+            const capacity = BigNumber.from(bundle.capacity);
+            // ignore bundles with no capacity
+            if (capacity.lte(0)) {
+                continue;
+            }
+            // ignore bundles with less capacity then min protected amount (inconsistent)
+            if (BigNumber.from(bundle.minSumInsured).gt(capacity)) {
                 continue;
             }
             const capitalSupport = bundle.capitalSupport;
@@ -70,17 +75,17 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         }
     }
 
-    async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>): Promise<[number, BundleData]> {
+    async calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationDays: number, bundles: Array<BundleData>): Promise<[BigNumber, BundleData]> {
         if ((await this.getDepegProductApi())!.isVoidSigner()) {
             console.log('no chain connection, no premium calculation');
-            return Promise.resolve([0, {} as BundleData]);
+            return Promise.resolve([BigNumber.from(0), {} as BundleData]);
         }
 
         const durationSecs = coverageDurationDays * 24 * 60 * 60;
         console.log("calculatePremium", walletAddress, insuredAmount, coverageDurationDays);
         console.log("bundleData", bundles);
         const bestBundle = (await this.riskpoolApi()).getBestQuote(bundles, insuredAmount, durationSecs, await this.lastBlockTimestamp());
-        if (bestBundle.minDuration == Number.MAX_VALUE) { 
+        if (bestBundle.minDuration == Number.MAX_SAFE_INTEGER) { 
             throw new NoBundleFoundError();
         }
         
@@ -88,9 +93,9 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         const depegProduct = (await this.getDepegProductApi())!.getDepegProduct();
 
         console.log("bestBundle", bestBundle);
-        const netPremium = (await depegProduct.calculateNetPremium(insuredAmount, durationSecs, bestBundle.id)).toNumber();
+        const netPremium = (await depegProduct.calculateNetPremium(insuredAmount, durationSecs, bestBundle.id));
         console.log("netPremium", netPremium);
-        const premium = (await depegProduct.calculatePremium(netPremium)).toNumber();
+        const premium = (await depegProduct.calculatePremium(netPremium));
         console.log("premium", premium);
 
         if (! await hasBalance(walletAddress, premium, await depegProduct.getToken(), (await this.getDepegProductApi())!.getSigner())) {
@@ -102,9 +107,9 @@ export class ApplicationApiSmartContract implements ApplicationApi {
 
     async applyForPolicy(
             walletAddress: string, 
-            insuredAmount: number, 
+            insuredAmount: BigNumber, 
             coverageDurationDays: number,
-            premium: number,
+            premium: BigNumber,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void,
         ): Promise<{ status: boolean, processId: string|undefined}> {

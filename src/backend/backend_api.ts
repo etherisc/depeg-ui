@@ -17,9 +17,9 @@ export interface BackendApi {
     createTreasuryApproval: 
         (
             walletAddress: string, 
-            premium: number,
-            beforeApprovalCallback?: (address: string, currency: string, amount: number) => void,
-            beforeWaitCallback?: (address: string, currency: string, amount: number) => void
+            premium: BigNumber,
+            beforeApprovalCallback?: (address: string, currency: string, amount: BigNumber) => void,
+            beforeWaitCallback?: (address: string, currency: string, amount: BigNumber) => void
         ) => Promise<boolean>;
     policy: 
         (
@@ -40,8 +40,8 @@ export interface BackendApi {
 }
 
 export interface ApplicationApi {
-    insuredAmountMin: number;
-    insuredAmountMax: number;
+    insuredAmountMin: BigNumber;
+    insuredAmountMax: BigNumber;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
     getRiskBundles: (
@@ -50,16 +50,16 @@ export interface ApplicationApi {
     calculatePremium: 
         (
             walletAddress: string, 
-            insuredAmount: number, 
+            insuredAmount: BigNumber, 
             coverageDurationDays: number,
             bundles: Array<BundleData>,
-        ) => Promise<[number, BundleData]>;
+        ) => Promise<[BigNumber, BundleData]>;
     applyForPolicy: 
         (
             walletAddress: string, 
-            insuredAmount: number, 
+            insuredAmount: BigNumber, 
             coverageDurationDays: number,
-            premium: number,
+            premium: BigNumber,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void
         ) => Promise<{ status: boolean, processId: string|undefined}>;
@@ -69,10 +69,10 @@ export interface ApplicationApi {
 export interface InvestApi {
     minLifetime: number;
     maxLifetime: number;
-    minInvestedAmount: number;
-    maxInvestedAmount: number;
-    minSumInsured: number;
-    maxSumInsured: number;
+    minInvestedAmount: BigNumber;
+    maxInvestedAmount: BigNumber;
+    minSumInsured: BigNumber;
+    maxSumInsured: BigNumber;
     minCoverageDuration: number;
     maxCoverageDuration: number;
     annualPctReturn: number;
@@ -82,9 +82,9 @@ export interface InvestApi {
             name: string,
             lifetime: number,
             investorWalletAddress: string, 
-            investedAmount: number, 
-            minSumInsured: number, 
-            maxSumInsured: number, 
+            investedAmount: BigNumber, 
+            minSumInsured: BigNumber, 
+            maxSumInsured: BigNumber, 
             minDuration: number, 
             maxDuration: number, 
             annualPctReturn: number,

@@ -49,5 +49,5 @@ export function getPolicyStateForPaidoutPolicy(policy: PolicyData): PolicyState 
 }
 
 export function getPolicyExpiration(policy: PolicyData): number {
-    return dayjs.unix(policy.createdAt.toNumber() + policy.duration.toNumber()).unix();
+    return dayjs.unix(policy.createdAt + policy.duration).unix();
 }
