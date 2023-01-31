@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { BackendApi } from '../../backend/backend_api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, set, SubmitHandler, useForm } from 'react-hook-form';
 import { TextField } from '@mui/material';
 import { INPUT_VARIANT } from '../../config/theme';
 import { DatePicker } from '@mui/x-date-pickers';
@@ -78,33 +78,16 @@ export default function InvestForm(props: InvestFormProperties) {
 
     const errors = useMemo(() => formState.errors, [formState]);
 
-    // handle changes in lifetime duration / end date and update the other field accordingly
-    const watchLifetime = watch("lifetime");
-    useEffect(() => {
-        if (watchLifetime === "") {
-            return;
-        }
-        setValue("lifetimeEndDate", dayjs().startOf('day').add(parseInt(watchLifetime), 'days').format("YYYY-MM-DD"));
-    }, [watchLifetime, setValue]);
-
-    const watchLifetimeEndDate = watch("lifetimeEndDate");
-    useEffect(() => {
-        if (watchLifetime === "") {
-            return;
-        }
-        setValue("lifetime", dayjs(watchLifetimeEndDate).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
-    }, [watchLifetimeEndDate, setValue]);
-
     // handle changes in insured amount min/max / coverage duration and validate the other field accordingly
     const watchInsuredAmountMin = watch("insuredAmountMin");
     useEffect(() => {
-        console.log("insuredAmountMin changed", watchInsuredAmountMin);
+        // console.log("insuredAmountMin changed", watchInsuredAmountMin);
         trigger(["insuredAmountMax", "insuredAmountMin"]);
     }, [watchInsuredAmountMin, trigger]);
 
     const watchInsuredAmountMax = watch("insuredAmountMax");
     useEffect(() => {
-        console.log("insuredAmountMax changed", watchInsuredAmountMax);
+        // console.log("insuredAmountMax changed", watchInsuredAmountMax);
         trigger("insuredAmountMin");
     }, [watchInsuredAmountMax, trigger]);
 
@@ -195,6 +178,10 @@ export default function InvestForm(props: InvestFormProperties) {
                                 InputProps={{
                                     endAdornment: <InputAdornment position="end">{t('days')}</InputAdornment>,
                                 }}
+                                onBlur={(e) => {
+                                    field.onBlur();
+                                    setValue("lifetimeEndDate", dayjs().startOf('day').add(parseInt(e.target.value), 'days').format("YYYY-MM-DD"));
+                                }}
                                 error={errors.lifetime !== undefined}
                                 helperText={errors.lifetime !== undefined 
                                     ? ( errors.lifetime.type == 'pattern' 
@@ -222,6 +209,11 @@ export default function InvestForm(props: InvestFormProperties) {
                                         variant={INPUT_VARIANT} 
                                         />
                                 }
+                                onAccept={(value: string|null) => {
+                                    if (value !== null) {
+                                        setValue("lifetime", dayjs(value).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
+                                    }
+                                }}
                                 disablePast={true}
                                 minDate={minLifetimeEndDate}
                                 maxDate={maxLifetimeEndDate}
