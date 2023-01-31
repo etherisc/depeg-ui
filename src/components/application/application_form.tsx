@@ -82,26 +82,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
     const [ showAvailableBundles, setShowAvailableBundles ] = useState(false);
 
-    
-    // handle changes in coverage duration / end date and update the other field accordingly
-    const watchCoverageDuration = watch("coverageDuration");
-    useEffect(() => {
-        if (watchCoverageDuration === "") {
-            return;
-        }
-        const durationDays = parseInt(watchCoverageDuration);
-        // console.log("watchCoverageDuration", watchCoverageDuration);
-        setValue("coverageEndDate", dayjs().startOf('day').add(durationDays, 'days').format("YYYY-MM-DD"));
-    }, [watchCoverageDuration, setValue]);
-
-    const watchCoverageEndDate = watch("coverageEndDate");
-    useEffect(() => {
-        setValue("coverageDuration", dayjs(watchCoverageEndDate).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
-        // this is a special case as changing date with date picker does not trigger the `watchPremiumFactors` useEffect
-        calculatePremium();
-    }, [watchCoverageEndDate, setValue]);
-
-
     const errors = useMemo(() => formState.errors, [formState]);
     const [ premiumCalculationRequired, setPremiumCalculationRequired ] = useState(false);
 
@@ -310,7 +290,11 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
                                 {...field} 
-                                onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
+                                onBlur={(e) => { 
+                                    field.onBlur(); 
+                                    setValue("coverageEndDate", dayjs().startOf('day').add(parseInt(e.target.value), 'days').format("YYYY-MM-DD"));
+                                    setPremiumCalculationRequired(true); 
+                                }}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
                                 }}
@@ -341,6 +325,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                         variant={INPUT_VARIANT} 
                                         />
                                 }
+                                onAccept={(date) => {
+                                    setValue("coverageDuration", dayjs(date).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
+                                    setPremiumCalculationRequired(true); 
+                                }}
                                 disablePast={true}
                                 minDate={coverageUntilMin}
                                 maxDate={coverageUntilMax}
