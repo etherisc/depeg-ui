@@ -95,36 +95,43 @@ export class DepegRiskpoolApi {
             const minSumInsured = BigNumber.from(bundle.minSumInsured);
             const maxSumInsured = BigNumber.from(bundle.maxSumInsured);
             if (sumInsured.lt(minSumInsured)) {
+                console.log("sumInsured less that min sum insured", sumInsured, bundle);
                 return best;
             }
             if (sumInsured.gt(maxSumInsured)) {
+                console.log("sumInsured greater that max sum insured", sumInsured, bundle);
                 return best;
             }
             if (duration < bundle.minDuration) {
+                console.log("duration less that min duration", duration, bundle);
                 return best;
             }
             if (duration > bundle.maxDuration) {
+                console.log("duration greater that max duration", duration, bundle);
                 return best;
             }
             if (best.apr < bundle.apr) {
+                console.log("bundle apr larger than best apr so far (best, bundle)", best, bundle);
                 return best;
             }
             const capacity = BigNumber.from(bundle.capacity);
             if (sumInsured.gt(capacity)) {
+                console.log("sumInsured greater than capacity", sumInsured, bundle);
                 return best;
             }
             if (isStakingSupported) {
                 if (bundle.capitalSupport === undefined) {
+                    console.log("no stakes defined on bundle", bundle);
                     return best;
                 }
                 const lockedCapital = BigNumber.from(bundle.locked);
                 const stakesRemaining = BigNumber.from(bundle.capitalSupport).sub(lockedCapital)
-                // FIXME: this might lead to different bundle being chosen. should be: if stakes are remaining instead if limited to < stakes remaining
-                // maybe bundles are no longer sorted by apr
-                if (BigNumber.from(sumInsured).gt(stakesRemaining)) {
+                if (stakesRemaining.lte(0)) {
+                    console.log("no stakes remaining on bundle", bundle);
                     return best;
                 }
             }
+            console.log("bundle selected", bundle);
             return bundle;
         }, { apr: 100, minDuration: Number.MAX_SAFE_INTEGER, maxDuration: Number.MIN_SAFE_INTEGER + 1, minSumInsured: BigNumber.from(Number.MAX_SAFE_INTEGER - 1).toString(), maxSumInsured: BigNumber.from(Number.MIN_SAFE_INTEGER + 1).toString() } as BundleData);
     }
