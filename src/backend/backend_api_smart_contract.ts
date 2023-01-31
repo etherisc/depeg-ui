@@ -5,7 +5,7 @@ import { DepegProductApi } from "./depeg_product_api";
 import { PolicyData } from "./policy_data";
 import { ApplicationApiSmartContract } from "./application_api_smart_contract";
 import { InvestApiSmartContract } from "./invest_api_smart_contract";
-import { hasBalanceBN } from "./erc20";
+import { hasBalance } from "./erc20";
 import { PriceFeed } from "./price_feed/price_feed";
 import { PriceFeedApi } from "./price_feed/api";
 
@@ -84,7 +84,7 @@ export class BackendApiSmartContract implements BackendApi {
 
     async hasUsd2Balance(walletAddress: string, amount: BigNumber): Promise<boolean> {
         const token = await (await this.getProductApi()).getUsd2Address();
-        return await hasBalanceBN(walletAddress, amount, token, this.signer);
+        return await hasBalance(walletAddress, amount, token, this.signer);
     }
 
     async createTreasuryApproval(

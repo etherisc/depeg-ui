@@ -12,12 +12,6 @@ export async function hasBalance(walletAddress: string, expectedBalance: BigNumb
     return balance.gte(expectedBalance);
 }
 
-// FIXME: remote this method
-/** Checks weather the given wallet has the expected balance */
-export async function hasBalanceBN(walletAddress: string, expectedBalance: BigNumber, tokenAddress: string, signer: Signer): Promise<boolean> {
-    return hasBalance(walletAddress, expectedBalance, tokenAddress, signer);
-}
-
 export async function transferAmount(walletAddress: string, amountToTransfer: BigNumber, tokenAddress: string, signer: Signer): Promise<boolean> {
     console.log(`Transferring ${amountToTransfer} from ${walletAddress} to ${tokenAddress}`);
     const token = getErc20Token(tokenAddress, signer);

@@ -190,7 +190,6 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
             return Promise.resolve(idx);
         },
         bundle(bundleId: number, walletAddress: string): Promise<BundleData|undefined> {
-            // TODO: return mock
             return Promise.resolve(undefined);
         },
         maxBundles(): Promise<number> {
