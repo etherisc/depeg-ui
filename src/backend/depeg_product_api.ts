@@ -170,10 +170,10 @@ export class DepegProductApi {
             applicationState: applicationState,
             policyState: policyState,
             payoutState: payoutState,
-            createdAt: createdAt,
-            premium: premium,
-            suminsured: suminsured,
-            duration: duration,
+            createdAt: createdAt.toNumber(),
+            premium: premium.toString(),
+            suminsured: suminsured.toString(),
+            duration: duration.toNumber(),
         } as PolicyData;
     }
 

@@ -43,10 +43,10 @@ const mockPoliciesActive = [
         owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 0,
-        createdAt: BigNumber.from(dayjs().add(-2, 'days').unix()),
-        duration: BigNumber.from(14 * 24 * 60 * 60),
-        premium: BigNumber.from(17),
-        suminsured: BigNumber.from(10000)
+        createdAt: dayjs().add(-2, 'days').unix(),
+        duration: 14 * 24 * 60 * 60,
+        premium: BigNumber.from(17).toString(),
+        suminsured: BigNumber.from(10000).toString()
     } as PolicyData,
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF62',
@@ -54,10 +54,10 @@ const mockPoliciesActive = [
         applicationState: 2,
         policyState: 0,
         payoutState: 0,
-        createdAt: BigNumber.from(dayjs().add(-2, 'days').unix()),
-        duration: BigNumber.from(14 * 24 * 60 * 60),
-        premium: BigNumber.from(17),
-        suminsured: BigNumber.from(11000000000)
+        createdAt: dayjs().add(-2, 'days').unix(),
+        duration: 14 * 24 * 60 * 60,
+        premium: BigNumber.from(17).toString(),
+        suminsured: BigNumber.from(11000000000).toString()
     } as PolicyData,
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF63',
@@ -65,19 +65,19 @@ const mockPoliciesActive = [
         applicationState: 2,
         policyState: 0,
         payoutState: 1,
-        createdAt: BigNumber.from(dayjs().add(-2, 'days').unix()),
-        duration: BigNumber.from(14 * 24 * 60 * 60),
-        premium: BigNumber.from(17),
-        suminsured: BigNumber.from(12000000000)
+        createdAt: dayjs().add(-2, 'days').unix(),
+        duration: 14 * 24 * 60 * 60,
+        premium: BigNumber.from(17).toString(),
+        suminsured: BigNumber.from(12000000000).toString()
     } as PolicyData,
     {
         id: '0x34e190322453300229d2be2a38450b8a8bd8cf64',
         owner: '0xdCeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 0,
-        createdAt: BigNumber.from(dayjs().add(-1, 'days').unix()),
-        duration: BigNumber.from(47 * 24 * 60 * 60),
-        premium: BigNumber.from(27),
-        suminsured: BigNumber.from(15000000000)
+        createdAt: dayjs().add(-1, 'days').unix(),
+        duration: 47 * 24 * 60 * 60,
+        premium: BigNumber.from(27).toString(),
+        suminsured: BigNumber.from(15000000000).toString()
     } as PolicyData,
 ];
 
@@ -87,20 +87,20 @@ const mockPolicies = mockPoliciesActive.concat(
         owner: '0xFEeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 1,
-        createdAt: BigNumber.from(dayjs().add(-20, 'days').unix()),
-        duration: BigNumber.from(14 * 24 * 60 * 60),
-        premium: BigNumber.from(100),
-        suminsured: BigNumber.from(35000)
+        createdAt: dayjs().add(-20, 'days').unix(),
+        duration: 14 * 24 * 60 * 60,
+        premium: BigNumber.from(100).toString(),
+        suminsured: BigNumber.from(35000).toString()
     } as PolicyData,
     {
         id: '0xc23223453200229d2be2a38450b8a8bd8cf72',
         owner: '0x821c4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 2,
-        createdAt: BigNumber.from(dayjs().add(-3, 'months').unix()),
-        duration: BigNumber.from(28 * 24 * 60 * 60),
-        premium: BigNumber.from(67),
-        suminsured: BigNumber.from(36000000000)
+        createdAt: dayjs().add(-3, 'months').unix(),
+        duration: 28 * 24 * 60 * 60,
+        premium: BigNumber.from(67).toString(),
+        suminsured: BigNumber.from(36000000000).toString()
     } as PolicyData,
 );
 

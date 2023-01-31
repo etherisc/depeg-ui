@@ -6,10 +6,10 @@ export interface PolicyData {
     applicationState: number;
     policyState?: number;
     payoutState?: number;
-    createdAt: BigNumber;
-    duration: BigNumber;
-    premium: BigNumber;
-    suminsured: BigNumber;
+    createdAt: number;
+    duration: number;
+    premium: string;
+    suminsured: string;
 }
 
 export enum PolicyState {
