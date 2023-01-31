@@ -27,7 +27,7 @@
     "@mui/material": "^5.11.5",
     "@mui/x-data-grid": "^5.17.20",
     "@mui/x-date-pickers": "^5.0.15",
-    "@reduxjs/toolkit": "^1.9.1",
+    "@reduxjs/toolkit": "^1.9.2",
     "@types/color": "^3.0.3",
     "@walletconnect/web3-provider": "^1.8.0",
     "abi-coder": "^4.1.1",
