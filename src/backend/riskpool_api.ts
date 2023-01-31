@@ -120,6 +120,7 @@ export class DepegRiskpoolApi {
                 const lockedCapital = BigNumber.from(bundle.locked);
                 const stakesRemaining = BigNumber.from(bundle.capitalSupport).sub(lockedCapital)
                 // FIXME: this might lead to different bundle being chosen. should be: if stakes are remaining instead if limited to < stakes remaining
+                // maybe bundles are no longer sorted by apr
                 if (BigNumber.from(sumInsured).gt(stakesRemaining)) {
                     return best;
                 }

@@ -6,7 +6,7 @@ import { SnackbarKey, useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import InvestForm from "./invest_form";
 import { useRouter } from "next/router";
-import { formatCurrency } from "../../utils/numbers";
+import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { REVOKE_INFO_URL } from "../application/application";
 import { useDispatch, useSelector } from "react-redux";
@@ -92,7 +92,7 @@ export default function Invest(props: InvestProps) {
         updateAccountBalance(signer!, dispatch);
     }
 
-    async function doApproval(walletAddress: string, investedAmount: number): Promise<Boolean> {
+    async function doApproval(walletAddress: string, investedAmount: BigNumber): Promise<Boolean> {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
             return await props.insurance.createTreasuryApproval(
@@ -100,7 +100,7 @@ export default function Invest(props: InvestProps) {
                 investedAmount, 
                 (address, currency, amount) => {
                     snackbar = enqueueSnackbar(
-                        t('approval_info', { address, currency, amount: formatCurrency(amount, props.insurance.usd2Decimals) }),
+                        t('approval_info', { address, currency, amount: formatCurrencyBN(amount, props.insurance.usd2Decimals) }),
                         { variant: "warning", persist: true }
                     );
                 },
@@ -146,7 +146,7 @@ export default function Invest(props: InvestProps) {
 
     async function doInvest(
         name: string, lifetime: number, investorWalletAddress: string, 
-        investedAmount: number, minSumInsured: number, maxSumInsured: number, 
+        investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
         minDuration: number, maxDuration: number, 
         annualPctReturn: number
     ): Promise<{ status: boolean, bundleId: string | undefined}> {
@@ -236,8 +236,8 @@ export default function Invest(props: InvestProps) {
     }
 
     async function invest(
-        name: string, lifetime: number, investedAmount: number, 
-        minSumInsured: number, maxSumInsured: number, 
+        name: string, lifetime: number, investedAmount: BigNumber, 
+        minSumInsured: BigNumber, maxSumInsured: BigNumber, 
         minDuration: number, maxDuration: number, annualPctReturn: number
     ) {
         try {

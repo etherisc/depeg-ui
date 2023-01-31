@@ -16,6 +16,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_DECIMALS } from '../../config/appConfig';
+import { parseUnits } from 'ethers/lib/utils';
 
 const formInputVariant = 'outlined';
 
@@ -25,7 +26,11 @@ export interface InvestFormProperties {
     usd2Decimals: number;
     insurance: BackendApi;
     formReadyForInvest: (isFormReady: boolean) => void;
-    invest: (name: string, lifetime: number, investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) => void;
+    invest: (
+        name: string, lifetime: number, 
+        investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+        minDuration: number, maxDuration: number, annualPctReturn: number
+    ) => void;
 }
 
 export type IInvestFormValues = {
@@ -48,10 +53,10 @@ export default function InvestForm(props: InvestFormProperties) {
     const minLifetimeEndDate = dayjs().add(minLifetimeDays, 'days').format("YYYY-MM-DD");
     const maxLifetimeDays = investProps.maxLifetime;
     const maxLifetimeEndDate = dayjs().add(maxLifetimeDays, 'days').format("YYYY-MM-DD");
-    const minInvestedAmount = investProps.minInvestedAmount / Math.pow(10, props.usd2Decimals);
-    const maxInvestedAmount = investProps.maxInvestedAmount / Math.pow(10, props.usd2Decimals);
-    const minSumInsured = investProps.minSumInsured / Math.pow(10, props.usd2Decimals);
-    const maxSumInsured = investProps.maxSumInsured / Math.pow(10, props.usd2Decimals);
+    const minInvestedAmount = investProps.minInvestedAmount.toNumber();
+    const maxInvestedAmount = investProps.maxInvestedAmount.toNumber();
+    const minSumInsured = investProps.minSumInsured.toNumber();
+    const maxSumInsured = investProps.maxSumInsured.toNumber();
     const minCoverageDuration = investProps.minCoverageDuration;
     const maxCoverageDuration = investProps.maxCoverageDuration;
     const annualPctReturn = investProps.annualPctReturn;
@@ -111,9 +116,9 @@ export default function InvestForm(props: InvestFormProperties) {
             const values = getValues();
             const bundleName = values.bundleName;
             const lifetime = parseInt(values.lifetime) * 24 * 60 * 60;
-            const investedAmount = parseFloat(values.investedAmount) * Math.pow(10, props.usd2Decimals);
-            const minSumInsured = parseFloat(values.insuredAmountMin) * Math.pow(10, props.usd2Decimals);
-            const maxSumInsured = parseFloat(values.insuredAmountMax) * Math.pow(10, props.usd2Decimals);
+            const investedAmount = parseUnits(values.investedAmount, props.usd2Decimals);
+            const minSumInsured = parseUnits(values.insuredAmountMin, props.usd2Decimals);
+            const maxSumInsured = parseUnits(values.insuredAmountMax, props.usd2Decimals);
             const minDuration = parseInt(values.coverageDurationMin);
             const maxDuration = parseInt(values.coverageDurationMax);
             const annualPctReturn = parseFloat(values.annualPctReturn);
