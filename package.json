@@ -37,7 +37,7 @@
     "color": "^4.2.3",
     "dayjs": "^1.11.7",
     "eslint": "^8.33.0",
-    "eslint-config-next": "^13.1.4",
+    "eslint-config-next": "^13.1.6",
     "ethers": "^5.7.2",
     "i18next": "^22.4.9",
     "moment": "^2.29.4",
