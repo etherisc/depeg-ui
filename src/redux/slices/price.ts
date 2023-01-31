@@ -9,11 +9,17 @@ export type PriceState = {
     name: string,
     decimals: number,
     latest: PriceInfo,
+    // timestamp when price was triggered or 0 if not triggered
     triggeredAt: number,
+    // timestamp when price was depegged or 0 if not depegged
     depeggedAt: number,
+    // price history
     history: Array<PriceInfo>,
+    // indicates if price history is loading
     historyLoading: boolean,
+    // used for testing only - disables dynamic updates from price feed
     noUpdates: boolean,
+    // this is used to indicate if issuing of new policies is allowed
     productState: ProductState,
 }
 

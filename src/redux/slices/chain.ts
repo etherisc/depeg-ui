@@ -3,12 +3,17 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { providers, Signer } from 'ethers';
 
 export interface ChainState {
+    // chain id
     chainId: string,
+    // indicates if connected to chain
     isConnected: boolean,
+    // indicates if connected to expected chain
     isExpectedChain: boolean,
     provider?: providers.Web3Provider | undefined,
     signer?: Signer | undefined,
+    // the number of the last block that was mined
     blockNumber: number,
+    // the timestamp of the last block that was mined
     blockTime: number,
 }
 
