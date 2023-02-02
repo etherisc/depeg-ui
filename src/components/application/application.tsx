@@ -162,6 +162,7 @@ export default function Application(props: ApplicationProps) {
     async function doApplication(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber): Promise<{ status: boolean, processId: string|undefined}> {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
+            // TODO: send selected bundle during application
             return await props.insurance.application.applyForPolicy(
                 walletAddress, 
                 insuredAmount, 
@@ -322,6 +323,7 @@ export default function Application(props: ApplicationProps) {
                 </Stepper>
 
                 { productState !== ProductState.Active && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.product_not_active')}</Alert>)}
+                {/* TODO: show error for no bundles */}
                 
                 {content}
             </div>

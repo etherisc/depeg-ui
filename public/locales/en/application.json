@@ -26,7 +26,7 @@
     "apply_info": "Please confirm execution of the policy application transaction on contract {{address}} in your wallet app",
     "apply_wait": "Transaction created, waiting for onchain confirmation",
     "bundles": {
-        "title": "Available risk pool bundles",
+        "title": "Risk bundles",
         "id": "ID",
         "name": "Name",
         "suminsured": "Min / max amount",

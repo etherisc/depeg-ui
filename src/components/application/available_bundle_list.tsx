@@ -1,4 +1,4 @@
-import { Table, TableHead, TableRow, TableCell, TableBody, Typography } from "@mui/material";
+import { Table, TableHead, TableRow, TableCell, TableBody, Typography, LinearProgress, Checkbox } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import { BigNumber } from "ethers";
@@ -11,15 +11,25 @@ import StakeUsageIndicator from "../bundles/stake_usage_indicator";
 
 interface AvailableBundleListProps {
     bundles: Array<BundleData>;
+    bundlesLoading: boolean;
+    selectedBundle: BundleData | undefined;
     currency: string;
     currencyDecimals: number;
+    onBundleSelected: (bundle: BundleData) => void;
 }
 
 export function AvailableBundleList(props: AvailableBundleListProps) {
     const { t } = useTranslation('application');
 
+    const progress = props.bundlesLoading ? 
+        (<LinearProgress />) 
+        : null;
+
     return (<>
-            <Typography variant="subtitle1" sx={{ my: 1 }}>{t('bundles.title')}</Typography>
+            {/* TODO: your policy can be covered by multiple bundles. Select the one you want to use. */}
+            <Typography variant="subtitle2" >{t('bundles.title')}</Typography>
+            {progress}
+            {/* TODO: change bundle selected color */}
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 'lg' }} size="small">
                     <TableHead>
@@ -35,7 +45,14 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
                     </TableHead>
                     <TableBody>
                         {props.bundles.map((bundle: BundleData) => (
-                            <AvailableBundleRow key={bundle.id} bundle={bundle} currency={props.currency} currencyDecimals={props.currencyDecimals} />
+                            <AvailableBundleRow 
+                                key={bundle.id} 
+                                bundle={bundle} 
+                                currency={props.currency} 
+                                currencyDecimals={props.currencyDecimals} 
+                                selected={props.selectedBundle?.id === bundle.id}
+                                onBundleSelected={props.onBundleSelected}
+                                />
                         ))}
                     </TableBody>
                 </Table>
@@ -47,6 +64,8 @@ interface AvailableBundleRowProps {
     bundle: BundleData;
     currency: string;
     currencyDecimals: number;
+    selected: boolean;
+    onBundleSelected: (bundle: BundleData) => void;
 }
 
 export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
@@ -65,6 +84,8 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
 
     return (<TableRow
         key={bundle.id}
+        selected={compProps.selected}
+        onClick={() => compProps.onBundleSelected(bundle)}
         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
         >
             <TableCell scope="row" data-testid="bundle-id">

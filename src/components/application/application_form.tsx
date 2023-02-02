@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { REGEX_PATTERN_NUMBER_WITH_DECIMALS } from '../../config/appConfig';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { AvailableBundleList } from './available_bundle_list';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -81,7 +82,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ matchedBundle, setMatchedBundle ] = useState<BundleData|undefined>(undefined);
     const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
-    const [ showAvailableBundles, setShowAvailableBundles ] = useState(false);
 
     const errors = useMemo(() => formState.errors, [formState]);
     const [ premiumCalculationRequired, setPremiumCalculationRequired ] = useState(false);
@@ -171,7 +171,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         console.log("Calculating premium...");
         try {
             setPremiumCalculationInProgress(true);
-            setShowAvailableBundles(false);
             const [premium, bundle] = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDays, bundles);
             setValue("premiumAmount", parseFloat(formatUnits(premium, props.usd1Decimals)));
             setMatchedBundle(bundle);
@@ -180,7 +179,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             if (e instanceof NoBundleFoundError) {
                 console.log("No bundle found for this insurance.");
                 setPremiumErrorKey('error_no_matching_bundle_found');
-                setShowAvailableBundles(true);
             } else if (e instanceof BalanceTooSmallError) {
                 console.log("Wallet balance too low");
                 setPremiumErrorKey('error_wallet_balance_too_low');
@@ -340,6 +338,17 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12}>
+                    {/* TODO: disable bundle selection for bundles that do not macht amount and duration */}
+                    <AvailableBundleList 
+                        currency={props.usd2}
+                        currencyDecimals={props.usd2Decimals}
+                        bundles={bundles}
+                        bundlesLoading={isLoadingBundles} 
+                        selectedBundle={matchedBundle}
+                        onBundleSelected={(bundle: BundleData) => setMatchedBundle(bundle)}
+                        />
+                </Grid>
+                <Grid item xs={12}>
                     <Premium 
                         control={control}
                         disabled={props.formDisabled}
@@ -349,11 +358,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         bundleCurrencyDecimals={props.usd1Decimals}
                         helperText={t(premiumErrorKey, { currency: props.usd2 })}
                         helperTextIsError={premiumErrorKey != ""}
-                        transactionInProgress={premiumCalculationInProgress || isLoadingBundles}
+                        transactionInProgress={premiumCalculationInProgress}
                         trxTextKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
-                        matchedBundle={matchedBundle}
-                        bundles={bundles}
-                        showBundles={showAvailableBundles}
                         />
                 </Grid>
                 <Grid item xs={12}>

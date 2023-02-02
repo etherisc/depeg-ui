@@ -15,32 +15,17 @@ export interface PremiumProps {
     helperTextIsError: boolean;
     trxTextKey: string;
     transactionInProgress?: boolean;
-    bundles: Array<BundleData>;
-    matchedBundle?: BundleData;
-    showBundles: boolean;
     control: Control<IAplicationFormValues, any>;
 }
 
 export default function Premium(props: PremiumProps) {
     const { t } = useTranslation('application');
 
-    let bundles = undefined;
-
-    if (props.showBundles) {
-        bundles = (<AvailableBundleList 
-            currency={props.bundleCurrency}
-            currencyDecimals={props.bundleCurrencyDecimals}
-            bundles={props.bundles} />);
-    }
-
     const wait = props.transactionInProgress ? 
         (<><LinearProgress />{t(props.trxTextKey)}</>) 
         : null;
 
     let matchedBundleText: string | undefined = undefined;
-    if (props.matchedBundle !== undefined) {
-        matchedBundleText = t('matched_bundle', { apr: props.matchedBundle.apr.toFixed(2), name: props.matchedBundle.name });
-    }
     
     return (<>
         <Controller
@@ -70,6 +55,5 @@ export default function Premium(props: PremiumProps) {
                 
             />
         <Typography variant="body2">{wait}</Typography>
-        {bundles}
     </>);
 }
