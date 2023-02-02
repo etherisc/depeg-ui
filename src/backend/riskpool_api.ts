@@ -36,12 +36,13 @@ export class DepegRiskpoolApi {
     async getBundleData(
     ): Promise<Array<BundleData>> {
         const activeBundleIds = await this.depegRiskpool.getActiveBundleIds();
+        console.log("number of bundles: " + activeBundleIds.length);
     
         let bundleData = new Array<BundleData>();
     
         for (let i = 0; i < activeBundleIds.length; i++) {
             const bundleId = activeBundleIds[i].toNumber();
-            // console.log('bundleId', bundleId);
+            console.log('bundleId', bundleId);
             const bundle = await this.getBundleDataByBundleId(bundleId);
             bundleData.push(bundle);
         }

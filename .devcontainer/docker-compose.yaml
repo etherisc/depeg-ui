@@ -1,0 +1,25 @@
+version: '3'
+
+
+services:
+  redis:
+    image: redis/redis-stack-server:latest
+    ports:
+      - "6379:6379"
+  webapp:
+    # See https://aka.ms/vscode-remote/containers/non-root for details.
+    user: node
+    build: 
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        VARIANT: 18-bullseye
+    volumes:
+      - ..:/workspaces/depeg-ui:cached
+      - depeg-ui-node_modules:/workspaces/depeg-ui/node_modules
+      #- $HOME/.ssh/:/home/vscode/.ssh/ # Mount the ssh folder to authenticate with github
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+volumes:
+  depeg-ui-node_modules:
