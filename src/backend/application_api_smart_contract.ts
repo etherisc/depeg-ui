@@ -75,6 +75,16 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         }
     }
 
+    async fetchRiskBundles(handleBundle: (bundle: BundleData) => void): Promise<void> {
+        const res = await fetch("/api/bundles/stakeable");
+        if (res.status == 200) {
+            const bundles = await res.json() as BundleData[];
+            bundles.forEach(bundle => handleBundle(bundle));
+        } else {
+            throw new Error(`invalid response from backend. statuscode ${res.status}. test: ${res.text}`);
+        }
+    }   
+
     async calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationDays: number, bundles: Array<BundleData>): Promise<[BigNumber, BundleData]> {
         if ((await this.getDepegProductApi())!.isVoidSigner()) {
             console.log('no chain connection, no premium calculation');

@@ -138,6 +138,8 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         coverageDurationDaysMax: 45,
         getRiskBundles(handleBundle: (bundle: BundleData) => void) {
         },
+        fetchRiskBundles(handleBundle) {
+        },
         calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationDays: number, bundles: Array<BundleData>): Promise<[BigNumber, BundleData]> {
             const premium = insuredAmount.toNumber() * 0.017 * coverageDurationDays / 365;
             return Promise.resolve([BigNumber.from(premium), bundles[0]]);

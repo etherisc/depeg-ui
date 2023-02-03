@@ -4,8 +4,9 @@ import bundlesReducer from './slices/bundles';
 import accountReducer from './slices/account';
 import policiesReducer from './slices/policies';
 import priceReducer from './slices/price';
+import { ToolkitStore } from '@reduxjs/toolkit/dist/configureStore';
 
-export const store = configureStore({
+export const store: ToolkitStore = configureStore({
     reducer: {
         chain: chainReducer,
         account: accountReducer,

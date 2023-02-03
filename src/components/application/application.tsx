@@ -50,11 +50,7 @@ export default function Application(props: ApplicationProps) {
         async function asyncGetProductStateAndBundles() {
             let productState = await props.insurance.getProductState();
             dispatch(setProductState(productState));
-            const res = await fetch("/api/bundles/stakeable");
-            if (res.status == 200) {
-                const bundles = await res.json() as BundleData[];
-                bundles.forEach(bundle => dispatch(addBundle(bundle)));
-            }
+            await props.insurance.application.fetchRiskBundles((bundle: BundleData) => dispatch(addBundle(bundle)));
             dispatch(finishLoading());
             setPremiumTrxTextKey("");
         }

@@ -46,7 +46,12 @@ export interface ApplicationApi {
     insuredAmountMax: BigNumber;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
+    /** Get all riskbundles for application from the blockchain */
     getRiskBundles: (
+        handleBundle: (bundle: BundleData) => void
+    ) => Promise<void>,
+    /** Fetch all riskbundles for application from the api */
+    fetchRiskBundles: (
         handleBundle: (bundle: BundleData) => void
     ) => Promise<void>,
     calculatePremium: 
