@@ -158,7 +158,6 @@ export default function Application(props: ApplicationProps) {
     async function doApplication(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, bundleId: number): Promise<{ status: boolean, processId: string|undefined}> {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
-            // TODO: send selected bundle during application
             return await props.insurance.application.applyForPolicy(
                 walletAddress, 
                 insuredAmount, 

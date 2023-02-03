@@ -117,7 +117,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         const premium = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDurationSeconds, bundle);
         console.log("premium", premium.toString());
         dispatch(setPremium([bundle.id, premium.toString()]));
-        // TODO: check balance and show error if not enough
     }, [dispatch, props.applicationApi]);
 
     const calculatePremium = useCallback(async () => {
@@ -133,9 +132,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             const fbid = filterApplicableBundles(bundles, insuredAmount, coverageSeconds).map(b => b.id);
             dispatch(setApplicableBundleIds(fbid));
             console.log("fbid", fbid);
-
-            // TODO: handle no match
-
+            
             const remainingBundles = bundles.filter((b: BundleData) => fbid.includes(b.id));
             console.log("remainingBundles", remainingBundles);
 
@@ -345,7 +342,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12}>
-                    {/* TODO: disable bundle selection for bundles that do not macht amount and duration */}
                     <AvailableBundleList 
                         currency={props.usd2}
                         currencyDecimals={props.usd2Decimals}

@@ -5,9 +5,7 @@ import { BigNumber } from "ethers";
 import { useTranslation } from "next-i18next";
 import { BundleData } from "../../backend/bundle_data";
 import { minBigNumber } from "../../utils/bignumber";
-import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
-import { calculateStakeUsage } from "../../utils/staking";
-import StakeUsageIndicator from "../bundles/stake_usage_indicator";
+import { formatCurrencyBN } from "../../utils/numbers";
 
 interface AvailableBundleListProps {
     bundles: Array<BundleData>;
@@ -30,10 +28,6 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
     const progress = props.bundlesLoading ? 
         (<LinearProgress />) 
         : null;
-
-    // TODO: show premium mount in row (calculate in background and update when available) -
-    // TODO: abort premium calculation loop when input changes and reset calculated premiums
-    // TODO: mobile view
 
     return (<>
             {/* TODO: text your policy can be covered by multiple bundles. Select the one you want to use. */}
