@@ -90,6 +90,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // this works for all values except the date picker which is handled separately in the `watchCoverageEndDate` useEffect
     const watchPremiumFactors = watch(["insuredWallet", "insuredAmount", "coverageDuration"]);
     useEffect(() => {
+        // TODO: filter which bundles are applicable for the data entered
+        // TODO: choose the best bundle
+        // TODO: calculate premium for that bundle
         console.log("watchPremiumFactors", premiumCalculationRequired, watchPremiumFactors, errors);
         if (premiumCalculationRequired && !errors.insuredAmount && !errors.insuredWallet && !errors.coverageDuration) {
             calculatePremium();
