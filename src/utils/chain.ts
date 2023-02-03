@@ -1,10 +1,11 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
-import { providers, Signer } from "ethers";
+import { ethers, providers, Signer } from "ethers";
 import { resetAccount, setAccount, updateBalance } from "../redux/slices/account";
 import { ChainState, connectChain, disconnectChain, setBlock, updateSigner as updateSignerSlice } from "../redux/slices/chain";
 import { expectedChain } from "./const";
 import { toHex } from "./numbers";
+import { StaticJsonRpcProvider } from '@ethersproject/providers';
 
 export async function getChainState(provider: Web3Provider): Promise<ChainState> {
     const signer = provider.getSigner(); 
@@ -65,4 +66,21 @@ export async function updateAccountBalance(signer: Signer, dispatch: Dispatch<An
     const tokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL ?? "ETH";
     const decimals = process.env.NEXT_PUBLIC_CHAIN_TOKEN_DECIMALS ?? "18";
     dispatch(updateBalance([balance.toString(), tokenSymbol, parseInt(decimals)]));
+}
+
+/**
+ * Returns a signer that is connected to the chain defined in the env variable NEXT_PUBLIC_CHAIN_RPC_URL.
+ * 
+ * @returns a signer that can be used to sign transactions but cannot send them
+ */
+export async function getVoidSigner(): Promise<Signer> {
+    const provider = new StaticJsonRpcProvider(process.env.NEXT_PUBLIC_CHAIN_RPC_URL);
+    return new ethers.VoidSigner("0x0000000000000000000000000000000000000000", provider);
+}
+
+
+export async function getLastBlockTimestamp(signer: Signer): Promise<number> {
+    const blockNumber = await signer.provider?.getBlockNumber() ?? 0;
+    const block = await signer.provider?.getBlock(blockNumber);
+    return block?.timestamp ?? 0;
 }

@@ -140,12 +140,12 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         },
         fetchRiskBundles(handleBundle) {
         },
-        calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationDays: number, bundles: Array<BundleData>): Promise<[BigNumber, BundleData]> {
-            const premium = insuredAmount.toNumber() * 0.017 * coverageDurationDays / 365;
-            return Promise.resolve([BigNumber.from(premium), bundles[0]]);
+        calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
+            const premium = insuredAmount.toNumber() * 0.017 * coverageDurationSeconds / 365;
+            return Promise.resolve(BigNumber.from(premium));
         },
-        async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays, premium) {
-            enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationDays})`,  { autoHideDuration: 3000, variant: 'info' });
+        async applyForPolicy(walletAddress, insuredAmount, coverageDurationSeconds, premium) {
+            enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationSeconds})`,  { autoHideDuration: 3000, variant: 'info' });
             await delay(2000);
             return Promise.resolve({ status: true, processId: "0x12345678"});
         },

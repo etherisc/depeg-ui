@@ -7,6 +7,7 @@ import { getDepegRiskpool, getInstanceService } from "../../../backend/gif_regis
 import { IInstanceService } from "../../../contracts/gif-interface/IInstanceService";
 import { DepegRiskpoolApi } from "../../../backend/riskpool_api";
 import { redisClient } from "../../../utils/redis";
+import { getLastBlockTimestamp, getVoidSigner } from "../../../utils/chain";
 
 
 export default async function handler(
@@ -22,8 +23,14 @@ export default async function handler(
     }        
 
     const bundles = JSON.parse(bundlesjson) as Array<BundleData>;
+    const lastBlockTimestamp = await getLastBlockTimestamp(await getVoidSigner());
 
     res.status(200).json(bundles.filter(bundle => {
+        // ignore expired bundles
+        if (lastBlockTimestamp > (bundle.createdAt + parseInt(bundle.lifetime))) {
+            return false;
+        }
+
         const capacity = BigNumber.from(bundle.capacity);
         // ignore bundles with no capacity
         if (capacity.lte(0)) {
@@ -45,4 +52,3 @@ export default async function handler(
         return true;
     }));
 }
-

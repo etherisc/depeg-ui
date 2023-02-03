@@ -10,7 +10,7 @@ import ApplicationForm from "./application_form";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/bundles";
+import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/application";
 import { BundleData } from "../../backend/bundle_data";
 import PolicyConfirmation from "./policy_confirmation";
 import { updateAccountBalance } from "../../utils/chain";
@@ -319,7 +319,6 @@ export default function Application(props: ApplicationProps) {
                 </Stepper>
 
                 { productState !== ProductState.Active && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.product_not_active')}</Alert>)}
-                {/* TODO: show error for no bundles */}
                 
                 {content}
             </div>

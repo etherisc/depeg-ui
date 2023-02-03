@@ -12,7 +12,8 @@ import StakeUsageIndicator from "../bundles/stake_usage_indicator";
 interface AvailableBundleListProps {
     bundles: Array<BundleData>;
     bundlesLoading: boolean;
-    selectedBundle: BundleData | undefined;
+    applicableBundleIds: Array<number>|undefined;
+    selectedBundleId: number | undefined;
     currency: string;
     currencyDecimals: number;
     onBundleSelected: (bundle: BundleData) => void;
@@ -20,13 +21,22 @@ interface AvailableBundleListProps {
 
 export function AvailableBundleList(props: AvailableBundleListProps) {
     const { t } = useTranslation('application');
+    let bundlesToShow = props.bundles;
+
+    if (props.applicableBundleIds !== undefined ) {
+        bundlesToShow = bundlesToShow.filter(bundle => props.applicableBundleIds?.includes(bundle.id));
+    }
 
     const progress = props.bundlesLoading ? 
         (<LinearProgress />) 
         : null;
 
+    // TODO: show premium mount in row (calculate in background and update when available) -
+    // TODO: abort premium calculation loop when input changes and reset calculated premiums
+    // TODO: mobile view
+
     return (<>
-            {/* TODO: your policy can be covered by multiple bundles. Select the one you want to use. */}
+            {/* TODO: text your policy can be covered by multiple bundles. Select the one you want to use. */}
             <Typography variant="subtitle2" >{t('bundles.title')}</Typography>
             {progress}
             {/* TODO: change bundle selected color */}
@@ -40,17 +50,16 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
                             <TableCell align="right">{t('bundles.suminsured', { currency: props.currency })}</TableCell>
                             <TableCell align="right">{t('bundles.duration')}</TableCell>
                             <TableCell align="right">{t('bundles.capacity', { currency: props.currency })}</TableCell>
-                            <TableCell align="right">{t('bundles.stake_usage')}</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {props.bundles.map((bundle: BundleData) => (
+                        {bundlesToShow.map((bundle: BundleData) => (
                             <AvailableBundleRow 
                                 key={bundle.id} 
                                 bundle={bundle} 
                                 currency={props.currency} 
                                 currencyDecimals={props.currencyDecimals} 
-                                selected={props.selectedBundle?.id === bundle.id}
+                                selected={props.selectedBundleId === bundle.id}
                                 onBundleSelected={props.onBundleSelected}
                                 />
                         ))}
@@ -98,14 +107,5 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
             <TableCell align="right" data-testid="bundle-suminsured">{currency} {formatCurrencyBN(BigNumber.from(bundle.minSumInsured), currencyDecimals)} / {formatCurrencyBN(BigNumber.from(bundle.maxSumInsured), currencyDecimals)}</TableCell>
             <TableCell align="right" data-testid="bundle-duration">{bundle.minDuration / 86400 } / {bundle.maxDuration / 86400 } {t('days')}</TableCell>
             <TableCell align="right" data-testid="bundle-capacity">{remainingCapacity(bundle)}</TableCell>
-            <TableCell align="right" data-testid="bundle-stakeusage">
-                <StakeUsageIndicator
-                    stakeUsage={calculateStakeUsage(BigNumber.from(bundle.capitalSupport), BigNumber.from(bundle.locked))}
-                    lockedCapital={BigNumber.from(bundle.locked)}
-                    supportedCapital={BigNumber.from(bundle.capitalSupport)}
-                    supportedToken={currency}
-                    supportedTokenDecimals={currencyDecimals}
-                    />
-            </TableCell>
         </TableRow>);
 }

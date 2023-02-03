@@ -1,6 +1,6 @@
 import { BigNumber, ContractReceipt, ContractTransaction, Signer } from "ethers";
 import { DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
-import { BundleData } from "./bundle_data";
+import { BundleData, MAX_BUNDLE } from "./bundle_data";
 import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json'
 import { Coder } from "abi-coder";
 import { TransactionFailedError } from "../utils/error";
@@ -134,7 +134,7 @@ export class DepegRiskpoolApi {
             }
             console.log("bundle selected", bundle);
             return bundle;
-        }, { apr: 100, minDuration: Number.MAX_SAFE_INTEGER, maxDuration: Number.MIN_SAFE_INTEGER + 1, minSumInsured: BigNumber.from(Number.MAX_SAFE_INTEGER - 1).toString(), maxSumInsured: BigNumber.from(Number.MIN_SAFE_INTEGER + 1).toString() } as BundleData);
+        }, MAX_BUNDLE);
     }
     
     async createBundle(

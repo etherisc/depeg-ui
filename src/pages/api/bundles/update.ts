@@ -7,6 +7,7 @@ import { getDepegRiskpool, getInstanceService } from "../../../backend/gif_regis
 import { IInstanceService } from "../../../contracts/gif-interface/IInstanceService";
 import { DepegRiskpoolApi } from "../../../backend/riskpool_api";
 import { redisClient } from "../../../utils/redis";
+import { getVoidSigner } from "../../../utils/chain";
 
 const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
 
@@ -16,7 +17,7 @@ export default async function handler(
 ) {
     console.log("updating bundles from blockchain");
 
-    const signer = await getSigner();
+    const signer = await getVoidSigner();
     const { depegRiskpool, depegRiskpoolId, instanceService } = await getRiskpool(signer);
     const riskpoolApi = new DepegRiskpoolApi(depegRiskpool, depegRiskpoolId, instanceService);
 
@@ -25,12 +26,6 @@ export default async function handler(
     await redisClient.set("bundles", JSON.stringify(bundles));
 
     res.status(200).json(bundles);
-}
-
-
-async function getSigner(): Promise<Signer> {
-    const provider = new StaticJsonRpcProvider(process.env.NEXT_PUBLIC_CHAIN_RPC_URL);
-    return new ethers.VoidSigner("0x0000000000000000000000000000000000000000", provider);
 }
 
 async function getRiskpool(signer: Signer): Promise<{ depegProduct: DepegProduct, depegRiskpool: DepegRiskpool, depegRiskpoolId: number, instanceService: IInstanceService }> {

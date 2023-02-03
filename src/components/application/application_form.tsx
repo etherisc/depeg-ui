@@ -7,9 +7,8 @@ import LinearProgress from '@mui/material/LinearProgress';
 import TextField from '@mui/material/TextField'
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BundleData } from '../../backend/bundle_data';
+import { BundleData, MAX_BUNDLE } from '../../backend/bundle_data';
 import { ApplicationApi } from '../../backend/backend_api';
-import { BalanceTooSmallError, NoBundleFoundError } from '../../utils/error';
 import Premium from './premium';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
@@ -18,11 +17,13 @@ import { INPUT_VARIANT } from '../../config/theme';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { BigNumber, ethers } from 'ethers';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { REGEX_PATTERN_NUMBER_WITH_DECIMALS } from '../../config/appConfig';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AvailableBundleList } from './available_bundle_list';
+import { filterApplicableBundles } from '../../utils/bundles';
+import { setApplicableBundleIds, setPremium } from '../../redux/slices/application';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -42,14 +43,17 @@ export type IAplicationFormValues = {
     insuredAmount: string;
     coverageDuration: string;
     coverageEndDate: string;
-    premiumAmount: number;
     termsAndConditions: boolean;
 };
 
 export default function ApplicationForm(props: ApplicationFormProperties) {
     const { t } = useTranslation('application');
-    const bundles = useSelector((state: RootState) => state.bundles.bundles);
-    const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
+    const dispatch = useDispatch();
+    const bundles = useSelector((state: RootState) => state.application.bundles);
+    const isLoadingBundles = useSelector((state: RootState) => state.application.isLoadingBundles);
+    const applicableBundleIds = useSelector((state: RootState) => state.application.applicableBundleIds);
+    const selectedBundleId = useSelector((state: RootState) => state.application.selectedBundleId);
+    const premium = useSelector((state: RootState) => state.application.premium);
 
     // update wallet address when it changes
     useEffect(() => {
@@ -73,35 +77,78 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             insuredAmount: undefined,
             coverageDuration: props.applicationApi.coverageDurationDaysMax.toString(),
             coverageEndDate: dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days').format("YYYY-MM-DD"),
-            premiumAmount: undefined,
             termsAndConditions: false,
         }
     });
 
     // premium
-    const [ matchedBundle, setMatchedBundle ] = useState<BundleData|undefined>(undefined);
     const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
 
     const errors = useMemo(() => formState.errors, [formState]);
-    const [ premiumCalculationRequired, setPremiumCalculationRequired ] = useState(false);
 
-    // triggers premium calculation when any of the factors change and a calculation is required
-    // this works for all values except the date picker which is handled separately in the `watchCoverageEndDate` useEffect
-    const watchPremiumFactors = watch(["insuredWallet", "insuredAmount", "coverageDuration"]);
-    useEffect(() => {
-        // TODO: filter which bundles are applicable for the data entered
-        // TODO: choose the best bundle
-        // TODO: calculate premium for that bundle
-        console.log("watchPremiumFactors", premiumCalculationRequired, watchPremiumFactors, errors);
-        if (premiumCalculationRequired && !errors.insuredAmount && !errors.insuredWallet && !errors.coverageDuration) {
-            calculatePremium();
-        } else if (premiumCalculationRequired) {
-            setValue("premiumAmount", 0);
-            setMatchedBundle(undefined);
+    const validateFormState = useCallback(() => {
+        if (formState.touchedFields.insuredAmount === undefined) {
+            console.log("amount not touched, not calculating premium...");
+            return false;
         }
-        setPremiumCalculationRequired(false);
-    }, [watchPremiumFactors, errors, premiumCalculationRequired]);
+
+        if (errors.coverageDuration !== undefined || errors.insuredWallet !== undefined || errors.insuredAmount !== undefined) {
+            console.log("Form is invalid, not calculating premium...");
+            return false;
+        }
+
+        if (bundles.length == 0) {
+            console.log("No bundles, not calculating premium...");
+            return false;
+        }
+        return true;
+    }, [errors, formState.touchedFields.insuredAmount, bundles.length]);
+
+    const getPremiumParameters = useCallback(() => {
+        const values = getValues();
+        const insuredWallet = values.insuredWallet;
+        const insuredAmount = parseUnits(values.insuredAmount ?? "0", props.usd1Decimals);
+        const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
+        return { insuredWallet, insuredAmount, coverageSeconds };
+    }, [getValues, props.usd1Decimals]);
+
+    const calculatePremiumForBundle = useCallback(async (walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData,) => {
+        const premium = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDurationSeconds, bundle);
+        console.log("premium", premium.toString());
+        dispatch(setPremium([bundle.id, premium.toString()]));
+        // TODO: check balance and show error if not enough
+    }, [dispatch, props.applicationApi]);
+
+    const calculatePremium = useCallback(async () => {
+        if ( ! validateFormState()) {
+            // setValue("premiumAmount", 0);
+            return;
+        }
+        
+        setPremiumCalculationInProgress(true);
+        try {
+            const { insuredWallet, insuredAmount, coverageSeconds } = getPremiumParameters();
+            // filter bundles matching application
+            const fbid = filterApplicableBundles(bundles, insuredAmount, coverageSeconds).map(b => b.id);
+            dispatch(setApplicableBundleIds(fbid));
+            console.log("fbid", fbid);
+
+            // TODO: handle no match
+
+            const remainingBundles = bundles.filter((b: BundleData) => fbid.includes(b.id));
+            console.log("remainingBundles", remainingBundles);
+
+            // select the bundle with the lowest APR
+            const bestBundle = remainingBundles.reduce((prev: BundleData, current: BundleData) => prev.apr < current.apr ? prev : current, MAX_BUNDLE);
+            console.log("bestBundle", bestBundle);
+
+            // calculate premium
+            await calculatePremiumForBundle(insuredWallet, insuredAmount, coverageSeconds, bestBundle);
+        } finally {
+            setPremiumCalculationInProgress(false);
+        }
+    }, [bundles, dispatch, getPremiumParameters, validateFormState, calculatePremiumForBundle]);
 
     //-------------------------------------------------------------------------
     // update min/max sum insured and coverage period when bundles are available
@@ -143,58 +190,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
     }, [bundles, props.usd1Decimals, setValue]);
 
-
-    //-------------------------------------------------------------------------
-    // calculate premium via onchain call
-    const calculatePremium = useCallback( async () => {
-        const values = getValues();
-        console.log('calculatePremium', values, formState.errors);
-
-        if (formState.touchedFields.insuredAmount === undefined) {
-            console.log("amount not touched, not calculating premium...");
-            return;
-        }
-
-        if (errors.coverageDuration !== undefined || errors.insuredWallet !== undefined || errors.insuredAmount !== undefined) {
-            console.log("Form is invalid, not calculating premium...");
-            return;
-        }
-
-        if (bundles.length == 0) {
-            console.log("No bundles, not calculating premium...");
-            setValue("premiumAmount", 0);
-            setMatchedBundle(undefined);
-            return;
-        }
-
-        const walletAddress = values.insuredWallet;
-        const insuredAmount = parseUnits(values.insuredAmount ?? "0", props.usd1Decimals);
-        const coverageDays = parseInt(values.coverageDuration);
-
-        console.log("Calculating premium...");
-        try {
-            setPremiumCalculationInProgress(true);
-            const [premium, bundle] = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDays, bundles);
-            setValue("premiumAmount", parseFloat(formatUnits(premium, props.usd1Decimals)));
-            setMatchedBundle(bundle);
-            setPremiumErrorKey("");
-        } catch (e) {
-            if (e instanceof NoBundleFoundError) {
-                console.log("No bundle found for this insurance.");
-                setPremiumErrorKey('error_no_matching_bundle_found');
-            } else if (e instanceof BalanceTooSmallError) {
-                console.log("Wallet balance too low");
-                setPremiumErrorKey('error_wallet_balance_too_low');
-            } else {
-                console.log("Error calculating premium: ", e);
-            }
-            setValue("premiumAmount", -1);
-            setMatchedBundle(undefined);
-        } finally {
-            setPremiumCalculationInProgress(false);
-        }
-    }, [formState, errors, bundles]);
-
+    const switchBundle = useCallback(async (bundle: BundleData) => {
+        const { insuredWallet, insuredAmount, coverageSeconds } = getPremiumParameters();
+        await calculatePremiumForBundle(insuredWallet, insuredAmount, coverageSeconds, bundle);
+    }, [getPremiumParameters, calculatePremiumForBundle]);
 
     const [ applicationInProgress, setApplicationInProgress ] = useState(false);
 
@@ -206,9 +205,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             const values = getValues();
             const walletAddress = values.insuredWallet;
             const insuredAmountWei = parseUnits(values.insuredAmount, props.usd1Decimals);
-            const coverageDays = parseInt(values.coverageDuration);
-            const premiumWei = parseUnits(values.premiumAmount.toString(), props.usd1Decimals);
-            await props.applyForPolicy(walletAddress, insuredAmountWei, coverageDays, premiumWei);
+            const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
+            await props.applyForPolicy(walletAddress, insuredAmountWei, coverageSeconds, BigNumber.from(premium));
         } finally {
             setApplicationInProgress(false);
         }
@@ -246,7 +244,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
                                 {...field} 
-                                onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
+                                onBlur={async (e) => { 
+                                    field.onBlur();
+                                    await calculatePremium();
+                                }}
                                 error={errors.insuredWallet !== undefined}
                                 helperText={errors.insuredWallet !== undefined 
                                     ? ( 
@@ -270,9 +271,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
                                 {...field} 
-                                onBlur={e => { field.onBlur(); setPremiumCalculationRequired(true); }}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
+                                }}
+                                onBlur={async (e) => { 
+                                    field.onBlur();
+                                    await calculatePremium();
                                 }}
                                 error={errors.insuredAmount !== undefined}
                                 helperText={errors.insuredAmount !== undefined 
@@ -295,10 +299,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
                                 {...field} 
-                                onBlur={(e) => { 
+                                onBlur={async (e) => { 
                                     field.onBlur(); 
                                     setValue("coverageEndDate", dayjs().startOf('day').add(parseInt(e.target.value), 'days').format("YYYY-MM-DD"));
-                                    setPremiumCalculationRequired(true); 
+                                    await calculatePremium();
                                 }}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{t('days')}</InputAdornment>,
@@ -330,9 +334,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                         variant={INPUT_VARIANT} 
                                         />
                                 }
-                                onAccept={(date) => {
+                                onAccept={async (date) => {
                                     setValue("coverageDuration", dayjs(date).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
-                                    setPremiumCalculationRequired(true); 
+                                    await calculatePremium();
                                 }}
                                 disablePast={true}
                                 minDate={coverageUntilMin}
@@ -347,18 +351,18 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         currencyDecimals={props.usd2Decimals}
                         bundles={bundles}
                         bundlesLoading={isLoadingBundles} 
-                        selectedBundle={matchedBundle}
-                        onBundleSelected={(bundle: BundleData) => setMatchedBundle(bundle)}
+                        applicableBundleIds={applicableBundleIds}
+                        selectedBundleId={selectedBundleId}
+                        onBundleSelected={(bundle: BundleData) => switchBundle(bundle) }
                         />
                 </Grid>
                 <Grid item xs={12}>
                     <Premium 
                         control={control}
                         disabled={props.formDisabled}
+                        premiumAmount={premium}
                         premiumCurrency={props.usd2}
                         premiumCurrencyDecimals={props.usd2Decimals}
-                        bundleCurrency={props.usd1}
-                        bundleCurrencyDecimals={props.usd1Decimals}
                         helperText={t(premiumErrorKey, { currency: props.usd2 })}
                         helperTextIsError={premiumErrorKey != ""}
                         transactionInProgress={premiumCalculationInProgress}
@@ -386,7 +390,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Button 
                         variant='contained'
                         type="submit"
-                        disabled={!formState.isValid || premiumCalculationInProgress || props.formDisabled || matchedBundle == null}
+                        disabled={!formState.isValid || premiumCalculationInProgress || props.formDisabled || selectedBundleId == null}
                         fullWidth
                         // onClick={buy}
                         sx={{ p: 1 }}
