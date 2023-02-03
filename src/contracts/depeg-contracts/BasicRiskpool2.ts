@@ -573,8 +573,9 @@ export interface BasicRiskpool2Interface extends utils.Interface {
   ): Result;
 
   events: {
-    "LogBasicRiskpoolBundlesAndPolicies(uint256,uint256)": EventFragment;
     "LogBasicRiskpoolCandidateBundleAmountCheck(uint256,uint256,uint256,uint256)": EventFragment;
+    "LogBasicRiskpoolCapitalCheck(uint256,uint256)": EventFragment;
+    "LogBasicRiskpoolCapitalization(uint256,uint256,uint256,uint256,bool)": EventFragment;
     "LogComponentApproved(uint256)": EventFragment;
     "LogComponentArchived(uint256)": EventFragment;
     "LogComponentCreated(bytes32,uint8,address,address)": EventFragment;
@@ -606,10 +607,13 @@ export interface BasicRiskpool2Interface extends utils.Interface {
   };
 
   getEvent(
-    nameOrSignatureOrTopic: "LogBasicRiskpoolBundlesAndPolicies"
+    nameOrSignatureOrTopic: "LogBasicRiskpoolCandidateBundleAmountCheck"
   ): EventFragment;
   getEvent(
-    nameOrSignatureOrTopic: "LogBasicRiskpoolCandidateBundleAmountCheck"
+    nameOrSignatureOrTopic: "LogBasicRiskpoolCapitalCheck"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LogBasicRiskpoolCapitalization"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogComponentApproved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogComponentArchived"): EventFragment;
@@ -651,18 +655,6 @@ export interface BasicRiskpool2Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
-export interface LogBasicRiskpoolBundlesAndPoliciesEventObject {
-  activeBundles: BigNumber;
-  policies: BigNumber;
-}
-export type LogBasicRiskpoolBundlesAndPoliciesEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  LogBasicRiskpoolBundlesAndPoliciesEventObject
->;
-
-export type LogBasicRiskpoolBundlesAndPoliciesEventFilter =
-  TypedEventFilter<LogBasicRiskpoolBundlesAndPoliciesEvent>;
-
 export interface LogBasicRiskpoolCandidateBundleAmountCheckEventObject {
   index: BigNumber;
   bundleId: BigNumber;
@@ -676,6 +668,33 @@ export type LogBasicRiskpoolCandidateBundleAmountCheckEvent = TypedEvent<
 
 export type LogBasicRiskpoolCandidateBundleAmountCheckEventFilter =
   TypedEventFilter<LogBasicRiskpoolCandidateBundleAmountCheckEvent>;
+
+export interface LogBasicRiskpoolCapitalCheckEventObject {
+  activeBundles: BigNumber;
+  policies: BigNumber;
+}
+export type LogBasicRiskpoolCapitalCheckEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  LogBasicRiskpoolCapitalCheckEventObject
+>;
+
+export type LogBasicRiskpoolCapitalCheckEventFilter =
+  TypedEventFilter<LogBasicRiskpoolCapitalCheckEvent>;
+
+export interface LogBasicRiskpoolCapitalizationEventObject {
+  activeBundles: BigNumber;
+  capital: BigNumber;
+  lockedCapital: BigNumber;
+  collateralAmount: BigNumber;
+  capacityIsAvailable: boolean;
+}
+export type LogBasicRiskpoolCapitalizationEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber, boolean],
+  LogBasicRiskpoolCapitalizationEventObject
+>;
+
+export type LogBasicRiskpoolCapitalizationEventFilter =
+  TypedEventFilter<LogBasicRiskpoolCapitalizationEvent>;
 
 export interface LogComponentApprovedEventObject {
   id: BigNumber;
@@ -1621,15 +1640,6 @@ export interface BasicRiskpool2 extends BaseContract {
   };
 
   filters: {
-    "LogBasicRiskpoolBundlesAndPolicies(uint256,uint256)"(
-      activeBundles?: null,
-      policies?: null
-    ): LogBasicRiskpoolBundlesAndPoliciesEventFilter;
-    LogBasicRiskpoolBundlesAndPolicies(
-      activeBundles?: null,
-      policies?: null
-    ): LogBasicRiskpoolBundlesAndPoliciesEventFilter;
-
     "LogBasicRiskpoolCandidateBundleAmountCheck(uint256,uint256,uint256,uint256)"(
       index?: null,
       bundleId?: null,
@@ -1642,6 +1652,30 @@ export interface BasicRiskpool2 extends BaseContract {
       maxAmount?: null,
       collateralAmount?: null
     ): LogBasicRiskpoolCandidateBundleAmountCheckEventFilter;
+
+    "LogBasicRiskpoolCapitalCheck(uint256,uint256)"(
+      activeBundles?: null,
+      policies?: null
+    ): LogBasicRiskpoolCapitalCheckEventFilter;
+    LogBasicRiskpoolCapitalCheck(
+      activeBundles?: null,
+      policies?: null
+    ): LogBasicRiskpoolCapitalCheckEventFilter;
+
+    "LogBasicRiskpoolCapitalization(uint256,uint256,uint256,uint256,bool)"(
+      activeBundles?: null,
+      capital?: null,
+      lockedCapital?: null,
+      collateralAmount?: null,
+      capacityIsAvailable?: null
+    ): LogBasicRiskpoolCapitalizationEventFilter;
+    LogBasicRiskpoolCapitalization(
+      activeBundles?: null,
+      capital?: null,
+      lockedCapital?: null,
+      collateralAmount?: null,
+      capacityIsAvailable?: null
+    ): LogBasicRiskpoolCapitalizationEventFilter;
 
     "LogComponentApproved(uint256)"(id?: null): LogComponentApprovedEventFilter;
     LogComponentApproved(id?: null): LogComponentApprovedEventFilter;

@@ -27,6 +27,33 @@ import type {
   PromiseOrValue,
 } from "./common";
 
+export declare namespace IPolicy {
+  export type ClaimStruct = {
+    state: PromiseOrValue<BigNumberish>;
+    claimAmount: PromiseOrValue<BigNumberish>;
+    paidAmount: PromiseOrValue<BigNumberish>;
+    data: PromiseOrValue<BytesLike>;
+    createdAt: PromiseOrValue<BigNumberish>;
+    updatedAt: PromiseOrValue<BigNumberish>;
+  };
+
+  export type ClaimStructOutput = [
+    number,
+    BigNumber,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber
+  ] & {
+    state: number;
+    claimAmount: BigNumber;
+    paidAmount: BigNumber;
+    data: string;
+    createdAt: BigNumber;
+    updatedAt: BigNumber;
+  };
+}
+
 export declare namespace IPriceDataProvider {
   export type PriceInfoStruct = {
     id: PromiseOrValue<BigNumberish>;
@@ -89,6 +116,7 @@ export declare namespace ITreasury {
 
 export interface DepegProductInterface extends utils.Interface {
   functions: {
+    "CLAIM_ID()": FunctionFragment;
     "DEFAULT_DATA_STRUCTURE()": FunctionFragment;
     "GANACHE()": FunctionFragment;
     "MAINNET()": FunctionFragment;
@@ -97,36 +125,46 @@ export interface DepegProductInterface extends utils.Interface {
     "VERSION()": FunctionFragment;
     "applications()": FunctionFragment;
     "applyForPolicy(address,uint256,uint256,uint256)": FunctionFragment;
+    "applyForPolicyWithBundle(address,uint256,uint256,uint256)": FunctionFragment;
     "approvalCallback()": FunctionFragment;
     "archiveCallback()": FunctionFragment;
+    "calculateClaimAmount(uint256,uint256)": FunctionFragment;
     "calculateFee(uint256)": FunctionFragment;
     "calculateNetPremium(uint256,uint256,uint256)": FunctionFragment;
     "calculatePremium(uint256)": FunctionFragment;
+    "createDepegClaim(bytes32)": FunctionFragment;
     "declineCallback()": FunctionFragment;
+    "decodeClaimInfoFromData(bytes)": FunctionFragment;
+    "encodeClaimInfoAsData(uint256,uint256)": FunctionFragment;
     "getApplicationDataStructure()": FunctionFragment;
     "getApplicationId(uint256)": FunctionFragment;
     "getClaimDataStructure()": FunctionFragment;
+    "getDepegClaim(bytes32)": FunctionFragment;
     "getDepegPriceInfo()": FunctionFragment;
     "getDepegState()": FunctionFragment;
     "getDepeggedAt()": FunctionFragment;
     "getFeeFractionFullUnit()": FunctionFragment;
-    "getFeeSpecification()": FunctionFragment;
+    "getFeeSpecification(uint256)": FunctionFragment;
     "getId()": FunctionFragment;
     "getLatestPriceInfo()": FunctionFragment;
     "getName()": FunctionFragment;
     "getOwner()": FunctionFragment;
     "getPayoutDataStructure()": FunctionFragment;
+    "getPolicyExpirationData(bytes32)": FunctionFragment;
     "getPolicyFlow()": FunctionFragment;
     "getPolicyId(uint256)": FunctionFragment;
+    "getPolicyToProcess(uint256)": FunctionFragment;
     "getPriceDataProvider()": FunctionFragment;
     "getProcessId(address,uint256)": FunctionFragment;
     "getProtectedToken()": FunctionFragment;
     "getRegistry()": FunctionFragment;
     "getRiskpoolId()": FunctionFragment;
     "getState()": FunctionFragment;
+    "getTargetPrice()": FunctionFragment;
     "getToken()": FunctionFragment;
     "getTriggeredAt()": FunctionFragment;
     "getType()": FunctionFragment;
+    "hasDepegClaim(bytes32)": FunctionFragment;
     "isNewPriceInfoEventAvailable()": FunctionFragment;
     "isOracle()": FunctionFragment;
     "isProduct()": FunctionFragment;
@@ -134,9 +172,11 @@ export interface DepegProductInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "pauseCallback()": FunctionFragment;
     "policies()": FunctionFragment;
+    "policiesToProcess()": FunctionFragment;
+    "policyIsAllowedToClaim(bytes32)": FunctionFragment;
     "processIds(address)": FunctionFragment;
     "processLatestPriceInfo()": FunctionFragment;
-    "processPolicy(bytes32)": FunctionFragment;
+    "processPolicy(bytes32,uint256)": FunctionFragment;
     "proposalCallback()": FunctionFragment;
     "reactivateProduct()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -151,6 +191,7 @@ export interface DepegProductInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "CLAIM_ID"
       | "DEFAULT_DATA_STRUCTURE"
       | "GANACHE"
       | "MAINNET"
@@ -159,15 +200,21 @@ export interface DepegProductInterface extends utils.Interface {
       | "VERSION"
       | "applications"
       | "applyForPolicy"
+      | "applyForPolicyWithBundle"
       | "approvalCallback"
       | "archiveCallback"
+      | "calculateClaimAmount"
       | "calculateFee"
       | "calculateNetPremium"
       | "calculatePremium"
+      | "createDepegClaim"
       | "declineCallback"
+      | "decodeClaimInfoFromData"
+      | "encodeClaimInfoAsData"
       | "getApplicationDataStructure"
       | "getApplicationId"
       | "getClaimDataStructure"
+      | "getDepegClaim"
       | "getDepegPriceInfo"
       | "getDepegState"
       | "getDepeggedAt"
@@ -178,17 +225,21 @@ export interface DepegProductInterface extends utils.Interface {
       | "getName"
       | "getOwner"
       | "getPayoutDataStructure"
+      | "getPolicyExpirationData"
       | "getPolicyFlow"
       | "getPolicyId"
+      | "getPolicyToProcess"
       | "getPriceDataProvider"
       | "getProcessId"
       | "getProtectedToken"
       | "getRegistry"
       | "getRiskpoolId"
       | "getState"
+      | "getTargetPrice"
       | "getToken"
       | "getTriggeredAt"
       | "getType"
+      | "hasDepegClaim"
       | "isNewPriceInfoEventAvailable"
       | "isOracle"
       | "isProduct"
@@ -196,6 +247,8 @@ export interface DepegProductInterface extends utils.Interface {
       | "owner"
       | "pauseCallback"
       | "policies"
+      | "policiesToProcess"
+      | "policyIsAllowedToClaim"
       | "processIds"
       | "processLatestPriceInfo"
       | "processPolicy"
@@ -211,6 +264,7 @@ export interface DepegProductInterface extends utils.Interface {
       | "unpauseCallback"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "CLAIM_ID", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "DEFAULT_DATA_STRUCTURE",
     values?: undefined
@@ -237,12 +291,25 @@ export interface DepegProductInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "applyForPolicyWithBundle",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "approvalCallback",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "archiveCallback",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calculateClaimAmount",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "calculateFee",
@@ -261,8 +328,20 @@ export interface DepegProductInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "createDepegClaim",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "declineCallback",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "decodeClaimInfoFromData",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "encodeClaimInfoAsData",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getApplicationDataStructure",
@@ -275,6 +354,10 @@ export interface DepegProductInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getClaimDataStructure",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDepegClaim",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "getDepegPriceInfo",
@@ -294,7 +377,7 @@ export interface DepegProductInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getFeeSpecification",
-    values?: undefined
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "getId", values?: undefined): string;
   encodeFunctionData(
@@ -308,11 +391,19 @@ export interface DepegProductInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getPolicyExpirationData",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getPolicyFlow",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getPolicyId",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPolicyToProcess",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -336,12 +427,20 @@ export interface DepegProductInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getState", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getTargetPrice",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getToken", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getTriggeredAt",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getType", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "hasDepegClaim",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "isNewPriceInfoEventAvailable",
     values?: undefined
@@ -359,6 +458,14 @@ export interface DepegProductInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "policies", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "policiesToProcess",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "policyIsAllowedToClaim",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "processIds",
     values: [PromiseOrValue<string>]
   ): string;
@@ -368,7 +475,7 @@ export interface DepegProductInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "processPolicy",
-    values: [PromiseOrValue<BytesLike>]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "proposalCallback",
@@ -411,6 +518,7 @@ export interface DepegProductInterface extends utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(functionFragment: "CLAIM_ID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "DEFAULT_DATA_STRUCTURE",
     data: BytesLike
@@ -432,11 +540,19 @@ export interface DepegProductInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "applyForPolicyWithBundle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "approvalCallback",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "archiveCallback",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateClaimAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -452,7 +568,19 @@ export interface DepegProductInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "createDepegClaim",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "declineCallback",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "decodeClaimInfoFromData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "encodeClaimInfoAsData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -465,6 +593,10 @@ export interface DepegProductInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getClaimDataStructure",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDepegClaim",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -499,11 +631,19 @@ export interface DepegProductInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getPolicyExpirationData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getPolicyFlow",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getPolicyId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPolicyToProcess",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -527,12 +667,20 @@ export interface DepegProductInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getState", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTargetPrice",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTriggeredAt",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getType", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "hasDepegClaim",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "isNewPriceInfoEventAvailable",
     data: BytesLike
@@ -546,6 +694,14 @@ export interface DepegProductInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "policies", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "policiesToProcess",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "policyIsAllowedToClaim",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "processIds", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "processLatestPriceInfo",
@@ -605,8 +761,12 @@ export interface DepegProductInterface extends utils.Interface {
     "LogComponentSuspended(uint256)": EventFragment;
     "LogComponentUnpaused(uint256)": EventFragment;
     "LogDepegApplicationCreated(bytes32,address,address,uint256,uint256,uint256)": EventFragment;
+    "LogDepegClaimConfirmed(bytes32,uint256,uint256,uint256,uint256)": EventFragment;
+    "LogDepegClaimCreated(bytes32,uint256,uint256)": EventFragment;
+    "LogDepegPayoutProcessed(bytes32,uint256,uint256,uint256)": EventFragment;
+    "LogDepegPolicyClosed(bytes32)": EventFragment;
     "LogDepegPolicyCreated(bytes32,address,uint256)": EventFragment;
-    "LogDepegPolicyProcessed(bytes32)": EventFragment;
+    "LogDepegPolicyExpired(bytes32)": EventFragment;
     "LogDepegPriceEvent(uint256,uint256,uint8,uint256,uint256,uint256)": EventFragment;
     "LogDepegProductDeactivated(uint256,uint256)": EventFragment;
     "LogDepegProductPaused(uint256,uint256)": EventFragment;
@@ -630,8 +790,12 @@ export interface DepegProductInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "LogComponentSuspended"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogComponentUnpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogDepegApplicationCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogDepegClaimConfirmed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogDepegClaimCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogDepegPayoutProcessed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogDepegPolicyClosed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogDepegPolicyCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LogDepegPolicyProcessed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogDepegPolicyExpired"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogDepegPriceEvent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogDepegProductDeactivated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogDepegProductPaused"): EventFragment;
@@ -778,6 +942,59 @@ export type LogDepegApplicationCreatedEvent = TypedEvent<
 export type LogDepegApplicationCreatedEventFilter =
   TypedEventFilter<LogDepegApplicationCreatedEvent>;
 
+export interface LogDepegClaimConfirmedEventObject {
+  processId: string;
+  claimId: BigNumber;
+  claimAmount: BigNumber;
+  accountBalance: BigNumber;
+  payoutAmount: BigNumber;
+}
+export type LogDepegClaimConfirmedEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber, BigNumber],
+  LogDepegClaimConfirmedEventObject
+>;
+
+export type LogDepegClaimConfirmedEventFilter =
+  TypedEventFilter<LogDepegClaimConfirmedEvent>;
+
+export interface LogDepegClaimCreatedEventObject {
+  processId: string;
+  claimId: BigNumber;
+  claimAmount: BigNumber;
+}
+export type LogDepegClaimCreatedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  LogDepegClaimCreatedEventObject
+>;
+
+export type LogDepegClaimCreatedEventFilter =
+  TypedEventFilter<LogDepegClaimCreatedEvent>;
+
+export interface LogDepegPayoutProcessedEventObject {
+  processId: string;
+  claimId: BigNumber;
+  payoutId: BigNumber;
+  payoutAmount: BigNumber;
+}
+export type LogDepegPayoutProcessedEvent = TypedEvent<
+  [string, BigNumber, BigNumber, BigNumber],
+  LogDepegPayoutProcessedEventObject
+>;
+
+export type LogDepegPayoutProcessedEventFilter =
+  TypedEventFilter<LogDepegPayoutProcessedEvent>;
+
+export interface LogDepegPolicyClosedEventObject {
+  processId: string;
+}
+export type LogDepegPolicyClosedEvent = TypedEvent<
+  [string],
+  LogDepegPolicyClosedEventObject
+>;
+
+export type LogDepegPolicyClosedEventFilter =
+  TypedEventFilter<LogDepegPolicyClosedEvent>;
+
 export interface LogDepegPolicyCreatedEventObject {
   processId: string;
   policyHolder: string;
@@ -791,16 +1008,16 @@ export type LogDepegPolicyCreatedEvent = TypedEvent<
 export type LogDepegPolicyCreatedEventFilter =
   TypedEventFilter<LogDepegPolicyCreatedEvent>;
 
-export interface LogDepegPolicyProcessedEventObject {
-  policyId: string;
+export interface LogDepegPolicyExpiredEventObject {
+  processId: string;
 }
-export type LogDepegPolicyProcessedEvent = TypedEvent<
+export type LogDepegPolicyExpiredEvent = TypedEvent<
   [string],
-  LogDepegPolicyProcessedEventObject
+  LogDepegPolicyExpiredEventObject
 >;
 
-export type LogDepegPolicyProcessedEventFilter =
-  TypedEventFilter<LogDepegPolicyProcessedEvent>;
+export type LogDepegPolicyExpiredEventFilter =
+  TypedEventFilter<LogDepegPolicyExpiredEvent>;
 
 export interface LogDepegPriceEventEventObject {
   priceId: BigNumber;
@@ -948,6 +1165,8 @@ export interface DepegProduct extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    CLAIM_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     DEFAULT_DATA_STRUCTURE(overrides?: CallOverrides): Promise<[string]>;
 
     GANACHE(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -972,6 +1191,14 @@ export interface DepegProduct extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    applyForPolicyWithBundle(
+      wallet: PromiseOrValue<string>,
+      sumInsured: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     approvalCallback(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -979,6 +1206,12 @@ export interface DepegProduct extends BaseContract {
     archiveCallback(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    calculateClaimAmount(
+      sumInsuredAmount: PromiseOrValue<BigNumberish>,
+      depegPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { claimAmount: BigNumber }>;
 
     calculateFee(
       amount: PromiseOrValue<BigNumberish>,
@@ -999,9 +1232,27 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { premiumAmount: BigNumber }>;
 
+    createDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     declineCallback(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    decodeClaimInfoFromData(
+      data: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { depegPrice: BigNumber; depeggedAt: BigNumber }
+    >;
+
+    encodeClaimInfoAsData(
+      depegPrice: PromiseOrValue<BigNumberish>,
+      depeggedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { data: string }>;
 
     getApplicationDataStructure(
       overrides?: CallOverrides
@@ -1015,6 +1266,13 @@ export interface DepegProduct extends BaseContract {
     getClaimDataStructure(
       overrides?: CallOverrides
     ): Promise<[string] & { dataStructure: string }>;
+
+    getDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<
+      [IPolicy.ClaimStructOutput] & { claim: IPolicy.ClaimStructOutput }
+    >;
 
     getDepegPriceInfo(
       overrides?: CallOverrides
@@ -1037,6 +1295,7 @@ export interface DepegProduct extends BaseContract {
     ): Promise<[BigNumber] & { fractionFullUnit: BigNumber }>;
 
     getFeeSpecification(
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [ITreasury.FeeSpecificationStructOutput] & {
@@ -1062,10 +1321,22 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { dataStructure: string }>;
 
+    getPolicyExpirationData(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber] & { isExpired: boolean; expiredAt: BigNumber }
+    >;
+
     getPolicyFlow(overrides?: CallOverrides): Promise<[string]>;
 
     getPolicyId(
       policyIdx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { processId: string }>;
+
+    getPolicyToProcess(
+      idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string] & { processId: string }>;
 
@@ -1089,6 +1360,10 @@ export interface DepegProduct extends BaseContract {
 
     getState(overrides?: CallOverrides): Promise<[number]>;
 
+    getTargetPrice(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { targetPrice: BigNumber }>;
+
     getToken(overrides?: CallOverrides): Promise<[string]>;
 
     getTriggeredAt(
@@ -1096,6 +1371,11 @@ export interface DepegProduct extends BaseContract {
     ): Promise<[BigNumber] & { triggeredAt: BigNumber }>;
 
     getType(overrides?: CallOverrides): Promise<[number]>;
+
+    hasDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { hasClaim: boolean }>;
 
     isNewPriceInfoEventAvailable(
       overrides?: CallOverrides
@@ -1123,6 +1403,15 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { policyCount: BigNumber }>;
 
+    policiesToProcess(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { numberOfPolicies: BigNumber }>;
+
+    policyIsAllowedToClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { mayClaim: boolean }>;
+
     processIds(
       policyHolder: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1134,6 +1423,7 @@ export interface DepegProduct extends BaseContract {
 
     processPolicy(
       processId: PromiseOrValue<BytesLike>,
+      depeggedAtBalance: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1182,6 +1472,8 @@ export interface DepegProduct extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  CLAIM_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
   DEFAULT_DATA_STRUCTURE(overrides?: CallOverrides): Promise<string>;
 
   GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1204,6 +1496,14 @@ export interface DepegProduct extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  applyForPolicyWithBundle(
+    wallet: PromiseOrValue<string>,
+    sumInsured: PromiseOrValue<BigNumberish>,
+    duration: PromiseOrValue<BigNumberish>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   approvalCallback(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1211,6 +1511,12 @@ export interface DepegProduct extends BaseContract {
   archiveCallback(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  calculateClaimAmount(
+    sumInsuredAmount: PromiseOrValue<BigNumberish>,
+    depegPrice: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   calculateFee(
     amount: PromiseOrValue<BigNumberish>,
@@ -1231,9 +1537,27 @@ export interface DepegProduct extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  createDepegClaim(
+    processId: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   declineCallback(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  decodeClaimInfoFromData(
+    data: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { depegPrice: BigNumber; depeggedAt: BigNumber }
+  >;
+
+  encodeClaimInfoAsData(
+    depegPrice: PromiseOrValue<BigNumberish>,
+    depeggedAt: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getApplicationDataStructure(overrides?: CallOverrides): Promise<string>;
 
@@ -1243,6 +1567,11 @@ export interface DepegProduct extends BaseContract {
   ): Promise<string>;
 
   getClaimDataStructure(overrides?: CallOverrides): Promise<string>;
+
+  getDepegClaim(
+    processId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<IPolicy.ClaimStructOutput>;
 
   getDepegPriceInfo(
     overrides?: CallOverrides
@@ -1255,6 +1584,7 @@ export interface DepegProduct extends BaseContract {
   getFeeFractionFullUnit(overrides?: CallOverrides): Promise<BigNumber>;
 
   getFeeSpecification(
+    componentId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<ITreasury.FeeSpecificationStructOutput>;
 
@@ -1270,10 +1600,22 @@ export interface DepegProduct extends BaseContract {
 
   getPayoutDataStructure(overrides?: CallOverrides): Promise<string>;
 
+  getPolicyExpirationData(
+    processId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<
+    [boolean, BigNumber] & { isExpired: boolean; expiredAt: BigNumber }
+  >;
+
   getPolicyFlow(overrides?: CallOverrides): Promise<string>;
 
   getPolicyId(
     policyIdx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getPolicyToProcess(
+    idx: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -1293,11 +1635,18 @@ export interface DepegProduct extends BaseContract {
 
   getState(overrides?: CallOverrides): Promise<number>;
 
+  getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
+
   getToken(overrides?: CallOverrides): Promise<string>;
 
   getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
 
   getType(overrides?: CallOverrides): Promise<number>;
+
+  hasDepegClaim(
+    processId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   isNewPriceInfoEventAvailable(
     overrides?: CallOverrides
@@ -1323,6 +1672,13 @@ export interface DepegProduct extends BaseContract {
 
   policies(overrides?: CallOverrides): Promise<BigNumber>;
 
+  policiesToProcess(overrides?: CallOverrides): Promise<BigNumber>;
+
+  policyIsAllowedToClaim(
+    processId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   processIds(
     policyHolder: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -1334,6 +1690,7 @@ export interface DepegProduct extends BaseContract {
 
   processPolicy(
     processId: PromiseOrValue<BytesLike>,
+    depeggedAtBalance: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1382,6 +1739,8 @@ export interface DepegProduct extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    CLAIM_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_DATA_STRUCTURE(overrides?: CallOverrides): Promise<string>;
 
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1404,9 +1763,23 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    applyForPolicyWithBundle(
+      wallet: PromiseOrValue<string>,
+      sumInsured: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     approvalCallback(overrides?: CallOverrides): Promise<void>;
 
     archiveCallback(overrides?: CallOverrides): Promise<void>;
+
+    calculateClaimAmount(
+      sumInsuredAmount: PromiseOrValue<BigNumberish>,
+      depegPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     calculateFee(
       amount: PromiseOrValue<BigNumberish>,
@@ -1427,7 +1800,25 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    createDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     declineCallback(overrides?: CallOverrides): Promise<void>;
+
+    decodeClaimInfoFromData(
+      data: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { depegPrice: BigNumber; depeggedAt: BigNumber }
+    >;
+
+    encodeClaimInfoAsData(
+      depegPrice: PromiseOrValue<BigNumberish>,
+      depeggedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getApplicationDataStructure(overrides?: CallOverrides): Promise<string>;
 
@@ -1437,6 +1828,11 @@ export interface DepegProduct extends BaseContract {
     ): Promise<string>;
 
     getClaimDataStructure(overrides?: CallOverrides): Promise<string>;
+
+    getDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<IPolicy.ClaimStructOutput>;
 
     getDepegPriceInfo(
       overrides?: CallOverrides
@@ -1449,6 +1845,7 @@ export interface DepegProduct extends BaseContract {
     getFeeFractionFullUnit(overrides?: CallOverrides): Promise<BigNumber>;
 
     getFeeSpecification(
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<ITreasury.FeeSpecificationStructOutput>;
 
@@ -1464,10 +1861,22 @@ export interface DepegProduct extends BaseContract {
 
     getPayoutDataStructure(overrides?: CallOverrides): Promise<string>;
 
+    getPolicyExpirationData(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<
+      [boolean, BigNumber] & { isExpired: boolean; expiredAt: BigNumber }
+    >;
+
     getPolicyFlow(overrides?: CallOverrides): Promise<string>;
 
     getPolicyId(
       policyIdx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getPolicyToProcess(
+      idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -1487,11 +1896,18 @@ export interface DepegProduct extends BaseContract {
 
     getState(overrides?: CallOverrides): Promise<number>;
 
+    getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
+
     getToken(overrides?: CallOverrides): Promise<string>;
 
     getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
 
     getType(overrides?: CallOverrides): Promise<number>;
+
+    hasDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     isNewPriceInfoEventAvailable(
       overrides?: CallOverrides
@@ -1515,6 +1931,13 @@ export interface DepegProduct extends BaseContract {
 
     policies(overrides?: CallOverrides): Promise<BigNumber>;
 
+    policiesToProcess(overrides?: CallOverrides): Promise<BigNumber>;
+
+    policyIsAllowedToClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     processIds(
       policyHolder: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1526,6 +1949,7 @@ export interface DepegProduct extends BaseContract {
 
     processPolicy(
       processId: PromiseOrValue<BytesLike>,
+      depeggedAtBalance: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1646,6 +2070,50 @@ export interface DepegProduct extends BaseContract {
       netPremiumAmount?: null
     ): LogDepegApplicationCreatedEventFilter;
 
+    "LogDepegClaimConfirmed(bytes32,uint256,uint256,uint256,uint256)"(
+      processId?: null,
+      claimId?: null,
+      claimAmount?: null,
+      accountBalance?: null,
+      payoutAmount?: null
+    ): LogDepegClaimConfirmedEventFilter;
+    LogDepegClaimConfirmed(
+      processId?: null,
+      claimId?: null,
+      claimAmount?: null,
+      accountBalance?: null,
+      payoutAmount?: null
+    ): LogDepegClaimConfirmedEventFilter;
+
+    "LogDepegClaimCreated(bytes32,uint256,uint256)"(
+      processId?: null,
+      claimId?: null,
+      claimAmount?: null
+    ): LogDepegClaimCreatedEventFilter;
+    LogDepegClaimCreated(
+      processId?: null,
+      claimId?: null,
+      claimAmount?: null
+    ): LogDepegClaimCreatedEventFilter;
+
+    "LogDepegPayoutProcessed(bytes32,uint256,uint256,uint256)"(
+      processId?: null,
+      claimId?: null,
+      payoutId?: null,
+      payoutAmount?: null
+    ): LogDepegPayoutProcessedEventFilter;
+    LogDepegPayoutProcessed(
+      processId?: null,
+      claimId?: null,
+      payoutId?: null,
+      payoutAmount?: null
+    ): LogDepegPayoutProcessedEventFilter;
+
+    "LogDepegPolicyClosed(bytes32)"(
+      processId?: null
+    ): LogDepegPolicyClosedEventFilter;
+    LogDepegPolicyClosed(processId?: null): LogDepegPolicyClosedEventFilter;
+
     "LogDepegPolicyCreated(bytes32,address,uint256)"(
       processId?: null,
       policyHolder?: null,
@@ -1657,12 +2125,10 @@ export interface DepegProduct extends BaseContract {
       sumInsuredAmount?: null
     ): LogDepegPolicyCreatedEventFilter;
 
-    "LogDepegPolicyProcessed(bytes32)"(
-      policyId?: null
-    ): LogDepegPolicyProcessedEventFilter;
-    LogDepegPolicyProcessed(
-      policyId?: null
-    ): LogDepegPolicyProcessedEventFilter;
+    "LogDepegPolicyExpired(bytes32)"(
+      processId?: null
+    ): LogDepegPolicyExpiredEventFilter;
+    LogDepegPolicyExpired(processId?: null): LogDepegPolicyExpiredEventFilter;
 
     "LogDepegPriceEvent(uint256,uint256,uint8,uint256,uint256,uint256)"(
       priceId?: null,
@@ -1746,6 +2212,8 @@ export interface DepegProduct extends BaseContract {
   };
 
   estimateGas: {
+    CLAIM_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
     DEFAULT_DATA_STRUCTURE(overrides?: CallOverrides): Promise<BigNumber>;
 
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1768,12 +2236,26 @@ export interface DepegProduct extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    applyForPolicyWithBundle(
+      wallet: PromiseOrValue<string>,
+      sumInsured: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     approvalCallback(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     archiveCallback(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    calculateClaimAmount(
+      sumInsuredAmount: PromiseOrValue<BigNumberish>,
+      depegPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     calculateFee(
@@ -1793,8 +2275,24 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    createDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     declineCallback(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    decodeClaimInfoFromData(
+      data: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    encodeClaimInfoAsData(
+      depegPrice: PromiseOrValue<BigNumberish>,
+      depeggedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getApplicationDataStructure(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1806,6 +2304,11 @@ export interface DepegProduct extends BaseContract {
 
     getClaimDataStructure(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getDepegPriceInfo(overrides?: CallOverrides): Promise<BigNumber>;
 
     getDepegState(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1814,7 +2317,10 @@ export interface DepegProduct extends BaseContract {
 
     getFeeFractionFullUnit(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getFeeSpecification(overrides?: CallOverrides): Promise<BigNumber>;
+    getFeeSpecification(
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getId(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1826,10 +2332,20 @@ export interface DepegProduct extends BaseContract {
 
     getPayoutDataStructure(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getPolicyExpirationData(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPolicyFlow(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPolicyId(
       policyIdx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPolicyToProcess(
+      idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1849,11 +2365,18 @@ export interface DepegProduct extends BaseContract {
 
     getState(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
+
     getToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
 
     getType(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hasDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isNewPriceInfoEventAvailable(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1871,6 +2394,13 @@ export interface DepegProduct extends BaseContract {
 
     policies(overrides?: CallOverrides): Promise<BigNumber>;
 
+    policiesToProcess(overrides?: CallOverrides): Promise<BigNumber>;
+
+    policyIsAllowedToClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     processIds(
       policyHolder: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1882,6 +2412,7 @@ export interface DepegProduct extends BaseContract {
 
     processPolicy(
       processId: PromiseOrValue<BytesLike>,
+      depeggedAtBalance: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1931,6 +2462,8 @@ export interface DepegProduct extends BaseContract {
   };
 
   populateTransaction: {
+    CLAIM_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     DEFAULT_DATA_STRUCTURE(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1955,12 +2488,26 @@ export interface DepegProduct extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    applyForPolicyWithBundle(
+      wallet: PromiseOrValue<string>,
+      sumInsured: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     approvalCallback(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     archiveCallback(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    calculateClaimAmount(
+      sumInsuredAmount: PromiseOrValue<BigNumberish>,
+      depegPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     calculateFee(
@@ -1980,8 +2527,24 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    createDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     declineCallback(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    decodeClaimInfoFromData(
+      data: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    encodeClaimInfoAsData(
+      depegPrice: PromiseOrValue<BigNumberish>,
+      depeggedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getApplicationDataStructure(
@@ -1997,6 +2560,11 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getDepegPriceInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getDepegState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2008,6 +2576,7 @@ export interface DepegProduct extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getFeeSpecification(
+      componentId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2025,10 +2594,20 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getPolicyExpirationData(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getPolicyFlow(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPolicyId(
       policyIdx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPolicyToProcess(
+      idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2050,11 +2629,18 @@ export interface DepegProduct extends BaseContract {
 
     getState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getTargetPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTriggeredAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getType(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    hasDepegClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     isNewPriceInfoEventAvailable(
       overrides?: CallOverrides
@@ -2074,6 +2660,13 @@ export interface DepegProduct extends BaseContract {
 
     policies(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    policiesToProcess(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    policyIsAllowedToClaim(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     processIds(
       policyHolder: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -2085,6 +2678,7 @@ export interface DepegProduct extends BaseContract {
 
     processPolicy(
       processId: PromiseOrValue<BytesLike>,
+      depeggedAtBalance: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -71,6 +71,7 @@ export interface IPriceDataProviderInterface extends utils.Interface {
     "getHeartbeat()": FunctionFragment;
     "getLatestPriceInfo()": FunctionFragment;
     "getOwner()": FunctionFragment;
+    "getTargetPrice()": FunctionFragment;
     "getToken()": FunctionFragment;
     "getTriggeredAt()": FunctionFragment;
     "isMainnetProvider()": FunctionFragment;
@@ -91,6 +92,7 @@ export interface IPriceDataProviderInterface extends utils.Interface {
       | "getHeartbeat"
       | "getLatestPriceInfo"
       | "getOwner"
+      | "getTargetPrice"
       | "getToken"
       | "getTriggeredAt"
       | "isMainnetProvider"
@@ -133,6 +135,10 @@ export interface IPriceDataProviderInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getTargetPrice",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getToken", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getTriggeredAt",
@@ -192,6 +198,10 @@ export interface IPriceDataProviderInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTargetPrice",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTriggeredAt",
@@ -414,6 +424,10 @@ export interface IPriceDataProvider extends BaseContract {
 
     getOwner(overrides?: CallOverrides): Promise<[string]>;
 
+    getTargetPrice(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { targetPrice: BigNumber }>;
+
     getToken(overrides?: CallOverrides): Promise<[string]>;
 
     getTriggeredAt(
@@ -467,6 +481,8 @@ export interface IPriceDataProvider extends BaseContract {
 
   getOwner(overrides?: CallOverrides): Promise<string>;
 
+  getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
+
   getToken(overrides?: CallOverrides): Promise<string>;
 
   getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
@@ -515,6 +531,8 @@ export interface IPriceDataProvider extends BaseContract {
     ): Promise<IPriceDataProvider.PriceInfoStructOutput>;
 
     getOwner(overrides?: CallOverrides): Promise<string>;
+
+    getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     getToken(overrides?: CallOverrides): Promise<string>;
 
@@ -654,6 +672,8 @@ export interface IPriceDataProvider extends BaseContract {
 
     getOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
+
     getToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
@@ -697,6 +717,8 @@ export interface IPriceDataProvider extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTargetPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
