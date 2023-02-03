@@ -30,6 +30,9 @@ export const applicationSlice = createSlice({
         },
         reset: (state) => {
             state.bundles = [];
+            state.applicableBundleIds = undefined;
+            state.selectedBundleId = undefined;
+            state.premium = undefined;
         },
         startLoading: (state) => {
             state.isLoadingBundles = true;

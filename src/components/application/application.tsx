@@ -155,7 +155,7 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function doApplication(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber): Promise<{ status: boolean, processId: string|undefined}> {
+    async function doApplication(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, bundleId: number): Promise<{ status: boolean, processId: string|undefined}> {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
             // TODO: send selected bundle during application
@@ -163,7 +163,7 @@ export default function Application(props: ApplicationProps) {
                 walletAddress, 
                 insuredAmount, 
                 coverageDuration, 
-                premium, 
+                bundleId, 
                 (address: string) => {
                     snackbar = enqueueSnackbar(
                         t('apply_info', { address }),
@@ -237,7 +237,7 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function applyForPolicy(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber) {
+    async function applyForPolicy(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, premium: BigNumber, bundleId: number) {
         try {
             enableUnloadWarning(true);
 
@@ -249,7 +249,7 @@ export default function Application(props: ApplicationProps) {
                 return;
             }
             setActiveStep(4);
-            const applicationResult = await doApplication(walletAddress, insuredAmount, coverageDuration, premium);
+            const applicationResult = await doApplication(walletAddress, insuredAmount, coverageDurationSeconds, bundleId);
             if ( ! applicationResult.status ) {
                 setActiveStep(2);
                 showAllowanceNotice();
@@ -257,7 +257,7 @@ export default function Application(props: ApplicationProps) {
             }
             setActiveStep(5);
             applicationSuccessful();
-            setProctectionDetails([applicationResult.processId as string, walletAddress, insuredAmount, coverageDuration])
+            setProctectionDetails([applicationResult.processId as string, walletAddress, insuredAmount, coverageDurationSeconds])
         } finally {
             enableUnloadWarning(false);
         }
@@ -293,7 +293,7 @@ export default function Application(props: ApplicationProps) {
                 processId={protectionDetails[0] as string}
                 wallet={protectionDetails[1] as string}
                 amount={protectionDetails[2] as BigNumber}
-                duration={protectionDetails[3] as number}
+                coverageDurationSeconds={protectionDetails[3] as number}
                 currency={props.insurance.usd1}
                 currencyDecimals={props.insurance.usd1Decimals}
                 />);

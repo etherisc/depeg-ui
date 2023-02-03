@@ -35,7 +35,7 @@ export interface ApplicationFormProperties {
     applicationApi: ApplicationApi;
     premiumTrxTextKey: string|undefined;
     formReadyForApply: (isFormReady: boolean) => void;
-    applyForPolicy: (walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber) => void;
+    applyForPolicy: (walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number) => void;
 }
 
 export type IAplicationFormValues = {
@@ -206,7 +206,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             const walletAddress = values.insuredWallet;
             const insuredAmountWei = parseUnits(values.insuredAmount, props.usd1Decimals);
             const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
-            await props.applyForPolicy(walletAddress, insuredAmountWei, coverageSeconds, BigNumber.from(premium));
+            await props.applyForPolicy(walletAddress, insuredAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!);
         } finally {
             setApplicationInProgress(false);
         }

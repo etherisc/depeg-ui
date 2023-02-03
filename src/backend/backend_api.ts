@@ -66,7 +66,7 @@ export interface ApplicationApi {
             walletAddress: string, 
             insuredAmount: BigNumber, 
             coverageDurationSeconds: number,
-            premium: BigNumber,
+            bundleId: number,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void
         ) => Promise<{ status: boolean, processId: string|undefined}>;

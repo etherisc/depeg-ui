@@ -90,7 +90,7 @@ export class DepegProductApi {
         walletAddress: string,
         insuredAmount: BigNumber, 
         coverageDurationSeconds: number, 
-        premium: BigNumber, 
+        bundleId: number, 
         beforeApplyCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void
     ): Promise<[ContractTransaction, ContractReceipt]> {
@@ -98,11 +98,11 @@ export class DepegProductApi {
             beforeApplyCallback(this.depegProduct!.address);
         }
         try {
-            const tx = await this.depegProduct!.applyForPolicy(
+            const tx = await this.depegProduct!.applyForPolicyWithBundle(
                 walletAddress,
                 insuredAmount, 
                 coverageDurationSeconds,
-                premium);
+                bundleId);
             if (beforeWaitCallback !== undefined) {
                 beforeWaitCallback(this.depegProduct!.address);
             }
