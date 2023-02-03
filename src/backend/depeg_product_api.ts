@@ -179,9 +179,18 @@ export class DepegProductApi {
     }
 
     async getProductState(): Promise<ProductState> {
-        // return (await this.getDepegProductApi())!.getProductState();
-        // TODO: implement
-        return ProductState.Active;
+        const state = await this.depegProduct!.getDepegState();
+        switch (state) {
+            case 0:
+            case 1:
+                return ProductState.Active;
+            case 2:
+                return ProductState.Paused;
+            case 3:
+                return ProductState.Depegged;
+            default:
+                throw new Error("Unknown product state: " + state);
+        }
     }
 
 }
