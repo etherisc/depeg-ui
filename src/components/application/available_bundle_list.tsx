@@ -1,5 +1,5 @@
-import { Table, TableHead, TableRow, TableCell, TableBody, Typography, LinearProgress, Checkbox, styled, tableCellClasses } from "@mui/material";
-import { blue, blueGrey, grey, lightBlue } from "@mui/material/colors";
+import { Table, TableHead, TableRow, TableCell, TableBody, Typography, LinearProgress, styled, tableCellClasses, Alert } from "@mui/material";
+import { blueGrey } from "@mui/material/colors";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import { BigNumber } from "ethers";
@@ -37,6 +37,18 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
         },
     }));
 
+    if (! props.bundlesLoading && props.bundles.length === 0) {
+        return (
+            <Alert variant="outlined" severity="info">{t('alert.riskpool_capacity_exceeded')}</Alert>
+        );
+    }
+
+    if (! props.bundlesLoading && bundlesToShow.length === 0) {
+        return (
+            <Alert variant="outlined" severity="warning">{t('alert.no_matching_bundle')}</Alert>
+        );
+    }
+
     return (<>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('bundles.title')}</Typography>
             {progress}
@@ -65,7 +77,7 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
                         ))}
                     </TableBody>
                 </Table>
-                </TableContainer>
+            </TableContainer>
         </>);
 }
 

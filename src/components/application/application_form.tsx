@@ -23,7 +23,7 @@ import { REGEX_PATTERN_NUMBER_WITH_DECIMALS } from '../../config/appConfig';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AvailableBundleList } from './available_bundle_list';
 import { filterApplicableBundles } from '../../utils/bundles';
-import { setApplicableBundleIds, setPremium } from '../../redux/slices/application';
+import { clearPremium, setApplicableBundleIds, setPremium } from '../../redux/slices/application';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -132,6 +132,11 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             const fbid = filterApplicableBundles(bundles, insuredAmount, coverageSeconds).map(b => b.id);
             dispatch(setApplicableBundleIds(fbid));
             console.log("fbid", fbid);
+
+            if (fbid.length == 0) {
+                dispatch(clearPremium());
+                return;
+            }
             
             const remainingBundles = bundles.filter((b: BundleData) => fbid.includes(b.id));
             console.log("remainingBundles", remainingBundles);

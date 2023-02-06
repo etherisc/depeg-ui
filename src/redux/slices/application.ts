@@ -12,7 +12,7 @@ export interface ApplicationState {
 
 const initialState: ApplicationState = {
     bundles: [],
-    isLoadingBundles: false,
+    isLoadingBundles: true,
     applicableBundleIds: undefined,
     selectedBundleId: undefined,
     premium: undefined,
@@ -46,7 +46,11 @@ export const applicationSlice = createSlice({
         setPremium(state, action: PayloadAction<[number|undefined, string|undefined]>) {
             state.selectedBundleId = action.payload[0];
             state.premium = action.payload[1];
-        }
+        },
+        clearPremium(state) {
+            state.selectedBundleId = undefined;
+            state.premium = undefined;
+        },
     },
 });
 
@@ -55,7 +59,7 @@ export const {
     addBundle, reset, 
     startLoading, finishLoading,
     setApplicableBundleIds,
-    setPremium,
+    setPremium, clearPremium,
 } = applicationSlice.actions;
 
 export default applicationSlice.reducer;

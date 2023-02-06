@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BundleData } from '../../../src/backend/bundle_data';
-import { AvailableBundleRow } from '../../../src/components/application/available_bundle_list';
+import { AvailableBundleList, AvailableBundleRow } from '../../../src/components/application/available_bundle_list';
 import { BigNumber } from 'ethers';
 import userEvent from '@testing-library/user-event';
 
@@ -18,7 +18,114 @@ jest.mock('react-i18next', () => ({
     },
 }));    
 
-describe('When rendering a bundle in the AvailableBundleList', () => {
+const bundle1 = {
+    id: 42,
+    riskpoolId: 10,
+    owner: "0x1234",
+    tokenId: 27,
+    apr: 2.7,
+    minSumInsured: BigNumber.from(1100 * Math.pow(10, 6)).toString(),
+    maxSumInsured: BigNumber.from(2100 * Math.pow(10, 6)).toString(),
+    minDuration: 30 * 86400,
+    maxDuration: 60 * 86400,
+    capacity: BigNumber.from(20000 * Math.pow(10, 6)).toString(),
+    capitalSupport: BigNumber.from(23000 * Math.pow(10, 6)).toString(),
+    locked: BigNumber.from(0).toString(),
+    name: "bundle1",
+} as BundleData;
+const bundle2 = {
+    id: 43,
+    riskpoolId: 10,
+    owner: "0x1234",
+    tokenId: 27,
+    apr: 2.7,
+    minSumInsured: BigNumber.from(1100 * Math.pow(10, 6)).toString(),
+    maxSumInsured: BigNumber.from(2100 * Math.pow(10, 6)).toString(),
+    minDuration: 30 * 86400,
+    maxDuration: 60 * 86400,
+    capacity: BigNumber.from(20000 * Math.pow(10, 6)).toString(),
+    capitalSupport: BigNumber.from(23000 * Math.pow(10, 6)).toString(),
+    locked: BigNumber.from(0).toString(),
+    name: "bundle2",
+} as BundleData;
+
+describe('When rendering the AvailableBundleList', () => {
+    it('with no bundles an error for no capacity is riskpool is shown', () => {
+        render(
+            <AvailableBundleList
+                bundles={[]}
+                bundlesLoading={false}
+                applicableBundleIds={undefined}
+                selectedBundleId={undefined}
+                currency="USDC"
+                currencyDecimals={6}
+                onBundleSelected={() => {}}
+                />
+            
+        );
+
+        expect(screen.getByRole("alert")).toHaveTextContent("alert.riskpool_capacity_exceeded");
+    })
+
+    it('with bundles and no match and a warning for no matching bundle is shown', () => {
+        render(
+            <AvailableBundleList
+                bundles={[
+                    bundle1
+                ]}
+                bundlesLoading={false}
+                applicableBundleIds={[]}
+                selectedBundleId={undefined}
+                currency="USDC"
+                currencyDecimals={6}
+                onBundleSelected={() => {}}
+                /> 
+        );
+
+        expect(screen.getByRole("alert")).toHaveTextContent("alert.no_matching_bundle");
+    })
+
+    it('with two bundles, then two bundles are shown in table', () => {
+        render(
+            <AvailableBundleList
+                bundles={[
+                    bundle1, bundle2
+                ]}
+                bundlesLoading={false}
+                applicableBundleIds={undefined}
+                selectedBundleId={undefined}
+                currency="USDC"
+                currencyDecimals={6}
+                onBundleSelected={() => {}}
+                /> 
+        );
+
+        expect(screen.getByRole("table")).toHaveTextContent("bundle1");
+        expect(screen.getByRole("table")).toHaveTextContent("bundle2");
+    })
+
+    it('with two bundles and one filtered, then only one bundle is shown in table', () => {
+        render(
+            <AvailableBundleList
+                bundles={[
+                    bundle1, bundle2
+                ]}
+                bundlesLoading={false}
+                applicableBundleIds={[bundle2.id]}
+                selectedBundleId={undefined}
+                currency="USDC"
+                currencyDecimals={6}
+                onBundleSelected={() => {}}
+                /> 
+        );
+
+        expect(screen.getByRole("table")).not.toHaveTextContent("bundle1");
+        expect(screen.getByRole("table")).toHaveTextContent("bundle2");
+    })
+
+});
+
+describe('When rendering a bundle in the AvailableBundleRow', () => {
     it('renders all relevant data', async () => {
         const user = userEvent.setup()
 
