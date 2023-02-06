@@ -6,6 +6,29 @@
 
 This repository contains the source code for web application to the Etherisc [depeg-contracts](https://github.com/etherisc/depeg-contracts).
 
+When starting the application, the webapplication is exposed on port 3000 (or the port specified in the environment variable `PORT`) and path `/`.
+Additionally to the frontend, the application also exposes an API on path `/api`.
+
+## API services
+
+The nextjs backend exposes three services:
+
+- `GET /api/bundles/update` - retrieves all bundles and stores them in redis store 
+- `GET /api/bundles/all` - retrieves all bundles from redis store
+- `GET /api/bundles/stakeable` - retrieves all stakeable bundles from redis store
+
+
+## Dependencies
+
+### Redis
+
+The application uses redis to store information. The application expects a environment variables called `REDIS_URL` to be set. The application will use the url`'redis://redis:6379'` if no connection is specified in the `REDIS_URL`.
+
+### Deployed contracts
+
+The application expects that the `depeg-contracts` are deployed to the blockchain. Use the two environment variables `NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS` and `NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS` to specify the addresses of the depeg product and staking contracts.
+The expected version of the contracts can be found in the `package.json` file (look for the package `@etherisc/depeg-contracts`).
+
 ## Run in development mode 
 
 The repository includes a vscode _devcontainer_ that installs all the necessary dependencies to run the application.
@@ -13,9 +36,10 @@ The repository includes a vscode _devcontainer_ that installs all the necessary 
 Create a `.env.local` file in the root directory of the project. Have a look a the `.env.example_local` file for the required environment variables of a setup running again a local ganache chain. The minimum required variables are described below
 Then run the application in dev mode with `npm run dev`.
 
+
 ## Configuration
 
-## General config
+### General config
 
 ```
 # Blockchain connection configuration
@@ -55,6 +79,13 @@ NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN_MAXIMUM=10
 - `NEXT_PUBLIC_FEATURE_PRICE_HISTORY` - show price history of the protected coin
 - `NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA` - enable loading of fake data for price history
 
+### Backend bundle update
+
+The backend caches the current bundle from the blockchain in a local redis store. 
+This information will be updated when a new bundle is created or a policy has been issued. 
+
+The detect outside changes (e.g. when a change to a bundle has been made from the blockchain explorer or a brownie shell) the backend api `/api/bundles/update` should be called on a regular basis (e.g. via a cron job that runs every 10 minutes) to ensure those updates are reflected in the redis store and the ui.
+
 
 ### Faucet 
 
@@ -79,6 +110,21 @@ open browser at http://localhost:3002
 
 ## Deployment
 
+### Docker
+
+The application can be run in a docker container. The docker image can be build via the provided `Dockerfile`. We do not currently provide a prebuilt docker image as the image includes static instance information that needs to be configured at build time.
+
+The build process requires the following arguments:
+
+- `INSTANCE` - the name of the instance to build the image for. The instance name is used to load the correct configuration from the `.env.INSTANCE` file in the root diretory of the project (see `.env.mumbai` as an example). 
+
+### Dokku
+
+We use [dokku](https://dokku.com/) for deployment. 
+
+With the current setup (dokku repo is added as remote repo called `dokku` to the local git), deployment is triggered by running the following command in the root directory of the project:
+
 ```
 git push dokku develop:main
 ```
+

@@ -15,7 +15,7 @@ interface PolicyConfirmationProps {
     amount: BigNumber;
     currency: string;
     currencyDecimals: number;
-    duration: number;
+    coverageDurationSeconds: number;
 }
 
 export default function PolicyConfirmation(props: PolicyConfirmationProps) {
@@ -90,7 +90,7 @@ export default function PolicyConfirmation(props: PolicyConfirmationProps) {
                             </Grid>
                             <Grid item xs={9}>
                                 <Typography variant="body1">
-                                    {moment().add(props.duration, 'days').format("YYYY-MM-DD")}
+                                    {moment().add(props.coverageDurationSeconds, 's').format("YYYY-MM-DD")}
                                 </Typography>
                             </Grid>
                         </Grid>

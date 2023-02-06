@@ -38,6 +38,9 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
         },
         application: applicationMock(enqueueSnackbar),
         invest: investMock(enqueueSnackbar),
+        triggerBundleUpdate(bundleId: number) {
+            return Promise.resolve();
+        },
     } as BackendApi;
 }
 
@@ -138,12 +141,14 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         coverageDurationDaysMax: 45,
         getRiskBundles(handleBundle: (bundle: BundleData) => void) {
         },
-        calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationDays: number, bundles: Array<BundleData>): Promise<[BigNumber, BundleData]> {
-            const premium = insuredAmount.toNumber() * 0.017 * coverageDurationDays / 365;
-            return Promise.resolve([BigNumber.from(premium), bundles[0]]);
+        fetchStakeableRiskBundles(handleBundle) {
         },
-        async applyForPolicy(walletAddress, insuredAmount, coverageDurationDays, premium) {
-            enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationDays})`,  { autoHideDuration: 3000, variant: 'info' });
+        calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
+            const premium = insuredAmount.toNumber() * 0.017 * coverageDurationSeconds / 365;
+            return Promise.resolve(BigNumber.from(premium));
+        },
+        async applyForPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId) {
+            enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationSeconds})`,  { autoHideDuration: 3000, variant: 'info' });
             await delay(2000);
             return Promise.resolve({ status: true, processId: "0x12345678"});
         },
@@ -183,6 +188,10 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
             );
             await delay(2000);
             return Promise.resolve({ status: true, bundleId: "42"});
+        },
+        fetchAllBundles(handleBundle: (bundle: BundleData) => void) {
+            bundles.forEach(handleBundle);
+            return Promise.resolve();
         },
         bundleTokenAddress(): Promise<string> {
             return Promise.resolve("0x0000000000000000000000000000000000000000");

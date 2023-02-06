@@ -10,7 +10,7 @@ import ApplicationForm from "./application_form";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/bundles";
+import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/application";
 import { BundleData } from "../../backend/bundle_data";
 import PolicyConfirmation from "./policy_confirmation";
 import { updateAccountBalance } from "../../utils/chain";
@@ -50,9 +50,7 @@ export default function Application(props: ApplicationProps) {
         async function asyncGetProductStateAndBundles() {
             let productState = await props.insurance.getProductState();
             dispatch(setProductState(productState));
-            await props.insurance.application.getRiskBundles(
-                (bundle: BundleData) => dispatch(addBundle(bundle)) 
-            );
+            await props.insurance.application.fetchStakeableRiskBundles((bundle: BundleData) => dispatch(addBundle(bundle)));
             dispatch(finishLoading());
             setPremiumTrxTextKey("");
         }
@@ -95,7 +93,9 @@ export default function Application(props: ApplicationProps) {
         setReadyToBuy(isFormReady);
     }
 
-    function applicationSuccessful() {
+    async function applicationSuccessful(bundleId: number) {
+        await props.insurance.triggerBundleUpdate(bundleId);
+
         confetti({
             particleCount: 100,
             spread: 70,
@@ -157,14 +157,14 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function doApplication(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber): Promise<{ status: boolean, processId: string|undefined}> {
+    async function doApplication(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, bundleId: number): Promise<{ status: boolean, processId: string|undefined}> {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
             return await props.insurance.application.applyForPolicy(
                 walletAddress, 
                 insuredAmount, 
                 coverageDuration, 
-                premium, 
+                bundleId, 
                 (address: string) => {
                     snackbar = enqueueSnackbar(
                         t('apply_info', { address }),
@@ -238,7 +238,7 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function applyForPolicy(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber) {
+    async function applyForPolicy(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, premium: BigNumber, bundleId: number) {
         try {
             enableUnloadWarning(true);
 
@@ -250,15 +250,15 @@ export default function Application(props: ApplicationProps) {
                 return;
             }
             setActiveStep(4);
-            const applicationResult = await doApplication(walletAddress, insuredAmount, coverageDuration, premium);
+            const applicationResult = await doApplication(walletAddress, insuredAmount, coverageDurationSeconds, bundleId);
             if ( ! applicationResult.status ) {
                 setActiveStep(2);
                 showAllowanceNotice();
                 return;
             }
             setActiveStep(5);
-            applicationSuccessful();
-            setProctectionDetails([applicationResult.processId as string, walletAddress, insuredAmount, coverageDuration])
+            await applicationSuccessful(bundleId);
+            setProctectionDetails([applicationResult.processId as string, walletAddress, insuredAmount, coverageDurationSeconds])
         } finally {
             enableUnloadWarning(false);
         }
@@ -277,11 +277,12 @@ export default function Application(props: ApplicationProps) {
         content = (
             <ApplicationForm 
                 formDisabled={formDisabled || productState !== ProductState.Active}
-                walletAddress={walletAddress}
+                connectedWalletAddress={walletAddress}
                 usd1={props.insurance.usd1}
                 usd1Decimals={props.insurance.usd1Decimals}
                 usd2={props.insurance.usd2}
                 usd2Decimals={props.insurance.usd2Decimals}
+                insuranceApi={props.insurance}
                 applicationApi={props.insurance.application}
                 formReadyForApply={formReadyForApply}
                 applyForPolicy={applyForPolicy}
@@ -294,7 +295,7 @@ export default function Application(props: ApplicationProps) {
                 processId={protectionDetails[0] as string}
                 wallet={protectionDetails[1] as string}
                 amount={protectionDetails[2] as BigNumber}
-                duration={protectionDetails[3] as number}
+                coverageDurationSeconds={protectionDetails[3] as number}
                 currency={props.insurance.usd1}
                 currencyDecimals={props.insurance.usd1Decimals}
                 />);

@@ -20,3 +20,10 @@ export type BundleData = {
     name: string;
     lifetime: string;
 }
+
+export const MAX_BUNDLE = 
+{ 
+    apr: 100, 
+    minDuration: Number.MAX_SAFE_INTEGER, maxDuration: Number.MIN_SAFE_INTEGER + 1, 
+    minSumInsured: BigNumber.from(Number.MAX_SAFE_INTEGER - 1).toString(), maxSumInsured: BigNumber.from(Number.MIN_SAFE_INTEGER + 1).toString() 
+} as BundleData;

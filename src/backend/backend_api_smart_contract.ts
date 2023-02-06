@@ -105,5 +105,10 @@ export class BackendApiSmartContract implements BackendApi {
     async getProductState(): Promise<ProductState> {
         return await (await this.getProductApi()).getProductState();
     }
+
+    async triggerBundleUpdate(bundleId: number): Promise<void> {
+        // do not wait for result, just trigger it
+        fetch("/api/bundles/update?bundleId=" + bundleId);
+    }
 }
 

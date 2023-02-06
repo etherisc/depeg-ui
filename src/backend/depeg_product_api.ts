@@ -89,8 +89,8 @@ export class DepegProductApi {
     async applyForDepegPolicy(
         walletAddress: string,
         insuredAmount: BigNumber, 
-        coverageDurationDays: number, 
-        premium: BigNumber, 
+        coverageDurationSeconds: number, 
+        bundleId: number, 
         beforeApplyCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void
     ): Promise<[ContractTransaction, ContractReceipt]> {
@@ -98,11 +98,11 @@ export class DepegProductApi {
             beforeApplyCallback(this.depegProduct!.address);
         }
         try {
-            const tx = await this.depegProduct!.applyForPolicy(
+            const tx = await this.depegProduct!.applyForPolicyWithBundle(
                 walletAddress,
                 insuredAmount, 
-                coverageDurationDays * 24 * 60 * 60,
-                premium);
+                coverageDurationSeconds,
+                bundleId);
             if (beforeWaitCallback !== undefined) {
                 beforeWaitCallback(this.depegProduct!.address);
             }
@@ -179,9 +179,18 @@ export class DepegProductApi {
     }
 
     async getProductState(): Promise<ProductState> {
-        // return (await this.getDepegProductApi())!.getProductState();
-        // TODO: implement
-        return ProductState.Active;
+        const state = await this.depegProduct!.getDepegState();
+        switch (state) {
+            case 0:
+            case 1:
+                return ProductState.Active;
+            case 2:
+                return ProductState.Paused;
+            case 3:
+                return ProductState.Depegged;
+            default:
+                throw new Error("Unknown product state: " + state);
+        }
     }
 
 }

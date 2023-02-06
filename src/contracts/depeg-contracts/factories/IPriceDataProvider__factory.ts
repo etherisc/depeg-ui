@@ -413,6 +413,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getTargetPrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "targetPrice",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getToken",
     outputs: [
       {

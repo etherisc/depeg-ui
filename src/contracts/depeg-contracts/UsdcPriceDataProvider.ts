@@ -98,6 +98,7 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     "getOwner()": FunctionFragment;
     "getRoundData(uint80)": FunctionFragment;
     "getStability(uint256,uint256,uint256)": FunctionFragment;
+    "getTargetPrice()": FunctionFragment;
     "getTimestamp(uint256)": FunctionFragment;
     "getToken()": FunctionFragment;
     "getTriggeredAt()": FunctionFragment;
@@ -161,6 +162,7 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
       | "getOwner"
       | "getRoundData"
       | "getStability"
+      | "getTargetPrice"
       | "getTimestamp"
       | "getToken"
       | "getTriggeredAt"
@@ -320,6 +322,10 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTargetPrice",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getTimestamp",
@@ -520,6 +526,10 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getStability",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTargetPrice",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -937,6 +947,10 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[number] & { stability: number }>;
 
+    getTargetPrice(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { targetPrice: BigNumber }>;
+
     getTimestamp(
       roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1149,6 +1163,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
     overrides?: CallOverrides
   ): Promise<number>;
 
+  getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
+
   getTimestamp(
     roundId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -1356,6 +1372,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
       updatedAt: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<number>;
+
+    getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTimestamp(
       roundId: PromiseOrValue<BigNumberish>,
@@ -1672,6 +1690,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
+
     getTimestamp(
       roundId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1877,6 +1897,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
       updatedAt: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getTargetPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTimestamp(
       roundId: PromiseOrValue<BigNumberish>,

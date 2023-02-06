@@ -23,7 +23,6 @@ export { IStakingDataProvider__factory } from "./IStakingDataProvider__factory";
 export { InstanceRegistry__factory } from "./InstanceRegistry__factory";
 export { Riskpool2__factory } from "./Riskpool2__factory";
 export { Staking__factory } from "./Staking__factory";
-export { Testli__factory } from "./Testli__factory";
 export { USD1__factory } from "./USD1__factory";
 export { USD2__factory } from "./USD2__factory";
 export { USD3__factory } from "./USD3__factory";

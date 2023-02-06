@@ -2,15 +2,18 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/typescript-node
 {
 	"name": "depeg-ui",
-	"build": {
-		"dockerfile": "Dockerfile",
-		// Update 'VARIANT' to pick a Node version: 18, 16, 14.
-		// Append -bullseye or -buster to pin to an OS version.
-		// Use -bullseye variants on local on arm64/Apple Silicon.
-		"args": { 
-			"VARIANT": "18-bullseye"
-		}
-	},
+	// "build": {
+	// 	"dockerfile": "Dockerfile",
+	// 	// Update 'VARIANT' to pick a Node version: 18, 16, 14.
+	// 	// Append -bullseye or -buster to pin to an OS version.
+	// 	// Use -bullseye variants on local on arm64/Apple Silicon.
+	// 	"args": { 
+	// 		"VARIANT": "18-bullseye"
+	// 	}
+	// },
+	"dockerComposeFile": "docker-compose.yaml",
+    "service": "webapp",
+    "workspaceFolder": "/workspaces/depeg-ui",
 
 	// Configure tool-specific properties.
 	"customizations": {
@@ -37,7 +40,7 @@
 	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [3000],
+	"forwardPorts": [3000, "redis:6379"],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "sudo chown node node_modules && touch node_modules/.metadata_never_index && npm install ",
@@ -48,7 +51,7 @@
 		"docker-from-docker": "latest",
 	},
 
-	"mounts": [
-		"source=depeg-ui-node_modules,target=/workspaces/depeg-ui/node_modules,type=volume"
-	]
+	// "mounts": [
+	// 	"source=depeg-ui-node_modules,target=/workspaces/depeg-ui/node_modules,type=volume"
+	// ]
 }

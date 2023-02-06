@@ -39,6 +39,7 @@ export interface BackendApi {
     application: ApplicationApi;
     invest: InvestApi;
     priceFeed: PriceFeedApi;
+    triggerBundleUpdate: (bundleId: number) => Promise<void>;
 }
 
 export interface ApplicationApi {
@@ -46,22 +47,27 @@ export interface ApplicationApi {
     insuredAmountMax: BigNumber;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
+    /** Get all riskbundles for application from the blockchain */
     getRiskBundles: (
+        handleBundle: (bundle: BundleData) => void
+    ) => Promise<void>,
+    /** Fetch all riskbundles for application from the api */
+    fetchStakeableRiskBundles: (
         handleBundle: (bundle: BundleData) => void
     ) => Promise<void>,
     calculatePremium: 
         (
             walletAddress: string, 
             insuredAmount: BigNumber, 
-            coverageDurationDays: number,
-            bundles: Array<BundleData>,
-        ) => Promise<[BigNumber, BundleData]>;
+            coverageDurationSeconds: number,
+            bundle: BundleData,
+        ) => Promise<BigNumber>;
     applyForPolicy: 
         (
             walletAddress: string, 
             insuredAmount: BigNumber, 
-            coverageDurationDays: number,
-            premium: BigNumber,
+            coverageDurationSeconds: number,
+            bundleId: number,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void
         ) => Promise<{ status: boolean, processId: string|undefined}>;
@@ -94,6 +100,7 @@ export interface InvestApi {
             beforeWaitCallback?: (address: string) => void,
         ) => Promise<{ status: boolean, bundleId: string | undefined}>;
     bundleTokenAddress(): Promise<string>;
+    fetchAllBundles(handleBundle: (bundle: BundleData) => void): Promise<void>;
     bundleCount(): Promise<number>;
     bundleId(idx: number): Promise<number>;
     bundle(bundleId: number, walletAddress?: string): Promise<BundleData|undefined>;

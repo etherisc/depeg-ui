@@ -5,7 +5,6 @@ import { DepegProductApi } from "./depeg_product_api";
 import { hasBalance } from "./erc20";
 import { ApplicationApi } from "./backend_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
-import { ProductState } from "../types/product_state";
 
 export class ApplicationApiSmartContract implements ApplicationApi {
     private depegProductApi: DepegProductApi;
@@ -76,46 +75,37 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         }
     }
 
-    async calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationDays: number, bundles: Array<BundleData>): Promise<[BigNumber, BundleData]> {
-        if ((await this.getDepegProductApi())!.isVoidSigner()) {
-            console.log('no chain connection, no premium calculation');
-            return Promise.resolve([BigNumber.from(0), {} as BundleData]);
+    async fetchStakeableRiskBundles(handleBundle: (bundle: BundleData) => void): Promise<void> {
+        const res = await fetch("/api/bundles/stakeable");
+        if (res.status == 200) {
+            const bundles = await res.json() as BundleData[];
+            bundles.forEach(bundle => handleBundle(bundle));
+        } else {
+            throw new Error(`invalid response from backend. statuscode ${res.status}. test: ${res.text}`);
         }
+    }   
 
-        const durationSecs = coverageDurationDays * 24 * 60 * 60;
-        console.log("calculatePremium", walletAddress, insuredAmount, coverageDurationDays);
-        console.log("bundleData", bundles);
-        const bestBundle = (await this.riskpoolApi()).getBestQuote(bundles, insuredAmount, durationSecs, await this.lastBlockTimestamp());
-        if (bestBundle.minDuration == Number.MAX_SAFE_INTEGER) { 
-            throw new NoBundleFoundError();
-        }
+    async calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
+        console.log("calculatePremium", walletAddress, insuredAmount.toNumber(), coverageDurationSeconds);
         
-        // TODO avoid this
         const depegProduct = (await this.getDepegProductApi())!.getDepegProduct();
-
-        console.log("bestBundle", bestBundle);
-        const netPremium = (await depegProduct.calculateNetPremium(insuredAmount, durationSecs, bestBundle.id));
+        const netPremium = (await depegProduct.calculateNetPremium(insuredAmount, coverageDurationSeconds, bundle.id));
         console.log("netPremium", netPremium);
         const premium = (await depegProduct.calculatePremium(netPremium));
-        console.log("premium", premium);
-
-        if (! await hasBalance(walletAddress, premium, await depegProduct.getToken(), (await this.getDepegProductApi())!.getSigner())) {
-            throw new BalanceTooSmallError();
-        }
-
-        return [premium, bestBundle];
+        console.log("premium", premium.toNumber());
+        return premium;
     }
 
     async applyForPolicy(
             walletAddress: string, 
             insuredAmount: BigNumber, 
-            coverageDurationDays: number,
-            premium: BigNumber,
+            coverageDurationSeconds: number,
+            bundleId: number,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void,
         ): Promise<{ status: boolean, processId: string|undefined}> {
-        console.log("applyForPolicy", walletAddress, insuredAmount, coverageDurationDays, premium);
-        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, insuredAmount, coverageDurationDays, premium, beforeApplyCallback, beforeWaitCallback);
+        console.log("applyForPolicy", walletAddress, insuredAmount, coverageDurationSeconds, bundleId);
+        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
         const processId = (await this.getDepegProductApi())!.extractProcessIdFromApplicationLogs(receipt.logs);
         console.log(`processId: ${processId}`);
         return {

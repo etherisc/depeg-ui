@@ -101,6 +101,16 @@ export class InvestApiSmartContract implements InvestApi {
         return await(await this.riskpoolApi()).getBundleTokenAddress();
     }
 
+    async fetchAllBundles(handleBundle: (bundle: BundleData) => void): Promise<void> {
+        const res = await fetch("/api/bundles/all");
+        if (res.status == 200) {
+            const bundles = await res.json() as BundleData[];
+            bundles.forEach(bundle => handleBundle(bundle));
+        } else {
+            throw new Error(`invalid response from backend. statuscode ${res.status}. test: ${res.text}`);
+        }
+    }
+
     async bundleCount(): Promise<number> {
         return await(await this.riskpoolApi()).getBundleCount();
     }

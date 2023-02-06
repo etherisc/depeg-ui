@@ -26,7 +26,7 @@
     "apply_info": "Please confirm execution of the policy application transaction on contract {{address}} in your wallet app",
     "apply_wait": "Transaction created, waiting for onchain confirmation",
     "bundles": {
-        "title": "Available risk pool bundles",
+        "title": "Your policy can be covered by multiple bundles. Please select the bundle you want to use",
         "id": "ID",
         "name": "Name",
         "suminsured": "Min / max amount",
@@ -49,6 +49,8 @@
         "continue_link": "Continue to overview"
     },
     "alert": {
-        "product_not_active": "Depeg Protection is not available for purchase at the moment. Please try again later."
+        "product_not_active": "Depeg Protection is not available for purchase at the moment. Please try again later.",
+        "riskpool_capacity_exceeded": "The product has no capacity for additional policies at the moment. Please try again later.",
+        "no_matching_bundle": "No risk bundle matching your criteria was found. Please change the amount or duration."
     }
 }
