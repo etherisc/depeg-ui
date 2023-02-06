@@ -82,7 +82,9 @@ export default function Invest(props: InvestProps) {
         setReadyToInvest(isFormReady);
     }
 
-    function applicationSuccessful() {
+    async function applicationSuccessful(bundleId: number) {
+        await props.insurance.triggerBundleUpdate(bundleId);
+
         confetti({
             particleCount: 100,
             spread: 70,
@@ -265,7 +267,7 @@ export default function Invest(props: InvestProps) {
                 return;
             }
             setActiveStep(5);
-            applicationSuccessful();
+            await applicationSuccessful(parseInt(investResult.bundleId as string));
             setInvestmentDetails([investResult.bundleId as string, BigNumber.from(investedAmount), 
                 BigNumber.from(minSumInsured), BigNumber.from(maxSumInsured),
                 minDuration, maxDuration,
