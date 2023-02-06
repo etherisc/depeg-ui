@@ -1,7 +1,8 @@
 import { Table, TableHead, TableRow, TableCell, TableBody, Typography, LinearProgress, styled, tableCellClasses, Alert } from "@mui/material";
-import { blueGrey } from "@mui/material/colors";
+import { blue, blueGrey } from "@mui/material/colors";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
+import Color from "color";
 import { BigNumber } from "ethers";
 import { useTranslation } from "next-i18next";
 import { BundleData } from "../../backend/bundle_data";
@@ -107,19 +108,22 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
 
     const StyledTableRow = styled(TableRow)(({ theme }) => ({
         '&:nth-of-type(even)': {
-            backgroundColor: blueGrey[100],
+            backgroundColor: blueGrey[50],
         },
         '&.Mui-selected': {
-            backgroundColor: theme.palette.secondary.light,
+            backgroundColor: blue[200],
+        },
+        '&.Mui-selected > td': {
+            fontWeight: theme.typography.fontWeightBold,
         },
         '&:nth-of-type(odd):hover': {
-            backgroundColor: blueGrey[200],
+            backgroundColor: blue[100],
         },
         '&:nth-of-type(even):hover': {
-            backgroundColor: blueGrey[200],
+            backgroundColor: blue[100],
         },
         '&.Mui-selected:hover': {
-            backgroundColor: theme.palette.secondary.light,
+            backgroundColor: blue[100],
         }
     }));
 
@@ -127,7 +131,9 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
         key={bundle.id}
         selected={compProps.selected}
         onClick={() => compProps.onBundleSelected(bundle)}
-        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        sx={{ 
+            '&:last-child td, &:last-child th': { border: 0 },
+        }}
         >
             <TableCell scope="row" data-testid="bundle-id">
                 {bundle.id}
