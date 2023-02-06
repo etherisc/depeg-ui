@@ -1,4 +1,5 @@
-import { Table, TableHead, TableRow, TableCell, TableBody, Typography, LinearProgress, Checkbox } from "@mui/material";
+import { Table, TableHead, TableRow, TableCell, TableBody, Typography, LinearProgress, Checkbox, styled, tableCellClasses } from "@mui/material";
+import { blue, blueGrey, grey, lightBlue } from "@mui/material/colors";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
 import { BigNumber } from "ethers";
@@ -29,21 +30,26 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
         (<LinearProgress />) 
         : null;
 
+    const StyledTableCell = styled(TableCell)(({ theme }) => ({
+        [`&.${tableCellClasses.head}`]: {
+            backgroundColor: theme.palette.primary.light,
+            color: theme.palette.common.white,
+        },
+    }));
+
     return (<>
-            {/* TODO: text your policy can be covered by multiple bundles. Select the one you want to use. */}
-            <Typography variant="subtitle2" >{t('bundles.title')}</Typography>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('bundles.title')}</Typography>
             {progress}
-            {/* TODO: change bundle selected color */}
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 'lg' }} size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell>{t('bundles.id')}</TableCell>
-                            <TableCell>{t('bundles.name')}</TableCell>
-                            <TableCell align="right">{t('bundles.apr')}</TableCell>
-                            <TableCell align="right">{t('bundles.suminsured', { currency: props.currency })}</TableCell>
-                            <TableCell align="right">{t('bundles.duration')}</TableCell>
-                            <TableCell align="right">{t('bundles.capacity', { currency: props.currency })}</TableCell>
+                            <StyledTableCell>{t('bundles.id')}</StyledTableCell>
+                            <StyledTableCell>{t('bundles.name')}</StyledTableCell>
+                            <StyledTableCell align="right">{t('bundles.apr')}</StyledTableCell>
+                            <StyledTableCell align="right">{t('bundles.suminsured', { currency: props.currency })}</StyledTableCell>
+                            <StyledTableCell align="right">{t('bundles.duration')}</StyledTableCell>
+                            <StyledTableCell align="right">{t('bundles.capacity', { currency: props.currency })}</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -85,7 +91,25 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
         return currency + " " + formatCurrencyBN(minBigNumber(BigNumber.from(capacity), capitalRemaining), currencyDecimals); 
     }
 
-    return (<TableRow
+    const StyledTableRow = styled(TableRow)(({ theme }) => ({
+        '&:nth-of-type(even)': {
+            backgroundColor: blueGrey[100],
+        },
+        '&.Mui-selected': {
+            backgroundColor: theme.palette.secondary.light,
+        },
+        '&:nth-of-type(odd):hover': {
+            backgroundColor: blueGrey[200],
+        },
+        '&:nth-of-type(even):hover': {
+            backgroundColor: blueGrey[200],
+        },
+        '&.Mui-selected:hover': {
+            backgroundColor: theme.palette.secondary.light,
+        }
+    }));
+
+    return (<StyledTableRow
         key={bundle.id}
         selected={compProps.selected}
         onClick={() => compProps.onBundleSelected(bundle)}
@@ -101,5 +125,5 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
             <TableCell align="right" data-testid="bundle-suminsured">{currency} {formatCurrencyBN(BigNumber.from(bundle.minSumInsured), currencyDecimals)} / {formatCurrencyBN(BigNumber.from(bundle.maxSumInsured), currencyDecimals)}</TableCell>
             <TableCell align="right" data-testid="bundle-duration">{bundle.minDuration / 86400 } / {bundle.maxDuration / 86400 } {t('days')}</TableCell>
             <TableCell align="right" data-testid="bundle-capacity">{remainingCapacity(bundle)}</TableCell>
-        </TableRow>);
+        </StyledTableRow>);
 }
