@@ -35,7 +35,6 @@ export default function Bundles(props: BundlesProps) {
     const dispatch = useDispatch();
 
     const signer = useSelector((state: RootState) => state.chain.signer);
-    const provider = useSelector((state: RootState) => state.chain.provider);
     const address = useSelector((state: RootState) => state.account.address);
     const bundles = useSelector((state: RootState) => state.bundles.bundles);
     const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
@@ -197,7 +196,7 @@ export default function Bundles(props: BundlesProps) {
 
             <DataGrid 
                 autoHeight
-                rows={bundles} 
+                rows={bundles.filter((bundle) => showAllBundles || bundle.owner === address)} 
                 columns={columns} 
                 getRowId={(row) => row.id}
                 components={{
