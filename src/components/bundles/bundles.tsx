@@ -30,6 +30,7 @@ export interface BundlesProps {
 export default function Bundles(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
     const { enqueueSnackbar } = useSnackbar();
+    const investmentApi = props.insurance.invest;
 
     const dispatch = useDispatch();
 
@@ -47,39 +48,21 @@ export default function Bundles(props: BundlesProps) {
         setShowAllBundles(!showAllBundles);
     }
 
-    const getBundles = useCallback(async () => {
-        if (isLoadingBundles) {
-            return;
-        }
-
-        dispatch(startLoading());
-        dispatch(reset());
-        
-        if (address === undefined ) {
-            dispatch(finishLoading());
-            return;
-        }
-
-        // this will return the count for all bundles in the system (right now this is the only way to get to bundles)
-        const iapi = getBackendApi(enqueueSnackbar, t, signer, provider).invest;
-        const bundlesCount = await iapi.bundleCount();
-        for (let i = 0; i < bundlesCount; i++) {
-            const bundleId = await iapi.bundleId(i);
-            const bundle = await iapi.bundle(bundleId, showAllBundles ? undefined : address);
-            // bundle() will return undefined if bundles is not owned by the wallet address
-            if (bundle === undefined ) {
-                continue;
-            }
-            // console.log("bundle: ", bundle);
-            dispatch(addBundle(bundle));
-        }
-        dispatch(finishLoading());
-    }, [provider, signer, isLoadingBundles, enqueueSnackbar, t, showAllBundles, dispatch]);
-
     useEffect(() => {
+        async function getBundles() {
+            dispatch(startLoading());
+            dispatch(reset());
+            
+            if (address === undefined ) {
+                dispatch(finishLoading());
+                return;
+            }
+    
+            await investmentApi.fetchAllBundles((bundle: BundleData) => dispatch(addBundle(bundle)) );
+            dispatch(finishLoading());
+        }
         getBundles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [signer, showAllBundles]); // update bundles when signer changes
+    }, [signer, showAllBundles, investmentApi, address, dispatch]); // update bundles when signer changes
 
     const columns: GridColDef[] = [
         { 

@@ -141,7 +141,7 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         coverageDurationDaysMax: 45,
         getRiskBundles(handleBundle: (bundle: BundleData) => void) {
         },
-        fetchRiskBundles(handleBundle) {
+        fetchStakeableRiskBundles(handleBundle) {
         },
         calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
             const premium = insuredAmount.toNumber() * 0.017 * coverageDurationSeconds / 365;
@@ -188,6 +188,10 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
             );
             await delay(2000);
             return Promise.resolve({ status: true, bundleId: "42"});
+        },
+        fetchAllBundles(handleBundle: (bundle: BundleData) => void) {
+            bundles.forEach(handleBundle);
+            return Promise.resolve();
         },
         bundleTokenAddress(): Promise<string> {
             return Promise.resolve("0x0000000000000000000000000000000000000000");

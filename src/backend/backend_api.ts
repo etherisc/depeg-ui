@@ -52,7 +52,7 @@ export interface ApplicationApi {
         handleBundle: (bundle: BundleData) => void
     ) => Promise<void>,
     /** Fetch all riskbundles for application from the api */
-    fetchRiskBundles: (
+    fetchStakeableRiskBundles: (
         handleBundle: (bundle: BundleData) => void
     ) => Promise<void>,
     calculatePremium: 
@@ -100,6 +100,7 @@ export interface InvestApi {
             beforeWaitCallback?: (address: string) => void,
         ) => Promise<{ status: boolean, bundleId: string | undefined}>;
     bundleTokenAddress(): Promise<string>;
+    fetchAllBundles(handleBundle: (bundle: BundleData) => void): Promise<void>;
     bundleCount(): Promise<number>;
     bundleId(idx: number): Promise<number>;
     bundle(bundleId: number, walletAddress?: string): Promise<BundleData|undefined>;

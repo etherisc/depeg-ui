@@ -75,7 +75,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         }
     }
 
-    async fetchRiskBundles(handleBundle: (bundle: BundleData) => void): Promise<void> {
+    async fetchStakeableRiskBundles(handleBundle: (bundle: BundleData) => void): Promise<void> {
         const res = await fetch("/api/bundles/stakeable");
         if (res.status == 200) {
             const bundles = await res.json() as BundleData[];
