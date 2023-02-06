@@ -39,6 +39,7 @@ export interface BackendApi {
     application: ApplicationApi;
     invest: InvestApi;
     priceFeed: PriceFeedApi;
+    triggerBundleUpdate: (bundleId: number) => Promise<void>;
 }
 
 export interface ApplicationApi {

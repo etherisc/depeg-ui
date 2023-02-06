@@ -38,6 +38,9 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
         },
         application: applicationMock(enqueueSnackbar),
         invest: investMock(enqueueSnackbar),
+        triggerBundleUpdate(bundleId: number) {
+            return Promise.resolve();
+        },
     } as BackendApi;
 }
 

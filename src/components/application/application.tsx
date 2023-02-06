@@ -93,7 +93,9 @@ export default function Application(props: ApplicationProps) {
         setReadyToBuy(isFormReady);
     }
 
-    function applicationSuccessful() {
+    async function applicationSuccessful(bundleId: number) {
+        await props.insurance.triggerBundleUpdate(bundleId);
+
         confetti({
             particleCount: 100,
             spread: 70,
@@ -255,7 +257,7 @@ export default function Application(props: ApplicationProps) {
                 return;
             }
             setActiveStep(5);
-            applicationSuccessful();
+            await applicationSuccessful(bundleId);
             setProctectionDetails([applicationResult.processId as string, walletAddress, insuredAmount, coverageDurationSeconds])
         } finally {
             enableUnloadWarning(false);

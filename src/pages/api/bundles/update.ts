@@ -15,17 +15,48 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Array<BundleData>>
 ) {
-    console.log("updating bundles from blockchain");
+    console.log("called /api/bundles/update");
 
     const signer = await getVoidSigner();
     const { depegRiskpool, depegRiskpoolId, instanceService } = await getRiskpool(signer);
     const riskpoolApi = new DepegRiskpoolApi(depegRiskpool, depegRiskpoolId, instanceService);
 
-    const bundles = await riskpoolApi.getBundleData();
+    const updateOnlyBundle = req.query.bundleId as string;
 
-    await redisClient.set("bundles", JSON.stringify(bundles));
+    let bundles;
+
+    if (updateOnlyBundle !== undefined) {
+        console.log("fetching bundle", updateOnlyBundle);
+        bundles = await updateBundle(riskpoolApi, parseInt(updateOnlyBundle));
+    } else {
+        console.log("fetching all bundles");
+        bundles = await updateAllBundles(riskpoolApi);
+    }
 
     res.status(200).json(bundles);
+}
+
+async function updateBundle(riskpoolApi: DepegRiskpoolApi, bundleId: number): Promise<Array<BundleData>> {
+    const bundle = await riskpoolApi.getBundleDataByBundleId(bundleId);
+
+    const storedBundles = await redisClient.get("bundles");
+    const bundles = storedBundles ? JSON.parse(storedBundles) : [];
+    // update bundle
+    const index = bundles.findIndex((b: BundleData) => b.id === bundleId);
+    if (index !== -1) {
+        bundles[index] = bundle;
+    } else {
+        bundles.push(bundle);
+    }
+
+    await redisClient.set("bundles", JSON.stringify(bundles));
+    return [bundle];
+}
+
+async function updateAllBundles(riskpoolApi: DepegRiskpoolApi): Promise<Array<BundleData>> {
+    const bundles = await riskpoolApi.getBundleData();
+    const storedBundles = await redisClient.get("bundles");
+    return bundles;
 }
 
 async function getRiskpool(signer: Signer): Promise<{ depegProduct: DepegProduct, depegRiskpool: DepegRiskpool, depegRiskpoolId: number, instanceService: IInstanceService }> {
