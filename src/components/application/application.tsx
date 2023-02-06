@@ -275,11 +275,12 @@ export default function Application(props: ApplicationProps) {
         content = (
             <ApplicationForm 
                 formDisabled={formDisabled || productState !== ProductState.Active}
-                walletAddress={walletAddress}
+                connectedWalletAddress={walletAddress}
                 usd1={props.insurance.usd1}
                 usd1Decimals={props.insurance.usd1Decimals}
                 usd2={props.insurance.usd2}
                 usd2Decimals={props.insurance.usd2Decimals}
+                insuranceApi={props.insurance}
                 applicationApi={props.insurance.application}
                 formReadyForApply={formReadyForApply}
                 applyForPolicy={applyForPolicy}

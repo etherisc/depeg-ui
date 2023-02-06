@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField'
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BundleData, MAX_BUNDLE } from '../../backend/bundle_data';
-import { ApplicationApi } from '../../backend/backend_api';
+import { ApplicationApi, BackendApi } from '../../backend/backend_api';
 import Premium from './premium';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
@@ -27,12 +27,13 @@ import { clearPremium, setApplicableBundleIds, setPremium } from '../../redux/sl
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
-    walletAddress: string;
+    connectedWalletAddress: string;
     usd1: string;
     usd1Decimals: number;
     usd2: string;
     usd2Decimals: number;
     applicationApi: ApplicationApi;
+    insuranceApi: BackendApi;
     premiumTrxTextKey: string|undefined;
     formReadyForApply: (isFormReady: boolean) => void;
     applyForPolicy: (walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number) => void;
@@ -57,8 +58,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     // update wallet address when it changes
     useEffect(() => {
-        setValue("insuredWallet", props.walletAddress);
-    }, [props.walletAddress]);
+        setValue("insuredWallet", props.connectedWalletAddress);
+    }, [props.connectedWalletAddress]);
 
     const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin.toNumber());
     const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax.toNumber());
@@ -119,6 +120,20 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         dispatch(setPremium([bundle.id, premium.toString()]));
     }, [dispatch, props.applicationApi]);
 
+    const checkBalanceForPremium = useCallback(async () => {
+        if (premium === undefined || premium === "") {
+            setPremiumErrorKey("");
+            return;
+        }
+        const hasBalance = await props.insuranceApi.hasUsd2Balance(props.connectedWalletAddress, BigNumber.from(premium));
+        console.log("hasBalance", premium, hasBalance);
+        if (! hasBalance) {
+            setPremiumErrorKey("error_wallet_balance_too_low");
+        } else {
+            setPremiumErrorKey("");
+        }
+    }, [premium, props.connectedWalletAddress, props.insuranceApi]);
+
     const calculatePremium = useCallback(async () => {
         if ( ! validateFormState()) {
             // setValue("premiumAmount", 0);
@@ -147,10 +162,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
             // calculate premium
             await calculatePremiumForBundle(insuredWallet, insuredAmount, coverageSeconds, bestBundle);
+
+            checkBalanceForPremium();
         } finally {
             setPremiumCalculationInProgress(false);
         }
-    }, [bundles, dispatch, getPremiumParameters, validateFormState, calculatePremiumForBundle]);
+    }, [bundles, dispatch, getPremiumParameters, validateFormState, calculatePremiumForBundle, checkBalanceForPremium]);
 
     //-------------------------------------------------------------------------
     // update min/max sum insured and coverage period when bundles are available
@@ -195,7 +212,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const switchBundle = useCallback(async (bundle: BundleData) => {
         const { insuredWallet, insuredAmount, coverageSeconds } = getPremiumParameters();
         await calculatePremiumForBundle(insuredWallet, insuredAmount, coverageSeconds, bundle);
-    }, [getPremiumParameters, calculatePremiumForBundle]);
+        checkBalanceForPremium();
+    }, [getPremiumParameters, calculatePremiumForBundle, checkBalanceForPremium]);
 
     const [ applicationInProgress, setApplicationInProgress ] = useState(false);
 
@@ -391,7 +409,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Button 
                         variant='contained'
                         type="submit"
-                        disabled={!formState.isValid || premiumCalculationInProgress || props.formDisabled || selectedBundleId == null}
+                        disabled={!formState.isValid || premiumCalculationInProgress || props.formDisabled || selectedBundleId == null || premiumErrorKey != ""}
                         fullWidth
                         // onClick={buy}
                         sx={{ p: 1 }}
