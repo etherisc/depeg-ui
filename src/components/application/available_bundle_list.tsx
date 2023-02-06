@@ -26,6 +26,8 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
         bundlesToShow = bundlesToShow.filter(bundle => props.applicableBundleIds?.includes(bundle.id));
     }
 
+    bundlesToShow = bundlesToShow.slice().sort((a, b) => { return a.apr - b.apr; });
+
     const progress = props.bundlesLoading ? 
         (<LinearProgress />) 
         : null;

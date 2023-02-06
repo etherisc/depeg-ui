@@ -23,7 +23,7 @@ const bundle1 = {
     riskpoolId: 10,
     owner: "0x1234",
     tokenId: 27,
-    apr: 2.7,
+    apr: 3.1,
     minSumInsured: BigNumber.from(1100 * Math.pow(10, 6)).toString(),
     maxSumInsured: BigNumber.from(2100 * Math.pow(10, 6)).toString(),
     minDuration: 30 * 86400,
@@ -102,6 +102,10 @@ describe('When rendering the AvailableBundleList', () => {
 
         expect(screen.getByRole("table")).toHaveTextContent("bundle1");
         expect(screen.getByRole("table")).toHaveTextContent("bundle2");
+
+        // ensure sortered by apr ascending
+        expect(screen.getAllByRole("row")[1]).toHaveTextContent("2.7%");
+        expect(screen.getAllByRole("row")[2]).toHaveTextContent("3.1%");
     })
 
     it('with two bundles and one filtered, then only one bundle is shown in table', () => {
