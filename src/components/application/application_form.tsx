@@ -35,7 +35,7 @@ export interface ApplicationFormProperties {
     applicationApi: ApplicationApi;
     insuranceApi: BackendApi;
     premiumTrxTextKey: string|undefined;
-    formReadyForApply: (isFormReady: boolean) => void;
+    readyToSubmit: (isFormReady: boolean) => void;
     applyForPolicy: (walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number) => void;
 }
 
@@ -232,6 +232,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
     }
 
+    const readyToSubmit = formState.isValid && ! premiumCalculationInProgress && ! props.formDisabled && selectedBundleId !== undefined && premiumErrorKey === "";
+    props.readyToSubmit(readyToSubmit);
+    
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
     
     return (<>
@@ -409,7 +412,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Button 
                         variant='contained'
                         type="submit"
-                        disabled={!formState.isValid || premiumCalculationInProgress || props.formDisabled || selectedBundleId == null || premiumErrorKey != ""}
+                        disabled={!readyToSubmit}
                         fullWidth
                         // onClick={buy}
                         sx={{ p: 1 }}

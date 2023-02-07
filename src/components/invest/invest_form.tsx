@@ -25,7 +25,7 @@ export interface InvestFormProperties {
     usd2: string;
     usd2Decimals: number;
     insurance: BackendApi;
-    formReadyForInvest: (isFormReady: boolean) => void;
+    readyToSubmit: (isFormReady: boolean) => void;
     invest: (
         name: string, lifetime: number, 
         investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
@@ -129,6 +129,9 @@ export default function InvestForm(props: InvestFormProperties) {
     }
 
     const waitForPayment = paymentInProgress ? <LinearProgress /> : null;
+
+    const readyToSubmit = ! props.formDisabled && formState.isValid && ! paymentInProgress;
+    props.readyToSubmit(readyToSubmit);
     
     return (<>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -443,7 +446,7 @@ export default function InvestForm(props: InvestFormProperties) {
                     <Button 
                         variant='contained'
                         type='submit'
-                        disabled={props.formDisabled || ! formState.isValid || paymentInProgress}
+                        disabled={!readyToSubmit}
                         fullWidth
                         sx={{ p: 1 }}
                         >

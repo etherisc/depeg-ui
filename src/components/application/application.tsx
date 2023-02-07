@@ -89,7 +89,7 @@ export default function Application(props: ApplicationProps) {
         }
     }, [activeStep]);
 
-    function formReadyForApply(isFormReady: boolean) {
+    function readyToSubmit(isFormReady: boolean) {
         setReadyToBuy(isFormReady);
     }
 
@@ -284,7 +284,7 @@ export default function Application(props: ApplicationProps) {
                 usd2Decimals={props.insurance.usd2Decimals}
                 insuranceApi={props.insurance}
                 applicationApi={props.insurance.application}
-                formReadyForApply={formReadyForApply}
+                readyToSubmit={readyToSubmit}
                 applyForPolicy={applyForPolicy}
                 premiumTrxTextKey={premiumTrxTextKey}
             />
