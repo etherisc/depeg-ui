@@ -10,6 +10,7 @@ import { redisClient } from "../../../utils/redis";
 import { getVoidSigner } from "../../../utils/chain";
 
 const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
+const usd2Decimals = parseInt(process.env.NEXT_PUBLIC_USD2_DECIMALS ?? "6");
 
 export default async function handler(
     req: NextApiRequest,
@@ -19,7 +20,7 @@ export default async function handler(
 
     const signer = await getVoidSigner();
     const { depegRiskpool, depegRiskpoolId, instanceService } = await getRiskpool(signer);
-    const riskpoolApi = new DepegRiskpoolApi(depegRiskpool, depegRiskpoolId, instanceService);
+    const riskpoolApi = new DepegRiskpoolApi(depegRiskpool, depegRiskpoolId, instanceService, usd2Decimals);
 
     const updateOnlyBundle = req.query.bundleId as string;
 
