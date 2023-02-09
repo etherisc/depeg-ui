@@ -1,7 +1,0 @@
-{
-    "scripts": {
-        "dokku": {
-            "postdeploy": "curl http://localhost:3000/api/bundles/update"
-        }
-    }
-}

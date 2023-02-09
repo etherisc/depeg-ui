@@ -47,7 +47,6 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY .env.$INSTANCE .env
-COPY app.json ./
 
 EXPOSE 3000
 
