@@ -52,6 +52,7 @@
         "continue_link": "Continue to bundle overview"
     },
     "alert": {
-        "max_bundles": "The maximum number of supported bundles has been reached. Please contact the Etherisc team for further information."
+        "max_bundles": "The maximum number of supported bundles has been reached. Please contact the Etherisc team for further information.",
+        "no_riskpool_capacity": "The riskpool is at capacity. Please contact Etherisc if you would like to stake into the riskpool."
     }
 }

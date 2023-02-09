@@ -85,6 +85,7 @@ export interface InvestApi {
     maxCoverageDuration: number;
     annualPctReturn: number;
     maxAnnualPctReturn: number;
+    isRiskpoolCapacityAvailable(): Promise<boolean>;
     invest: 
         (
             name: string,

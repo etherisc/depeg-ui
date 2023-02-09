@@ -29,6 +29,7 @@ export default function Invest(props: InvestProps) {
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    const [ riskpoolCapacityAvailable, setNoRiskpoolCapacityAvailable ] = useState(true);
     const [ maxBundlesUsed, setMaxBundlesUsed ] = useState(false);
     const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
@@ -36,8 +37,16 @@ export default function Invest(props: InvestProps) {
     const [ investmentDetails, setInvestmentDetails ] = useState(["0", BigNumber.from(0), BigNumber.from(0), BigNumber.from(0), 0, 0, 0 ]);
 
     useEffect(() => {
-        async function checkMaxBundles() {
+        async function checkRiskpoolCapacity() {
             if (isConnected) {
+                if (process.env.NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT === "true") {
+                    const riskpoolCapacityAvailable = await props.backend.invest.isRiskpoolCapacityAvailable();
+                    if (! riskpoolCapacityAvailable) {
+                        setNoRiskpoolCapacityAvailable(false);
+                        setFormDisabled(true);
+                        return;
+                    } 
+                }
                 const bundleCount = await props.backend.invest.bundleCount();
                 const maxBundles = await props.backend.invest.maxBundles();
                 console.log("bundleCount", bundleCount, "maxBundles", maxBundles);
@@ -50,7 +59,7 @@ export default function Invest(props: InvestProps) {
                 }
             }    
         }
-        checkMaxBundles();
+        checkRiskpoolCapacity();
     }, [isConnected, props.backend.invest]);
 
             
@@ -320,6 +329,7 @@ export default function Invest(props: InvestProps) {
                     })}
                 </Stepper>
 
+                { ! riskpoolCapacityAvailable && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.no_riskpool_capacity')}</Alert>)}
                 { maxBundlesUsed && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.max_bundles')}</Alert>)}
 
                 {content}

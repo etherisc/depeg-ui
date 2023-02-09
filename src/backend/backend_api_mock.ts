@@ -171,6 +171,9 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         maxCoverageDuration: 90,
         annualPctReturn: 5,
         maxAnnualPctReturn: 20,
+        isRiskpoolCapacityAvailable() {
+            return Promise.resolve(true);
+        },
         async invest(
             name: string,
             lifetime: number,

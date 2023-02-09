@@ -75,9 +75,17 @@ NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN_MAXIMUM=10
 
 ### Feature flags
 
-- `NEXT_PUBLIC_FEATURE_PRICE` - show latest price of the protected coin
-- `NEXT_PUBLIC_FEATURE_PRICE_HISTORY` - show price history of the protected coin
-- `NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA` - enable loading of fake data for price history
+#### Price
+
+- `NEXT_PUBLIC_FEATURE_PRICE=true` - show latest price of the protected coin
+- `NEXT_PUBLIC_FEATURE_PRICE_HISTORY=true` - show price history of the protected coin
+- `NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA=true` - enable loading of fake data for price history
+
+#### Riskpool capacity limit
+
+- `NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT=true` - evaluate the riskpool capacity limit
+- `NEXT_PUBLIC_RISKPOOL_CAPACITY_LIMIT=250000` - configure the riskpool capacity limit to USD2 250000 
+
 
 ### Backend bundle update
 

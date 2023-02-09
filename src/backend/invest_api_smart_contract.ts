@@ -4,6 +4,7 @@ import { InvestApi } from "./backend_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
 import { getInstanceService } from "./gif_registry";
 import { BigNumber } from "ethers";
+import { parseUnits } from "ethers/lib/utils";
 
 export class InvestApiSmartContract implements InvestApi {
     private doNoUseDirectlydepegRiskpoolApi?: DepegRiskpoolApi;
@@ -19,13 +20,16 @@ export class InvestApiSmartContract implements InvestApi {
     maxCoverageDuration: number;
     annualPctReturn: number;
     maxAnnualPctReturn: number;
+    usd2Decimals: number;
+    private riskpoolCapacityLimit?: BigNumber | undefined;
 
     constructor(depegProductApi: DepegProductApi, 
         minLifetime: number, maxLifetime: number, 
         minInvestedAmount: BigNumber, maxInvestedAmount: BigNumber, 
         minSumInsured: BigNumber, maxSumInsured: BigNumber, 
         minCoverageDuration: number, maxCoverageDuration: number, 
-        annualPctReturn: number, maxAnnualPctReturn: number
+        annualPctReturn: number, maxAnnualPctReturn: number,
+        usd2Decimals: number,
     ) {
         this.minLifetime = minLifetime;
         this.maxLifetime = maxLifetime;
@@ -38,6 +42,10 @@ export class InvestApiSmartContract implements InvestApi {
         this.annualPctReturn = annualPctReturn;
         this.maxAnnualPctReturn = maxAnnualPctReturn;
         this.depegProductApi = depegProductApi;
+        this.usd2Decimals = usd2Decimals;
+
+        const riskpoolCapacityLimit = process.env.NEXT_PUBLIC_RISKPOOL_CAPACITY_LIMIT;
+        this.riskpoolCapacityLimit = riskpoolCapacityLimit !== undefined ? parseUnits(riskpoolCapacityLimit, usd2Decimals) : undefined;
     }
 
     /**
@@ -59,9 +67,21 @@ export class InvestApiSmartContract implements InvestApi {
             this.doNoUseDirectlydepegRiskpoolApi = new DepegRiskpoolApi(
                 (await this.getDepegProductApi()).getDepegRiskpool(), 
                 (await this.getDepegProductApi()).getRiskpoolId(), 
-                (await this.getDepegProductApi()).getInstanceService());
+                (await this.getDepegProductApi()).getInstanceService(),
+                this.usd2Decimals);
         }
         return this.doNoUseDirectlydepegRiskpoolApi;
+    }
+
+    async isRiskpoolCapacityAvailable(): Promise<boolean> {
+        if (this.riskpoolCapacityLimit === undefined) {
+            return true;
+        }
+
+        const riskpoolApi = await this.riskpoolApi();
+        const capital = await riskpoolApi.getCapital();
+        const remaining = this.riskpoolCapacityLimit!.sub(capital);
+        return this.minInvestedAmount.lte(remaining);
     }
 
     async invest(

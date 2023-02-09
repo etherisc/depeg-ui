@@ -6,6 +6,7 @@ import { Coder } from "abi-coder";
 import { TransactionFailedError } from "../utils/error";
 import StakingApi from "./staking_api";
 import { isStakingSupported } from "../utils/staking";
+import { parseUnits } from "ethers/lib/utils";
 
 export class DepegRiskpoolApi {
 
@@ -19,18 +20,23 @@ export class DepegRiskpoolApi {
         riskpool: DepegRiskpool,
         riskpoolId: number,
         instanceService: IInstanceService,
+        usd2Decimals: number,
         // signer: Signer,
     ) {
         this.depegRiskpool = riskpool;
         this.signer = riskpool.signer;
         this.riskpoolId = riskpoolId;
         this.instanceService = instanceService;
-        
+
 
         const stakingAddress = process.env.NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS;
         if (stakingAddress !== undefined) {
             this.stakingApi = new StakingApi(stakingAddress, riskpool.signer, instanceService);
         }
+    }
+
+    async getCapital(): Promise<BigNumber> {
+        return await this.depegRiskpool.getCapital();
     }
 
     async getBundleData(
