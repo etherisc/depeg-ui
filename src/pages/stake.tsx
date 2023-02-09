@@ -15,7 +15,7 @@ export default function InvestPage() {
   const signer = useSelector((state: RootState) => state.chain.signer);
   const provider = useSelector((state: RootState) => state.chain.provider);
 
-  const insurance = useMemo(() => getBackendApi(
+  const backend = useMemo(() => getBackendApi(
     enqueueSnackbar,
     t,
     signer,
@@ -28,7 +28,7 @@ export default function InvestPage() {
           <title>{t('apptitle')}</title>
       </Head>
             
-      <Invest insurance={insurance} />
+      <Invest backend={backend} />
     </>
   )
 }

@@ -24,7 +24,7 @@ export interface InvestFormProperties {
     formDisabled: boolean;
     usd2: string;
     usd2Decimals: number;
-    insurance: BackendApi;
+    backend: BackendApi;
     readyToSubmit: (isFormReady: boolean) => void;
     invest: (
         name: string, lifetime: number, 
@@ -48,7 +48,7 @@ export type IInvestFormValues = {
 
 export default function InvestForm(props: InvestFormProperties) {
     const { t } = useTranslation('invest');
-    const investProps = props.insurance.invest;
+    const investProps = props.backend.invest;
     const minLifetimeDays = investProps.minLifetime;
     const minLifetimeEndDate = dayjs().add(minLifetimeDays, 'days').format("YYYY-MM-DD");
     const maxLifetimeDays = investProps.maxLifetime;
@@ -239,9 +239,9 @@ export default function InvestForm(props: InvestFormProperties) {
                             pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS,
                             validate: {
                                 balance: async (value) => {
-                                    const walletAddress = await props.insurance.getWalletAddress();
+                                    const walletAddress = await props.backend.getWalletAddress();
                                     const investedAmount = BigNumber.from(parseFloat(value) * Math.pow(10, props.usd2Decimals));
-                                    return  props.insurance.hasUsd2Balance(walletAddress, investedAmount);
+                                    return  props.backend.hasUsd2Balance(walletAddress, investedAmount);
                                 }
                             }
                         }}
