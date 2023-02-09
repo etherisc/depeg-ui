@@ -13,13 +13,15 @@ export class ApplicationApiSmartContract implements ApplicationApi {
     insuredAmountMax: BigNumber;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
+    usd2decimals: number;
     
-    constructor(depegProductApi: DepegProductApi, insuredAmountMin: BigNumber, insuredAmountMax: BigNumber, coverageDurationDaysMin: number, coverageDurationDaysMax: number) {
+    constructor(depegProductApi: DepegProductApi, insuredAmountMin: BigNumber, insuredAmountMax: BigNumber, coverageDurationDaysMin: number, coverageDurationDaysMax: number, usd2decimals: number) {
         this.insuredAmountMin = insuredAmountMin;
         this.insuredAmountMax = insuredAmountMax;
         this.coverageDurationDaysMin = coverageDurationDaysMin;
         this.coverageDurationDaysMax = coverageDurationDaysMax;
         this.depegProductApi = depegProductApi;
+        this.usd2decimals = usd2decimals;
     }
 
     /**
@@ -37,7 +39,8 @@ export class ApplicationApiSmartContract implements ApplicationApi {
             this.doNoUseDirectlyDepegRiskpoolApi = new DepegRiskpoolApi(
                 (await this.getDepegProductApi()).getDepegRiskpool(), 
                 (await this.getDepegProductApi()).getRiskpoolId(), 
-                (await this.getDepegProductApi()).getInstanceService()
+                (await this.getDepegProductApi()).getInstanceService(),
+                this.usd2decimals,
                 );
         }
         return this.doNoUseDirectlyDepegRiskpoolApi;
