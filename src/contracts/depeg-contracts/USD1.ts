@@ -145,10 +145,14 @@ export interface USD1Interface extends utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
+    "LogUsd1Transfer(address,address,uint256,uint256,uint256)": EventFragment;
+    "LogUsd1TransferFrom(address,address,uint256,uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogUsd1Transfer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogUsd1TransferFrom"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -163,6 +167,35 @@ export type ApprovalEvent = TypedEvent<
 >;
 
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+
+export interface LogUsd1TransferEventObject {
+  from: string;
+  to: string;
+  amount: BigNumber;
+  time: BigNumber;
+  blockNumber: BigNumber;
+}
+export type LogUsd1TransferEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, BigNumber],
+  LogUsd1TransferEventObject
+>;
+
+export type LogUsd1TransferEventFilter = TypedEventFilter<LogUsd1TransferEvent>;
+
+export interface LogUsd1TransferFromEventObject {
+  from: string;
+  to: string;
+  amount: BigNumber;
+  time: BigNumber;
+  blockNumber: BigNumber;
+}
+export type LogUsd1TransferFromEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber, BigNumber],
+  LogUsd1TransferFromEventObject
+>;
+
+export type LogUsd1TransferFromEventFilter =
+  TypedEventFilter<LogUsd1TransferFromEvent>;
 
 export interface TransferEventObject {
   from: string;
@@ -391,6 +424,36 @@ export interface USD1 extends BaseContract {
       spender?: PromiseOrValue<string> | null,
       value?: null
     ): ApprovalEventFilter;
+
+    "LogUsd1Transfer(address,address,uint256,uint256,uint256)"(
+      from?: null,
+      to?: null,
+      amount?: null,
+      time?: null,
+      blockNumber?: null
+    ): LogUsd1TransferEventFilter;
+    LogUsd1Transfer(
+      from?: null,
+      to?: null,
+      amount?: null,
+      time?: null,
+      blockNumber?: null
+    ): LogUsd1TransferEventFilter;
+
+    "LogUsd1TransferFrom(address,address,uint256,uint256,uint256)"(
+      from?: null,
+      to?: null,
+      amount?: null,
+      time?: null,
+      blockNumber?: null
+    ): LogUsd1TransferFromEventFilter;
+    LogUsd1TransferFrom(
+      from?: null,
+      to?: null,
+      amount?: null,
+      time?: null,
+      blockNumber?: null
+    ): LogUsd1TransferFromEventFilter;
 
     "Transfer(address,address,uint256)"(
       from?: PromiseOrValue<string> | null,
