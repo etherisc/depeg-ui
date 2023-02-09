@@ -84,6 +84,16 @@ export class InvestApiSmartContract implements InvestApi {
         return this.minInvestedAmount.lte(remaining);
     }
 
+    async riskpoolRemainingCapacity(): Promise<BigNumber> {
+        if (this.riskpoolCapacityLimit === undefined) {
+            return BigNumber.from(0);
+        }
+
+        const riskpoolApi = await this.riskpoolApi();
+        const capital = await riskpoolApi.getCapital();
+        return this.riskpoolCapacityLimit!.sub(capital);
+    }
+
     async invest(
         name: string,
         lifetime: number,

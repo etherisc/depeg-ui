@@ -16,7 +16,9 @@ import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
 import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_DECIMALS } from '../../config/appConfig';
-import { parseUnits } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 const formInputVariant = 'outlined';
 
@@ -48,13 +50,15 @@ export type IInvestFormValues = {
 
 export default function InvestForm(props: InvestFormProperties) {
     const { t } = useTranslation('invest');
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+
     const investProps = props.backend.invest;
     const minLifetimeDays = investProps.minLifetime;
     const minLifetimeEndDate = dayjs().add(minLifetimeDays, 'days').format("YYYY-MM-DD");
     const maxLifetimeDays = investProps.maxLifetime;
     const maxLifetimeEndDate = dayjs().add(maxLifetimeDays, 'days').format("YYYY-MM-DD");
     const minInvestedAmount = investProps.minInvestedAmount.toNumber();
-    const maxInvestedAmount = investProps.maxInvestedAmount.toNumber();
+    const [ maxInvestedAmount, setMaxInvestedAmount ] = useState(investProps.maxInvestedAmount.toNumber());
     const minSumInsured = investProps.minSumInsured.toNumber();
     const maxSumInsured = investProps.maxSumInsured.toNumber();
     const minCoverageDuration = investProps.minCoverageDuration;
@@ -127,6 +131,22 @@ export default function InvestForm(props: InvestFormProperties) {
             setPaymentInProgress(false);
         }
     }
+
+    useEffect(() => {
+        async function checkMaxInvestedAmount() {
+            const riskpoolRemainingCapacityBN = await props.backend.invest.riskpoolRemainingCapacity();
+            const riskpoolRemainingCapacity = parseInt(formatUnits(riskpoolRemainingCapacityBN, props.usd2Decimals));
+            console.log("riskpoolRemainingCapacity", riskpoolRemainingCapacity.toString());
+            if (riskpoolRemainingCapacity < maxInvestedAmount) {
+                console.log("updating maxInvestedAmount");
+                setMaxInvestedAmount(riskpoolRemainingCapacity);
+                setValue("investedAmount", riskpoolRemainingCapacity.toString());
+            }
+        }
+        if (process.env.NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT === "true" && isConnected) {
+            checkMaxInvestedAmount();
+        }
+    }, [isConnected, props.backend.invest, investProps.maxInvestedAmount, props.usd2Decimals, maxInvestedAmount, setValue]);
 
     const waitForPayment = paymentInProgress ? <LinearProgress /> : null;
 
