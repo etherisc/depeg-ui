@@ -157,4 +157,67 @@ describe('When rendering the ApplicationForm', () => {
         });
     })
 
+    it('the protection duration is checked', async () => {
+        const backendApi = mockSimple((message: SnackbarMessage, options?: OptionsObject) => { return {} as SnackbarKey});
+        
+        renderWithProviders(
+            <ApplicationForm
+                formDisabled={false}
+                connectedWalletAddress="0x123456789012345678901234567890123456789012"
+                usd1="USDC"
+                usd1Decimals={6}
+                usd2="USDT"
+                usd2Decimals={6}
+                applicationApi={backendApi.application}
+                insuranceApi={backendApi}
+                premiumTrxTextKey={undefined}
+                readyToSubmit={(isFormReady: boolean) => {}}
+                applyForPolicy={(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number) => {}}
+                />
+        );
+
+        const insuredAmountInput = screen.getByTestId("coverageDuration").querySelector("input");
+        expect(insuredAmountInput).toHaveAttribute("value", "45");
+
+        act(() => {
+            fireEvent.change(insuredAmountInput!, { target: { value: "3" } });
+        });
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("coverageDuration");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.min");
+        });
+
+        act(() => {
+            fireEvent.change(insuredAmountInput!, { target: { value: "100" } });
+        });
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("coverageDuration");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.max");
+        });
+
+        act(() => {
+            fireEvent.change(insuredAmountInput!, { target: { value: "" } });
+        });
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("coverageDuration");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.required");
+        });
+
+        act(() => {
+            fireEvent.change(insuredAmountInput!, { target: { value: "abc" } });
+        });
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("coverageDuration");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.numberType");
+        });
+
+        act(() => {
+            fireEvent.change(insuredAmountInput!, { target: { value: "30" } });
+        });
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("coverageDuration");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toBeNull();
+        });
+    })
+
 })
