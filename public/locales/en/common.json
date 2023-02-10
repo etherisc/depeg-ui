@@ -38,7 +38,7 @@
             "isAddress": "This field must contain a valid ethereum address",
             "numberType": "This field must contain an integer number",
             "numberTypeFloat": "This field must contain a decimal number",
-            "amountType": "This field must contain a whole number, no decimals (e.g. 100)",
+            "amountType": "This field must contain a whole number, no decimals, no separators (e.g. 1000)",
             "minLength": "This field must be at least {{minLength}} characters",
             "maxLength": "This field must be at most {{maxLength}} characters",
             "min": "This field must be at least {{minValue}}",

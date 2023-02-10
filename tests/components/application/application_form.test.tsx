@@ -22,6 +22,62 @@ jest.mock('react-i18next', () => ({
 }));
 
 describe('When rendering the ApplicationForm', () => {
+    it('the insured wallet is checked', async () => {
+        const backendApi = mockSimple((message: SnackbarMessage, options?: OptionsObject) => { return {} as SnackbarKey});
+        
+        renderWithProviders(
+            <ApplicationForm
+                formDisabled={false}
+                connectedWalletAddress="0x123456789012345678901234567890123456789012"
+                usd1="USDC"
+                usd1Decimals={6}
+                usd2="USDT"
+                usd2Decimals={6}
+                applicationApi={backendApi.application}
+                insuranceApi={backendApi}
+                premiumTrxTextKey={undefined}
+                readyToSubmit={(isFormReady: boolean) => {}}
+                applyForPolicy={(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number) => {}}
+                />
+        );
+
+        const insuredAmountInput = screen.getByTestId("insuredWallet").querySelector("input");
+        expect(insuredAmountInput).toHaveAttribute("value", "0x123456789012345678901234567890123456789012");
+
+        act(() => {
+            fireEvent.change(insuredAmountInput!, { target: { value: "0x2CeC4C063Fef1074B0CD53022C3306A6FADb472" } });
+        });
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("insuredWallet");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.minLength");
+        });
+
+        act(() => {
+            fireEvent.change(insuredAmountInput!, { target: { value: "0x2CeC4C063Fef1074B0CD53022C3306A6FADb472AB" } });
+        });
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("insuredWallet");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.maxLength");
+        });
+
+        act(() => {
+            fireEvent.change(insuredAmountInput!, { target: { value: "0x2CeC4C063Fef1074B0CD53022C3306A6FADb472Y" } });
+        });
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("insuredWallet");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.walletType");
+        });
+
+        act(() => {
+            fireEvent.change(insuredAmountInput!, { target: { value: "0x2CeC4C063Fef1074B0CD53022C3306A6FADb472A" } });
+        });
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("insuredWallet");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.isAddress");
+        });
+
+    })
+
     it('the protected amount is checked', async () => {
         const backendApi = mockSimple((message: SnackbarMessage, options?: OptionsObject) => { return {} as SnackbarKey});
         
@@ -43,8 +99,6 @@ describe('When rendering the ApplicationForm', () => {
 
         const insuredAmountInput = screen.getByTestId("insuredAmount").querySelector("input");
         expect(insuredAmountInput).toHaveAttribute("value", "");
-
-        const user = userEvent.setup()
 
         act(() => {
             fireEvent.change(insuredAmountInput!, { target: { value: "100" } });

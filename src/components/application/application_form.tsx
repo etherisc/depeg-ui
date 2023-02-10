@@ -279,6 +279,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                             : t(`error.field.${errors.insuredWallet.type}`, { "ns": "common", "minLength": 42, "maxLength": 42}) 
                                     )
                                     : t('insuredWalletHelper')}
+                                data-testid="insuredWallet"
                                 />}
                         />
                 </Grid>
