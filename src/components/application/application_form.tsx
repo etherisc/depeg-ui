@@ -307,6 +307,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.insuredAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${insuredAmountMin}`, "maxValue": `${props.usd1} ${insuredAmountMax}` })
                                     ) : ""}
+                                data-testid="insuredAmount"
                                 />}
                         />
                 </Grid>
@@ -336,6 +337,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                             ? t(`error.field.numberType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.coverageDuration.type}`, { "ns": "common", "minValue": coverageDaysMin, "maxValue": coverageDaysMax }) 
                                     ) : ""}
+                                data-testid="coverageDuration"
                                 />}
                         />
                 </Grid>
