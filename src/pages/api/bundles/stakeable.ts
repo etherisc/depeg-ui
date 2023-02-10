@@ -1,13 +1,8 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import { BundleData } from "../../../backend/bundle_data"
-import { StaticJsonRpcProvider } from '@ethersproject/providers';
-import { BigNumber, ethers, Signer } from "ethers";
-import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../../../contracts/depeg-contracts";
-import { getDepegRiskpool, getInstanceService } from "../../../backend/gif_registry";
-import { IInstanceService } from "../../../contracts/gif-interface/IInstanceService";
-import { DepegRiskpoolApi } from "../../../backend/riskpool_api";
-import { redisClient } from "../../../utils/redis";
+import { BigNumber } from "ethers";
+import { NextApiRequest, NextApiResponse } from "next";
+import { BundleData } from "../../../backend/bundle_data";
 import { getLastBlockTimestamp, getVoidSigner } from "../../../utils/chain";
+import { redisClient } from "../../../utils/redis";
 
 
 export default async function handler(
@@ -18,7 +13,7 @@ export default async function handler(
     const bundlesjson = await redisClient.get("bundles");
     
     if (bundlesjson == null) {
-        res.status(500).json([]);
+        res.status(200).json([]);
         return;
     }        
 
