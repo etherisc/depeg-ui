@@ -87,6 +87,7 @@ export interface InvestApi {
     maxAnnualPctReturn: number;
     isRiskpoolCapacityAvailable(): Promise<boolean>;
     riskpoolRemainingCapacity(): Promise<BigNumber>;
+    isInvestorWhitelisted(walletAddress: string): Promise<boolean>;
     invest: 
         (
             name: string,

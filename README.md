@@ -74,8 +74,9 @@ NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN_MAXIMUM=10
 ```
 
 ### Feature flags
-
 #### Price
+
+Show a page that displays the latest price of the protected coin and (if enabled) the price history of the protected coin.
 
 - `NEXT_PUBLIC_FEATURE_PRICE=true` - show latest price of the protected coin
 - `NEXT_PUBLIC_FEATURE_PRICE_HISTORY=true` - show price history of the protected coin
@@ -83,8 +84,17 @@ NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN_MAXIMUM=10
 
 #### Riskpool capacity limit
 
+Check the riskpool capacity limit before investment and show a warning if the limit is reached.
+
 - `NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT=true` - evaluate the riskpool capacity limit
 - `NEXT_PUBLIC_RISKPOOL_CAPACITY_LIMIT=250000` - configure the riskpool capacity limit to USD2 250000 
+
+#### Investor whitelist
+
+Check if the investor is whitelisted before investment and show a warning if the investor is not whitelisted.
+
+- `NEXT_PUBLIC_FEATURE_INVESTOR_WHITELIST=true` - enable investor whitelist
+- `NEXT_PUBLIC_INVESTOR_WHITELIST=0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729` - configure the investor whitelist addresses (comma separated list of addresses)
 
 
 ### Backend bundle update

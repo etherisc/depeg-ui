@@ -177,6 +177,9 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         riskpoolRemainingCapacity() {
             return Promise.resolve(BigNumber.from(10000000000000));
         },
+        isInvestorWhitelisted(walletAddress: string) {
+            return Promise.resolve(true);
+        },
         async invest(
             name: string,
             lifetime: number,

@@ -29,6 +29,8 @@ export default function Invest(props: InvestProps) {
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    const investorAddress = useSelector((state: RootState) => state.account.address);
+    const [ isInvestorWhitelisted, setIsInvestorWhitelisted ] = useState(true);
     const [ riskpoolCapacityAvailable, setNoRiskpoolCapacityAvailable ] = useState(true);
     const [ maxBundlesUsed, setMaxBundlesUsed ] = useState(false);
     const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
@@ -37,30 +39,38 @@ export default function Invest(props: InvestProps) {
     const [ investmentDetails, setInvestmentDetails ] = useState(["0", BigNumber.from(0), BigNumber.from(0), BigNumber.from(0), 0, 0, 0 ]);
 
     useEffect(() => {
-        async function checkRiskpoolCapacity() {
+        async function checkStakingAllowed() {
             if (isConnected) {
+                if (process.env.NEXT_PUBLIC_FEATURE_INVESTOR_WHITELIST === "true") {
+                    const isInvestorWhitelisted = await props.backend.invest.isInvestorWhitelisted(investorAddress!);
+                    if (! isInvestorWhitelisted) {
+                        setIsInvestorWhitelisted(false);
+                        return;
+                    } else {
+                        setIsInvestorWhitelisted(true);
+                    }
+                }
                 if (process.env.NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT === "true") {
                     const riskpoolCapacityAvailable = await props.backend.invest.isRiskpoolCapacityAvailable();
                     if (! riskpoolCapacityAvailable) {
                         setNoRiskpoolCapacityAvailable(false);
-                        setFormDisabled(true);
                         return;
-                    } 
+                    } else {
+                        setNoRiskpoolCapacityAvailable(true);
+                    }
                 }
                 const bundleCount = await props.backend.invest.bundleCount();
                 const maxBundles = await props.backend.invest.maxBundles();
                 console.log("bundleCount", bundleCount, "maxBundles", maxBundles);
                 if (bundleCount >= maxBundles) {
                     setMaxBundlesUsed(true);
-                    setFormDisabled(true);
                 } else {
                     setMaxBundlesUsed(false);
-                    setFormDisabled(false);
                 }
             }    
         }
-        checkRiskpoolCapacity();
-    }, [isConnected, props.backend.invest]);
+        checkStakingAllowed();
+    }, [isConnected, props.backend.invest, investorAddress]);
 
             
 
@@ -289,7 +299,7 @@ export default function Invest(props: InvestProps) {
     let content;
     if (activeStep < 5) {
         content = (<InvestForm 
-                        formDisabled={formDisabled}
+                        formDisabled={formDisabled || maxBundlesUsed || ! isInvestorWhitelisted || ! riskpoolCapacityAvailable}
                         usd2={props.backend.usd2}
                         usd2Decimals={props.backend.usd2Decimals}
                         backend={props.backend}
@@ -329,6 +339,7 @@ export default function Invest(props: InvestProps) {
                     })}
                 </Stepper>
 
+                { ! isInvestorWhitelisted && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.investor_not_whitelisted')}</Alert>)}
                 { ! riskpoolCapacityAvailable && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.no_riskpool_capacity')}</Alert>)}
                 { maxBundlesUsed && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.max_bundles')}</Alert>)}
 

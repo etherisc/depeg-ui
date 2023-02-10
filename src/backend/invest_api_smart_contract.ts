@@ -22,6 +22,7 @@ export class InvestApiSmartContract implements InvestApi {
     maxAnnualPctReturn: number;
     usd2Decimals: number;
     private riskpoolCapacityLimit?: BigNumber | undefined;
+    private investorWhitelist?: string[];
 
     constructor(depegProductApi: DepegProductApi, 
         minLifetime: number, maxLifetime: number, 
@@ -46,6 +47,8 @@ export class InvestApiSmartContract implements InvestApi {
 
         const riskpoolCapacityLimit = process.env.NEXT_PUBLIC_RISKPOOL_CAPACITY_LIMIT;
         this.riskpoolCapacityLimit = riskpoolCapacityLimit !== undefined ? parseUnits(riskpoolCapacityLimit, usd2Decimals) : undefined;
+
+        this.investorWhitelist = process.env.NEXT_PUBLIC_INVESTOR_WHITELIST?.split(',').map(w => w.trim()) ?? [];
     }
 
     /**
@@ -93,6 +96,12 @@ export class InvestApiSmartContract implements InvestApi {
         const capital = await riskpoolApi.getCapital();
         return this.riskpoolCapacityLimit!.sub(capital);
     }
+
+    async isInvestorWhitelisted(walletAddress: string): Promise<boolean> {
+        console.log("isInvestorWhitelisted", walletAddress, this.investorWhitelist);
+        return this.investorWhitelist!.includes(walletAddress);
+    }
+
 
     async invest(
         name: string,
