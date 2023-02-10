@@ -1,11 +1,11 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
-import { useCallback, useEffect, useState } from "react";
-import { getBackendApi, BackendApi } from "../../backend/backend_api";
+import { useEffect, useState } from "react";
+import { BackendApi } from "../../backend/backend_api";
 import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import LinearProgress from "@mui/material/LinearProgress";
 import { BundleData } from "../../backend/bundle_data";
-import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
+import { formatCurrencyBN } from "../../utils/numbers";
 import { LinkBehaviour } from "../link_behaviour";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
@@ -177,7 +177,7 @@ export default function Bundles(props: BundlesProps) {
                         label={t('action.all_mine_bundles')} />   
                 </Box>
                 {/* aligned right beyond here */}
-                <Link component={LinkBehaviour} href="/invest" passHref style={{ textDecoration: 'none' }}>
+                <Link component={LinkBehaviour} href="/stake" passHref style={{ textDecoration: 'none' }}>
                     <Button variant="text" color="secondary">
                         {t('action.create_bundle')}
                     </Button>
