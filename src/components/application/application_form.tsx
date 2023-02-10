@@ -19,7 +19,7 @@ import dayjs from 'dayjs';
 import { BigNumber, ethers } from 'ethers';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { REGEX_PATTERN_NUMBER_WITH_DECIMALS } from '../../config/appConfig';
+import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from '../../config/appConfig';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AvailableBundleList } from './available_bundle_list';
 import { filterApplicableBundles } from '../../utils/bundles';
@@ -286,7 +286,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Controller
                         name="insuredAmount"
                         control={control}
-                        rules={{ required: true, min: insuredAmountMin, max: insuredAmountMax, pattern: REGEX_PATTERN_NUMBER_WITH_DECIMALS  }}
+                        rules={{ required: true, min: insuredAmountMin, max: insuredAmountMax, pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS  }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('insuredAmount')}
