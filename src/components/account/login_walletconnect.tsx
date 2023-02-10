@@ -46,6 +46,7 @@ export default function LoginWithWalletConnectButton(props: any) {
             console.log("accountsChanged", accounts);
             await provider?.send("eth_requestAccounts", []);
             updateSigner(dispatch, provider);
+            location.reload();
         });
         wcProvider.on("chainChanged", (chainId: number) => {
             console.log("chainChanged", chainId);

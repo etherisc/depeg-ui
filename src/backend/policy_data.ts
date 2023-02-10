@@ -2,7 +2,8 @@ import { BigNumber } from "ethers/lib/ethers";
 
 export interface PolicyData {
     id: string;
-    owner: string
+    policyHolder: string;
+    protectedWallet: string;
     applicationState: number;
     policyState?: number;
     payoutState?: number;

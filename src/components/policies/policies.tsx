@@ -20,6 +20,10 @@ import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { bigNumberComparator } from "../../utils/bignumber";
 import { addPolicy, finishLoading, reset, startLoading } from "../../redux/slices/policies";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faShieldHalved } from "@fortawesome/free-solid-svg-icons";
+import WithTooltip from "../with_tooltip";
+import { grey } from "@mui/material/colors";
 
 export interface PoliciesProps {
     insurance: BackendApi;
@@ -27,7 +31,7 @@ export interface PoliciesProps {
 
 export default function Policies(props: PoliciesProps) {
     const { t } = useTranslation(['policies', 'common']);
-    const signer = useSelector((state: RootState) => state.chain.signer);
+    const walletAddress = useSelector((state: RootState) => state.account.address);
 
     const dispatch = useDispatch();
     const policies = useSelector((state: RootState) => state.policies.policies);
@@ -42,7 +46,6 @@ export default function Policies(props: PoliciesProps) {
 
     useEffect(() => {
         async function getPolicies() {
-            const walletAddress = await signer?.getAddress();
             if (walletAddress !== undefined) {
                 dispatch(startLoading());
                 dispatch(reset());
@@ -56,27 +59,61 @@ export default function Policies(props: PoliciesProps) {
                 }
                 dispatch(finishLoading());
             } else {
+                dispatch(startLoading());
+                dispatch(reset());
                 dispatch(finishLoading());
             }
         }
         getPolicies();
-    }, [signer, props.insurance, showActivePoliciesOnly, t, dispatch]);
+    }, [walletAddress, props.insurance, showActivePoliciesOnly, t, dispatch]);
+
+    function ownerBadge(policyData: PolicyData) {
+        const badges: JSX.Element[] = [];
+        if (policyData.policyHolder === walletAddress) {
+            return (
+                <WithTooltip tooltipText={t('is_owner')}>
+                    <Typography color={grey[400]}>
+                        <FontAwesomeIcon icon={faUser} className="fa" />
+                    </Typography>
+                </WithTooltip>
+            );
+        }
+        return null;
+    }
+
+    function protectedByBadge(policyData: PolicyData) {
+        if (policyData.protectedWallet === walletAddress) {
+            return (
+                <WithTooltip tooltipText={t('is_protected')}>
+                    <Typography color={grey[400]}>
+                        <FontAwesomeIcon icon={faShieldHalved} className="fa" />
+                    </Typography>
+                </WithTooltip>
+            );
+        }
+        return null;
+    }
 
     const columns: GridColDef[] = [
         { 
             field: 'id', 
             headerName: t('table.header.policyId'), 
             flex: 1,
-            renderCell: (params: GridRenderCellParams<string>) => 
-                (<Address address={params.value ?? ""} iconColor="secondary.main" />),
+            valueGetter: (params: GridValueGetterParams<string, PolicyData>) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                return (<><Address address={params.value!.id} iconColor="secondary.main" />{ownerBadge(params.value!)}</>);
+            },
             sortComparator: gridStringOrNumberComparator,
         },
         { 
-            field: 'owner', 
+            field: 'protectedWallet', 
             headerName: t('table.header.walletAddress'), 
             flex: 1,
-            renderCell: (params: GridRenderCellParams<string>) => 
-                (<Address address={params.value ?? ""} iconColor="secondary.main" />),
+            valueGetter: (params: GridValueGetterParams<string, PolicyData>) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                return (<><Address address={params.value!.policyHolder} iconColor="secondary.main" />{protectedByBadge(params.value!)}</>);
+            }
+                ,
             sortComparator: gridStringOrNumberComparator,
         },
         { 

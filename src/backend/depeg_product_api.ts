@@ -150,11 +150,11 @@ export class DepegProductApi {
             idx: number,
             ): Promise<PolicyData> {
         const processId = await this.depegProduct!.getProcessId(ownerWalletAddress, idx);
-        const application = await this.instanceService!.getApplication(processId);
-        const [ applicationState, premium, suminsured, appdata, createdAt ] = application;
+        const { state, premiumAmount, sumInsuredAmount, data, createdAt } = await this.instanceService!.getApplication(processId);
+        const { owner } = await this.instanceService!.getMetadata(processId);
         let policyState = undefined;
         let payoutState = undefined;
-        if ( applicationState == APPLICATION_STATE_UNDERWRITTEN ) {
+        if ( state == APPLICATION_STATE_UNDERWRITTEN ) {
             const policy = await this.instanceService!.getPolicy(processId);
             [ policyState ] = policy;
             const payoutsCount = (await this.instanceService!.payouts(processId)).toNumber();
@@ -164,16 +164,17 @@ export class DepegProductApi {
                 [ payoutState ] = payout;
             }
         }
-        const { wallet, duration } = await this.depegRiskpool!.decodeApplicationParameterFromData(appdata);
+        const { wallet, duration } = await this.depegRiskpool!.decodeApplicationParameterFromData(data);
         return {
             id: processId,
-            owner: wallet,
-            applicationState: applicationState,
+            policyHolder: owner,
+            protectedWallet: wallet,
+            applicationState: state,
             policyState: policyState,
             payoutState: payoutState,
             createdAt: createdAt.toNumber(),
-            premium: premium.toString(),
-            suminsured: suminsured.toString(),
+            premium: premiumAmount.toString(),
+            suminsured: sumInsuredAmount.toString(),
             duration: duration.toNumber(),
         } as PolicyData;
     }

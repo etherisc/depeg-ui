@@ -4,7 +4,7 @@
         "header": {
             "id": "ID",
             "policyId": "Policy Id",
-            "walletAddress": "Wallet Address",
+            "walletAddress": "Protected Wallet",
             "insuredAmount": "Protected Amount",
             "coverageUntil": "Coverage Until",
             "status": "Status",
@@ -14,5 +14,7 @@
     "action": {
         "create_application": "Apply for new policy",
         "filter_active": "Show only active policies"
-    }
+    },
+    "is_owner": "The connected wallet is the owner of the policy",
+    "is_protected": "The connected wallet is protected by the policy"
 }
