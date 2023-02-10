@@ -2,7 +2,7 @@ import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import { BackendApi } from "../../backend/backend_api";
-import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, GridScrollParams, GridSortCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -106,7 +106,8 @@ export default function Policies(props: PoliciesProps) {
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return (<><Address address={params.value!.id} iconColor="secondary.main" />{ownerBadge(params.value!)}</>);
             },
-            sortComparator: gridStringOrNumberComparator,
+            sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => 
+                gridStringOrNumberComparator(v1.id, v2.id, cellParams1, cellParams2)
         },
         { 
             field: 'protectedWallet', 
@@ -115,9 +116,9 @@ export default function Policies(props: PoliciesProps) {
             valueGetter: (params: GridValueGetterParams<string, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return (<><Address address={params.value!.protectedWallet} iconColor="secondary.main" />{protectedByBadge(params.value!)}</>);
-            }
-                ,
-            sortComparator: gridStringOrNumberComparator,
+            },
+            sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => 
+                gridStringOrNumberComparator(v1.protectedWallet, v2.protectedWallet, cellParams1, cellParams2)
         },
         { 
             field: 'suminsured', 
