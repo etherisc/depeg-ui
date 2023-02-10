@@ -141,8 +141,14 @@ export class DepegProductApi {
     async getPolicy(
         ownerWalletAddress: string,
         idx: number,
+        checkClaim: boolean,
     ): Promise<PolicyData> {
-        return this.getPolicyForProduct(ownerWalletAddress, idx);
+        const policy = await this.getPolicyForProduct(ownerWalletAddress, idx);
+        if (checkClaim) {
+            const isAllowedToClaim = await this.depegProduct!.policyIsAllowedToClaim(policy.id);
+            policy.isAllowedToClaim = isAllowedToClaim;
+        }
+        return policy;
     }
     
     async getPolicyForProduct(
@@ -176,6 +182,7 @@ export class DepegProductApi {
             premium: premiumAmount.toString(),
             suminsured: sumInsuredAmount.toString(),
             duration: duration.toNumber(),
+            isAllowedToClaim: false,
         } as PolicyData;
     }
 

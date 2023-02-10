@@ -24,6 +24,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faShieldHalved } from "@fortawesome/free-solid-svg-icons";
 import WithTooltip from "../with_tooltip";
 import { grey } from "@mui/material/colors";
+import { ProductState } from "../../types/product_state";
 
 export interface PoliciesProps {
     backend: BackendApi;
@@ -52,9 +53,10 @@ export default function Policies(props: PoliciesProps) {
             if (walletAddress !== undefined) {
                 dispatch(startLoading());
                 dispatch(reset());
+                const isProductDepegged = (await props.backend.getProductState()) === ProductState.Depegged;
                 const policiesCount = await props.backend.policiesCount(walletAddress);
                 for (let i = 0; i < policiesCount; i++) {
-                    const policy = await props.backend.policy(walletAddress, i);
+                    const policy = await props.backend.policy(walletAddress, i, isProductDepegged);
                     if (showActivePoliciesOnly && (policy.applicationState !== 2 || policy.policyState !== 0)) {
                         continue;
                     }
@@ -95,6 +97,10 @@ export default function Policies(props: PoliciesProps) {
             );
         }
         return null;
+    }
+
+    async function claim(processId: string) {
+        // FIXME: implement this
     }
 
     const columns: GridColDef[] = [
@@ -148,13 +154,25 @@ export default function Policies(props: PoliciesProps) {
         { 
             field: 'applicationState', 
             headerName: t('table.header.status'), 
-            flex: 1,
+            flex: 0.6,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => getPolicyState(params.row),
             valueFormatter: (params: GridValueFormatterParams<number>) => {
                 return t('application_state_' + params.value, { ns: 'common'})
             },
             sortComparator: gridStringOrNumberComparator,
         },
+        {
+            field: 'action',
+            headerName: t('table.header.action'), 
+            flex: 0.6,
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => getPolicyState(params.row),
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                if (params.value!.isAllowedToClaim) {
+                    return (<Button variant="text" color="secondary" onClick={() => claim(params.value!.id)}>{t('action.claim')}</Button>);
+                }
+                return (<></>);
+            },
+        }
     ];
 
     function GridToolbar() {

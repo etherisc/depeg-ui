@@ -11,6 +11,7 @@ export interface PolicyData {
     duration: number;
     premium: string;
     suminsured: string;
+    isAllowedToClaim: boolean;
 }
 
 export enum PolicyState {

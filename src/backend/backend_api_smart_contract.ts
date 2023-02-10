@@ -67,8 +67,8 @@ export class BackendApiSmartContract implements BackendApi {
         return this.doNoUseDirectlyDepegProductApi;
     }
 
-    async policy(walletAddress: string, idx: number): Promise<PolicyData> {
-        return await (await this.getProductApi()).getPolicy(walletAddress, idx);
+    async policy(walletAddress: string, idx: number, checkClaim: boolean): Promise<PolicyData> {
+        return await (await this.getProductApi()).getPolicy(walletAddress, idx, checkClaim);
     }
 
     async policies(walletAddress: string): Promise<Array<PolicyData>> {

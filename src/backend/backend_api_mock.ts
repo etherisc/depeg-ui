@@ -24,7 +24,7 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
             await delay(2000);
             return Promise.resolve(true);
         },
-        async policy(walletAddress: string, idx: number): Promise<PolicyData> {
+        async policy(walletAddress: string, idx: number, checkClaim: boolean): Promise<PolicyData> {
             return Promise.resolve(mockPolicies[idx]);
         },
         async policies(walletAddress: string): Promise<Array<PolicyData>> {

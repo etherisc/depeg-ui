@@ -26,6 +26,7 @@ export interface BackendApi {
         (
             walletAddress: string, 
             index: number,
+            checkClaim: boolean,
         ) => Promise<PolicyData>;
     policies: 
         (
