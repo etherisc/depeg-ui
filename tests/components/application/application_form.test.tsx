@@ -1,12 +1,9 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { BigNumber } from 'ethers';
 import ApplicationForm from '../../../src/components/application/application_form';
 import { mockSimple } from '../../mocks/backend_api/backend_api_mock';
-import { OptionsObject, SnackbarKey, SnackbarMessage } from 'notistack';
 import { renderWithProviders } from '../../util/render_with_provider';
-import userEvent from '@testing-library/user-event';
-import { delay } from '../../../src/utils/delay';
 
 jest.mock('react-i18next', () => ({
     ...jest.requireActual('react-i18next'),
@@ -23,7 +20,7 @@ jest.mock('react-i18next', () => ({
 
 describe('When rendering the ApplicationForm', () => {
     it('the insured wallet is checked', async () => {
-        const backendApi = mockSimple((message: SnackbarMessage, options?: OptionsObject) => { return {} as SnackbarKey});
+        const backendApi = mockSimple();
         
         renderWithProviders(
             <ApplicationForm
@@ -79,7 +76,7 @@ describe('When rendering the ApplicationForm', () => {
     })
 
     it('the protected amount is checked', async () => {
-        const backendApi = mockSimple((message: SnackbarMessage, options?: OptionsObject) => { return {} as SnackbarKey});
+        const backendApi = mockSimple();
         
         renderWithProviders(
             <ApplicationForm
@@ -158,7 +155,7 @@ describe('When rendering the ApplicationForm', () => {
     })
 
     it('the protection duration is checked', async () => {
-        const backendApi = mockSimple((message: SnackbarMessage, options?: OptionsObject) => { return {} as SnackbarKey});
+        const backendApi = mockSimple();
         
         renderWithProviders(
             <ApplicationForm

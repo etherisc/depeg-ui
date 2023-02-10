@@ -26,7 +26,10 @@ import WithTooltip from "../with_tooltip";
 import { grey } from "@mui/material/colors";
 
 export interface PoliciesProps {
-    insurance: BackendApi;
+    backend: BackendApi;
+    // **DO NOT USE IN PRODUCTION**
+    // does not fetch policies from the blockchain
+    testMode?: boolean;
 }
 
 export default function Policies(props: PoliciesProps) {
@@ -49,9 +52,9 @@ export default function Policies(props: PoliciesProps) {
             if (walletAddress !== undefined) {
                 dispatch(startLoading());
                 dispatch(reset());
-                const policiesCount = await props.insurance.policiesCount(walletAddress);
+                const policiesCount = await props.backend.policiesCount(walletAddress);
                 for (let i = 0; i < policiesCount; i++) {
-                    const policy = await props.insurance.policy(walletAddress, i);
+                    const policy = await props.backend.policy(walletAddress, i);
                     if (showActivePoliciesOnly && (policy.applicationState !== 2 || policy.policyState !== 0)) {
                         continue;
                     }
@@ -64,8 +67,8 @@ export default function Policies(props: PoliciesProps) {
                 dispatch(finishLoading());
             }
         }
-        getPolicies();
-    }, [walletAddress, props.insurance, showActivePoliciesOnly, t, dispatch]);
+        if (! props.testMode) getPolicies();
+    }, [walletAddress, props.backend, showActivePoliciesOnly, t, dispatch]);
 
     function ownerBadge(policyData: PolicyData) {
         const badges: JSX.Element[] = [];
@@ -111,7 +114,7 @@ export default function Policies(props: PoliciesProps) {
             flex: 1,
             valueGetter: (params: GridValueGetterParams<string, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
-                return (<><Address address={params.value!.policyHolder} iconColor="secondary.main" />{protectedByBadge(params.value!)}</>);
+                return (<><Address address={params.value!.protectedWallet} iconColor="secondary.main" />{protectedByBadge(params.value!)}</>);
             }
                 ,
             sortComparator: gridStringOrNumberComparator,
@@ -121,7 +124,7 @@ export default function Policies(props: PoliciesProps) {
             headerName: t('table.header.insuredAmount'), 
             flex: 1,
             valueGetter: (params: GridValueGetterParams<string, PolicyData>) => BigNumber.from(params.value),
-            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.insurance.usd1} ${formatCurrency(params.value.toNumber(), props.insurance.usd1Decimals)}`,
+            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.backend.usd1} ${formatCurrency(params.value.toNumber(), props.backend.usd1Decimals)}`,
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2),
         },
         { 
