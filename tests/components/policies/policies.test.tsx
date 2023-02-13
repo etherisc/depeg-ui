@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { parseEther } from 'ethers/lib/utils';
 import { SnackbarProvider } from 'notistack';
 import Policies from '../../../src/components/policies/policies';
@@ -114,7 +114,7 @@ describe('When rendering the policies list', () => {
         expect(rows[3]).toHaveTextContent("action.claim");
 
         expect(rows[4]).toHaveTextContent("0xccE1…CF64");
-        expect(rows[4]).toHaveTextContent("application_state_6"); // payout pending
+        expect(rows[4]).toHaveTextContent("application_state_8"); // payout pending
         expect(rows[4]).not.toHaveTextContent("action.claim");
     })
 

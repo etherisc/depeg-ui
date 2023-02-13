@@ -192,9 +192,9 @@ export default function Policies(props: PoliciesProps) {
         const usd2Decimals = props.backend.usd2Decimals;
         return (
             <div>
-                <Typography variant="body2">{t('claim_amount')}: {symbol} {formatCurrencyBN(BigNumber.from(claim.claimAmount), usd2Decimals)}</Typography>
-                <Typography variant="body2">{t('claim_state')}: {t('claim_state_' + claim.state)}</Typography>
-                <Typography variant="body2">{t('claim_timestamp')}: { formatDateUtc(claim.claimCreatedAt) }</Typography>
+                <Typography variant="body2" data-testid="claim-amount">{t('claim_amount')}: {symbol} {formatCurrencyBN(BigNumber.from(claim.claimAmount), usd2Decimals)}</Typography>
+                <Typography variant="body2" data-testid="claim-state">{t('claim_state')}: {t('claim_state_' + claim.state)}</Typography>
+                <Typography variant="body2" data-testid="claim-timestamp">{t('claim_timestamp')}: { formatDateUtc(claim.claimCreatedAt) }</Typography>
             </div>
         );
     }
@@ -265,7 +265,7 @@ export default function Policies(props: PoliciesProps) {
                 if (policyState === PolicyState.PAYOUT_EXPECTED) {
                     return (<>{t('application_state_' + policyState, { ns: 'common'})}<WithTooltip tooltipText={claimsTooltip(params.value!.claim!)}>
                                 <Typography color="secondary">
-                                    <FontAwesomeIcon icon={faFileInvoiceDollar} className="fa" />
+                                    <FontAwesomeIcon icon={faFileInvoiceDollar} className="fa" data-testid="claim-pending-icon"/>
                                 </Typography>
                             </WithTooltip></>);
                 }

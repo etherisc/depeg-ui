@@ -86,6 +86,7 @@ export function mockPoliciesSimpleWithClaim() {
             protectedWallet: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
             applicationState: 2,
             policyState: 1,
+            payoutState: 0,
             createdAt: dayjs().add(-2, 'days').unix(),
             duration: 15 * 24 * 60 * 60,
             premium: BigNumber.from(17).toString(),
