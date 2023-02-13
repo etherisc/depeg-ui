@@ -21,13 +21,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { bigNumberComparator } from "../../utils/bignumber";
 import { addPolicy, finishLoading, reset, startLoading } from "../../redux/slices/policies";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faShieldHalved } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faShieldHalved, faCircleInfo, faFileInvoiceDollar } from "@fortawesome/free-solid-svg-icons";
 import WithTooltip from "../with_tooltip";
 import { grey } from "@mui/material/colors";
 import { ProductState } from "../../types/product_state";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { TransactionFailedError } from "../../utils/error";
 import { formatDateUtc } from "../../utils/date";
+import { Policy } from "@mui/icons-material";
 
 export interface PoliciesProps {
     backend: BackendApi;
@@ -52,6 +53,17 @@ export default function Policies(props: PoliciesProps) {
         setShowActivePoliciesOnly(! showActivePoliciesOnly);
     }
 
+    function isActivePolicy(policy: PolicyData) {
+        // underwritten
+        if (policy.applicationState === 2) {
+            if (policy.policyState === 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     const getPolicies = useCallback(async () => {
         if (walletAddress !== undefined) {
             dispatch(startLoading());
@@ -60,7 +72,7 @@ export default function Policies(props: PoliciesProps) {
             const policiesCount = await props.backend.policiesCount(walletAddress);
             for (let i = 0; i < policiesCount; i++) {
                 const policy = await props.backend.policy(walletAddress, i, isProductDepegged);
-                if (showActivePoliciesOnly && (policy.applicationState !== 2 || policy.policyState !== 0)) {
+                if (showActivePoliciesOnly && (! isActivePolicy(policy))) {
                     continue;
                 }
                 dispatch(addPolicy(policy));
@@ -191,7 +203,7 @@ export default function Policies(props: PoliciesProps) {
         { 
             field: 'id', 
             headerName: t('table.header.policyId'), 
-            flex: 1,
+            flex: 0.8,
             valueGetter: (params: GridValueGetterParams<string, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return (<><Address address={params.value!.id} iconColor="secondary.main" />{ownerBadge(params.value!)}</>);
@@ -202,7 +214,7 @@ export default function Policies(props: PoliciesProps) {
         { 
             field: 'protectedWallet', 
             headerName: t('table.header.walletAddress'), 
-            flex: 1,
+            flex: 0.8,
             valueGetter: (params: GridValueGetterParams<string, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return (<><Address address={params.value!.protectedWallet} iconColor="secondary.main" />{protectedByBadge(params.value!)}</>);
@@ -213,7 +225,7 @@ export default function Policies(props: PoliciesProps) {
         { 
             field: 'suminsured', 
             headerName: t('table.header.insuredAmount'), 
-            flex: 1,
+            flex: 0.8,
             valueGetter: (params: GridValueGetterParams<string, PolicyData>) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.backend.usd1} ${formatCurrency(params.value.toNumber(), props.backend.usd1Decimals)}`,
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2),
@@ -221,35 +233,45 @@ export default function Policies(props: PoliciesProps) {
         { 
             field: 'createdAt', 
             headerName: t('table.header.createdDate'), 
-            flex: 1,
+            flex: 0.7,
             renderCell: (params: GridRenderCellParams<number>) => <Timestamp at={params?.value ?? 0} />,
             sortComparator: gridNumberComparator,
         },
         { 
             field: 'coverageUntil', 
             headerName: t('table.header.coverageUntil'), 
-            flex: 1,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => getPolicyExpiration(params.row),
-            renderCell: (params: GridRenderCellParams<number>) => {
-                return (<Timestamp at={params.value!} />);
+            flex: 0.7,
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                if (! isActivePolicy(params.value!)) {
+                    return (<></>);
+                }
+                const exp = getPolicyExpiration(params.row)
+                return (<Timestamp at={exp} />);
             },
             sortComparator: gridNumberComparator,
         },
         { 
             field: 'applicationState', 
             headerName: t('table.header.status'), 
-            flex: 0.6,
+            flex: 0.9,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 const policyState = getPolicyState(params.value!);
                 if (policyState === PolicyState.PAYOUT_EXPECTED) {
-                    return (<WithTooltip tooltipText={claimsTooltip(params.value!.claim!)}>
-                                {t('application_state_' + policyState, { ns: 'common'})}
-                            </WithTooltip>);
+                    return (<>{t('application_state_' + policyState, { ns: 'common'})}<WithTooltip tooltipText={claimsTooltip(params.value!.claim!)}>
+                                <Typography color="secondary">
+                                    <FontAwesomeIcon icon={faFileInvoiceDollar} className="fa" />
+                                </Typography>
+                            </WithTooltip></>);
                 }
                 return (<>{t('application_state_' + policyState, { ns: 'common'})}</>);
             },
-            sortComparator: gridStringOrNumberComparator,
+            sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => {
+                const state1 = getPolicyState(v1);
+                const state2 = getPolicyState(v2);
+                return gridStringOrNumberComparator(state1, state2, cellParams1, cellParams2);
+            },
         },
         {
             field: 'action',
