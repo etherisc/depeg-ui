@@ -9,9 +9,9 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { LinkBehaviour } from "../link_behaviour";
 import Link from "@mui/material/Link";
-import { PolicyData } from "../../backend/policy_data";
+import { ClaimData, PAYOUT_STATE_EXPECTED, PolicyData, PolicyState } from "../../backend/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
-import { formatCurrency } from "../../utils/numbers";
+import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
 import { getPolicyExpiration, getPolicyState } from "../../utils/product_formatter";
 import { BigNumber } from "ethers";
 import Address from "../address";
@@ -27,6 +27,7 @@ import { grey } from "@mui/material/colors";
 import { ProductState } from "../../types/product_state";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { TransactionFailedError } from "../../utils/error";
+import { formatDateUtc } from "../../utils/date";
 
 export interface PoliciesProps {
     backend: BackendApi;
@@ -174,6 +175,18 @@ export default function Policies(props: PoliciesProps) {
         }
     }
 
+    function claimsTooltip(claim: ClaimData) {
+        const symbol = props.backend.usd2;
+        const usd2Decimals = props.backend.usd2Decimals;
+        return (
+            <div>
+                <Typography variant="body2">{t('claim_amount')}: {symbol} {formatCurrencyBN(claim.claimAmount, usd2Decimals)}</Typography>
+                <Typography variant="body2">{t('claim_state')}: {t('claim_state_' + claim.state)}</Typography>
+                <Typography variant="body2">{t('claim_timestamp')}: { formatDateUtc(claim.claimCreatedAt) }</Typography>
+            </div>
+        );
+    }
+
     const columns: GridColDef[] = [
         { 
             field: 'id', 
@@ -226,9 +239,15 @@ export default function Policies(props: PoliciesProps) {
             field: 'applicationState', 
             headerName: t('table.header.status'), 
             flex: 0.6,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => getPolicyState(params.row),
-            valueFormatter: (params: GridValueFormatterParams<number>) => {
-                return t('application_state_' + params.value, { ns: 'common'})
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                const policyState = getPolicyState(params.value!);
+                if (policyState === PolicyState.PAYOUT_EXPECTED) {
+                    return (<WithTooltip tooltipText={claimsTooltip(params.value!.claim!)}>
+                                {t('application_state_' + policyState, { ns: 'common'})}
+                            </WithTooltip>);
+                }
+                return (<>{t('application_state_' + policyState, { ns: 'common'})}</>);
             },
             sortComparator: gridStringOrNumberComparator,
         },

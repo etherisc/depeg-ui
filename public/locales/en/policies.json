@@ -15,7 +15,8 @@
     "action": {
         "create_application": "Apply for new policy",
         "filter_active": "Show only active policies",
-        "claim": "Claim"
+        "claim": "Claim",
+        "show_claim": "Show claim"
     },
     "is_owner": "The connected wallet is the owner of the policy",
     "is_protected": "The connected wallet is protected by the policy",
@@ -23,5 +24,12 @@
     "claim_successful": "Your claim the successfully processeed. You will receive payout soon.",
     "error": {
         "transaction_failed": "Transaction failed"
-    }
+    },
+    "claim_state_0": "Applied",
+    "claim_state_1": "Confirmed",
+    "claim_state_2": "Declined",
+    "claim_state_3": "Closed",
+    "claim_amount": "Claim amount",
+    "claim_state": "Claim state",
+    "claim_timestamp": "Claim timestamp"
 }

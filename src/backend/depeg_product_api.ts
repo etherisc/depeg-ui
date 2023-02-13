@@ -147,6 +147,18 @@ export class DepegProductApi {
         if (checkClaim) {
             const isAllowedToClaim = await this.depegProduct!.policyIsAllowedToClaim(policy.id);
             policy.isAllowedToClaim = isAllowedToClaim;
+
+            const hasClaim = await this.depegProduct!.hasDepegClaim(policy.id);
+
+            if (hasClaim) {
+                const { actualAmount, claimState, claimAmount, claimCreatedAt } = await this.depegProduct!.getClaimData(policy.id);
+                policy.claim = {
+                    actualAmount: actualAmount,
+                    state: claimState,
+                    claimAmount: claimAmount,
+                    claimCreatedAt: claimCreatedAt.toNumber(),
+                }
+            }
         }
         return policy;
     }

@@ -12,6 +12,7 @@ export interface PolicyData {
     premium: string;
     suminsured: string;
     isAllowedToClaim: boolean;
+    claim: ClaimData | undefined;
 }
 
 export enum PolicyState {
@@ -19,6 +20,17 @@ export enum PolicyState {
     APPLIED, REVOKED, UNDERWRITTEN, DECLINED,
     ACTIVE, EXPIRED, CLOSED, 
     PAYOUT_EXPECTED, PAIDOUT,
+}
+
+export interface ClaimData {
+    state: ClaimState;
+    actualAmount: BigNumber;
+    claimAmount: BigNumber;
+    claimCreatedAt: number;
+}
+
+export enum ClaimState {
+    APPLIED, CONFIRMED, DECLINED, CLOSED
 }
 
 export const APPLICATION_STATE_APPLIED = 0;
