@@ -14,8 +14,14 @@
     },  
     "action": {
         "create_application": "Apply for new policy",
-        "filter_active": "Show only active policies"
+        "filter_active": "Show only active policies",
+        "claim": "Claim"
     },
     "is_owner": "The connected wallet is the owner of the policy",
-    "is_protected": "The connected wallet is protected by the policy"
+    "is_protected": "The connected wallet is protected by the policy",
+    "claim_info": "Please confirm the claim transaction on contract {{address}} in your wallet app",
+    "claim_successful": "Your claim the successfully processeed. You will receive payout soon.",
+    "error": {
+        "transaction_failed": "Transaction failed"
+    }
 }

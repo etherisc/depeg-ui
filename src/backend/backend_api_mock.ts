@@ -160,6 +160,9 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         },
         lastBlockTimestamp(): Promise<number> {
             return Promise.resolve(dayjs().unix());
+        },
+        claim(policyId: string) {
+            return Promise.resolve({ status: true, claimId: "0x1"});
         }
     } as ApplicationApi
 }

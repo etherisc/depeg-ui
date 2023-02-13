@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BackendApi } from "../../backend/backend_api";
 import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, GridScrollParams, GridSortCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import Button from "@mui/material/Button";
@@ -25,6 +25,8 @@ import { faUser, faShieldHalved } from "@fortawesome/free-solid-svg-icons";
 import WithTooltip from "../with_tooltip";
 import { grey } from "@mui/material/colors";
 import { ProductState } from "../../types/product_state";
+import { SnackbarKey, useSnackbar } from "notistack";
+import { TransactionFailedError } from "../../utils/error";
 
 export interface PoliciesProps {
     backend: BackendApi;
@@ -35,6 +37,7 @@ export interface PoliciesProps {
 
 export default function Policies(props: PoliciesProps) {
     const { t } = useTranslation(['policies', 'common']);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const walletAddress = useSelector((state: RootState) => state.account.address);
 
     const dispatch = useDispatch();
@@ -48,29 +51,30 @@ export default function Policies(props: PoliciesProps) {
         setShowActivePoliciesOnly(! showActivePoliciesOnly);
     }
 
-    useEffect(() => {
-        async function getPolicies() {
-            if (walletAddress !== undefined) {
-                dispatch(startLoading());
-                dispatch(reset());
-                const isProductDepegged = (await props.backend.getProductState()) === ProductState.Depegged;
-                const policiesCount = await props.backend.policiesCount(walletAddress);
-                for (let i = 0; i < policiesCount; i++) {
-                    const policy = await props.backend.policy(walletAddress, i, isProductDepegged);
-                    if (showActivePoliciesOnly && (policy.applicationState !== 2 || policy.policyState !== 0)) {
-                        continue;
-                    }
-                    dispatch(addPolicy(policy));
+    const getPolicies = useCallback(async () => {
+        if (walletAddress !== undefined) {
+            dispatch(startLoading());
+            dispatch(reset());
+            const isProductDepegged = (await props.backend.getProductState()) === ProductState.Depegged;
+            const policiesCount = await props.backend.policiesCount(walletAddress);
+            for (let i = 0; i < policiesCount; i++) {
+                const policy = await props.backend.policy(walletAddress, i, isProductDepegged);
+                if (showActivePoliciesOnly && (policy.applicationState !== 2 || policy.policyState !== 0)) {
+                    continue;
                 }
-                dispatch(finishLoading());
-            } else {
-                dispatch(startLoading());
-                dispatch(reset());
-                dispatch(finishLoading());
+                dispatch(addPolicy(policy));
             }
+            dispatch(finishLoading());
+        } else {
+            dispatch(startLoading());
+            dispatch(reset());
+            dispatch(finishLoading());
         }
+    }, [walletAddress, props.backend, showActivePoliciesOnly, dispatch]);
+
+    useEffect(() => {
         if (! props.testMode) getPolicies();
-    }, [walletAddress, props.backend, showActivePoliciesOnly, t, dispatch]);
+    }, [getPolicies, props.testMode]);
 
     function ownerBadge(policyData: PolicyData) {
         const badges: JSX.Element[] = [];
@@ -99,8 +103,75 @@ export default function Policies(props: PoliciesProps) {
         return null;
     }
 
+    function renderClaimCell(policy: PolicyData) {
+        if (policy.isAllowedToClaim) {
+            return (<Button variant="text" color="secondary" onClick={() => claim(policy.id)}>{t('action.claim')}</Button>);
+        }
+        return (<></>);
+    }
+
     async function claim(processId: string) {
-        // FIXME: implement this
+        let snackbar: SnackbarKey | undefined = undefined;
+        try {
+            return await props.backend.application.claim(
+                processId,
+                (address: string) => {
+                    snackbar = enqueueSnackbar(
+                        t('claim_info', { address }),
+                        { variant: "warning", persist: true }
+                    );
+                },
+                () => {
+                    if (snackbar !== undefined) {
+                        closeSnackbar(snackbar);
+                    }
+                    snackbar = enqueueSnackbar(
+                        t('apply_wait'),
+                        { variant: "info", persist: true }
+                    );
+                });
+        } catch(e) { 
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                if (snackbar !== undefined) {
+                    closeSnackbar(snackbar);
+                }
+
+                enqueueSnackbar(
+                    t('error.transaction_failed', { ns: 'common', error: e.code }),
+                    { 
+                        variant: "error", 
+                        persist: true,
+                        action: (key) => {
+                            return (
+                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                            );
+                        }
+                    }
+                );
+                return Promise.resolve({ status: false, processId: undefined });
+            } else {
+                throw e;
+            }
+        } finally {
+            if (snackbar !== undefined) {
+                closeSnackbar(snackbar);
+            }
+
+            enqueueSnackbar(
+                t('claim_successful', { ns: 'common' }),
+                { 
+                    variant: "success", 
+                    persist: true,
+                    action: (key) => {
+                        return (
+                            <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                        );
+                    }
+                }
+            );
+            await getPolicies();
+        }
     }
 
     const columns: GridColDef[] = [
@@ -167,10 +238,7 @@ export default function Policies(props: PoliciesProps) {
             flex: 0.6,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
-                if (params.value!.isAllowedToClaim) {
-                    return (<Button variant="text" color="secondary" onClick={() => claim(params.value!.id)}>{t('action.claim')}</Button>);
-                }
-                return (<></>);
+                return renderClaimCell(params.value!);
             },
         }
     ];
