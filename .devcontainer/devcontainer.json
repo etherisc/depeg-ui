@@ -34,6 +34,7 @@
 				"csstools.postcss",
 				"vscodeshift.mui-snippets",
 				"mikestead.dotenv",
+				"vscode-icons-team.vscode-icons"
 			]
 		}
 	},
