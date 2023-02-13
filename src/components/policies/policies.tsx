@@ -159,7 +159,7 @@ export default function Policies(props: PoliciesProps) {
             }
 
             enqueueSnackbar(
-                t('claim_successful', { ns: 'common' }),
+                t('claim_successful'),
                 { 
                     variant: "success", 
                     persist: true,
