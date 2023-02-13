@@ -192,7 +192,7 @@ export default function Policies(props: PoliciesProps) {
         const usd2Decimals = props.backend.usd2Decimals;
         return (
             <div>
-                <Typography variant="body2">{t('claim_amount')}: {symbol} {formatCurrencyBN(claim.claimAmount, usd2Decimals)}</Typography>
+                <Typography variant="body2">{t('claim_amount')}: {symbol} {formatCurrencyBN(BigNumber.from(claim.claimAmount), usd2Decimals)}</Typography>
                 <Typography variant="body2">{t('claim_state')}: {t('claim_state_' + claim.state)}</Typography>
                 <Typography variant="body2">{t('claim_timestamp')}: { formatDateUtc(claim.claimCreatedAt) }</Typography>
             </div>
@@ -249,7 +249,11 @@ export default function Policies(props: PoliciesProps) {
                 const exp = getPolicyExpiration(params.row)
                 return (<Timestamp at={exp} />);
             },
-            sortComparator: gridNumberComparator,
+            sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => {
+                const exp1 = getPolicyExpiration(v1);
+                const exp2 = getPolicyExpiration(v2);   
+                return gridNumberComparator(exp1, exp2, cellParams1, cellParams2);
+            },
         },
         { 
             field: 'applicationState', 

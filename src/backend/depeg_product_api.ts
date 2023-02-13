@@ -153,9 +153,9 @@ export class DepegProductApi {
             if (hasClaim) {
                 const { actualAmount, claimState, claimAmount, claimCreatedAt } = await this.depegProduct!.getClaimData(policy.id);
                 policy.claim = {
-                    actualAmount: actualAmount,
+                    actualAmount: actualAmount.toString(),
                     state: claimState,
-                    claimAmount: claimAmount,
+                    claimAmount: claimAmount.toString(),
                     claimCreatedAt: claimCreatedAt.toNumber(),
                 }
             }

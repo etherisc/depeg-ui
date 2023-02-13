@@ -62,6 +62,7 @@ describe('When rendering the policies list', () => {
         expect(rows[1].querySelector('[data-icon="shield-halved"]')).toBeInTheDocument();
         
         expect(rows[2]).toHaveTextContent("0xA3C5…8814");
+        expect(rows[2]).toHaveTextContent("application_state_5"); // active
         expect(rows[2].querySelector('[data-icon="user"]')).toBeInTheDocument();
         expect(rows[2].querySelector('[data-icon="shield-halved"]')).not.toBeInTheDocument();
 
@@ -101,15 +102,20 @@ describe('When rendering the policies list', () => {
         );
 
         await waitFor(async () => 
-            expect(await screen.findAllByRole("row")).toHaveLength(4)
+            expect(await screen.findAllByRole("row")).toHaveLength(5)
         );
         
         const rows = await screen.findAllByRole("row");
 
         expect(rows[3]).toHaveTextContent("0xccE1…CF63");
+        expect(rows[3]).toHaveTextContent("application_state_5"); // active
         expect(rows[3].querySelector('[data-icon="user"]')).not.toBeInTheDocument();
         expect(rows[3].querySelector('[data-icon="shield-halved"]')).toBeInTheDocument();
         expect(rows[3]).toHaveTextContent("action.claim");
+
+        expect(rows[4]).toHaveTextContent("0xccE1…CF64");
+        expect(rows[4]).toHaveTextContent("application_state_6"); // payout pending
+        expect(rows[4]).not.toHaveTextContent("action.claim");
     })
 
 })
