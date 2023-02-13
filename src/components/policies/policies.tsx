@@ -165,7 +165,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'action',
             headerName: t('table.header.action'), 
             flex: 0.6,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => getPolicyState(params.row),
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 if (params.value!.isAllowedToClaim) {
                     return (<Button variant="text" color="secondary" onClick={() => claim(params.value!.id)}>{t('action.claim')}</Button>);
@@ -225,6 +225,7 @@ export default function Policies(props: PoliciesProps) {
                 onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
                 disableSelectionOnClick={true}
                 disableColumnMenu={true}
+                columnBuffer={7}
                 />
         </>
     );
