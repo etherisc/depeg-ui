@@ -116,13 +116,6 @@ export default function Policies(props: PoliciesProps) {
         return null;
     }
 
-    function renderClaimCell(policy: PolicyData) {
-        if (policy.isAllowedToClaim) {
-            return (<Button variant="text" color="secondary" onClick={() => claim(policy.id)}>{t('action.claim')}</Button>);
-        }
-        return (<></>);
-    }
-
     async function claim(processId: string) {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
@@ -187,6 +180,13 @@ export default function Policies(props: PoliciesProps) {
         }
     }
 
+    function renderClaimCell(policy: PolicyData) {
+        if (policy.isAllowedToClaim) {
+            return (<Button variant="text" color="secondary" onClick={() => claim(policy.id)}>{t('action.claim')}</Button>);
+        }
+        return (<></>);
+    }
+    
     function claimsTooltip(claim: ClaimData) {
         const symbol = props.backend.usd2;
         const usd2Decimals = props.backend.usd2Decimals;
