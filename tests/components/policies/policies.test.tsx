@@ -103,7 +103,7 @@ describe('When rendering the policies list', () => {
         );
 
         await waitFor(async () => 
-            expect(await screen.findAllByRole("row")).toHaveLength(5)
+            expect(await screen.findAllByRole("row")).toHaveLength(6)
         );
         
         const rows = await screen.findAllByRole("row");
@@ -115,7 +115,7 @@ describe('When rendering the policies list', () => {
         expect(rows[3]).toHaveTextContent("action.claim");
     })
 
-    it('a policy that has a claim shows claim info and no claim button ', async () => {
+    it('a policy that has an oopen claim shows claim info and no claim button ', async () => {
         const backendApi = mockSimple();
 
         renderWithProviders(
@@ -146,7 +146,7 @@ describe('When rendering the policies list', () => {
         );
 
         await waitFor(async () => 
-            expect(await screen.findAllByRole("row")).toHaveLength(5)
+            expect(await screen.findAllByRole("row")).toHaveLength(6)
         );
         
         const rows = await screen.findAllByRole("row");
@@ -156,7 +156,7 @@ describe('When rendering the policies list', () => {
         expect(rows[4]).not.toHaveTextContent("action.claim");
 
         const pendings = await screen.findAllByTestId("claim-pending-icon");
-        expect(pendings).toHaveLength(1);
+        expect(pendings).toHaveLength(2);
 
         fireEvent.mouseOver(pendings[0]);
 
@@ -166,7 +166,60 @@ describe('When rendering the policies list', () => {
             expect(await screen.findByTestId("claim-state")).toHaveTextContent("claim_state_0");
             expect(await screen.findByTestId("claim-timestamp")).toHaveTextContent(dayjs().add(-1, 'days').format('YYYY-MM-DD'));
         });
+    })
 
+    it('a policy that has a closed claim shows claim info and no claim button ', async () => {
+        const backendApi = mockSimple();
+
+        renderWithProviders(
+            // snackbar is needed for the copy button
+            <SnackbarProvider>
+                <Policies
+                    backend={backendApi}
+                    testMode={true}
+                    />
+            </SnackbarProvider>
+            ,
+            {
+                preloadedState: {
+                    account: {
+                        address: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+                        balance: {
+                            amount: parseEther("1.1").toString(),
+                            currency: 'ETH',
+                            decimals: 18,
+                        },
+                    },
+                    policies: {
+                        policies: mockPoliciesSimpleWithClaim(),
+                        isLoading: false,
+                    }
+                },
+            }
+        );
+
+        await waitFor(async () => 
+            expect(await screen.findAllByRole("row")).toHaveLength(6)
+        );
+        
+        const rows = await screen.findAllByRole("row");
+
+        expect(rows[4]).toHaveTextContent("0xccE1…CF64");
+        expect(rows[4]).toHaveTextContent("application_state_8"); // payout pending
+        expect(rows[4]).not.toHaveTextContent("action.claim");
+
+        const pendings = await screen.findAllByTestId("claim-pending-icon");
+        expect(pendings).toHaveLength(2);
+
+        fireEvent.mouseOver(pendings[1]);
+
+        await waitFor(async () => {
+            expect(await screen.findByTestId("claim-amount")).toBeInTheDocument();
+            expect(await screen.findByTestId("claim-amount")).toHaveTextContent("USDT 8,000.00");
+            expect(await screen.findByTestId("claim-state")).toHaveTextContent("claim_state_3");
+            expect(await screen.findByTestId("claim-timestamp")).toHaveTextContent(dayjs().add(-1, 'days').format('YYYY-MM-DD'));
+            expect(await screen.findByTestId("claim-paid-amount")).toHaveTextContent("USDT 5,000.00");
+        });
     })
 
 

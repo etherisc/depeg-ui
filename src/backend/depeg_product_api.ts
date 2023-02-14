@@ -155,8 +155,14 @@ export class DepegProductApi {
                 policy.claim = {
                     actualAmount: actualAmount.toString(),
                     state: claimState,
+                    paidAmount: undefined,
                     claimAmount: claimAmount.toString(),
                     claimCreatedAt: claimCreatedAt.toNumber(),
+                }
+
+                if (claimState == 3) { // state is closed
+                    const claim = await this.instanceService!.getClaim(policy.id, 0); // claim id is always 0 for depeg
+                    policy.claim!.paidAmount = claim.paidAmount.toString();
                 }
             }
         }

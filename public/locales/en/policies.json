@@ -31,5 +31,6 @@
     "claim_state_3": "Closed",
     "claim_amount": "Claim amount",
     "claim_state": "Claim state",
-    "claim_timestamp": "Claim timestamp"
+    "claim_timestamp": "Claim timestamp",
+    "claim_paid_amount": "Paid amount"
 }

@@ -25,6 +25,7 @@ export enum PolicyState {
 export interface ClaimData {
     state: ClaimState;
     actualAmount: string;
+    paidAmount: string | undefined;
     claimAmount: string;
     claimCreatedAt: number;
 }

@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { bigNumberComparator } from "../../utils/bignumber";
 import { addPolicy, finishLoading, reset, startLoading } from "../../redux/slices/policies";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faShieldHalved, faCircleInfo, faFileInvoiceDollar } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faShieldHalved, faCircleInfo, faFileInvoiceDollar, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import WithTooltip from "../with_tooltip";
 import { grey } from "@mui/material/colors";
 import { ProductState } from "../../types/product_state";
@@ -186,17 +186,40 @@ export default function Policies(props: PoliciesProps) {
         }
         return (<></>);
     }
-    
+
     function claimsTooltip(claim: ClaimData) {
         const symbol = props.backend.usd2;
         const usd2Decimals = props.backend.usd2Decimals;
+        let paidAmount = undefined;
+        if (claim.state === 3 && claim.paidAmount !== undefined) { // state closed
+            paidAmount = (<Typography variant="body2" data-testid="claim-paid-amount">{t('claim_paid_amount')}: {symbol} {formatCurrencyBN(BigNumber.from(claim.paidAmount), usd2Decimals)}</Typography>);
+        }
         return (
-            <div>
+            <div data-testid="claim_info_hover">
                 <Typography variant="body2" data-testid="claim-amount">{t('claim_amount')}: {symbol} {formatCurrencyBN(BigNumber.from(claim.claimAmount), usd2Decimals)}</Typography>
+                {paidAmount}
                 <Typography variant="body2" data-testid="claim-state">{t('claim_state')}: {t('claim_state_' + claim.state)}</Typography>
                 <Typography variant="body2" data-testid="claim-timestamp">{t('claim_timestamp')}: { formatDateUtc(claim.claimCreatedAt) }</Typography>
             </div>
         );
+    }
+
+    function render_application_state(policy: PolicyData) {
+        const policyState = getPolicyState(policy);
+        if (policyState === PolicyState.PAYOUT_EXPECTED) {
+            return (<>{t('application_state_' + policyState, { ns: 'common'})}<WithTooltip tooltipText={claimsTooltip(policy.claim!)}>
+                        <Typography color="secondary">
+                            <FontAwesomeIcon icon={faFileInvoiceDollar} className="fa" data-testid="claim-pending-icon"/>
+                        </Typography>
+                    </WithTooltip></>);
+        } else if (policyState === PolicyState.PAIDOUT) {
+            return (<>{t('application_state_' + policyState, { ns: 'common'})}<WithTooltip tooltipText={claimsTooltip(policy.claim!)}>
+                        <Typography color="secondary">
+                            <FontAwesomeIcon icon={faInfoCircle} className="fa" data-testid="claim-pending-icon"/>
+                        </Typography>
+                    </WithTooltip></>);
+        }
+        return (<>{t('application_state_' + policyState, { ns: 'common'})}</>);
     }
 
     const columns: GridColDef[] = [
@@ -261,15 +284,7 @@ export default function Policies(props: PoliciesProps) {
             flex: 0.9,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
-                const policyState = getPolicyState(params.value!);
-                if (policyState === PolicyState.PAYOUT_EXPECTED) {
-                    return (<>{t('application_state_' + policyState, { ns: 'common'})}<WithTooltip tooltipText={claimsTooltip(params.value!.claim!)}>
-                                <Typography color="secondary">
-                                    <FontAwesomeIcon icon={faFileInvoiceDollar} className="fa" data-testid="claim-pending-icon"/>
-                                </Typography>
-                            </WithTooltip></>);
-                }
-                return (<>{t('application_state_' + policyState, { ns: 'common'})}</>);
+                return render_application_state(params.value!);
             },
             sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => {
                 const state1 = getPolicyState(v1);
