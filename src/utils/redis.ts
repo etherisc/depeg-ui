@@ -1,4 +1,3 @@
-import { getClientBuildManifest } from 'next/dist/client/route-loader';
 import { createClient } from 'redis';
 
 export const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://redis:6379' });
