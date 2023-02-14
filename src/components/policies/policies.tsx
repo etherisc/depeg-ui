@@ -191,6 +191,9 @@ export default function Policies(props: PoliciesProps) {
         const symbol = props.backend.usd2;
         const usd2Decimals = props.backend.usd2Decimals;
         let paidAmount = undefined;
+        if (claim === undefined) {
+            return (<></>);
+        }
         if (claim.state === 3 && claim.paidAmount !== undefined) { // state closed
             paidAmount = (<Typography variant="body2" data-testid="claim-paid-amount">{t('claim_paid_amount')}: {symbol} {formatCurrencyBN(BigNumber.from(claim.paidAmount), usd2Decimals)}</Typography>);
         }
@@ -212,12 +215,14 @@ export default function Policies(props: PoliciesProps) {
                             <FontAwesomeIcon icon={faFileInvoiceDollar} className="fa" data-testid="claim-pending-icon"/>
                         </Typography>
                     </WithTooltip></>);
-        } else if (policyState === PolicyState.PAIDOUT) {
+        } else if (policyState === PolicyState.PAIDOUT && policy.claim !== undefined) {
             return (<>{t('application_state_' + policyState, { ns: 'common'})}<WithTooltip tooltipText={claimsTooltip(policy.claim!)}>
                         <Typography color="secondary">
                             <FontAwesomeIcon icon={faInfoCircle} className="fa" data-testid="claim-pending-icon"/>
                         </Typography>
                     </WithTooltip></>);
+        } else if (policyState === PolicyState.PAIDOUT) {
+            return (<>{t('application_state_' + policyState, { ns: 'common'})}</>);
         }
         return (<>{t('application_state_' + policyState, { ns: 'common'})}</>);
     }
