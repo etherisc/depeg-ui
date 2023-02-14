@@ -1,6 +1,7 @@
 import { BigNumber } from "ethers";
 import { NextApiRequest, NextApiResponse } from "next";
 import { BundleData } from "../../../backend/bundle_data";
+import { minBigNumber } from "../../../utils/bignumber";
 import { getLastBlockTimestamp, getVoidSigner } from "../../../utils/chain";
 import { redisClient } from "../../../utils/redis";
 
@@ -40,10 +41,18 @@ export default async function handler(
         }
         const capitalSupport = bundle.capitalSupport;
         if (capitalSupport !== undefined) {
-            console.log("bundleid", bundle.id, "locked", bundle.locked, "capitalSupport", capitalSupport.toString());
+            const capitalSupportBN = BigNumber.from(capitalSupport);
+            const lockedBN = BigNumber.from(bundle.locked);
+            // stake adjusted capacity
+            const remainingCapacity = minBigNumber(capacity, capitalSupportBN.sub(lockedBN));
+            console.log("bundleid", bundle.id, "remainingCapacity", remainingCapacity.toString(), "locked", bundle.locked, "capitalSupport", capitalSupport);
             // if supported capital is defined, then only bundles with locked capital less than the capital support are used
-            if (BigNumber.from(bundle.locked).gte(BigNumber.from(capitalSupport))) {
-                console.log("bundle locked capital greater than capital support", bundle.id);
+            if (remainingCapacity.lte(BigNumber.from(0))) {
+                console.log("remaining capacity less than 0", bundle.id);
+                return false;
+            }
+            if (remainingCapacity.lt(BigNumber.from(bundle.minSumInsured))) {
+                console.log("remaining capacity less than min sum insured", bundle.id);
                 return false;
             }
         }
