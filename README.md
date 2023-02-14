@@ -125,14 +125,14 @@ To initiate a fake depeg event these steps are required
     - `NEXT_PUBLIC_FAKE_DEPEG_PRODUCT_OWNER_MNEMONIC=...`
     - `NEXT_PUBLIC_FAKE_DEPEG_PRODUCT_OWNER_HD_WALLET_INDEX=x` - (optional) if the product owner is derived from a hd wallet 
 1. Use a PriceDataProvider that is fed through the `depeg-monitor` with fake prices
-1. Trigger a depeg event by calling an HTTP PUT to `{{ _.monitor_base_url }}/v1/feeder/set_state/triggered`
+1. Trigger a depeg event by calling an HTTP PUT to `/v1/feeder/set_state/triggered` on the depeg monitor
 1. Wait a bit for the price feed to go into triggered state (how long to wait depends in the price feed config)
-1. Trigger a depeg event by calling an HTTP PUT to `{{ _.monitor_base_url }}/v1/feeder/set_state/depegged`
+1. Trigger a depeg event by calling an HTTP PUT to `/v1/feeder/set_state/depegged` on the depeg monitor
 1. Wait a bit for the price feed to go into depegged state (how long to wait depends on price feed config)
 1. Confirm depeg by calling the api `/api/fake-depeg/confirm` which will store the latest blocknumber as the time of depeg (technically not correct, but good enough for testing)
 1. Execute some claims through the UI
 1. Call the api `/api/fake-depeg/process` to process these claims and issue immediate payout 
-1. If you want to reset the system to be able to issue new policies, call an HTTP PUT to `{{ _.monitor_base_url }}/v1/product/reactivate`
+1. If you want to reset the system to be able to issue new policies, call an HTTP PUT to `/v1/product/reactivate` and `/v1/feeder/set_state/stable` on the monitor to reset the price feed. 
 1. Finally reset fake data in the api by calling `/api/fake-depeg/reset`
 
 
