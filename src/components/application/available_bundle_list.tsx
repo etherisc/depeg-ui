@@ -13,6 +13,7 @@ import { formatCurrencyBN } from "../../utils/numbers";
 
 interface AvailableBundleListProps {
     formDisabled: boolean;
+    isWalletConnected: boolean;
     bundles: Array<BundleData>;
     bundlesLoading: boolean;
     applicableBundleIds: Array<number>|undefined;
@@ -24,7 +25,6 @@ interface AvailableBundleListProps {
 
 export function AvailableBundleList(props: AvailableBundleListProps) {
     const { t } = useTranslation('application');
-    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     
     let bundlesToShow = props.bundles;
 
@@ -45,7 +45,7 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
         },
     }));
 
-    if (! isConnected ) {
+    if (! props.isWalletConnected ) {
         return (
             <Alert variant="outlined" severity="info">{t('alert.not_connected_no_bundles')}</Alert>
         );

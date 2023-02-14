@@ -50,6 +50,7 @@ export type IAplicationFormValues = {
 export default function ApplicationForm(props: ApplicationFormProperties) {
     const { t } = useTranslation('application');
     const dispatch = useDispatch();
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const bundles = useSelector((state: RootState) => state.application.bundles);
     const isLoadingBundles = useSelector((state: RootState) => state.application.isLoadingBundles);
     const applicableBundleIds = useSelector((state: RootState) => state.application.applicableBundleIds);
@@ -373,6 +374,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 <Grid item xs={12}>
                     <AvailableBundleList 
                         formDisabled={props.formDisabled}
+                        isWalletConnected={isConnected}
                         currency={props.usd2}
                         currencyDecimals={props.usd2Decimals}
                         bundles={bundles}

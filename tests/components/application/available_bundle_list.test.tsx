@@ -53,6 +53,8 @@ describe('When rendering the AvailableBundleList', () => {
     it('with no bundles an error for no capacity is riskpool is shown', () => {
         render(
             <AvailableBundleList
+                formDisabled={false}
+                isWalletConnected={true}
                 bundles={[]}
                 bundlesLoading={false}
                 applicableBundleIds={undefined}
@@ -70,6 +72,8 @@ describe('When rendering the AvailableBundleList', () => {
     it('with bundles and no match and a warning for no matching bundle is shown', () => {
         render(
             <AvailableBundleList
+                formDisabled={false}
+                isWalletConnected={true}
                 bundles={[
                     bundle1
                 ]}
@@ -88,6 +92,8 @@ describe('When rendering the AvailableBundleList', () => {
     it('with two bundles, then two bundles are shown in table', () => {
         render(
             <AvailableBundleList
+                formDisabled={false}
+                isWalletConnected={true}
                 bundles={[
                     bundle1, bundle2
                 ]}
@@ -111,6 +117,8 @@ describe('When rendering the AvailableBundleList', () => {
     it('with two bundles and one filtered, then only one bundle is shown in table', () => {
         render(
             <AvailableBundleList
+                formDisabled={false}
+                isWalletConnected={true}
                 bundles={[
                     bundle1, bundle2
                 ]}
@@ -154,6 +162,7 @@ describe('When rendering a bundle in the AvailableBundleRow', () => {
         render(
             <table><tbody>
                 <AvailableBundleRow
+                    formDisabled={false}
                     bundle={bundle}
                     currency="USDC"
                     currencyDecimals={6}
@@ -193,6 +202,7 @@ describe('When rendering a bundle in the AvailableBundleRow', () => {
         render(
             <table><tbody>
                 <AvailableBundleRow
+                    formDisabled={false}
                     bundle={bundle}
                     currency="USDC"
                     currencyDecimals={6}
@@ -225,6 +235,7 @@ describe('When rendering a bundle in the AvailableBundleRow', () => {
         render(
             <table><tbody>
                 <AvailableBundleRow
+                    formDisabled={false}
                     bundle={bundle}
                     currency="USDC"
                     currencyDecimals={6}
