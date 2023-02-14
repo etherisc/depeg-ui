@@ -183,6 +183,43 @@ describe('When rendering a bundle in the AvailableBundleRow', () => {
         expect(clicked).toBe(true);
     })
 
+    it('clicking does not work when form is disabled', async () => {
+        const user = userEvent.setup()
+
+        const bundle = {
+            id: 42,
+            riskpoolId: 10,
+            owner: "0x1234",
+            tokenId: 27,
+            apr: 2.7,
+            minSumInsured: BigNumber.from(1100 * Math.pow(10, 6)).toString(),
+            maxSumInsured: BigNumber.from(2100 * Math.pow(10, 6)).toString(),
+            minDuration: 30 * 86400,
+            maxDuration: 60 * 86400,
+            capacity: BigNumber.from(20000 * Math.pow(10, 6)).toString(),
+            capitalSupport: BigNumber.from(23000 * Math.pow(10, 6)).toString(),
+            locked: BigNumber.from(0).toString(),
+            name: "some bundle",
+        } as BundleData;
+
+        let clicked = false;
+
+        render(
+            <table><tbody>
+                <AvailableBundleRow
+                    formDisabled={true}
+                    bundle={bundle}
+                    currency="USDC"
+                    currencyDecimals={6}
+                    selected={false}
+                    onBundleSelected={() => clicked = true}
+                    />
+            </tbody></table>
+        );
+        await user.click(screen.getByTestId("bundle-name"));
+        expect(clicked).toBe(false);
+    })
+
     it('capacity takes locked and capitalSupport into account', () => {
         const bundle = {
             id: 42,
