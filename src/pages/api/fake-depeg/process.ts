@@ -4,6 +4,7 @@ import { ethers, Signer } from 'ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getErc20Token } from '../../../backend/erc20';
+import { getInstanceService } from '../../../backend/gif_registry';
 import { DepegProduct__factory, ERC20__factory } from '../../../contracts/depeg-contracts';
 import { IERC20__factory } from '../../../contracts/gif-interface';
 import { redisClient } from '../../../utils/redis';
@@ -31,6 +32,7 @@ export default async function handler(
     }
 
     const depegProduct = DepegProduct__factory.connect(process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "", productOwnerSigner);
+    const instanceService = await getInstanceService(await depegProduct.getRegistry(), productOwnerSigner);
     const usd2 = ERC20__factory.connect(await depegProduct.getToken(), productOwnerSigner);
 
     const policies = (await depegProduct.policiesToProcess()).toNumber();
@@ -42,9 +44,11 @@ export default async function handler(
     for (let p = 0; p < policies; p++) {
         const { processId, wallet } = await depegProduct.getPolicyToProcess(p);
         console.log("processing policy: ", processId, wallet);
-        const currentBalance = await usd2.balanceOf(wallet);
-        console.log("current balance: ", formatUnits(currentBalance, await usd2.decimals()));
-        const balance = await depegProduct.createDepegBalance(wallet, latestBlockNumber, currentBalance);
+        
+        const { sumInsuredAmount }= await instanceService.getApplication(processId);
+        console.log("sum insured: ", formatUnits(sumInsuredAmount, await usd2.decimals()));
+
+        const balance = await depegProduct.createDepegBalance(wallet, latestBlockNumber, sumInsuredAmount);
         balances.push(balance);
         processIds.push(processId);
     }
