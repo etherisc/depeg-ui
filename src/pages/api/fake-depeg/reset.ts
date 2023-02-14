@@ -21,12 +21,6 @@ export default async function handler(
         return; 
     }
 
-    const productOwnerSigner: Signer = getProductOwnerSigner();
-
-    const latestBlockNumber = await productOwnerSigner.provider!.getBlockNumber();
-    const depegProduct = DepegProduct__factory.connect(process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "", productOwnerSigner);
-    await depegProduct.setDepeggedBlockNumber(latestBlockNumber, formatBytes32String('Depegged'));
-
     await redisClient.del("fake-depeg-block-number");
 
     console.log("fake-depeg reset done");
