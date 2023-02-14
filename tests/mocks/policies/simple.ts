@@ -90,12 +90,12 @@ export function mockPoliciesSimpleWithClaim() {
             createdAt: dayjs().add(-2, 'days').unix(),
             duration: 15 * 24 * 60 * 60,
             premium: BigNumber.from(17).toString(),
-            suminsured: BigNumber.from(10000).toString(),
+            suminsured: BigNumber.from(10000000000).toString(),
             isAllowedToClaim: false,
             claim: {
                 state: ClaimState.APPLIED,
-                claimAmount: BigNumber.from(10000).toString(),
-                actualAmount: BigNumber.from(5000).toString(),
+                claimAmount: BigNumber.from(10000000000).toString(),
+                actualAmount: BigNumber.from(5000000000).toString(),
                 claimCreatedAt: dayjs().add(-1, 'days').unix(),
             }
         } as PolicyData,
