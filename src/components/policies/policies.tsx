@@ -1,17 +1,17 @@
 import Typography from "@mui/material/Typography";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BackendApi } from "../../backend/backend_api";
-import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, GridScrollParams, GridSortCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import { LinkBehaviour } from "../link_behaviour";
 import Link from "@mui/material/Link";
-import { PolicyData } from "../../backend/policy_data";
+import { ClaimData, PAYOUT_STATE_EXPECTED, PolicyData, PolicyState } from "../../backend/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
-import { formatCurrency } from "../../utils/numbers";
+import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
 import { getPolicyExpiration, getPolicyState } from "../../utils/product_formatter";
 import { BigNumber } from "ethers";
 import Address from "../address";
@@ -20,14 +20,27 @@ import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { bigNumberComparator } from "../../utils/bignumber";
 import { addPolicy, finishLoading, reset, startLoading } from "../../redux/slices/policies";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faShieldHalved, faCircleInfo, faFileInvoiceDollar, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import WithTooltip from "../with_tooltip";
+import { grey } from "@mui/material/colors";
+import { ProductState } from "../../types/product_state";
+import { SnackbarKey, useSnackbar } from "notistack";
+import { TransactionFailedError } from "../../utils/error";
+import { formatDateUtc } from "../../utils/date";
+import { Policy } from "@mui/icons-material";
 
 export interface PoliciesProps {
-    insurance: BackendApi;
+    backend: BackendApi;
+    // **DO NOT USE IN PRODUCTION**
+    // does not fetch policies from the blockchain
+    testMode?: boolean;
 }
 
 export default function Policies(props: PoliciesProps) {
     const { t } = useTranslation(['policies', 'common']);
-    const signer = useSelector((state: RootState) => state.chain.signer);
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const walletAddress = useSelector((state: RootState) => state.account.address);
 
     const dispatch = useDispatch();
     const policies = useSelector((state: RootState) => state.policies.policies);
@@ -40,80 +53,259 @@ export default function Policies(props: PoliciesProps) {
         setShowActivePoliciesOnly(! showActivePoliciesOnly);
     }
 
-    useEffect(() => {
-        async function getPolicies() {
-            const walletAddress = await signer?.getAddress();
-            if (walletAddress !== undefined) {
-                dispatch(startLoading());
-                dispatch(reset());
-                const policiesCount = await props.insurance.policiesCount(walletAddress);
-                for (let i = 0; i < policiesCount; i++) {
-                    const policy = await props.insurance.policy(walletAddress, i);
-                    if (showActivePoliciesOnly && (policy.applicationState !== 2 || policy.policyState !== 0)) {
-                        continue;
-                    }
-                    dispatch(addPolicy(policy));
-                }
-                dispatch(finishLoading());
-            } else {
-                dispatch(finishLoading());
+    function isActivePolicy(policy: PolicyData) {
+        // underwritten
+        if (policy.applicationState === 2) {
+            if (policy.policyState === 0) {
+                return true;
             }
         }
-        getPolicies();
-    }, [signer, props.insurance, showActivePoliciesOnly, t, dispatch]);
+
+        return false;
+    }
+
+    const getPolicies = useCallback(async () => {
+        if (walletAddress !== undefined) {
+            dispatch(startLoading());
+            dispatch(reset());
+            const isProductDepegged = (await props.backend.getProductState()) === ProductState.Depegged;
+            const policiesCount = await props.backend.policiesCount(walletAddress);
+            for (let i = 0; i < policiesCount; i++) {
+                const policy = await props.backend.policy(walletAddress, i, isProductDepegged);
+                if (showActivePoliciesOnly && (! isActivePolicy(policy))) {
+                    continue;
+                }
+                dispatch(addPolicy(policy));
+            }
+            dispatch(finishLoading());
+        } else {
+            dispatch(startLoading());
+            dispatch(reset());
+            dispatch(finishLoading());
+        }
+    }, [walletAddress, props.backend, showActivePoliciesOnly, dispatch]);
+
+    useEffect(() => {
+        if (! props.testMode) getPolicies();
+    }, [getPolicies, props.testMode]);
+
+    function ownerBadge(policyData: PolicyData) {
+        const badges: JSX.Element[] = [];
+        if (policyData.policyHolder === walletAddress) {
+            return (
+                <WithTooltip tooltipText={t('is_owner')}>
+                    <Typography color={grey[400]}>
+                        <FontAwesomeIcon icon={faUser} className="fa" />
+                    </Typography>
+                </WithTooltip>
+            );
+        }
+        return null;
+    }
+
+    function protectedByBadge(policyData: PolicyData) {
+        if (policyData.protectedWallet === walletAddress) {
+            return (
+                <WithTooltip tooltipText={t('is_protected')}>
+                    <Typography color={grey[400]}>
+                        <FontAwesomeIcon icon={faShieldHalved} className="fa" />
+                    </Typography>
+                </WithTooltip>
+            );
+        }
+        return null;
+    }
+
+    async function claim(processId: string) {
+        let snackbar: SnackbarKey | undefined = undefined;
+        try {
+            return await props.backend.application.claim(
+                processId,
+                (address: string) => {
+                    snackbar = enqueueSnackbar(
+                        t('claim_info', { address }),
+                        { variant: "warning", persist: true }
+                    );
+                },
+                () => {
+                    if (snackbar !== undefined) {
+                        closeSnackbar(snackbar);
+                    }
+                    snackbar = enqueueSnackbar(
+                        t('apply_wait'),
+                        { variant: "info", persist: true }
+                    );
+                });
+        } catch(e) { 
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                if (snackbar !== undefined) {
+                    closeSnackbar(snackbar);
+                }
+
+                enqueueSnackbar(
+                    t('error.transaction_failed', { ns: 'common', error: e.code }),
+                    { 
+                        variant: "error", 
+                        persist: true,
+                        action: (key) => {
+                            return (
+                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                            );
+                        }
+                    }
+                );
+                return Promise.resolve({ status: false, processId: undefined });
+            } else {
+                throw e;
+            }
+        } finally {
+            if (snackbar !== undefined) {
+                closeSnackbar(snackbar);
+            }
+
+            enqueueSnackbar(
+                t('claim_successful'),
+                { 
+                    variant: "success", 
+                    persist: true,
+                    action: (key) => {
+                        return (
+                            <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                        );
+                    }
+                }
+            );
+            await getPolicies();
+        }
+    }
+
+    function renderClaimCell(policy: PolicyData) {
+        if (policy.isAllowedToClaim) {
+            return (<Button variant="text" color="secondary" onClick={() => claim(policy.id)}>{t('action.claim')}</Button>);
+        }
+        return (<></>);
+    }
+
+    function claimsTooltip(claim: ClaimData) {
+        const symbol = props.backend.usd2;
+        const usd2Decimals = props.backend.usd2Decimals;
+        let paidAmount = undefined;
+        if (claim === undefined) {
+            return (<></>);
+        }
+        if (claim.state === 3 && claim.paidAmount !== undefined) { // state closed
+            paidAmount = (<Typography variant="body2" data-testid="claim-paid-amount">{t('claim_paid_amount')}: {symbol} {formatCurrencyBN(BigNumber.from(claim.paidAmount), usd2Decimals)}</Typography>);
+        }
+        return (
+            <div data-testid="claim_info_hover">
+                <Typography variant="body2" data-testid="claim-amount">{t('claim_amount')}: {symbol} {formatCurrencyBN(BigNumber.from(claim.claimAmount), usd2Decimals)}</Typography>
+                {paidAmount}
+                <Typography variant="body2" data-testid="claim-state">{t('claim_state')}: {t('claim_state_' + claim.state)}</Typography>
+                <Typography variant="body2" data-testid="claim-timestamp">{t('claim_timestamp')}: { formatDateUtc(claim.claimCreatedAt) }</Typography>
+            </div>
+        );
+    }
+
+    function render_application_state(policy: PolicyData) {
+        const policyState = getPolicyState(policy);
+        if (policyState === PolicyState.PAYOUT_EXPECTED) {
+            return (<>{t('application_state_' + policyState, { ns: 'common'})}<WithTooltip tooltipText={claimsTooltip(policy.claim!)}>
+                        <Typography color="secondary">
+                            <FontAwesomeIcon icon={faFileInvoiceDollar} className="fa" data-testid="claim-pending-icon"/>
+                        </Typography>
+                    </WithTooltip></>);
+        } else if (policyState === PolicyState.PAIDOUT && policy.claim !== undefined) {
+            return (<>{t('application_state_' + policyState, { ns: 'common'})}<WithTooltip tooltipText={claimsTooltip(policy.claim!)}>
+                        <Typography color="secondary">
+                            <FontAwesomeIcon icon={faInfoCircle} className="fa" data-testid="claim-pending-icon"/>
+                        </Typography>
+                    </WithTooltip></>);
+        } else if (policyState === PolicyState.PAIDOUT) {
+            return (<>{t('application_state_' + policyState, { ns: 'common'})}</>);
+        }
+        return (<>{t('application_state_' + policyState, { ns: 'common'})}</>);
+    }
 
     const columns: GridColDef[] = [
         { 
             field: 'id', 
             headerName: t('table.header.policyId'), 
-            flex: 1,
-            renderCell: (params: GridRenderCellParams<string>) => 
-                (<Address address={params.value ?? ""} iconColor="secondary.main" />),
-            sortComparator: gridStringOrNumberComparator,
+            flex: 0.8,
+            valueGetter: (params: GridValueGetterParams<string, PolicyData>) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                return (<><Address address={params.value!.id} iconColor="secondary.main" />{ownerBadge(params.value!)}</>);
+            },
+            sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => 
+                gridStringOrNumberComparator(v1.id, v2.id, cellParams1, cellParams2)
         },
         { 
-            field: 'owner', 
+            field: 'protectedWallet', 
             headerName: t('table.header.walletAddress'), 
-            flex: 1,
-            renderCell: (params: GridRenderCellParams<string>) => 
-                (<Address address={params.value ?? ""} iconColor="secondary.main" />),
-            sortComparator: gridStringOrNumberComparator,
+            flex: 0.8,
+            valueGetter: (params: GridValueGetterParams<string, PolicyData>) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                return (<><Address address={params.value!.protectedWallet} iconColor="secondary.main" />{protectedByBadge(params.value!)}</>);
+            },
+            sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => 
+                gridStringOrNumberComparator(v1.protectedWallet, v2.protectedWallet, cellParams1, cellParams2)
         },
         { 
             field: 'suminsured', 
             headerName: t('table.header.insuredAmount'), 
-            flex: 1,
+            flex: 0.8,
             valueGetter: (params: GridValueGetterParams<string, PolicyData>) => BigNumber.from(params.value),
-            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.insurance.usd1} ${formatCurrency(params.value.toNumber(), props.insurance.usd1Decimals)}`,
+            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.backend.usd1} ${formatCurrency(params.value.toNumber(), props.backend.usd1Decimals)}`,
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2),
         },
         { 
             field: 'createdAt', 
             headerName: t('table.header.createdDate'), 
-            flex: 1,
+            flex: 0.7,
             renderCell: (params: GridRenderCellParams<number>) => <Timestamp at={params?.value ?? 0} />,
             sortComparator: gridNumberComparator,
         },
         { 
             field: 'coverageUntil', 
             headerName: t('table.header.coverageUntil'), 
-            flex: 1,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => getPolicyExpiration(params.row),
-            renderCell: (params: GridRenderCellParams<number>) => {
-                return (<Timestamp at={params.value!} />);
+            flex: 0.7,
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                if (! isActivePolicy(params.value!)) {
+                    return (<></>);
+                }
+                const exp = getPolicyExpiration(params.row)
+                return (<Timestamp at={exp} />);
             },
-            sortComparator: gridNumberComparator,
+            sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => {
+                const exp1 = getPolicyExpiration(v1);
+                const exp2 = getPolicyExpiration(v2);   
+                return gridNumberComparator(exp1, exp2, cellParams1, cellParams2);
+            },
         },
         { 
             field: 'applicationState', 
             headerName: t('table.header.status'), 
-            flex: 1,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => getPolicyState(params.row),
-            valueFormatter: (params: GridValueFormatterParams<number>) => {
-                return t('application_state_' + params.value, { ns: 'common'})
+            flex: 0.9,
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                return render_application_state(params.value!);
             },
-            sortComparator: gridStringOrNumberComparator,
+            sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => {
+                const state1 = getPolicyState(v1);
+                const state2 = getPolicyState(v2);
+                return gridStringOrNumberComparator(state1, state2, cellParams1, cellParams2);
+            },
         },
+        {
+            field: 'action',
+            headerName: t('table.header.action'), 
+            flex: 0.6,
+            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                return renderClaimCell(params.value!);
+            },
+        }
     ];
 
     function GridToolbar() {
@@ -166,6 +358,7 @@ export default function Policies(props: PoliciesProps) {
                 onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
                 disableSelectionOnClick={true}
                 disableColumnMenu={true}
+                columnBuffer={7}
                 />
         </>
     );

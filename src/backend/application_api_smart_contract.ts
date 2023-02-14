@@ -123,4 +123,18 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         return block?.timestamp ?? 0;
     }
 
+    async claim(
+        processId: string,
+        beforeTrxCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+    ): Promise<{ status: boolean, claimId: string|undefined}> {
+        const [tx, receipt] = await (await this.getDepegProductApi())!.claim(processId, beforeTrxCallback, beforeWaitCallback);
+        const claimId = (await this.getDepegProductApi())!.extractClaimIdFromLogs(receipt.logs);
+        console.log(`claimId: ${claimId}`);
+        return {
+            status: receipt.status === 1, 
+            claimId
+        };
+    }
+
 }

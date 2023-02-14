@@ -24,7 +24,7 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
             await delay(2000);
             return Promise.resolve(true);
         },
-        async policy(walletAddress: string, idx: number): Promise<PolicyData> {
+        async policy(walletAddress: string, idx: number, checkClaim: boolean): Promise<PolicyData> {
             return Promise.resolve(mockPolicies[idx]);
         },
         async policies(walletAddress: string): Promise<Array<PolicyData>> {
@@ -47,7 +47,8 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
 const mockPoliciesActive = [
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF61',
-        owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        policyHolder: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        protectedWallet: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 0,
         createdAt: dayjs().add(-2, 'days').unix(),
@@ -57,7 +58,8 @@ const mockPoliciesActive = [
     } as PolicyData,
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF62',
-        owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        policyHolder: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        protectedWallet: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 0,
         payoutState: 0,
@@ -68,7 +70,8 @@ const mockPoliciesActive = [
     } as PolicyData,
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF63',
-        owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        policyHolder: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        protectedWallet: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 0,
         payoutState: 1,
@@ -79,7 +82,8 @@ const mockPoliciesActive = [
     } as PolicyData,
     {
         id: '0x34e190322453300229d2be2a38450b8a8bd8cf64',
-        owner: '0xdCeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        policyHolder: '0xdCeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        protectedWallet: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 0,
         createdAt: dayjs().add(-1, 'days').unix(),
         duration: 47 * 24 * 60 * 60,
@@ -91,7 +95,8 @@ const mockPoliciesActive = [
 const mockPolicies = mockPoliciesActive.concat(
     {
         id: '0x23e190322453300229d2be2a38450b8a8bd8cf71',
-        owner: '0xFEeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        policyHolder: '0xFEeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        protectedWallet: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 1,
         createdAt: dayjs().add(-20, 'days').unix(),
@@ -101,7 +106,8 @@ const mockPolicies = mockPoliciesActive.concat(
     } as PolicyData,
     {
         id: '0xc23223453200229d2be2a38450b8a8bd8cf72',
-        owner: '0x821c4C063Fef1074B0CD53022C3306A6FADb4729',
+        policyHolder: '0x821c4C063Fef1074B0CD53022C3306A6FADb4729',
+        protectedWallet: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 2,
         createdAt: dayjs().add(-3, 'months').unix(),
@@ -154,6 +160,9 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         },
         lastBlockTimestamp(): Promise<number> {
             return Promise.resolve(dayjs().unix());
+        },
+        claim(policyId: string) {
+            return Promise.resolve({ status: true, claimId: "0x1"});
         }
     } as ApplicationApi
 }

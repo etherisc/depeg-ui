@@ -26,12 +26,12 @@
     "apply_info": "Please confirm execution of the policy application transaction on contract {{address}} in your wallet app",
     "apply_wait": "Transaction created, waiting for onchain confirmation",
     "bundles": {
-        "title": "Your policy can be covered by multiple bundles. Please select the bundle you want to use",
+        "title": "Your policy can be covered by these bundles. Please select the bundle you want to use",
         "id": "ID",
         "name": "Name",
         "suminsured": "Min / max amount",
         "duration": "Min / max duration",
-        "apr": "APR (%)",
+        "apr": "APR",
         "capacity": "Capacity",
         "stake_usage": "Stakes"
     },

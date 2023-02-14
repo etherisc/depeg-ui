@@ -28,13 +28,13 @@
 				"eamodio.gitlens",
 				"gruntfuggly.todo-tree",
 				"oderwat.indent-rainbow",
-				"2gua.rainbow-brackets",
 				"johnpapa.vscode-peacock",
 				"vikas.code-navigation",
 				"aaron-bond.better-comments",
 				"csstools.postcss",
 				"vscodeshift.mui-snippets",
 				"mikestead.dotenv",
+				"vscode-icons-team.vscode-icons"
 			]
 		}
 	},

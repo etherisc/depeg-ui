@@ -69,6 +69,7 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
         } else {
           getAndUpdateWalletAccount(reduxDispatch);
         }
+        location.reload();
       });
       // @ts-ignore
       window.ethereum.on('chainChanged', function (chain: any) {

@@ -26,6 +26,7 @@ export interface BackendApi {
         (
             walletAddress: string, 
             index: number,
+            checkClaim: boolean,
         ) => Promise<PolicyData>;
     policies: 
         (
@@ -72,6 +73,11 @@ export interface ApplicationApi {
             beforeWaitCallback?: (address: string) => void
         ) => Promise<{ status: boolean, processId: string|undefined}>;
     lastBlockTimestamp(): Promise<number>;
+    claim(
+        processId: string,
+        beforeTrxCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+    ): Promise<{ status: boolean, claimId: string|undefined}>;
 }
 
 export interface InvestApi {

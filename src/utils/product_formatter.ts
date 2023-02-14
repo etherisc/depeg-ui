@@ -23,13 +23,16 @@ export function getPolicyStateForActivePolicy(policy: PolicyData): PolicyState {
             if (dayjs().isAfter(dayjs.unix(exp))) {
                 return PolicyState.EXPIRED;
             }
+            return PolicyState.ACTIVE;
+        case POLICY_STATE_EXPIRED:
             if (policy.payoutState !== undefined) {
                 return getPolicyStateForPaidoutPolicy(policy);
             }           
-            return PolicyState.ACTIVE;
-        case POLICY_STATE_EXPIRED:
             return PolicyState.EXPIRED;
         case POLICY_STATE_CLOSED:
+            if (policy.payoutState !== undefined) {
+                return getPolicyStateForPaidoutPolicy(policy);
+            }           
             return PolicyState.CLOSED;
         default:
             return PolicyState.UNKNOWN;

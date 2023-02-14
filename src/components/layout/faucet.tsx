@@ -49,7 +49,7 @@ export default function Faucet() {
         const snackbarId = enqueueSnackbar(t('wait_for_coins'),  { persist: true, variant: 'info' });
 
         console.log("calling faucet api...");
-        await fetch("/api/faucet?address=" + address!);
+        await fetch("/api/faucet/send?address=" + address!);
         console.log("faucet api called");
 
         closeSnackbar(snackbarId);

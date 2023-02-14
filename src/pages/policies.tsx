@@ -46,7 +46,7 @@ export default function PoliciesPage() {
                 <title>{t('apptitle')}</title>
             </Head>
 
-            <Policies insurance={insurance} />
+            <Policies backend={insurance} />
         </>
     )
 }

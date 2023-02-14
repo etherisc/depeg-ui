@@ -4,7 +4,7 @@ import { BigNumber, ContractReceipt, ContractTransaction, Signer, VoidSigner } f
 import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../contracts/depeg-contracts";
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { IInstanceService } from "../contracts/gif-interface";
-import { APPLICATION_STATE_UNDERWRITTEN, PolicyData } from "./policy_data";
+import { APPLICATION_STATE_UNDERWRITTEN, PAYOUT_STATE_EXPECTED, PAYOUT_STATE_PAIDOUT, PolicyData } from "./policy_data";
 import { TransactionFailedError } from "../utils/error";
 import { ProductState } from "../types/product_state";
 
@@ -92,7 +92,7 @@ export class DepegProductApi {
         coverageDurationSeconds: number, 
         bundleId: number, 
         beforeApplyCallback?: (address: string) => void,
-        beforeWaitCallback?: (address: string) => void
+        beforeWaitCallback?: (address: string) => void,
     ): Promise<[ContractTransaction, ContractReceipt]> {
         if (beforeApplyCallback !== undefined) {
             beforeApplyCallback(this.depegProduct!.address);
@@ -141,8 +141,32 @@ export class DepegProductApi {
     async getPolicy(
         ownerWalletAddress: string,
         idx: number,
+        checkClaim: boolean,
     ): Promise<PolicyData> {
-        return this.getPolicyForProduct(ownerWalletAddress, idx);
+        const policy = await this.getPolicyForProduct(ownerWalletAddress, idx);
+        if (checkClaim) {
+            const isAllowedToClaim = await this.depegProduct!.policyIsAllowedToClaim(policy.id);
+            policy.isAllowedToClaim = isAllowedToClaim;
+
+            const hasClaim = await this.depegProduct!.hasDepegClaim(policy.id);
+
+            if (hasClaim) {
+                const { actualAmount, claimState, claimAmount, claimCreatedAt } = await this.depegProduct!.getClaimData(policy.id);
+                policy.claim = {
+                    actualAmount: actualAmount.toString(),
+                    state: claimState,
+                    paidAmount: undefined,
+                    claimAmount: claimAmount.toString(),
+                    claimCreatedAt: claimCreatedAt.toNumber(),
+                }
+
+                if (claimState == 3) { // state is closed
+                    const claim = await this.instanceService!.getClaim(policy.id, 0); // claim id is always 0 for depeg
+                    policy.claim!.paidAmount = claim.paidAmount.toString();
+                }
+            }
+        }
+        return policy;
     }
     
     async getPolicyForProduct(
@@ -150,31 +174,36 @@ export class DepegProductApi {
             idx: number,
             ): Promise<PolicyData> {
         const processId = await this.depegProduct!.getProcessId(ownerWalletAddress, idx);
-        const application = await this.instanceService!.getApplication(processId);
-        const [ applicationState, premium, suminsured, appdata, createdAt ] = application;
+        const { state, premiumAmount, sumInsuredAmount, data, createdAt } = await this.instanceService!.getApplication(processId);
+        const { owner } = await this.instanceService!.getMetadata(processId);
         let policyState = undefined;
         let payoutState = undefined;
-        if ( applicationState == APPLICATION_STATE_UNDERWRITTEN ) {
+        if ( state == APPLICATION_STATE_UNDERWRITTEN ) {
             const policy = await this.instanceService!.getPolicy(processId);
             [ policyState ] = policy;
-            const payoutsCount = (await this.instanceService!.payouts(processId)).toNumber();
-            if (payoutsCount > 0) {
-                // this is a simplification as Depeg insureance can only have 0 or 1 payouts
-                const payout = await this.instanceService!.getPayout(processId, 0);
-                [ payoutState ] = payout;
+            const claimsCount = (await this.instanceService!.claims(processId)).toNumber();
+            if (claimsCount > 0) {
+                const payoutCount = (await this.instanceService!.payouts(processId)).toNumber();
+                if (payoutCount > 0) {
+                    payoutState = PAYOUT_STATE_PAIDOUT;
+                } else {
+                    payoutState = PAYOUT_STATE_EXPECTED;
+                }
             }
         }
-        const { wallet, duration } = await this.depegRiskpool!.decodeApplicationParameterFromData(appdata);
+        const { wallet, duration } = await this.depegRiskpool!.decodeApplicationParameterFromData(data);
         return {
             id: processId,
-            owner: wallet,
-            applicationState: applicationState,
+            policyHolder: owner,
+            protectedWallet: wallet,
+            applicationState: state,
             policyState: policyState,
             payoutState: payoutState,
             createdAt: createdAt.toNumber(),
-            premium: premium.toString(),
-            suminsured: suminsured.toString(),
+            premium: premiumAmount.toString(),
+            suminsured: sumInsuredAmount.toString(),
             duration: duration.toNumber(),
+            isAllowedToClaim: false,
         } as PolicyData;
     }
 
@@ -191,6 +220,50 @@ export class DepegProductApi {
             default:
                 throw new Error("Unknown product state: " + state);
         }
+    }
+
+    async claim(
+        processId: string,
+        beforeApplyCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        if (beforeApplyCallback !== undefined) {
+            beforeApplyCallback(this.depegProduct!.address);
+        }
+        try {
+            const tx = await this.depegProduct!.createDepegClaim(processId)
+            if (beforeWaitCallback !== undefined) {
+                beforeWaitCallback(this.depegProduct!.address);
+            }
+            const receipt = await tx.wait();
+            // console.log(receipt);
+            return [tx, receipt];
+        } catch (e) {
+            console.log("caught error while creating a depeg claim: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        }
+    }
+
+    extractClaimIdFromLogs(logs: any[]): string|undefined {
+        const productAbiCoder = new Coder(DepegProductBuild.abi);
+        let claimId = undefined;
+    
+        logs.forEach(log => {
+            try {
+                const evt = productAbiCoder.decodeEvent(log.topics, log.data);
+                console.log(evt);
+                if (evt.name === 'LogDepegClaimCreated') {
+                    console.log(evt);
+                    // @ts-ignore
+                    claimId = evt.values.claimId.toString();
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        });
+    
+        return claimId;
     }
 
 }

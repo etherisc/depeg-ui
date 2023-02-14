@@ -7,7 +7,7 @@ import { PolicyData } from "../../../src/backend/policy_data";
 import { ProductState } from "../../../src/types/product_state";
 import { delay } from "../../../src/utils/delay";
 
-export function mockSimple(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
+export function mockSimple() {
     return {
         usd1: 'USDC',
         usd1Decimals: 6,
@@ -20,11 +20,10 @@ export function mockSimple(enqueueSnackbar: (message: SnackbarMessage, options?:
             return Promise.resolve(true);
         },
         async createTreasuryApproval(walletAddress: string, premium: BigNumber) {
-            enqueueSnackbar(`Approval mocked (${walletAddress}, ${premium}`,  { autoHideDuration: 3000, variant: 'info' });
             await delay(2000);
             return Promise.resolve(true);
         },
-        async policy(walletAddress: string, idx: number): Promise<PolicyData> {
+        async policy(walletAddress: string, idx: number, checkClaim: boolean): Promise<PolicyData> {
             return Promise.resolve(mockPolicies[idx]);
         },
         async policies(walletAddress: string): Promise<Array<PolicyData>> {
@@ -36,18 +35,19 @@ export function mockSimple(enqueueSnackbar: (message: SnackbarMessage, options?:
         async getProductState() {
             return Promise.resolve(ProductState.Active);
         },
-        application: applicationMock(enqueueSnackbar),
-        invest: investMock(enqueueSnackbar),
+        application: applicationMock(),
+        invest: investMock(),
         triggerBundleUpdate(bundleId: number) {
             return Promise.resolve();
         },
     } as BackendApi;
 }
 
-const mockPoliciesActive = [
+const mockPolicies = [
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF61',
-        owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        policyHolder: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        protectedWallet: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
         applicationState: 2,
         policyState: 0,
         createdAt: dayjs().add(-2, 'days').unix(),
@@ -57,7 +57,8 @@ const mockPoliciesActive = [
     } as PolicyData,
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF62',
-        owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        policyHolder: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
+        protectedWallet: '0xA3C552FA4756dd343394785283923bE2f27f8814',
         applicationState: 2,
         policyState: 0,
         payoutState: 0,
@@ -66,50 +67,7 @@ const mockPoliciesActive = [
         premium: BigNumber.from(17).toString(),
         suminsured: BigNumber.from(11000000000).toString()
     } as PolicyData,
-    {
-        id: '0x54E190322453300229D2BE2A38450B8A8BD8CF63',
-        owner: '0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729',
-        applicationState: 2,
-        policyState: 0,
-        payoutState: 1,
-        createdAt: dayjs().add(-2, 'days').unix(),
-        duration: 14 * 24 * 60 * 60,
-        premium: BigNumber.from(17).toString(),
-        suminsured: BigNumber.from(12000000000).toString()
-    } as PolicyData,
-    {
-        id: '0x34e190322453300229d2be2a38450b8a8bd8cf64',
-        owner: '0xdCeC4C063Fef1074B0CD53022C3306A6FADb4729',
-        applicationState: 0,
-        createdAt: dayjs().add(-1, 'days').unix(),
-        duration: 47 * 24 * 60 * 60,
-        premium: BigNumber.from(27).toString(),
-        suminsured: BigNumber.from(15000000000).toString()
-    } as PolicyData,
 ];
-
-const mockPolicies = mockPoliciesActive.concat(
-    {
-        id: '0x23e190322453300229d2be2a38450b8a8bd8cf71',
-        owner: '0xFEeC4C063Fef1074B0CD53022C3306A6FADb4729',
-        applicationState: 2,
-        policyState: 1,
-        createdAt: dayjs().add(-20, 'days').unix(),
-        duration: 14 * 24 * 60 * 60,
-        premium: BigNumber.from(100).toString(),
-        suminsured: BigNumber.from(35000).toString()
-    } as PolicyData,
-    {
-        id: '0xc23223453200229d2be2a38450b8a8bd8cf72',
-        owner: '0x821c4C063Fef1074B0CD53022C3306A6FADb4729',
-        applicationState: 2,
-        policyState: 2,
-        createdAt: dayjs().add(-3, 'months').unix(),
-        duration: 28 * 24 * 60 * 60,
-        premium: BigNumber.from(67).toString(),
-        suminsured: BigNumber.from(36000000000).toString()
-    } as PolicyData,
-);
 
 const bundles = [
     {
@@ -133,7 +91,7 @@ const bundles = [
     } as BundleData
 ];
 
-function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
+function applicationMock() {
     return {
         insuredAmountMin: BigNumber.from(1000),
         insuredAmountMax: BigNumber.from(2000),
@@ -148,7 +106,6 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
             return Promise.resolve(BigNumber.from(premium));
         },
         async applyForPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId) {
-            enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationSeconds})`,  { autoHideDuration: 3000, variant: 'info' });
             await delay(2000);
             return Promise.resolve({ status: true, processId: "0x12345678"});
         },
@@ -158,7 +115,7 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
     } as ApplicationApi
 }
 
-function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
+function investMock() {
     return {
         usd1: 'USDC',
         minLifetime: 14,
@@ -191,10 +148,6 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
             maxDuration: number, 
             annualPctReturn: number
         ): Promise<{ status: boolean, bundleId: string | undefined}> {
-            enqueueSnackbar(
-                `Riskpool mocked ($name, $lifetime, $investorWalletAddress, $investedAmount, $minSumInsured, $maxSumInsured, $minDuration, $maxDuration, $annualPctReturn)`,
-                { autoHideDuration: 3000, variant: 'info' }
-            );
             await delay(2000);
             return Promise.resolve({ status: true, bundleId: "42"});
         },
