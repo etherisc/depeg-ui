@@ -12,7 +12,7 @@ export interface ApplicationState {
 
 const initialState: ApplicationState = {
     bundles: [],
-    isLoadingBundles: true,
+    isLoadingBundles: false,
     applicableBundleIds: undefined,
     selectedBundleId: undefined,
     premium: undefined,

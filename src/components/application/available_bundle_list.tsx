@@ -5,7 +5,9 @@ import TableContainer from "@mui/material/TableContainer";
 import Color from "color";
 import { BigNumber } from "ethers";
 import { useTranslation } from "next-i18next";
+import { useSelector } from "react-redux";
 import { BundleData } from "../../backend/bundle_data";
+import { RootState } from "../../redux/store";
 import { minBigNumber } from "../../utils/bignumber";
 import { formatCurrencyBN } from "../../utils/numbers";
 
@@ -21,6 +23,8 @@ interface AvailableBundleListProps {
 
 export function AvailableBundleList(props: AvailableBundleListProps) {
     const { t } = useTranslation('application');
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    
     let bundlesToShow = props.bundles;
 
     if (props.applicableBundleIds !== undefined ) {
@@ -39,6 +43,12 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
             color: theme.palette.common.white,
         },
     }));
+
+    if (! isConnected ) {
+        return (
+            <Alert variant="outlined" severity="info">{t('alert.not_connected_no_bundles')}</Alert>
+        );
+    }
 
     if (! props.bundlesLoading && props.bundles.length === 0) {
         return (
