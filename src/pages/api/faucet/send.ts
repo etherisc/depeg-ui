@@ -3,7 +3,7 @@ import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { ethers, Signer } from 'ethers';
 import { parseEther, parseUnits } from 'ethers/lib/utils';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { transferAmount } from '../../backend/erc20';
+import { transferAmount } from '../../../backend/erc20';
 
 type Data = {
     name: string
