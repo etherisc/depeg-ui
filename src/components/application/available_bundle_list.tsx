@@ -12,6 +12,7 @@ import { minBigNumber } from "../../utils/bignumber";
 import { formatCurrencyBN } from "../../utils/numbers";
 
 interface AvailableBundleListProps {
+    formDisabled: boolean;
     bundles: Array<BundleData>;
     bundlesLoading: boolean;
     applicableBundleIds: Array<number>|undefined;
@@ -80,6 +81,7 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
                     <TableBody>
                         {bundlesToShow.map((bundle: BundleData) => (
                             <AvailableBundleRow 
+                                formDisabled={props.formDisabled}
                                 key={bundle.id} 
                                 bundle={bundle} 
                                 currency={props.currency} 
@@ -95,6 +97,7 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
 }
 
 interface AvailableBundleRowProps {
+    formDisabled: boolean;
     bundle: BundleData;
     currency: string;
     currencyDecimals: number;
@@ -127,10 +130,10 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
             fontWeight: theme.typography.fontWeightBold,
         },
         '&:nth-of-type(odd):hover': {
-            backgroundColor: blue[100],
+            backgroundColor: ! compProps.formDisabled && blue[100],
         },
         '&:nth-of-type(even):hover': {
-            backgroundColor: blue[100],
+            backgroundColor: ! compProps.formDisabled && blue[100],
         },
         '&.Mui-selected:hover': {
             backgroundColor: blue[100],
@@ -140,7 +143,12 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
     return (<StyledTableRow
         key={bundle.id}
         selected={compProps.selected}
-        onClick={() => compProps.onBundleSelected(bundle)}
+        onClick={() => {
+            if (compProps.formDisabled) {
+                return;
+            }
+            compProps.onBundleSelected(bundle)
+        }}
         sx={{ 
             '&:last-child td, &:last-child th': { border: 0 },
         }}

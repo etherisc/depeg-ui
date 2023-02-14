@@ -372,6 +372,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 </Grid>
                 <Grid item xs={12}>
                     <AvailableBundleList 
+                        formDisabled={props.formDisabled}
                         currency={props.usd2}
                         currencyDecimals={props.usd2Decimals}
                         bundles={bundles}
