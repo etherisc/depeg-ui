@@ -48,7 +48,7 @@
     "react-blockies": "^1.4.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.43.0",
+    "react-hook-form": "^7.43.1",
     "react-i18next": "^12.1.5",
     "react-redux": "^8.0.5",
     "redis": "^4.6.4",
