@@ -28,9 +28,9 @@
     "button_invest": "Stake",
     "application_success": "Congratulations, you have staked a new riskpool bundle!",
     "days": "Days",
-    "approval_info": "To fund the risk pool bundle, the GIF treasury contract at {{address}} needs permission to transfer {{currency}} {{amount}} to the Depeg Protection riskpool. Please confirm this allowance in your wallet app.",
+    "approval_info": "To create the risk bundle, two steps are needed. First - give Etherisc contract at {{address}} permission to take {{currency}} {{amount}} from your wallet.",
     "approval_wait": "Treasury allowance created, waiting for onchain confirmation",
-    "invest_info": "Please confirm execution of the riskpool staking transaction on contract {{address}} in your wallet app",
+    "invest_info": "Second - please confirm risk pool creation on contract {{address}}",
     "invest_wait": "Transaction created, waiting for onchain confirmation",
     "balance_insufficient": "{{currency}} balance of wallet is insufficient to fund this riskpool bundle",
     "error": {
@@ -41,14 +41,14 @@
     "confirmation": {
         "alert": {
             "title": "Payment for Depeg riskpool bundle confirmed",
-            "text": "Risk bundle is now active and ready for DIP staking"
+            "text": "Your risk bundle is now active and will require DIP staking to enable policies to be purchased"
         },
         "title": "Bundle details",
         "id": "Bundle Id",
         "invested_amount": "Staked amount",
         "sum_insured": "Protected amount",
         "coverage_duration": "Coverage duration",
-        "apr": "Annual percentage return",
+        "apr": "APR",
         "continue_link": "Continue to bundle overview"
     },
     "alert": {

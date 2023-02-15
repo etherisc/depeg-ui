@@ -21,12 +21,12 @@
     "error_wallet_balance_too_low": "The wallet does not contain enough {{currency}} to pay for the premium",
     "bundle_loading": "Fetching risk bundle information from blockchain",
     "premium_calculation_in_progress": "Premium is being calculated",
-    "approval_info": "To issue a policy, the GIF treasury contract at {{address}} needs permission to transfer {{currency}} {{amount}} to the Depeg Protection. Please confirm this allowance in your wallet app.",
-    "approval_wait": "Treasury allowance created, waiting for onchain confirmation",
-    "apply_info": "Please confirm execution of the policy application transaction on contract {{address}} in your wallet app",
+    "approval_info": "To issue a protection, two steps are needed. First - give Etherisc contract at {{address}} permission to take {{currency}} {{amount}} from your wallet.",
+    "approval_wait": "Allowance created, waiting for onchain confirmation ...",
+    "apply_info": "Second - please confirm issuing your protection on contract {{address}}",
     "apply_wait": "Transaction created, waiting for onchain confirmation",
     "bundles": {
-        "title": "Your policy can be covered by these bundles. Please select the bundle you want to use",
+        "title": "Please choose from the bundles below",
         "id": "ID",
         "name": "Name",
         "suminsured": "Min / max amount",
@@ -38,8 +38,8 @@
     "matched_bundle": "This policy will be protected by bundle '{{name}}' with an APR rate of {{apr}}%.",
     "confirmation": {
         "alert": {
-            "title": "Payment for Depeg protection premium confirmed",
-            "text": "Protection is now active."
+            "title": "Payment for Depeg protection premium confirmed, your protection is now active.",
+            "text": "{{currency}} {{amount}} in wallet {{walletAddress}} are protected against depeg until {{endDate}}. You policy ID is {{policyId}}."
         },
         "title": "Protection details",
         "id": "Id",
