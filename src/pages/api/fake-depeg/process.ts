@@ -14,7 +14,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    console.log("fake-depeg confirm called");
+    console.log("fake-depeg process called");
 
     if (process.env.NEXT_PUBLIC_FEATURE_FAKE_DEPEG_ENABLED !== 'true') {
         res.status(400).json({ });
@@ -60,7 +60,7 @@ export default async function handler(
         console.log("policies processed: ", processIds);
     }
     
-    console.log("fake-depeg confirm done");
+    console.log("fake-depeg process done");
     res.status(200).json({});
 }
 
