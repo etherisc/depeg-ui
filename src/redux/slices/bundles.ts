@@ -36,6 +36,9 @@ export const bundlesSlice = createSlice({
         showBundle(state, action: PayloadAction<BundleData|undefined>) {
             state.showBundle = action.payload;
         },
+        cleanup(state) {
+            state.showBundle = undefined;
+        },
     },
 });
 
@@ -44,6 +47,7 @@ export const {
     addBundle, reset, 
     startLoading, finishLoading,
     showBundle,
+    cleanup,
 } = bundlesSlice.actions;
 
 export default bundlesSlice.reducer;

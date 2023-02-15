@@ -3,18 +3,24 @@ import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { getBackendApi } from '../backend/backend_api';
 import Bundles from '../components/bundles/bundles';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { cleanup } from '../redux/slices/bundles';
 
 export default function BundlesPage() {
     const { enqueueSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
     const signer = useSelector((state: RootState) => state.chain.signer);
     const provider = useSelector((state: RootState) => state.chain.provider);
+    const dispatch = useDispatch();
     
+    useEffect(() => {
+        dispatch(cleanup());
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps 
+
     const backend = useMemo(() => getBackendApi(
         enqueueSnackbar,
         t,
