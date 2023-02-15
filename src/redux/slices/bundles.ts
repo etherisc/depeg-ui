@@ -4,11 +4,13 @@ import { BundleData } from '../../backend/bundle_data';
 
 export interface BundlesState {
     bundles: BundleData[];
+    showBundle: BundleData | undefined;
     isLoadingBundles: boolean;
 }
 
 const initialState: BundlesState = {
     bundles: [],
+    showBundle: undefined,
     isLoadingBundles: false,
 }
 
@@ -31,6 +33,9 @@ export const bundlesSlice = createSlice({
         finishLoading: (state) => {
             state.isLoadingBundles = false;
         },
+        showBundle(state, action: PayloadAction<BundleData|undefined>) {
+            state.showBundle = action.payload;
+        },
     },
 });
 
@@ -38,6 +43,7 @@ export const bundlesSlice = createSlice({
 export const { 
     addBundle, reset, 
     startLoading, finishLoading,
+    showBundle,
 } = bundlesSlice.actions;
 
 export default bundlesSlice.reducer;
