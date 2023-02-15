@@ -1,7 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import { BundleData } from '../../../src/backend/bundle_data';
 import handler from '../../../src/pages/api/bundles/stakeable';
-// import { getLastBlockTimestamp, getVoidSigner } from "../../../src/utils/chain";
 
 jest.mock('../../../src/utils/chain', () => ({
     ...(jest.requireActual('../../../src/utils/chain')),
@@ -10,6 +9,16 @@ jest.mock('../../../src/utils/chain', () => ({
 }));
 
 let bundles = [] as Array<BundleData>;
+
+// fake redis client
+jest.mock('redis', () => ({
+    createClient: jest.fn().mockImplementation(() => {
+        return {
+            on: jest.fn(),
+            connect: jest.fn(),
+        };
+    }),
+}));
 
 jest.mock('../../../src/utils/redis', () => ({
     ...(jest.requireActual('../../../src/utils/redis')),
