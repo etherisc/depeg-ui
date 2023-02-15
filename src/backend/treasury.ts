@@ -13,17 +13,18 @@ export async function createApprovalForTreasury(
         ): Promise<[ContractTransaction, ContractReceipt]> {
     console.log(`creating treasury approval for ${amount} token ${tokenAddress}`);
     const usd1 = getErc20Token(tokenAddress, signer);
+    const symbol = await usd1.symbol();
     const instanceService = await getInstanceService(registryAddress, signer);
     const treasury = await instanceService.getTreasuryAddress();
     console.log("treasury", treasury);
     if (beforeApprovalCallback !== undefined) {
-        beforeApprovalCallback(treasury, "", amount); // TODO: currency symbol
+        beforeApprovalCallback(treasury, symbol, amount); 
     }
     try {
         const tx = await usd1.approve(treasury, amount, { gasLimit: 100000 });
         console.log("tx done", tx)
         if (beforeWaitCallback !== undefined) {
-            beforeWaitCallback(treasury, "", amount); // TODO: currency symbol
+            beforeWaitCallback(treasury, symbol, amount); 
         }
         const receipt = await tx.wait();
         console.log("wait done", receipt, tx)
