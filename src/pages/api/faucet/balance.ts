@@ -15,7 +15,7 @@ export default async function handler(
 ) {
     const address = req.query.address as string;
 
-    console.log("faucet called for", address);
+    console.log("balance check called");
     const currency = process.env.NEXT_PUBLIC_DEPEG_USD2;
     const currencyDecimals = parseInt(process.env.NEXT_PUBLIC_DEPEG_USD2_DECIMALS ?? '6');
     const provider = new StaticJsonRpcProvider(process.env.NEXT_PUBLIC_CHAIN_RPC_URL);
