@@ -1,4 +1,5 @@
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { faFileSignature } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Alert, AlertTitle, Button, Card, CardActions, CardContent, Grid, Typography, useTheme } from "@mui/material";
 import { BigNumber } from "ethers";
@@ -34,7 +35,12 @@ export default function PolicyConfirmation(props: PolicyConfirmationProps) {
         <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={2} mt={{ 'xs': 0, 'md': 2 }} 
                 sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
             <Grid item xs={12}>
-                <Alert severity="success" variant="filled" sx={{ mb: 2 }}>
+                <Alert 
+                    severity="success" 
+                    variant="filled" 
+                    sx={{ mb: 2 }} 
+                    icon={<FontAwesomeIcon icon={faFileSignature} fontSize="4rem" />}
+                    >
                     <AlertTitle>{t('confirmation.alert.title')}</AlertTitle>
                     <Typography variant="body2">
                     {t('confirmation.alert.text', {

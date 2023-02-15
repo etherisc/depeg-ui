@@ -39,14 +39,9 @@
     "confirmation": {
         "alert": {
             "title": "Payment for Depeg protection premium confirmed, your protection is now active.",
-            "text": "{{currency}} {{amount}} in wallet {{walletAddress}} are protected against depeg until {{endDate}}. You policy ID is {{policyId}}."
+            "text": "{{currency}} {{amount}} in wallet {{walletAddress}} are protected against depeg until {{endDate}}. Your policy ID is {{policyId}}."
         },
-        "title": "Protection details",
-        "id": "Id",
-        "wallet": "Wallet",
-        "amount": "Amount",
-        "end_date": "End date",
-        "continue_link": "Continue to overview"
+        "continue_link": "Continue"
     },
     "alert": {
         "product_not_active": "Depeg Protection is not available for purchase at the moment. Please try again later.",
