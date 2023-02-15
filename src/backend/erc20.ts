@@ -1,8 +1,9 @@
 import { BigNumber, Signer } from "ethers";
+import { ERC20, ERC20__factory } from "../contracts/depeg-contracts";
 import { IERC20, IERC20__factory } from "../contracts/gif-interface";
 
-export function getErc20Token(address: string, signer: Signer): IERC20 {
-    return IERC20__factory.connect(address, signer);
+export function getErc20Token(address: string, signer: Signer): ERC20 {
+    return ERC20__factory.connect(address, signer);
 }
 
 /** Checks weather the given wallet has the expected balance */
