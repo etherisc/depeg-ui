@@ -122,8 +122,8 @@ To initiate a fake depeg event these steps are required
 
 1. Set environment variables 
     - `NEXT_PUBLIC_FEATURE_FAKE_DEPEG_ENABLED=true` 
-    - `NEXT_PUBLIC_FAKE_DEPEG_PRODUCT_OWNER_MNEMONIC=...`
-    - `NEXT_PUBLIC_FAKE_DEPEG_PRODUCT_OWNER_HD_WALLET_INDEX=x` - (optional) if the product owner is derived from a hd wallet 
+    - `NEXT_FAKE_DEPEG_PRODUCT_OWNER_MNEMONIC=...`
+    - `NEXT_FAKE_DEPEG_PRODUCT_OWNER_HD_WALLET_INDEX=x` - (optional) if the product owner is derived from a hd wallet 
 1. Use a PriceDataProvider that is fed through the `depeg-monitor` with fake prices
 1. Trigger a depeg event by calling an HTTP PUT to `/v1/feeder/set_state/triggered` on the depeg monitor
 1. Wait a bit for the price feed to go into triggered state (how long to wait depends in the price feed config)

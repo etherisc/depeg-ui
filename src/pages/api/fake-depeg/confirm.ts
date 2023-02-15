@@ -36,12 +36,12 @@ export default async function handler(
 
 
 function getProductOwnerSigner(): Signer {
-    const mnemonic = process.env.NEXT_PUBLIC_FAKE_DEPEG_PRODUCT_OWNER_MNEMONIC;
+    const mnemonic = process.env.NEXT_FAKE_DEPEG_PRODUCT_OWNER_MNEMONIC;
     if (!mnemonic) {
         throw new Error("Product owner mnemonic not set");
     }
 
-    const walletNumber = parseInt(process.env.NEXT_PUBLIC_FAKE_DEPEG_PRODUCT_OWNER_HD_WALLET_INDEX ?? '0');
+    const walletNumber = parseInt(process.env.NEXT_FAKE_DEPEG_PRODUCT_OWNER_HD_WALLET_INDEX ?? '0');
     const provider = new StaticJsonRpcProvider(process.env.NEXT_PUBLIC_CHAIN_RPC_URL);
     return ethers.Wallet.fromMnemonic(mnemonic, `m/44'/60'/0'/0/${walletNumber}`).connect(provider);
 }
