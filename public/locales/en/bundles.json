@@ -18,5 +18,6 @@
         "create_bundle": "Create new risk bundle",
         "all_mine_bundles": "Show all risk bundles",
         "details": "Show bundle"
-    }
+    },
+    "title_show_bundle": "Bundle"
 }
