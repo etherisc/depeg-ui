@@ -99,7 +99,7 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
   appProps.pageProps.title = t('apptitle_short');
 
   return (
-    <SnackbarProvider maxSnack={3}>
+    <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "center", vertical: "top" }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Layout {...appProps} />
       </LocalizationProvider>
