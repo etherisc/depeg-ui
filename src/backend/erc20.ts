@@ -1,6 +1,5 @@
 import { BigNumber, Signer } from "ethers";
 import { ERC20, ERC20__factory } from "../contracts/depeg-contracts";
-import { IERC20, IERC20__factory } from "../contracts/gif-interface";
 
 export function getErc20Token(address: string, signer: Signer): ERC20 {
     return ERC20__factory.connect(address, signer);
