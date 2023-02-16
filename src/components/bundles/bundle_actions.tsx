@@ -1,9 +1,12 @@
 import { Button, Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { BundleData } from "../../backend/bundle_data";
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 
 interface BundleActionsProps {
     bundle: BundleData;
+    connectedWallet: string;
     actions: {
         fund: (bundle: BundleData) => Promise<boolean>,
         withdraw: (bundle: BundleData) => Promise<boolean>,
@@ -16,7 +19,7 @@ interface BundleActionsProps {
 
 export default function BundleActions(props: BundleActionsProps) {
     const { t } = useTranslation('bundles');
-
+    
     // enum BundleState {
     //     Active,
     //     Locked,
@@ -25,12 +28,13 @@ export default function BundleActions(props: BundleActionsProps) {
     // }
 
     const state = props.bundle.state;
-    const isLockAllowed = state === 0;
-    const isUnlockAllowed = state === 1;
-    const isFundAllowed = state === 0 || state === 1;
-    const isWithdrawAllowed = state !== 3;
-    const isCloseAllowed = state === 0 || state === 1;
-    const isBurnAllowed = state === 2;
+    const isOwner = props.connectedWallet !== undefined && props.connectedWallet === props.bundle.owner;
+    const isLockAllowed = isOwner && (state === 0);
+    const isUnlockAllowed = isOwner && (state === 1);
+    const isFundAllowed = isOwner && (state === 0 || state === 1);
+    const isWithdrawAllowed = isOwner && (state !== 3);
+    const isCloseAllowed = isOwner && (state === 0 || state === 1);
+    const isBurnAllowed = isOwner && (state === 2);
 
     async function fund() {
         // TODO: implement this
@@ -108,5 +112,4 @@ export default function BundleActions(props: BundleActionsProps) {
         </Grid>}
     </Grid>);
 }
-
 

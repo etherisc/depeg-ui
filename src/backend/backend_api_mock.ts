@@ -39,7 +39,7 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
         application: applicationMock(enqueueSnackbar),
         invest: investMock(enqueueSnackbar),
         triggerBundleUpdate(bundleId: number) {
-            return Promise.resolve();
+            return Promise.resolve({} as BundleData);
         },
     } as BackendApi;
 }
@@ -226,5 +226,17 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         maxBundles(): Promise<number> {
             return Promise.resolve(100);
         },
+        async lockBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async unlockBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async closeBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async burnBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        }
     } as InvestApi;
 };

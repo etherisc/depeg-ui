@@ -45,6 +45,7 @@ describe('When displaying the bundle actions', () => {
         const baseDom = render(
             <BundleActions
                 bundle={bundle}
+                connectedWallet={bundle.owner}
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),
@@ -90,6 +91,7 @@ describe('When displaying the bundle actions', () => {
         const baseDom = render(
             <BundleActions
                 bundle={bundle}
+                connectedWallet={bundle.owner}
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),
@@ -135,6 +137,7 @@ describe('When displaying the bundle actions', () => {
         const baseDom = render(
             <BundleActions
                 bundle={bundle}
+                connectedWallet={bundle.owner}
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),
@@ -180,6 +183,7 @@ describe('When displaying the bundle actions', () => {
         const baseDom = render(
             <BundleActions
                 bundle={bundle}
+                connectedWallet={bundle.owner}
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),

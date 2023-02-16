@@ -166,4 +166,28 @@ export class InvestApiSmartContract implements InvestApi {
         return await(await this.riskpoolApi()).getMaxBundles();
     }
 
+    async lockBundle(
+        bundleId: number,
+        beforeTrxCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+    ): Promise<boolean> {
+        const [tx, receipt] = await (await this.riskpoolApi()).lockBundle(bundleId, beforeTrxCallback, beforeWaitCallback);
+        return true;
+    }
+
+    async unlockBundle(bundleId: number): Promise<boolean> {
+        // TODO : implement unlock
+        return true;
+    }
+
+    async closeBundle(bundleId: number): Promise<boolean> {
+        // TODO : implement close
+        return true;
+    }
+
+    async burnBundle(bundleId: number): Promise<boolean> {
+        // TODO : implement burn
+        return true;
+    }
+
 }

@@ -24,6 +24,12 @@ export const bundlesSlice = createSlice({
                 state.bundles.push(action.payload);
             }
         },
+        updateBundle: (state, action: PayloadAction<BundleData>) => {
+            const index = state.bundles.findIndex((bundle) => bundle.id === action.payload.id);
+            if (index !== -1) {
+                state.bundles[index] = action.payload;
+            }
+        },
         reset: (state) => {
             state.bundles = [];
         },
@@ -44,7 +50,7 @@ export const bundlesSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { 
-    addBundle, reset, 
+    addBundle, updateBundle, reset, 
     startLoading, finishLoading,
     showBundle,
     cleanup,

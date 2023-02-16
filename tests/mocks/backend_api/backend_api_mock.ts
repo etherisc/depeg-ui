@@ -4,6 +4,7 @@ import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import { BackendApi, ApplicationApi, InvestApi } from "../../../src/backend/backend_api";
 import { BundleData } from "../../../src/backend/bundle_data";
 import { PolicyData } from "../../../src/backend/policy_data";
+import { PriceFeedApi } from "../../../src/backend/price_feed/api";
 import { ProductState } from "../../../src/types/product_state";
 import { delay } from "../../../src/utils/delay";
 
@@ -38,9 +39,25 @@ export function mockSimple() {
         application: applicationMock(),
         invest: investMock(),
         triggerBundleUpdate(bundleId: number) {
-            return Promise.resolve();
+            return Promise.resolve({} as BundleData);
         },
-    } as BackendApi;
+        priceFeed: {
+            getLatestPrice(priceRetrieved: (price: PriceInfo, triggeredAt: number, depeggedAt: number) => void): Promise<void> { 
+                return Promise.resolve();
+            },
+            getPrice(roundId: BigNumber, priceRetrieved: (price: PriceInfo) => void): Promise<void> {
+                return Promise.resolve();
+            },
+            getAllPricesAfter(
+                after: number, 
+                priceRetrieved: (price: PriceInfo) => void,
+                loadingStarted: () => void,
+                loadingFinished: () => void,
+            ): Promise<void> {
+                return Promise.resolve();
+            }
+        } as PriceFeedApi,
+    };
 }
 
 const mockPolicies = [
@@ -170,5 +187,17 @@ function investMock() {
         maxBundles(): Promise<number> {
             return Promise.resolve(100);
         },
+        async lockBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async unlockBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async closeBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async burnBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        }
     } as InvestApi;
 };

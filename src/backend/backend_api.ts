@@ -40,7 +40,7 @@ export interface BackendApi {
     application: ApplicationApi;
     invest: InvestApi;
     priceFeed: PriceFeedApi;
-    triggerBundleUpdate: (bundleId: number) => Promise<void>;
+    triggerBundleUpdate: (bundleId: number) => Promise<BundleData>;
 }
 
 export interface ApplicationApi {
@@ -114,6 +114,26 @@ export interface InvestApi {
     bundleId(idx: number): Promise<number>;
     bundle(bundleId: number, walletAddress?: string): Promise<BundleData|undefined>;
     maxBundles(): Promise<number>;
+    lockBundle(
+        bundleId: number,
+        beforeTrxCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+        ): Promise<boolean>;
+    unlockBundle(
+        bundleId: number,
+        beforeTrxCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+        ): Promise<boolean>;
+    closeBundle(
+        bundleId: number,
+        beforeTrxCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+        ): Promise<boolean>;
+    burnBundle(
+        bundleId: number,
+        beforeTrxCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+        ): Promise<boolean>;
 }
 
 export function getBackendApi(

@@ -9,6 +9,8 @@ import { hasBalance } from "./erc20";
 import { PriceFeed } from "./price_feed/price_feed";
 import { PriceFeedApi } from "./price_feed/api";
 import { ProductState } from "../types/product_state";
+import { json } from "stream/consumers";
+import { BundleData } from "./bundle_data";
 
 export class BackendApiSmartContract implements BackendApi {
 
@@ -106,9 +108,15 @@ export class BackendApiSmartContract implements BackendApi {
         return await (await this.getProductApi()).getProductState();
     }
 
-    async triggerBundleUpdate(bundleId: number): Promise<void> {
-        // do not wait for result, just trigger it
-        fetch("/api/bundles/update?bundleId=" + bundleId);
+    async triggerBundleUpdate(bundleId: number): Promise<BundleData> {
+        const res = await fetch("/api/bundles/update?bundleId=" + bundleId);
+
+        if (res.status != 200) {
+            throw new Error(`invalid response from backend. statuscode ${res.status}. test: ${res.text}`);
+        }
+
+        const bundles = await res.json() as BundleData[];
+        return bundles[0];
     }
 }
 

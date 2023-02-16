@@ -102,7 +102,7 @@ export default function Invest(props: InvestProps) {
     }
 
     async function applicationSuccessful(bundleId: number) {
-        await props.backend.triggerBundleUpdate(bundleId);
+        props.backend.triggerBundleUpdate(bundleId);
 
         confetti({
             particleCount: 100,
