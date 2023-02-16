@@ -47,12 +47,10 @@ export default function BundleActions(props: BundleActionsProps) {
     }
 
     async function lock() {
-        // TODO: implement this
         await props.actions.lock(props.bundle);
     }
 
     async function unlock() {
-        // TODO: implement this
         await props.actions.unlock(props.bundle);
     }
 

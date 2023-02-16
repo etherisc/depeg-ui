@@ -272,5 +272,29 @@ export class DepegRiskpoolApi {
         }
     }
 
+    async unlockBundle(
+        bundleId: number,
+        beforeTrxCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("riskpoolapi - lockBundle");
+        const riskpoolAddress = this.depegRiskpool.address;
+        if (beforeTrxCallback) {
+            beforeTrxCallback(riskpoolAddress);
+        }
+        try {
+            const tx = await this.depegRiskpool.unlockBundle(bundleId);
+            if (beforeWaitCallback !== undefined) {
+                beforeWaitCallback(riskpoolAddress);
+            }
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while creating bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        }
+    }
+
 }
 

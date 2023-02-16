@@ -101,8 +101,70 @@ export default function ShowBundle(props: ShowBundleProps) {
     }
 
     async function unlock(bundle: BundleData): Promise<boolean> {
-        // TODO: implement unlock
-        return Promise.resolve(true);
+        const bundleId = bundle.id;
+        let snackbar: SnackbarKey | undefined = undefined;
+        try {
+            return await props.backend.invest.unlockBundle(
+                bundleId,
+                (address: string) => {
+                    snackbar = enqueueSnackbar(
+                        t('unlock_info', { address }),
+                        { variant: "warning", persist: true }
+                    );
+                },
+                () => {
+                    if (snackbar !== undefined) {
+                        closeSnackbar(snackbar);
+                    }
+                    snackbar = enqueueSnackbar(
+                        t('apply_wait'),
+                        { variant: "info", persist: true }
+                    );
+                });
+        } catch(e) { 
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                if (snackbar !== undefined) {
+                    closeSnackbar(snackbar);
+                }
+
+                enqueueSnackbar(
+                    t('error.transaction_failed', { ns: 'common', error: e.code }),
+                    { 
+                        variant: "error", 
+                        persist: true,
+                        action: (key) => {
+                            return (
+                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                            );
+                        }
+                    }
+                );
+                return false;
+            } else {
+                throw e;
+            }
+        } finally {
+            if (snackbar !== undefined) {
+                closeSnackbar(snackbar);
+            }
+
+            enqueueSnackbar(
+                t('unlock_successful'),
+                { 
+                    variant: "success", 
+                    persist: true,
+                    action: (key) => {
+                        return (
+                            <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                        );
+                    }
+                }
+            );
+
+            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
+            dispatch(updateBundle(updatedBundle));
+        }
     }
 
     async function close(bundle: BundleData): Promise<boolean> {
