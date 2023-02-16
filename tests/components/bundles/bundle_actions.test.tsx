@@ -1,11 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import StakeUsageIndicator from '../../../src/components/bundles/stake_usage_indicator';
-import { parseUnits } from 'ethers/lib/utils';
-import BundleDetails from '../../../src/components/bundles/bundle_details';
-import { BundleData } from '../../../src/backend/bundle_data';
-import dayjs from 'dayjs';
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
 import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
+import { BundleData } from '../../../src/backend/bundle_data';
 import BundleActions from '../../../src/components/bundles/bundle_actions';
 
 jest.mock('react-i18next', () => ({
@@ -48,6 +45,14 @@ describe('When displaying the bundle actions', () => {
         const baseDom = render(
             <BundleActions
                 bundle={bundle}
+                actions={{ 
+                    fund: jest.fn(),
+                    withdraw: jest.fn(),
+                    lock: jest.fn(),
+                    unlock: jest.fn(),
+                    close: jest.fn(),
+                    burn: jest.fn(),
+                }}
                 />
         );
 
@@ -85,6 +90,14 @@ describe('When displaying the bundle actions', () => {
         const baseDom = render(
             <BundleActions
                 bundle={bundle}
+                actions={{ 
+                    fund: jest.fn(),
+                    withdraw: jest.fn(),
+                    lock: jest.fn(),
+                    unlock: jest.fn(),
+                    close: jest.fn(),
+                    burn: jest.fn(),
+                }}
                 />
         );
 
@@ -122,6 +135,14 @@ describe('When displaying the bundle actions', () => {
         const baseDom = render(
             <BundleActions
                 bundle={bundle}
+                actions={{ 
+                    fund: jest.fn(),
+                    withdraw: jest.fn(),
+                    lock: jest.fn(),
+                    unlock: jest.fn(),
+                    close: jest.fn(),
+                    burn: jest.fn(),
+                }}
                 />
         );
 
@@ -159,6 +180,14 @@ describe('When displaying the bundle actions', () => {
         const baseDom = render(
             <BundleActions
                 bundle={bundle}
+                actions={{ 
+                    fund: jest.fn(),
+                    withdraw: jest.fn(),
+                    lock: jest.fn(),
+                    unlock: jest.fn(),
+                    close: jest.fn(),
+                    burn: jest.fn(),
+                }}
                 />
         );
 
