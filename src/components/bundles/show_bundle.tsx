@@ -96,6 +96,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             );
 
             const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
+            console.log("updated bundle", updatedBundle);
             dispatch(updateBundle(updatedBundle));
         }
     }
@@ -163,6 +164,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             );
 
             const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
+            console.log("updated bundle", updatedBundle);
             dispatch(updateBundle(updatedBundle));
         }
     }

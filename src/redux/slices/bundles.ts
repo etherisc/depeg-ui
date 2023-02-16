@@ -28,6 +28,9 @@ export const bundlesSlice = createSlice({
             const index = state.bundles.findIndex((bundle) => bundle.id === action.payload.id);
             if (index !== -1) {
                 state.bundles[index] = action.payload;
+                if (state.showBundle?.id === action.payload.id) {
+                    state.showBundle = action.payload;
+                }
             }
         },
         reset: (state) => {
