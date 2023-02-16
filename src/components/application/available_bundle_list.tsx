@@ -120,8 +120,12 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
     }
 
     const StyledTableRow = styled(TableRow)(({ theme }) => ({
+        '&:nth-of-type(odd)': {
+            cursor: 'pointer',
+        },
         '&:nth-of-type(even)': {
             backgroundColor: blueGrey[50],
+            cursor: 'pointer',
         },
         '&.Mui-selected': {
             backgroundColor: blue[200],
