@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { showBundle } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
+import BundleActions from "./bundle_actions";
 import BundleDetails from "./bundle_details";
 
 interface ShowBundleProps {
@@ -35,7 +36,7 @@ export default function ShowBundle(props: ShowBundleProps) {
                 <BundleDetails bundle={bundle!} currency={props.backend.usd2} decimals={props.backend.usd2Decimals} />
             </Grid>
             <Grid item xs={12} md={6}>
-                Actions
+                <BundleActions bundle={bundle!} />
             </Grid>
         </Grid>
     </>);
