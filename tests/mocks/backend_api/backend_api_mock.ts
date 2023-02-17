@@ -198,6 +198,9 @@ function investMock() {
         },
         async burnBundle(bundleId: number): Promise<boolean> {
             return Promise.resolve(true);
-        }
+        },
+        async withdrawBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
+            return Promise.resolve(true);
+        },
     } as InvestApi;
 };

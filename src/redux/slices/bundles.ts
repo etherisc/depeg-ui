@@ -4,14 +4,18 @@ import { BundleData } from '../../backend/bundle_data';
 
 export interface BundlesState {
     bundles: BundleData[];
-    showBundle: BundleData | undefined;
     isLoadingBundles: boolean;
+    // if not undefined this will show the bundle details for the given bundle
+    showBundle: BundleData | undefined;
+    // if true this will show the withdraw dialog for the bundle
+    isShowBundleWithdraw: boolean;
 }
 
 const initialState: BundlesState = {
     bundles: [],
     showBundle: undefined,
     isLoadingBundles: false,
+    isShowBundleWithdraw: false,
 }
 
 export const bundlesSlice = createSlice({
@@ -47,6 +51,10 @@ export const bundlesSlice = createSlice({
         },
         cleanup(state) {
             state.showBundle = undefined;
+            state.isShowBundleWithdraw = false;
+        },
+        showBundleWithdraw(state, action: PayloadAction<boolean>) {
+            state.isShowBundleWithdraw = action.payload;
         },
     },
 });
@@ -57,6 +65,7 @@ export const {
     startLoading, finishLoading,
     showBundle,
     cleanup,
+    showBundleWithdraw,
 } = bundlesSlice.actions;
 
 export default bundlesSlice.reducer;

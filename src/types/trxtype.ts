@@ -3,4 +3,5 @@ export enum TrxType {
     BUNDLE_UNLOCK,
     BUNDLE_CLOSE,
     BUNDLE_BURN,
+    BUNDLE_WITHDRAW
 }

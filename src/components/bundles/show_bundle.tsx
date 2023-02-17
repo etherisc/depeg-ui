@@ -1,17 +1,19 @@
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Grid, Typography } from "@mui/material";
+import { BigNumber } from "ethers";
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
 import useTransactionNotifications from "../../hooks/trx_notifications";
-import { showBundle, updateBundle } from "../../redux/slices/bundles";
+import { showBundle, updateBundle,showBundleWithdraw } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { TransactionFailedError } from "../../utils/error";
 import BundleActions from "./bundle_actions";
 import BundleDetails from "./bundle_details";
+import BundleWithdrawForm from "./bundle_withdraw_form";
 
 interface ShowBundleProps {
     backend: BackendApi;
@@ -19,11 +21,13 @@ interface ShowBundleProps {
 
 export default function ShowBundle(props: ShowBundleProps) {
     const { t } = useTranslation('bundles');
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const dispatch = useDispatch();
+
     const bundle = useSelector((state: RootState) => state.bundles.showBundle);
     const connectedWalletAddress = useSelector((state: RootState) => state.account.address);
-    const dispatch = useDispatch();
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
+    const isShowBundleWithdraw = useSelector((state: RootState) => state.bundles.isShowBundleWithdraw);
+    
     useTransactionNotifications();
 
     async function fund(bundle: BundleData): Promise<boolean> {
@@ -32,8 +36,28 @@ export default function ShowBundle(props: ShowBundleProps) {
     }
 
     async function withdraw(bundle: BundleData): Promise<boolean> {
-        // TODO: implement withdraw
+        dispatch(showBundleWithdraw(true));
         return Promise.resolve(true);
+    }
+
+    async function withdrawAmount(bundleId: number, amount: BigNumber): Promise<boolean> {
+        try {
+            return await props.backend.invest.withdrawBundle(bundleId, amount);
+        } catch(e) {
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                showTrxFailedNotification(e);
+                return false;
+            } else {
+                throw e;
+            }
+        } finally {
+            dispatch(showBundleWithdraw(false));
+            showSuccessNotification(t('withdraw_successful'));
+            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
+            console.log("updated bundle", updatedBundle);
+            dispatch(updateBundle(updatedBundle));
+        }
     }
 
     async function lock(bundle: BundleData): Promise<boolean> {
@@ -176,6 +200,13 @@ export default function ShowBundle(props: ShowBundleProps) {
                         burn,
                     }}
                     />
+                { isShowBundleWithdraw && <BundleWithdrawForm 
+                        bundle={bundle!} 
+                        currency={props.backend.usd2} 
+                        decimals={props.backend.usd2Decimals} 
+                        doWithdraw={withdrawAmount}
+                        />
+                }
             </Grid>
         </Grid>
     </>);

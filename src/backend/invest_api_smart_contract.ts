@@ -194,4 +194,10 @@ export class InvestApiSmartContract implements InvestApi {
         return receipt.status === 1;
     }
 
+    async withdrawBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
+        const [tx, receipt] = await (await this.riskpoolApi()).withdrawBundle(bundleId, amount);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
+    }
+
 }

@@ -275,7 +275,7 @@ export class DepegRiskpoolApi {
     async unlockBundle(
         bundleId: number,
     ): Promise<[ContractTransaction, ContractReceipt]> {
-        console.log("riskpoolapi - lockBundle");
+        console.log("riskpoolapi - unlockBundle");
         const riskpoolAddress = this.depegRiskpool.address;
         store.dispatch(start({ type: TrxType.BUNDLE_UNLOCK }));
         store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
@@ -296,7 +296,7 @@ export class DepegRiskpoolApi {
     async closeBundle(
         bundleId: number,
     ): Promise<[ContractTransaction, ContractReceipt]> {
-        console.log("riskpoolapi - lockBundle");
+        console.log("riskpoolapi - closeBundle");
         const riskpoolAddress = this.depegRiskpool.address;
         store.dispatch(start({ type: TrxType.BUNDLE_CLOSE }));
         store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
@@ -317,7 +317,7 @@ export class DepegRiskpoolApi {
     async burnBundle(
         bundleId: number,
     ): Promise<[ContractTransaction, ContractReceipt]> {
-        console.log("riskpoolapi - lockBundle");
+        console.log("riskpoolapi - burnBundle");
         const riskpoolAddress = this.depegRiskpool.address;
         store.dispatch(start({ type: TrxType.BUNDLE_BURN }));
         store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
@@ -328,6 +328,28 @@ export class DepegRiskpoolApi {
             return Promise.resolve([tx, receipt]);
         } catch (e) {
             console.log("caught error while burning bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
+    async withdrawBundle(
+        bundleId: number,
+        amount: BigNumber,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("riskpoolapi - withdrawBundle");
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_WITHDRAW }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            const tx = await this.depegRiskpool.defundBundle(bundleId, amount);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while withdrawing from bundle: ", e);
             // @ts-ignore e.code
             throw new TransactionFailedError(e.code, e);
         } finally {

@@ -237,6 +237,9 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         },
         async burnBundle(bundleId: number): Promise<boolean> {
             return Promise.resolve(true);
-        }
+        },
+        async withdrawBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
     } as InvestApi;
 };
