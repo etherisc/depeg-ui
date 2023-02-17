@@ -16,7 +16,7 @@ export default function useTransactionNotifications() {
     const trxWaitingForTransactionParams = useSelector((state: RootState) => state.transaction.waitingForTransactionParams);
 
     useEffect(() => {
-        console.log("trxIsActive", trxIsActive);
+        // console.log("trxIsActive", trxIsActive);
         if (trxIsActive !== null) {
             if (trxIsWaitingForUser) {
                 switch (trxIsActive) {

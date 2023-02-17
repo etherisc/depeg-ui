@@ -23,7 +23,7 @@ export const transactionSlice = createSlice({
     initialState,
     reducers: {
         start: (state, action: PayloadAction<{ type?: TrxType }>) => {
-            console.log('start', action.payload.type);
+            // console.log('start', action.payload.type);
             state.isActive = action.payload.type !== undefined ? action.payload.type : null;
         },
         finish: (state) => {
@@ -35,7 +35,7 @@ export const transactionSlice = createSlice({
         },
         // waiting for user to sign a transaction in the wallet
         waitingForUser: (state, action: PayloadAction<{ active: boolean, params?: any }>) => {
-            console.log('waitingForUser', action.payload.active, action.payload.params);
+            // console.log('waitingForUser', action.payload.active, action.payload.params);
             state.isWaitingForUser = action.payload.active;
             state.waitingForUserParams = action.payload.params || {};
         },
@@ -43,7 +43,7 @@ export const transactionSlice = createSlice({
         waitingForTransaction: (state, action: PayloadAction<{ active: boolean, params?: any }>) => {
             state.isWaitingForUser = false;
             state.waitingForUserParams = {};
-            console.log('waitingForTransaction', action.payload.active, action.payload.params);
+            // console.log('waitingForTransaction', action.payload.active, action.payload.params);
             state.isWaitingForTransaction = action.payload.active;
             state.waitingForTransactionParams = action.payload.params || {};
         },
