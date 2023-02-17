@@ -183,13 +183,15 @@ export class InvestApiSmartContract implements InvestApi {
     }
 
     async closeBundle(bundleId: number): Promise<boolean> {
-        // TODO : implement close
-        return true;
+        const [tx, receipt] = await (await this.riskpoolApi()).closeBundle(bundleId);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
     }
 
     async burnBundle(bundleId: number): Promise<boolean> {
-        // TODO : implement burn
-        return true;
+        const [tx, receipt] = await (await this.riskpoolApi()).burnBundle(bundleId);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
     }
 
 }

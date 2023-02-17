@@ -19,16 +19,40 @@ export default function useTransactionNotifications() {
         console.log("trxIsActive", trxIsActive);
         if (trxIsActive !== null) {
             if (trxIsWaitingForUser) {
-                if (trxIsActive === TrxType.BUNDLE_LOCK) {                
-                    enqueueSnackbar(
-                        t('lock_info', { trxWaitingForUserParams }),
-                        { variant: "warning", persist: true }
-                    );
-                } else if (trxIsActive === TrxType.BUNDLE_UNLOCK) {
-                    enqueueSnackbar(
-                        t('unlock_info', { trxWaitingForUserParams }),
-                        { variant: "warning", persist: true }
-                    );
+                switch (trxIsActive) {
+                    case TrxType.BUNDLE_LOCK:
+                        enqueueSnackbar(
+                            t('lock_info', { trxWaitingForUserParams }),
+                            { variant: "warning", persist: true }
+                        );
+                        break;
+
+                    case TrxType.BUNDLE_UNLOCK:
+                        enqueueSnackbar(
+                            t('unlock_info', { trxWaitingForUserParams }),
+                            { variant: "warning", persist: true }
+                        );
+                        break;
+
+                    case TrxType.BUNDLE_CLOSE:
+                        enqueueSnackbar(
+                            t('close_info', { trxWaitingForUserParams }),
+                            { variant: "warning", persist: true }
+                        );
+                        break;
+
+                    case TrxType.BUNDLE_BURN:
+                        enqueueSnackbar(
+                            t('burn_info', { trxWaitingForUserParams }),
+                            { variant: "warning", persist: true }
+                        );
+                        break;
+
+                    default:
+                        enqueueSnackbar(
+                            t('trx_info', { ns: "common", trxWaitingForUserParams }),
+                            { variant: "warning", persist: true }
+                        );
                 }
             } else if (trxIsWaitingForTransaction) {
                 closeSnackbar();

@@ -264,7 +264,7 @@ export class DepegRiskpoolApi {
             const receipt = await tx.wait();
             return Promise.resolve([tx, receipt]);
         } catch (e) {
-            console.log("caught error while creating bundle: ", e);
+            console.log("caught error while locking bundle: ", e);
             // @ts-ignore e.code
             throw new TransactionFailedError(e.code, e);
         } finally {
@@ -274,8 +274,6 @@ export class DepegRiskpoolApi {
 
     async unlockBundle(
         bundleId: number,
-        beforeTrxCallback?: (address: string) => void,
-        beforeWaitCallback?: (address: string) => void,
     ): Promise<[ContractTransaction, ContractReceipt]> {
         console.log("riskpoolapi - lockBundle");
         const riskpoolAddress = this.depegRiskpool.address;
@@ -287,7 +285,49 @@ export class DepegRiskpoolApi {
             const receipt = await tx.wait();
             return Promise.resolve([tx, receipt]);
         } catch (e) {
-            console.log("caught error while creating bundle: ", e);
+            console.log("caught error while unlocking bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
+    async closeBundle(
+        bundleId: number,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("riskpoolapi - lockBundle");
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_CLOSE }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            const tx = await this.depegRiskpool.closeBundle(bundleId);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while closing bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
+    async burnBundle(
+        bundleId: number,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("riskpoolapi - lockBundle");
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_BURN }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            const tx = await this.depegRiskpool.burnBundle(bundleId);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while burning bundle: ", e);
             // @ts-ignore e.code
             throw new TransactionFailedError(e.code, e);
         } finally {

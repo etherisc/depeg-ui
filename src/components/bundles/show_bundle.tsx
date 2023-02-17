@@ -77,13 +77,43 @@ export default function ShowBundle(props: ShowBundleProps) {
     }
 
     async function close(bundle: BundleData): Promise<boolean> {
-        // TODO: implement close  
-        return Promise.resolve(true);
+        const bundleId = bundle.id;
+        try {
+            return await props.backend.invest.closeBundle(bundleId);
+        } catch(e) { 
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                showTrxFailedNotification(e);
+                return false;
+            } else {
+                throw e;
+            }
+        } finally {
+            showSuccessNotification(t('unlock_successful'));
+            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
+            console.log("updated bundle", updatedBundle);
+            dispatch(updateBundle(updatedBundle));
+        }
     }
 
     async function burn(bundle: BundleData): Promise<boolean> {
-        // TODO: implement burn
-        return Promise.resolve(true);
+        const bundleId = bundle.id;
+        try {
+            return await props.backend.invest.burnBundle(bundleId);
+        } catch(e) { 
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                showTrxFailedNotification(e);
+                return false;
+            } else {
+                throw e;
+            }
+        } finally {
+            showSuccessNotification(t('unlock_successful'));
+            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
+            console.log("updated bundle", updatedBundle);
+            dispatch(updateBundle(updatedBundle));
+        }
     }
 
     function showTrxFailedNotification(e: TransactionFailedError) {
