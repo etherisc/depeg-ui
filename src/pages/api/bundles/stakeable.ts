@@ -22,6 +22,13 @@ export default async function handler(
     const lastBlockTimestamp = await getLastBlockTimestamp(await getVoidSigner());
 
     res.status(200).json(bundles.filter(bundle => {
+        // TODO: MZ is this correct for replacement of getActiveBundleIds ... when exactly is a bundle in _activeBundleIds?
+        // ignore bundles with state not active
+        if (bundle.state !== 0) {
+            console.log("bundle not active", bundle.id);
+            return false;
+        }
+
         // ignore expired bundles
         if (lastBlockTimestamp > (bundle.createdAt + parseInt(bundle.lifetime))) {
             console.log("bundle expired", bundle.id);
