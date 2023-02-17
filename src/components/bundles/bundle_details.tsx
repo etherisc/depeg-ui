@@ -32,6 +32,7 @@ export default function BundleDetails(props: BundleDetailsProps) {
     return (<>
         <Grid container spacing={1} data-testid="bundle-details">
             <NameValue name={t('state')} value={t('bundle_state_' + state, { ns: 'common'})}/>
+            {/* TODO MZ: difference between balance and capacity? -> make note in ui */}
             <NameValue name={t('balance')} value={symbol + " " + formatCurrencyBN(balance, props.decimals)}/>
             <NameValue name={t('capacity')} value={symbol + " " + formatCurrencyBN(capacity, props.decimals)}/>
             <NameValue name={t('locked')} value={symbol + " " + formatCurrencyBN(locked, props.decimals)}/>
