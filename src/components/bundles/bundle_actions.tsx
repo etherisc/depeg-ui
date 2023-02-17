@@ -3,6 +3,7 @@ import { useTranslation } from "next-i18next";
 import { BundleData } from "../../backend/bundle_data";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
 
 interface BundleActionsProps {
     bundle: BundleData;

@@ -7,6 +7,9 @@ import { TransactionFailedError } from "../utils/error";
 import StakingApi from "./staking_api";
 import { isStakingSupported } from "../utils/staking";
 import { parseUnits } from "ethers/lib/utils";
+import { store } from "../redux/store";
+import { finish, start, waitingForTransaction, waitingForUser } from "../redux/slices/transaction";
+import { TrxType } from "../types/trxtype";
 
 export class DepegRiskpoolApi {
 
@@ -250,25 +253,24 @@ export class DepegRiskpoolApi {
 
     async lockBundle(
         bundleId: number,
-        beforeTrxCallback?: (address: string) => void,
-        beforeWaitCallback?: (address: string) => void,
     ): Promise<[ContractTransaction, ContractReceipt]> {
         console.log("riskpoolapi - lockBundle");
         const riskpoolAddress = this.depegRiskpool.address;
-        if (beforeTrxCallback) {
-            beforeTrxCallback(riskpoolAddress);
-        }
+        store.dispatch(start({ type: TrxType.BUNDLE_LOCK }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
         try {
             const tx = await this.depegRiskpool.lockBundle(bundleId);
-            if (beforeWaitCallback !== undefined) {
-                beforeWaitCallback(riskpoolAddress);
-            }
+            store.dispatch(waitingForUser({ active: false}));
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
             const receipt = await tx.wait();
+            store.dispatch(waitingForTransaction({ active: false}));
             return Promise.resolve([tx, receipt]);
         } catch (e) {
             console.log("caught error while creating bundle: ", e);
             // @ts-ignore e.code
             throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
         }
     }
 
@@ -279,6 +281,7 @@ export class DepegRiskpoolApi {
     ): Promise<[ContractTransaction, ContractReceipt]> {
         console.log("riskpoolapi - lockBundle");
         const riskpoolAddress = this.depegRiskpool.address;
+        
         if (beforeTrxCallback) {
             beforeTrxCallback(riskpoolAddress);
         }

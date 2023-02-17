@@ -116,8 +116,6 @@ export interface InvestApi {
     maxBundles(): Promise<number>;
     lockBundle(
         bundleId: number,
-        beforeTrxCallback?: (address: string) => void,
-        beforeWaitCallback?: (address: string) => void,
         ): Promise<boolean>;
     unlockBundle(
         bundleId: number,

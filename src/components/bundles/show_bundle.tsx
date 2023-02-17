@@ -6,7 +6,8 @@ import { SnackbarKey, useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
-import { addBundle, showBundle, updateBundle } from "../../redux/slices/bundles";
+import useTransactionNotifications from "../../hooks/trx_notifications";
+import { showBundle, updateBundle } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { TransactionFailedError } from "../../utils/error";
 import BundleActions from "./bundle_actions";
@@ -23,6 +24,8 @@ export default function ShowBundle(props: ShowBundleProps) {
     const dispatch = useDispatch();
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+    useTransactionNotifications();
+
     async function fund(bundle: BundleData): Promise<boolean> {
         // TODO: implement fund
         return Promise.resolve(true);   
@@ -35,31 +38,11 @@ export default function ShowBundle(props: ShowBundleProps) {
 
     async function lock(bundle: BundleData): Promise<boolean> {
         const bundleId = bundle.id;
-        let snackbar: SnackbarKey | undefined = undefined;
         try {
-            return await props.backend.invest.lockBundle(
-                bundleId,
-                (address: string) => {
-                    snackbar = enqueueSnackbar(
-                        t('lock_info', { address }),
-                        { variant: "warning", persist: true }
-                    );
-                },
-                () => {
-                    if (snackbar !== undefined) {
-                        closeSnackbar(snackbar);
-                    }
-                    snackbar = enqueueSnackbar(
-                        t('apply_wait'),
-                        { variant: "info", persist: true }
-                    );
-                });
-        } catch(e) { 
+            return await props.backend.invest.lockBundle(bundleId);
+        } catch(e) {
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
-                if (snackbar !== undefined) {
-                    closeSnackbar(snackbar);
-                }
 
                 enqueueSnackbar(
                     t('error.transaction_failed', { ns: 'common', error: e.code }),
@@ -78,10 +61,6 @@ export default function ShowBundle(props: ShowBundleProps) {
                 throw e;
             }
         } finally {
-            if (snackbar !== undefined) {
-                closeSnackbar(snackbar);
-            }
-
             enqueueSnackbar(
                 t('lock_successful'),
                 { 
