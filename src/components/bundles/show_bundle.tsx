@@ -2,7 +2,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Grid, Typography } from "@mui/material";
 import { useTranslation } from "next-i18next";
-import { SnackbarKey, useSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
@@ -43,37 +43,13 @@ export default function ShowBundle(props: ShowBundleProps) {
         } catch(e) {
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
-
-                enqueueSnackbar(
-                    t('error.transaction_failed', { ns: 'common', error: e.code }),
-                    { 
-                        variant: "error", 
-                        persist: true,
-                        action: (key) => {
-                            return (
-                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                            );
-                        }
-                    }
-                );
+                showTrxFailedNotification(e);
                 return false;
             } else {
                 throw e;
             }
         } finally {
-            enqueueSnackbar(
-                t('lock_successful'),
-                { 
-                    variant: "success", 
-                    persist: true,
-                    action: (key) => {
-                        return (
-                            <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                        );
-                    }
-                }
-            );
-
+            showSuccessNotification(t('unlock_successful'));
             const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
             console.log("updated bundle", updatedBundle);
             dispatch(updateBundle(updatedBundle));
@@ -82,50 +58,18 @@ export default function ShowBundle(props: ShowBundleProps) {
 
     async function unlock(bundle: BundleData): Promise<boolean> {
         const bundleId = bundle.id;
-        let snackbar: SnackbarKey | undefined = undefined;
         try {
             return await props.backend.invest.unlockBundle(bundleId);
         } catch(e) { 
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
-                if (snackbar !== undefined) {
-                    closeSnackbar(snackbar);
-                }
-
-                enqueueSnackbar(
-                    t('error.transaction_failed', { ns: 'common', error: e.code }),
-                    { 
-                        variant: "error", 
-                        persist: true,
-                        action: (key) => {
-                            return (
-                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                            );
-                        }
-                    }
-                );
+                showTrxFailedNotification(e);
                 return false;
             } else {
                 throw e;
             }
         } finally {
-            if (snackbar !== undefined) {
-                closeSnackbar(snackbar);
-            }
-
-            enqueueSnackbar(
-                t('unlock_successful'),
-                { 
-                    variant: "success", 
-                    persist: true,
-                    action: (key) => {
-                        return (
-                            <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                        );
-                    }
-                }
-            );
-
+            showSuccessNotification(t('unlock_successful'));
             const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
             console.log("updated bundle", updatedBundle);
             dispatch(updateBundle(updatedBundle));
@@ -140,6 +84,36 @@ export default function ShowBundle(props: ShowBundleProps) {
     async function burn(bundle: BundleData): Promise<boolean> {
         // TODO: implement burn
         return Promise.resolve(true);
+    }
+
+    function showTrxFailedNotification(e: TransactionFailedError) {
+        enqueueSnackbar(
+            t('error.transaction_failed', { ns: 'common', error: e.code }),
+            { 
+                variant: "error", 
+                persist: true,
+                action: (key) => {
+                    return (
+                        <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                    );
+                }
+            }
+        );
+    }
+
+    function showSuccessNotification(text: string) {
+        enqueueSnackbar(
+            text,
+            { 
+                variant: "success", 
+                persist: true,
+                action: (key) => {
+                    return (
+                        <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
+                    );
+                }
+            }
+        );
     }
     
     return (<>

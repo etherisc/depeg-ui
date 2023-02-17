@@ -20,12 +20,12 @@ export default function useTransactionNotifications() {
         if (trxIsActive !== null) {
             if (trxIsWaitingForUser) {
                 if (trxIsActive === TrxType.BUNDLE_LOCK) {                
-                    const key = enqueueSnackbar(
+                    enqueueSnackbar(
                         t('lock_info', { trxWaitingForUserParams }),
                         { variant: "warning", persist: true }
                     );
                 } else if (trxIsActive === TrxType.BUNDLE_UNLOCK) {
-                    const key = enqueueSnackbar(
+                    enqueueSnackbar(
                         t('unlock_info', { trxWaitingForUserParams }),
                         { variant: "warning", persist: true }
                     );
