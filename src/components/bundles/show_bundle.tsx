@@ -84,23 +84,7 @@ export default function ShowBundle(props: ShowBundleProps) {
         const bundleId = bundle.id;
         let snackbar: SnackbarKey | undefined = undefined;
         try {
-            return await props.backend.invest.unlockBundle(
-                bundleId,
-                (address: string) => {
-                    snackbar = enqueueSnackbar(
-                        t('unlock_info', { address }),
-                        { variant: "warning", persist: true }
-                    );
-                },
-                () => {
-                    if (snackbar !== undefined) {
-                        closeSnackbar(snackbar);
-                    }
-                    snackbar = enqueueSnackbar(
-                        t('apply_wait'),
-                        { variant: "info", persist: true }
-                    );
-                });
+            return await props.backend.invest.unlockBundle(bundleId);
         } catch(e) { 
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);

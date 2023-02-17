@@ -33,12 +33,16 @@ export const transactionSlice = createSlice({
             state.isWaitingForTransaction = false;
             state.waitingForTransactionParams = {};
         },
+        // waiting for user to sign a transaction in the wallet
         waitingForUser: (state, action: PayloadAction<{ active: boolean, params?: any }>) => {
             console.log('waitingForUser', action.payload.active, action.payload.params);
             state.isWaitingForUser = action.payload.active;
             state.waitingForUserParams = action.payload.params || {};
         },
+        // waiting for transaction to be mined
         waitingForTransaction: (state, action: PayloadAction<{ active: boolean, params?: any }>) => {
+            state.isWaitingForUser = false;
+            state.waitingForUserParams = {};
             console.log('waitingForTransaction', action.payload.active, action.payload.params);
             state.isWaitingForTransaction = action.payload.active;
             state.waitingForTransactionParams = action.payload.params || {};

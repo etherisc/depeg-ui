@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next";
-import { useSnackbar } from "notistack";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { SnackbarKey, useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { TrxType } from "../types/trxtype";
 
@@ -18,21 +18,24 @@ export default function useTransactionNotifications() {
     useEffect(() => {
         console.log("trxIsActive", trxIsActive);
         if (trxIsActive !== null) {
-            if (trxIsActive === TrxType.BUNDLE_LOCK) {
-                if (trxIsWaitingForUser) {
+            if (trxIsWaitingForUser) {
+                if (trxIsActive === TrxType.BUNDLE_LOCK) {                
                     const key = enqueueSnackbar(
                         t('lock_info', { trxWaitingForUserParams }),
                         { variant: "warning", persist: true }
                     );
-                } else if (trxIsWaitingForTransaction) {
-                    closeSnackbar();
-                    enqueueSnackbar(
-                        t('apply_wait'),
-                        { variant: "info", persist: true }
+                } else if (trxIsActive === TrxType.BUNDLE_UNLOCK) {
+                    const key = enqueueSnackbar(
+                        t('unlock_info', { trxWaitingForUserParams }),
+                        { variant: "warning", persist: true }
                     );
-                } else {
-                    closeSnackbar();
                 }
+            } else if (trxIsWaitingForTransaction) {
+                closeSnackbar();
+                enqueueSnackbar(
+                    t('apply_wait'),
+                    { variant: "info", persist: true }
+                );
             }
         } else {
             closeSnackbar();

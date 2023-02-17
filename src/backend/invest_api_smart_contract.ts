@@ -176,10 +176,8 @@ export class InvestApiSmartContract implements InvestApi {
 
     async unlockBundle(
         bundleId: number,
-        beforeTrxCallback?: (address: string) => void,
-        beforeWaitCallback?: (address: string) => void,
     ): Promise<boolean> {
-        const [tx, receipt] = await (await this.riskpoolApi()).unlockBundle(bundleId, beforeTrxCallback, beforeWaitCallback);
+        const [tx, receipt] = await (await this.riskpoolApi()).unlockBundle(bundleId);
         console.log("tx", tx, "receipt", receipt);
         return receipt.status === 1;
     }

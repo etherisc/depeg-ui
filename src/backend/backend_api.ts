@@ -119,18 +119,12 @@ export interface InvestApi {
         ): Promise<boolean>;
     unlockBundle(
         bundleId: number,
-        beforeTrxCallback?: (address: string) => void,
-        beforeWaitCallback?: (address: string) => void,
         ): Promise<boolean>;
     closeBundle(
         bundleId: number,
-        beforeTrxCallback?: (address: string) => void,
-        beforeWaitCallback?: (address: string) => void,
         ): Promise<boolean>;
     burnBundle(
         bundleId: number,
-        beforeTrxCallback?: (address: string) => void,
-        beforeWaitCallback?: (address: string) => void,
         ): Promise<boolean>;
 }
 
