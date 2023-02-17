@@ -38,12 +38,10 @@ export default function BundleActions(props: BundleActionsProps) {
     const isBurnAllowed = isOwner && (state === 2);
 
     async function fund() {
-        // TODO: implement this
         await props.actions.fund(props.bundle);
     }
 
     async function withdraw() {
-        // TODO: implement this
         await props.actions.withdraw(props.bundle);
     }
 
@@ -56,12 +54,10 @@ export default function BundleActions(props: BundleActionsProps) {
     }
 
     async function close() {
-        // TODO: implement this
         await props.actions.close(props.bundle);
     }
 
     async function burn() {
-        // TODO: implement this
         await props.actions.burn(props.bundle);
     }
 
