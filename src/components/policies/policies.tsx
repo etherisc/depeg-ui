@@ -1,34 +1,34 @@
-import Typography from "@mui/material/Typography";
-import { useTranslation } from "next-i18next";
-import { useCallback, useEffect, useState } from "react";
-import { BackendApi } from "../../backend/backend_api";
-import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, GridScrollParams, GridSortCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
-import Button from "@mui/material/Button";
+import { faFileInvoiceDollar, faHandHoldingDollar, faInfoCircle, faShieldHalved, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Alert, AlertTitle } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { grey } from "@mui/material/colors";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import { LinkBehaviour } from "../link_behaviour";
-import Link from "@mui/material/Link";
-import { ClaimData, PAYOUT_STATE_EXPECTED, PolicyData, PolicyState } from "../../backend/policy_data";
 import LinearProgress from "@mui/material/LinearProgress";
+import Link from "@mui/material/Link";
+import Switch from "@mui/material/Switch";
+import Typography from "@mui/material/Typography";
+import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, GridSortCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { BigNumber } from "ethers";
+import { useTranslation } from "next-i18next";
+import { SnackbarKey, useSnackbar } from "notistack";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { BackendApi } from "../../backend/backend_api";
+import { ClaimData, PolicyData, PolicyState } from "../../backend/policy_data";
+import { addPolicy, finishLoading, reset, setDepegged, startLoading } from "../../redux/slices/policies";
+import { RootState } from "../../redux/store";
+import { ProductState } from "../../types/product_state";
+import { bigNumberComparator } from "../../utils/bignumber";
+import { formatDateUtc } from "../../utils/date";
+import { TransactionFailedError } from "../../utils/error";
 import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
 import { getPolicyExpiration, getPolicyState } from "../../utils/product_formatter";
-import { BigNumber } from "ethers";
 import Address from "../address";
+import { LinkBehaviour } from "../link_behaviour";
 import Timestamp from "../timestamp";
-import { RootState } from "../../redux/store";
-import { useDispatch, useSelector } from "react-redux";
-import { bigNumberComparator } from "../../utils/bignumber";
-import { addPolicy, finishLoading, reset, startLoading } from "../../redux/slices/policies";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faShieldHalved, faCircleInfo, faFileInvoiceDollar, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import WithTooltip from "../with_tooltip";
-import { grey } from "@mui/material/colors";
-import { ProductState } from "../../types/product_state";
-import { SnackbarKey, useSnackbar } from "notistack";
-import { TransactionFailedError } from "../../utils/error";
-import { formatDateUtc } from "../../utils/date";
-import { Policy } from "@mui/icons-material";
 
 export interface PoliciesProps {
     backend: BackendApi;
@@ -45,6 +45,7 @@ export default function Policies(props: PoliciesProps) {
     const dispatch = useDispatch();
     const policies = useSelector((state: RootState) => state.policies.policies);
     const isLoading = useSelector((state: RootState) => state.policies.isLoading);
+    const isDepegged = useSelector((state: RootState) => state.policies.isDepegged);
 
     const [ pageSize, setPageSize ] = useState(10);
 
@@ -69,6 +70,9 @@ export default function Policies(props: PoliciesProps) {
             dispatch(startLoading());
             dispatch(reset());
             const isProductDepegged = (await props.backend.getProductState()) === ProductState.Depegged;
+            if(isProductDepegged) {
+                dispatch(setDepegged());
+            }
             const policiesCount = await props.backend.policiesCount(walletAddress);
             for (let i = 0; i < policiesCount; i++) {
                 const policy = await props.backend.policy(walletAddress, i, isProductDepegged);
@@ -338,6 +342,18 @@ export default function Policies(props: PoliciesProps) {
         <>
             <Typography variant="h5" mb={2}>{t('title')}</Typography>
 
+            { isDepegged && <Box sx={{ m: 2 }}>
+                <Alert 
+                    severity="warning" 
+                    variant="filled"
+                    icon={<FontAwesomeIcon icon={faHandHoldingDollar} fontSize="2rem"/>}
+                    data-testid="alert-claimable-policies"
+                    >
+                    <AlertTitle>{t('alert.claimable_policies.title', { currency: props.backend.usd1 })}</AlertTitle>
+                    {t('alert.claimable_policies.message')}
+                </Alert>
+            </Box>}
+            
             {loadingBar}
 
             <DataGrid 

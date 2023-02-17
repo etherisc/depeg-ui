@@ -47,6 +47,7 @@ describe('When rendering the policies list', () => {
                     policies: {
                         policies: mockPoliciesSimple(),
                         isLoading: false,
+                        isDepegged: false,
                     }
                 },
             }
@@ -97,6 +98,7 @@ describe('When rendering the policies list', () => {
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
                         isLoading: false,
+                        isDepegged: true,
                     }
                 },
             }
@@ -106,6 +108,9 @@ describe('When rendering the policies list', () => {
             expect(await screen.findAllByRole("row")).toHaveLength(6)
         );
         
+        expect(screen.getByTestId("alert-claimable-policies")).toHaveTextContent("alert.claimable_policies.title");
+        expect(screen.getByTestId("alert-claimable-policies")).toHaveTextContent("alert.claimable_policies.message");
+
         const rows = await screen.findAllByRole("row");
 
         expect(rows[3]).toHaveTextContent("0xccE1…CF63");
@@ -140,6 +145,7 @@ describe('When rendering the policies list', () => {
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
                         isLoading: false,
+                        isDepegged: true,
                     }
                 },
             }
@@ -193,6 +199,7 @@ describe('When rendering the policies list', () => {
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
                         isLoading: false,
+                        isDepegged: true,
                     }
                 },
             }

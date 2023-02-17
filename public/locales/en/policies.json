@@ -32,5 +32,11 @@
     "claim_amount": "Claim amount",
     "claim_state": "Claim state",
     "claim_timestamp": "Claim timestamp",
-    "claim_paid_amount": "Paid amount"
+    "claim_paid_amount": "Paid amount",
+    "alert": {
+        "claimable_policies": {
+            "title": "{{currency}} has depegged",
+            "message": "Ensure you are connected with the protected wallet, then click the 'claim' button to disburse your claim."
+        }
+    }
 }

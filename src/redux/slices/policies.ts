@@ -5,11 +5,13 @@ import { PolicyData } from '../../backend/policy_data';
 export interface PoliciesState {
     policies: PolicyData[];
     isLoading: boolean;
+    isDepegged: boolean;
 }
 
 const initialState: PoliciesState = {
     policies: [],
     isLoading: false,
+    isDepegged: false,
 }
 
 export const policiesSlice = createSlice({
@@ -31,6 +33,9 @@ export const policiesSlice = createSlice({
         finishLoading: (state) => {
             state.isLoading = false;
         },
+        setDepegged: (state) => {
+            state.isDepegged = true;
+        },
     },
 });
 
@@ -38,6 +43,7 @@ export const policiesSlice = createSlice({
 export const { 
     addPolicy, reset, 
     startLoading, finishLoading,
+    setDepegged,
 } = policiesSlice.actions;
 
 export default policiesSlice.reducer;
