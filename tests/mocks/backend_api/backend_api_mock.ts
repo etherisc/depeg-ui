@@ -202,5 +202,8 @@ function investMock() {
         async withdrawBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
             return Promise.resolve(true);
         },
+        async fundBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
+            return Promise.resolve(true);
+        },
     } as InvestApi;
 };

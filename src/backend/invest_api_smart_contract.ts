@@ -200,4 +200,10 @@ export class InvestApiSmartContract implements InvestApi {
         return receipt.status === 1;
     }
 
+    async fundBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
+        const [tx, receipt] = await (await this.riskpoolApi()).fundBundle(bundleId, amount);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
+    }
+
 }

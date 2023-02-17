@@ -9,6 +9,8 @@ export interface BundlesState {
     showBundle: BundleData | undefined;
     // if true this will show the withdraw dialog for the bundle
     isShowBundleWithdraw: boolean;
+    // if true this will show the fund dialog for the bundle
+    isShowBundleFund: boolean;
 }
 
 const initialState: BundlesState = {
@@ -16,6 +18,7 @@ const initialState: BundlesState = {
     showBundle: undefined,
     isLoadingBundles: false,
     isShowBundleWithdraw: false,
+    isShowBundleFund: false,
 }
 
 export const bundlesSlice = createSlice({
@@ -52,9 +55,15 @@ export const bundlesSlice = createSlice({
         cleanup(state) {
             state.showBundle = undefined;
             state.isShowBundleWithdraw = false;
+            state.isShowBundleFund = false;
         },
         showBundleWithdraw(state, action: PayloadAction<boolean>) {
             state.isShowBundleWithdraw = action.payload;
+            state.isShowBundleFund = false;
+        },
+        showBundleFund(state, action: PayloadAction<boolean>) {
+            state.isShowBundleFund = action.payload;
+            state.isShowBundleWithdraw = false;
         },
     },
 });
@@ -66,6 +75,7 @@ export const {
     showBundle,
     cleanup,
     showBundleWithdraw,
+    showBundleFund,
 } = bundlesSlice.actions;
 
 export default bundlesSlice.reducer;

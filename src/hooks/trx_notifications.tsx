@@ -55,6 +55,13 @@ export default function useTransactionNotifications() {
                         );
                         break;
 
+                    case TrxType.BUNDLE_FUND:
+                        enqueueSnackbar(
+                            t('fund_info', { trxWaitingForUserParams }),
+                            { variant: "warning", persist: true }
+                        );
+                        break;
+
                     default:
                         enqueueSnackbar(
                             t('trx_info', { ns: "common", trxWaitingForUserParams }),

@@ -8,11 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
 import useTransactionNotifications from "../../hooks/trx_notifications";
-import { showBundle, updateBundle,showBundleWithdraw } from "../../redux/slices/bundles";
+import { showBundle, updateBundle,showBundleWithdraw, showBundleFund } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { TransactionFailedError } from "../../utils/error";
 import BundleActions from "./bundle_actions";
 import BundleDetails from "./bundle_details";
+import BundleFundForm from "./bundle_fund_form";
 import BundleWithdrawForm from "./bundle_withdraw_form";
 
 interface ShowBundleProps {
@@ -27,11 +28,13 @@ export default function ShowBundle(props: ShowBundleProps) {
     const bundle = useSelector((state: RootState) => state.bundles.showBundle);
     const connectedWalletAddress = useSelector((state: RootState) => state.account.address);
     const isShowBundleWithdraw = useSelector((state: RootState) => state.bundles.isShowBundleWithdraw);
+    const isShowBundleFund = useSelector((state: RootState) => state.bundles.isShowBundleFund);
+    const walletAddress = useSelector((state: RootState) => state.account.address);
     
     useTransactionNotifications();
 
     async function fund(bundle: BundleData): Promise<boolean> {
-        // TODO: implement fund
+        dispatch(showBundleFund(true));
         return Promise.resolve(true);   
     }
 
@@ -54,6 +57,39 @@ export default function ShowBundle(props: ShowBundleProps) {
         } finally {
             dispatch(showBundleWithdraw(false));
             showSuccessNotification(t('withdraw_successful'));
+            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
+            console.log("updated bundle", updatedBundle);
+            dispatch(updateBundle(updatedBundle));
+        }
+    }
+
+    async function fundBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
+        // FIXME: make approval use new notification mechanism
+        try {
+            await props.backend.createTreasuryApproval(walletAddress!, amount, () => {}, () => {});
+        } catch(e) {
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                showTrxFailedNotification(e);
+                return false;
+            } else {
+                throw e;
+            }
+        }
+        
+        try {
+            return await props.backend.invest.fundBundle(bundleId, amount);
+        } catch(e) {
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                showTrxFailedNotification(e);
+                return false;
+            } else {
+                throw e;
+            }
+        } finally {
+            dispatch(showBundleWithdraw(false));
+            showSuccessNotification(t('fund_successful'));
             const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
             console.log("updated bundle", updatedBundle);
             dispatch(updateBundle(updatedBundle));
@@ -205,6 +241,13 @@ export default function ShowBundle(props: ShowBundleProps) {
                         currency={props.backend.usd2} 
                         decimals={props.backend.usd2Decimals} 
                         doWithdraw={withdrawAmount}
+                        />
+                }
+                { isShowBundleFund && <BundleFundForm 
+                        bundle={bundle!} 
+                        currency={props.backend.usd2} 
+                        decimals={props.backend.usd2Decimals} 
+                        doFund={fundBundle}
                         />
                 }
             </Grid>
