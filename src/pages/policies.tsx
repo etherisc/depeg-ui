@@ -4,7 +4,7 @@ import Head from "next/head";
 import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
 import Policies from '../components/policies/policies';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { getBackendApi } from '../backend/backend_api';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
@@ -24,21 +24,6 @@ export default function PoliciesPage() {
         signer,
         provider,
     ), [enqueueSnackbar, signer, provider, t]);
-
-    
-    // if wallet has no policies, redirect to application page
-    async function redirectToApplication() {
-        if ( isConnected && await insurance.policiesCount(await signer!!.getAddress()) === 0 ) {
-            router.push('/');
-            return;
-        }
-    }
-
-    redirectToApplication();
-
-    useEffect(() => {
-        redirectToApplication();
-    }, [signer]);
 
     return (
         <>
