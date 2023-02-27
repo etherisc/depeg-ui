@@ -94,7 +94,7 @@ export default function Application(props: ApplicationProps) {
     }
 
     async function applicationSuccessful(bundleId: number) {
-        props.insurance.triggerBundleUpdate(bundleId);
+        props.insurance.triggerBundleUpdate(bundleId, dispatch);
 
         confetti({
             particleCount: 100,
