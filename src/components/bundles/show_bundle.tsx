@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
 import useTransactionNotifications from "../../hooks/trx_notifications";
-import { showBundle, updateBundle,showBundleWithdraw, showBundleFund } from "../../redux/slices/bundles";
+import bundles, { showBundle, updateBundle,showBundleWithdraw, showBundleFund } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { TransactionFailedError } from "../../utils/error";
 import BundleActions from "./bundle_actions";
@@ -25,10 +25,12 @@ export default function ShowBundle(props: ShowBundleProps) {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const dispatch = useDispatch();
 
+    const bundles = useSelector((state: RootState) => state.bundles.bundles);
     const bundle = useSelector((state: RootState) => state.bundles.showBundle);
     const connectedWalletAddress = useSelector((state: RootState) => state.account.address);
     const isShowBundleWithdraw = useSelector((state: RootState) => state.bundles.isShowBundleWithdraw);
     const isShowBundleFund = useSelector((state: RootState) => state.bundles.isShowBundleFund);
+    const maxActiveBundles = useSelector((state: RootState) => state.bundles.maxActiveBundles);
     const walletAddress = useSelector((state: RootState) => state.account.address);
     
     useTransactionNotifications();
@@ -57,9 +59,7 @@ export default function ShowBundle(props: ShowBundleProps) {
         } finally {
             dispatch(showBundleWithdraw(false));
             showSuccessNotification(t('withdraw_successful'));
-            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
-            console.log("updated bundle", updatedBundle);
-            dispatch(updateBundle(updatedBundle));
+            await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
 
@@ -90,9 +90,7 @@ export default function ShowBundle(props: ShowBundleProps) {
         } finally {
             dispatch(showBundleWithdraw(false));
             showSuccessNotification(t('fund_successful'));
-            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
-            console.log("updated bundle", updatedBundle);
-            dispatch(updateBundle(updatedBundle));
+            await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
 
@@ -110,9 +108,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             }
         } finally {
             showSuccessNotification(t('unlock_successful'));
-            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
-            console.log("updated bundle", updatedBundle);
-            dispatch(updateBundle(updatedBundle));
+            await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
 
@@ -130,9 +126,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             }
         } finally {
             showSuccessNotification(t('unlock_successful'));
-            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
-            console.log("updated bundle", updatedBundle);
-            dispatch(updateBundle(updatedBundle));
+            await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
 
@@ -150,9 +144,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             }
         } finally {
             showSuccessNotification(t('unlock_successful'));
-            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
-            console.log("updated bundle", updatedBundle);
-            dispatch(updateBundle(updatedBundle));
+            await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
 
@@ -170,9 +162,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             }
         } finally {
             showSuccessNotification(t('unlock_successful'));
-            const updatedBundle = await props.backend.triggerBundleUpdate(bundleId);
-            console.log("updated bundle", updatedBundle);
-            dispatch(updateBundle(updatedBundle));
+            await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
 
@@ -227,6 +217,8 @@ export default function ShowBundle(props: ShowBundleProps) {
                 <BundleActions 
                     bundle={bundle!} 
                     connectedWallet={connectedWalletAddress!}
+                    activeBundles={bundles.filter(b => b.state === 0 /* ACTIVE */).length}
+                    maxActiveBundles={maxActiveBundles}
                     actions={{
                         fund,
                         withdraw,

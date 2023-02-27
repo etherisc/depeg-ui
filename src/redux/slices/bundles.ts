@@ -4,6 +4,7 @@ import { BundleData } from '../../backend/bundle_data';
 
 export interface BundlesState {
     bundles: BundleData[];
+    maxActiveBundles: number;
     isLoadingBundles: boolean;
     // if not undefined this will show the bundle details for the given bundle
     showBundle: BundleData | undefined;
@@ -15,6 +16,7 @@ export interface BundlesState {
 
 const initialState: BundlesState = {
     bundles: [],
+    maxActiveBundles: 0,
     showBundle: undefined,
     isLoadingBundles: false,
     isShowBundleWithdraw: false,
@@ -65,12 +67,16 @@ export const bundlesSlice = createSlice({
             state.isShowBundleFund = action.payload;
             state.isShowBundleWithdraw = false;
         },
+        setMaxActiveBundles(state, action: PayloadAction<number>) {
+            state.maxActiveBundles = action.payload;
+        },
     },
 });
 
 // Action creators are generated for each case reducer function
 export const { 
     addBundle, updateBundle, reset, 
+    setMaxActiveBundles,
     startLoading, finishLoading,
     showBundle,
     cleanup,

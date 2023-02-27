@@ -10,7 +10,6 @@ import { LinkBehaviour } from "../link_behaviour";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import { useSnackbar } from "notistack";
 import { FormControlLabel, Switch } from "@mui/material";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -21,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BigNumber } from "ethers";
 import StakeUsageIndicator from "./stake_usage_indicator";
 import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
-import { addBundle, finishLoading, reset, showBundle, startLoading } from "../../redux/slices/bundles";
+import { addBundle, finishLoading, reset, showBundle, startLoading, setMaxActiveBundles } from "../../redux/slices/bundles";
 
 export interface BundlesProps {
     insurance: BackendApi;
@@ -58,6 +57,9 @@ export default function BundlesList(props: BundlesProps) {
             }
     
             await investmentApi.fetchAllBundles((bundle: BundleData) => dispatch(addBundle(bundle)) );
+            const maxActiveBundles = await investmentApi.maxBundles();
+            const activeBundles = await investmentApi.activeBundles();
+            dispatch(setMaxActiveBundles(maxActiveBundles));
             dispatch(finishLoading());
         }
         getBundles();
@@ -230,7 +232,7 @@ export default function BundlesList(props: BundlesProps) {
                 componentsProps={{ 
                     row: { 
                         onMouseEnter: (e: MouseEvent) => {
-                            console.log("enter", e);
+                            // console.log("enter", e);
                             // onMouseEnter is also triggered when hovering over the embedded action button and we don't want to change the hover state in that case
                             if ((e.target as HTMLElement).nodeName !== 'DIV') { 
                                 return;
@@ -239,7 +241,7 @@ export default function BundlesList(props: BundlesProps) {
                             setHoveringOverBundleId(id !== undefined ? parseInt(id) : undefined);
                         },
                         onMouseLeave: (e: MouseEvent) => {
-                            console.log("leave", e);
+                            // console.log("leave", e);
                             const id = (e.target as HTMLElement).parentElement?.dataset?.id;
                             if (id === undefined) {
                                 return;

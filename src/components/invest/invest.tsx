@@ -59,10 +59,10 @@ export default function Invest(props: InvestProps) {
                         setNoRiskpoolCapacityAvailable(true);
                     }
                 }
-                const bundleCount = await props.backend.invest.bundleCount();
+                const activeBundleCount = await props.backend.invest.activeBundles();
                 const maxBundles = await props.backend.invest.maxBundles();
-                console.log("bundleCount", bundleCount, "maxBundles", maxBundles);
-                if (bundleCount >= maxBundles) {
+                console.log("activeBundleCount", activeBundleCount, "maxBundles", maxBundles);
+                if (activeBundleCount >= maxBundles) {
                     setMaxBundlesUsed(true);
                 } else {
                     setMaxBundlesUsed(false);
@@ -102,14 +102,13 @@ export default function Invest(props: InvestProps) {
     }
 
     async function applicationSuccessful(bundleId: number) {
-        props.backend.triggerBundleUpdate(bundleId);
-
         confetti({
             particleCount: 100,
             spread: 70,
             origin: { y: 0.6 }
         });
 
+        await props.backend.triggerBundleUpdate(bundleId, dispatch);
         updateAccountBalance(signer!, dispatch);
     }
 

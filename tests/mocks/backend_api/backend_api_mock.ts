@@ -187,6 +187,9 @@ function investMock() {
         maxBundles(): Promise<number> {
             return Promise.resolve(100);
         },
+        activeBundles(): Promise<number> {
+            return Promise.resolve(2);
+        },
         async lockBundle(bundleId: number): Promise<boolean> {
             return Promise.resolve(true);
         },

@@ -40,7 +40,7 @@ export interface BackendApi {
     application: ApplicationApi;
     invest: InvestApi;
     priceFeed: PriceFeedApi;
-    triggerBundleUpdate: (bundleId: number) => Promise<BundleData>;
+    triggerBundleUpdate: (bundleId: number, dispatch: Dispatch<AnyAction>) => Promise<BundleData>;
 }
 
 export interface ApplicationApi {
@@ -113,6 +113,7 @@ export interface InvestApi {
     bundleCount(): Promise<number>;
     bundleId(idx: number): Promise<number>;
     bundle(bundleId: number, walletAddress?: string): Promise<BundleData|undefined>;
+    activeBundles(): Promise<number>;
     maxBundles(): Promise<number>;
     lockBundle(
         bundleId: number,

@@ -8,6 +8,8 @@ import { useSnackbar } from "notistack";
 interface BundleActionsProps {
     bundle: BundleData;
     connectedWallet: string;
+    activeBundles: number;
+    maxActiveBundles: number;
     actions: {
         fund: (bundle: BundleData) => Promise<boolean>,
         withdraw: (bundle: BundleData) => Promise<boolean>,
@@ -31,7 +33,7 @@ export default function BundleActions(props: BundleActionsProps) {
     const state = props.bundle.state;
     const isOwner = props.connectedWallet !== undefined && props.connectedWallet === props.bundle.owner;
     const isLockAllowed = isOwner && (state === 0);
-    const isUnlockAllowed = isOwner && (state === 1);
+    const isUnlockAllowed = isOwner && (state === 1) && (props.activeBundles < props.maxActiveBundles);
     const isFundAllowed = isOwner && (state === 0 || state === 1);
     const isWithdrawAllowed = isOwner && (state !== 3);
     const isCloseAllowed = isOwner && (state === 0 || state === 1);

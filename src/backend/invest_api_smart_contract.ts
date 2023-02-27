@@ -166,6 +166,10 @@ export class InvestApiSmartContract implements InvestApi {
         return await(await this.riskpoolApi()).getMaxBundles();
     }
 
+    async activeBundles(): Promise<number> {
+        return await(await this.riskpoolApi()).activeBundles();
+    }
+
     async lockBundle(
         bundleId: number,
     ): Promise<boolean> {

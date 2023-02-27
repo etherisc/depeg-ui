@@ -11,6 +11,9 @@ import { PriceFeedApi } from "./price_feed/api";
 import { ProductState } from "../types/product_state";
 import { json } from "stream/consumers";
 import { BundleData } from "./bundle_data";
+import { Dispatch } from "react";
+import { setMaxActiveBundles, updateBundle } from "../redux/slices/bundles";
+import { AnyAction } from "@reduxjs/toolkit";
 
 export class BackendApiSmartContract implements BackendApi {
 
@@ -108,7 +111,7 @@ export class BackendApiSmartContract implements BackendApi {
         return await (await this.getProductApi()).getProductState();
     }
 
-    async triggerBundleUpdate(bundleId: number): Promise<BundleData> {
+    async triggerBundleUpdate(bundleId: number, dispatch?: Dispatch<AnyAction>): Promise<BundleData> {
         const res = await fetch("/api/bundles/update?bundleId=" + bundleId);
 
         if (res.status != 200) {
@@ -116,7 +119,11 @@ export class BackendApiSmartContract implements BackendApi {
         }
 
         const bundles = await res.json() as BundleData[];
-        return bundles[0];
+        const updatedBundle = bundles[0];
+        if (dispatch !== undefined) {
+            dispatch(updateBundle(updatedBundle));
+        }
+        return updatedBundle;
     }
 }
 
