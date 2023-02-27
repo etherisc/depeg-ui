@@ -64,9 +64,8 @@ export default function ShowBundle(props: ShowBundleProps) {
     }
 
     async function fundBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
-        // FIXME: make approval use new notification mechanism
         try {
-            await props.backend.createTreasuryApproval(walletAddress!, amount, () => {}, () => {});
+            await props.backend.createTreasuryApproval(walletAddress!, amount);
         } catch(e) {
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);

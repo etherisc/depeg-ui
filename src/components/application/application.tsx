@@ -1,21 +1,21 @@
 import { Alert, Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useTranslation } from 'next-i18next';
-import { BackendApi } from "../../backend/backend_api";
-import { SnackbarKey, useSnackbar } from "notistack";
 import confetti from "canvas-confetti";
 import { BigNumber, Signer } from "ethers";
-import { formatCurrencyBN } from "../../utils/numbers";
-import ApplicationForm from "./application_form";
-import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
-import { RootState } from "../../redux/store";
+import { useTranslation } from 'next-i18next';
+import { SnackbarKey, useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/application";
+import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
-import PolicyConfirmation from "./policy_confirmation";
-import { updateAccountBalance } from "../../utils/chain";
+import useTransactionNotifications from "../../hooks/trx_notifications";
+import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/application";
 import { setProductState } from "../../redux/slices/price";
+import { RootState } from "../../redux/store";
 import { ProductState } from "../../types/product_state";
+import { updateAccountBalance } from "../../utils/chain";
+import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
+import ApplicationForm from "./application_form";
+import PolicyConfirmation from "./policy_confirmation";
 
 export interface ApplicationProps {
     insurance: BackendApi;
@@ -27,6 +27,7 @@ export const REVOKE_INFO_URL = "https://metamask.zendesk.com/hc/en-us/articles/4
 export default function Application(props: ApplicationProps) {
     const { t } = useTranslation(['application', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    useTransactionNotifications();
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
@@ -106,34 +107,14 @@ export default function Application(props: ApplicationProps) {
     }
 
     async function doApproval(walletAddress: string, premium: BigNumber): Promise<Boolean> {
-        let snackbar: SnackbarKey | undefined = undefined;
         try {
             return await props.insurance.createTreasuryApproval(
                 walletAddress, 
                 premium, 
-                (address, currency, amount) => {
-                    snackbar = enqueueSnackbar(
-                        t('approval_info', { address, currency, amount: formatCurrencyBN(amount, props.insurance.usd1Decimals) }),
-                        { variant: "warning", persist: true }
-                    );
-                },
-                (address, currency, amount) => {
-                    if (snackbar !== undefined) {
-                        closeSnackbar(snackbar);
-                    }
-                    snackbar = enqueueSnackbar(
-                        t('approval_wait'),
-                        { variant: "info", persist: true }
-                    );
-                }
             );
         } catch(e) { 
             if ( e instanceof ApprovalFailedError) {
                 console.log("approval failed", e);
-                if (snackbar !== undefined) {
-                    closeSnackbar(snackbar);
-                }
-
                 enqueueSnackbar(
                     t('error.approval_failed', { ns: 'common', error: e.code }),
                     { 
@@ -149,10 +130,6 @@ export default function Application(props: ApplicationProps) {
                 return Promise.resolve(false);
             } else {
                 throw e;
-            }
-        } finally {
-            if (snackbar !== undefined) {
-                closeSnackbar(snackbar);
             }
         }
     }

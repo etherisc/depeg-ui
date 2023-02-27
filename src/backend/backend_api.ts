@@ -19,8 +19,6 @@ export interface BackendApi {
         (
             walletAddress: string, 
             premium: BigNumber,
-            beforeApprovalCallback?: (address: string, currency: string, amount: BigNumber) => void,
-            beforeWaitCallback?: (address: string, currency: string, amount: BigNumber) => void
         ) => Promise<boolean>;
     policy: 
         (

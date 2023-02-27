@@ -4,5 +4,6 @@ export enum TrxType {
     BUNDLE_CLOSE,
     BUNDLE_BURN,
     BUNDLE_WITHDRAW,
-    BUNDLE_FUND
+    BUNDLE_FUND,
+    TOKEN_ALLOWANCE
 }

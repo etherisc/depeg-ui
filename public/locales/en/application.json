@@ -21,8 +21,6 @@
     "error_wallet_balance_too_low": "The wallet does not contain enough {{currency}} to pay for the premium",
     "bundle_loading": "Fetching risk bundle information from blockchain",
     "premium_calculation_in_progress": "Premium is being calculated",
-    "approval_info": "To issue a protection, two steps are needed. First - give Etherisc contract at {{address}} permission to take {{currency}} {{amount}} from your wallet.",
-    "approval_wait": "Allowance created, waiting for onchain confirmation ...",
     "apply_info": "Second - please confirm issuing your protection on contract {{address}}",
     "apply_wait": "Transaction created, waiting for onchain confirmation",
     "bundles": {

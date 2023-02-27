@@ -28,8 +28,6 @@
     "button_invest": "Stake",
     "application_success": "Congratulations, you have staked a new riskpool bundle!",
     "days": "Days",
-    "approval_info": "To create the risk bundle, two steps are needed. First - give Etherisc contract at {{address}} permission to take {{currency}} {{amount}} from your wallet.",
-    "approval_wait": "Treasury allowance created, waiting for onchain confirmation",
     "invest_info": "Second - please confirm risk pool creation on contract {{address}}",
     "invest_wait": "Transaction created, waiting for onchain confirmation",
     "balance_insufficient": "{{currency}} balance of wallet is insufficient to fund this riskpool bundle",

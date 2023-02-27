@@ -96,13 +96,11 @@ export class BackendApiSmartContract implements BackendApi {
     async createTreasuryApproval(
         walletAddress: string, 
         premium: BigNumber, 
-        beforeApprovalCallback?: (address: string, currency: string, amount: BigNumber) => void,
-        beforeWaitCallback?: (address: string, currency: string, amount: BigNumber) => void,
     ): Promise<boolean> {
         console.log("createApproval", walletAddress, premium);
         // TODO: avoid this
         const depegProduct = (await this.getProductApi()).getDepegProduct();
-        const [tx, receipt] = await createApprovalForTreasury(await depegProduct.getToken(), this.signer, premium, await depegProduct.getRegistry(), beforeApprovalCallback, beforeWaitCallback);
+        const [tx, receipt] = await createApprovalForTreasury(await depegProduct.getToken(), this.signer, premium, await depegProduct.getRegistry());
         console.log("tx", tx, "receipt", receipt);
         return Promise.resolve(receipt.status === 1);
     }

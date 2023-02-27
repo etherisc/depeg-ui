@@ -114,7 +114,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
                         sx={{ p: 1 }}
                     >
                         <FontAwesomeIcon icon={faMoneyBillTransfer} className="fa" />
-                        {t('action.withdraw')}
+                        {t('action.fund')}
                     </Button>
                     {/* TODO: cancel button */}
                     {loadingBar}

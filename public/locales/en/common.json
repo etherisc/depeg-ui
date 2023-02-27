@@ -74,5 +74,7 @@
     "locked_capital": "Locked Capital",
     "supported_capital": "Total Supported Capital",
     "no_stakes": "No stakes",
-    "wait_for_coins": "Please wait for the coints to be sent to your wallet. This might take some seconds. Do not leave the page of close the browser window"
+    "wait_for_coins": "Please wait for the coints to be sent to your wallet. This might take some seconds. Do not leave the page of close the browser window",
+    "approval_info": "First - give Etherisc contract at {{address}} permission to take {{currency}} {{amount}} from your wallet.",
+    "wait_for_trx": "Awaiting onchain transaction confirmation"
 }
