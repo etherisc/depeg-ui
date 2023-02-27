@@ -19,7 +19,7 @@ export enum PolicyState {
     UNKNOWN, 
     APPLIED, REVOKED, UNDERWRITTEN, DECLINED,
     ACTIVE, EXPIRED, CLOSED, 
-    PAYOUT_EXPECTED, PAIDOUT,
+    CLAIMABLE, PAYOUT_EXPECTED, PAIDOUT, 
 }
 
 export interface ClaimData {

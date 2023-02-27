@@ -23,6 +23,9 @@ export function getPolicyStateForActivePolicy(policy: PolicyData): PolicyState {
             if (dayjs().isAfter(dayjs.unix(exp))) {
                 return PolicyState.EXPIRED;
             }
+            if (policy.isAllowedToClaim) {
+                return PolicyState.CLAIMABLE;
+            }
             return PolicyState.ACTIVE;
         case POLICY_STATE_EXPIRED:
             if (policy.payoutState !== undefined) {
