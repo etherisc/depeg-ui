@@ -21,6 +21,10 @@ jest.mock('react-i18next', () => ({
     },
 }));
 
+jest.mock('next/router', () => ({
+    useRouter: jest.fn()
+}));
+
 describe('When rendering the policies list', () => {
     it('protected wallets, owner and protected wallet icons are shown', async () => {
         const backendApi = mockSimple();
@@ -46,6 +50,7 @@ describe('When rendering the policies list', () => {
                     },
                     policies: {
                         policies: mockPoliciesSimple(),
+                        claimedPolicy: null,
                         isLoading: false,
                         isDepegged: false,
                     }
@@ -97,6 +102,7 @@ describe('When rendering the policies list', () => {
                     },
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
+                        claimedPolicy: null,
                         isLoading: false,
                         isDepegged: true,
                     }
@@ -144,6 +150,7 @@ describe('When rendering the policies list', () => {
                     },
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
+                        claimedPolicy: null,
                         isLoading: false,
                         isDepegged: true,
                     }
@@ -198,6 +205,7 @@ describe('When rendering the policies list', () => {
                     },
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
+                        claimedPolicy: null,
                         isLoading: false,
                         isDepegged: true,
                     }
