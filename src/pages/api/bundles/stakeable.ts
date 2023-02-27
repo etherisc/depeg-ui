@@ -22,7 +22,6 @@ export default async function handler(
     const lastBlockTimestamp = await getLastBlockTimestamp(await getVoidSigner());
 
     res.status(200).json(bundles.filter(bundle => {
-        // TODO: MZ is this correct for replacement of getActiveBundleIds ... when exactly is a bundle in _activeBundleIds?
         // ignore bundles with state not active
         if (bundle.state !== 0) {
             console.log("bundle not active", bundle.id);
@@ -63,6 +62,7 @@ export default async function handler(
                 return false;
             }
         }
+        // TODO: rename -> active
         console.log("bundle stakeable", bundle.id);
         return true;
     }));

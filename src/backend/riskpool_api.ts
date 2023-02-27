@@ -47,7 +47,6 @@ export class DepegRiskpoolApi {
         let bundleData = new Array<BundleData>();
     
         for (let i = 0; i < numBundles; i++) {
-            // TODO: check with MZ if this is the correct way to use the bundleId
             const bundleId = (await this.depegRiskpool.getBundleId(i)).toNumber();
             console.log('bundleId', bundleId);
             const bundle = await this.getBundleDataByBundleId(bundleId);
