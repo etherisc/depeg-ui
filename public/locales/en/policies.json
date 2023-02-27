@@ -40,7 +40,7 @@
     },
     "claim_success": {
         "alert": {
-            "title": "Your claim has been processed",
+            "title": "Your claim has been registered",
             "message": "You will soon receive the payout to the wallet of the policy holder ({{policy_holder_wallet}})."
         },
         "continue_link": "Continue to the policy overview"
