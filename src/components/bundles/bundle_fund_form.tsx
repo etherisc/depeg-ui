@@ -4,16 +4,20 @@ import { Box, Button, Checkbox, FormControlLabel, Grid, InputAdornment, LinearPr
 import { BigNumber } from "ethers";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
 import { BundleData } from "../../backend/bundle_data";
 import { REGEX_PATTERN_NUMBER_WITH_DECIMALS } from "../../config/appConfig";
 import { INPUT_VARIANT } from "../../config/theme";
+import { RootState } from "../../redux/store";
 
 interface BundleFundFormProps {
     bundle: BundleData;
     currency: string;
     decimals: number;
+    maxInvestedAmount: BigNumber;
+    getRemainingCapacity: () => Promise<number>;
     doFund: (bundleId: number, amount: BigNumber) => Promise<boolean>;
     doCancel: () => void;
 }
@@ -27,10 +31,10 @@ export default function BundleFundForm(props: BundleFundFormProps) {
     const { t } = useTranslation('bundles');
 
     const [ fundInProgress, setFundInProgress ] = useState(false);
+    const [ maxFundAmount, setMaxFundAmount ] = useState(props.maxInvestedAmount.toNumber());
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    const getRemainingCapacity = props.getRemainingCapacity;
 
-    // FIXME: get real max fund amount here
-    const maxFundAmountBN = BigNumber.from(100000000000)
-    const maxFundAmount = parseFloat(formatUnits(maxFundAmountBN, props.decimals));
     const minFundAmount = 1;
 
     const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IFundFormValues>({ 
@@ -41,6 +45,21 @@ export default function BundleFundForm(props: BundleFundFormProps) {
             termsAndConditions: false,
         }
     });
+
+    useEffect(() => {
+        async function checkMaxInvestedAmount() {
+            const riskpoolRemainingCapacity = await getRemainingCapacity();
+            console.log("riskpoolRemainingCapacity", riskpoolRemainingCapacity.toString());
+            if (riskpoolRemainingCapacity < maxFundAmount) {
+                console.log("updating maxFundAmount");
+                setMaxFundAmount(riskpoolRemainingCapacity);
+                setValue("amount", riskpoolRemainingCapacity.toString());
+            }
+        }
+        if (process.env.NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT === "true" && isConnected) {
+            checkMaxInvestedAmount();
+        }
+    }, [isConnected, getRemainingCapacity, maxFundAmount, setValue]);
 
     const errors = useMemo(() => formState.errors, [formState]);
     
@@ -109,7 +128,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', flexDirection: 'row'}}>
                         <Button 
-                            variant='contained'
+                            variant='outlined'
                             type="reset"
                             fullWidth
                             onClick={props.doCancel}

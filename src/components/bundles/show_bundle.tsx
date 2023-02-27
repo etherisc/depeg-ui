@@ -2,6 +2,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Grid, Typography } from "@mui/material";
 import { BigNumber } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
@@ -194,6 +195,11 @@ export default function ShowBundle(props: ShowBundleProps) {
             }
         );
     }
+
+    async function getRemainingCapacity() {
+        const riskpoolRemainingCapacityBN = await props.backend.invest.riskpoolRemainingCapacity();
+        return parseInt(formatUnits(riskpoolRemainingCapacityBN, props.backend.usd2Decimals));
+    }
     
     return (<>
         <Typography variant="h5" mb={2}>
@@ -237,6 +243,8 @@ export default function ShowBundle(props: ShowBundleProps) {
                 }
                 { isShowBundleFund && <BundleFundForm 
                         bundle={bundle!} 
+                        maxInvestedAmount={props.backend.invest.maxInvestedAmount}
+                        getRemainingCapacity={getRemainingCapacity}
                         currency={props.backend.usd2} 
                         decimals={props.backend.usd2Decimals} 
                         doFund={fundBundle}

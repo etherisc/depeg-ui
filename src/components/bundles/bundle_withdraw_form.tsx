@@ -93,7 +93,7 @@ export default function BundleWithdrawForm(props: BundleWithdrawFormProps) {
                 <Grid item xs={12}>
                     <Box sx={{ display: 'flex', flexDirection: 'row'}}>
                         <Button 
-                            variant='contained'
+                            variant='outlined'
                             type="reset"
                             fullWidth
                             onClick={props.doCancel}
