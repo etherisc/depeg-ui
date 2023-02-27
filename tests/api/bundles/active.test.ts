@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import { BundleData } from '../../../src/backend/bundle_data';
-import handler from '../../../src/pages/api/bundles/stakeable';
+import handler from '../../../src/pages/api/bundles/active';
 
 jest.mock('../../../src/utils/chain', () => ({
     ...(jest.requireActual('../../../src/utils/chain')),
@@ -28,12 +28,13 @@ jest.mock('../../../src/utils/redis', () => ({
 }));
 
 
-describe('/api/bundles/stakeable', () => {
+describe('/api/bundles/active', () => {
     test('returns all stakable bundles', async () => {
 
         bundles = [ 
-            { // stakeable
+            { // active
                 id: 1,
+                state: 0,
                 createdAt: 200,
                 lifetime: "100",
                 capacity: "10000",
@@ -41,6 +42,7 @@ describe('/api/bundles/stakeable', () => {
             } as BundleData,
             { // expired
                 id: 2,
+                state: 0,
                 createdAt: 0,
                 lifetime: "10",
                 capacity: "10000",
@@ -48,6 +50,7 @@ describe('/api/bundles/stakeable', () => {
             } as BundleData,
             { // no capacity
                 id: 3,
+                state: 0,
                 createdAt: 200,
                 lifetime: "100",
                 capacity: "0",
@@ -55,6 +58,7 @@ describe('/api/bundles/stakeable', () => {
             } as BundleData,
             { // minSumInsured greater than capacity
                 id: 4,
+                state: 0,
                 createdAt: 200,
                 lifetime: "100",
                 capacity: "1000",
@@ -62,6 +66,7 @@ describe('/api/bundles/stakeable', () => {
             } as BundleData,
             { // locked capital greater than capital support
                 id: 5,
+                state: 0,
                 createdAt: 200,
                 lifetime: "100",
                 capacity: "10000",
@@ -71,6 +76,7 @@ describe('/api/bundles/stakeable', () => {
             } as BundleData,
             { // remaining capacity less than minSumInsured
                 id: 6,
+                state: 0,
                 createdAt: 200,
                 lifetime: "100",
                 capacity: "10000",
@@ -78,9 +84,16 @@ describe('/api/bundles/stakeable', () => {
                 capitalSupport: "10000",
                 locked: "9100",
             } as BundleData,
-
-            
-            
+            { // state locked
+                id: 6,
+                state: 1,
+                createdAt: 200,
+                lifetime: "100",
+                capacity: "10000",
+                minSumInsured: "1000",
+                capitalSupport: "10000",
+                locked: "9100",
+            } as BundleData,
         ];
 
         const { req, res } = createMocks({
