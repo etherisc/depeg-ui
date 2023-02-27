@@ -1,6 +1,6 @@
-import { faMoneyBillTransfer } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faMoneyBillTransfer } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Checkbox, FormControlLabel, Grid, InputAdornment, LinearProgress, TextField, Typography } from "@mui/material";
+import { Box, Button, Checkbox, FormControlLabel, Grid, InputAdornment, LinearProgress, TextField, Typography } from "@mui/material";
 import { BigNumber } from "ethers";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
@@ -15,6 +15,7 @@ interface BundleFundFormProps {
     currency: string;
     decimals: number;
     doFund: (bundleId: number, amount: BigNumber) => Promise<boolean>;
+    doCancel: () => void;
 }
 
 export type IFundFormValues = {
@@ -106,17 +107,28 @@ export default function BundleFundForm(props: BundleFundFormProps) {
                         />
                 </Grid>
                 <Grid item xs={12}>
-                    <Button 
-                        variant='contained'
-                        type="submit"
-                        disabled={!readyToSubmit}
-                        fullWidth
-                        sx={{ p: 1 }}
-                    >
-                        <FontAwesomeIcon icon={faMoneyBillTransfer} className="fa" />
-                        {t('action.fund')}
-                    </Button>
-                    {/* TODO: cancel button */}
+                    <Box sx={{ display: 'flex', flexDirection: 'row'}}>
+                        <Button 
+                            variant='contained'
+                            type="reset"
+                            fullWidth
+                            onClick={props.doCancel}
+                            sx={{ p: 1, m: 1 }}
+                        >
+                            <FontAwesomeIcon icon={faArrowLeft} className="fa" />
+                            {t('action.cancel')}
+                        </Button>
+                        <Button 
+                            variant='contained'
+                            type="submit"
+                            disabled={!readyToSubmit}
+                            fullWidth
+                            sx={{ p: 1, m: 1 }}
+                            >
+                                <FontAwesomeIcon icon={faMoneyBillTransfer} className="fa" />
+                                {t('action.fund')}
+                        </Button>
+                    </Box>
                     {loadingBar}
                 </Grid>
             </Grid>

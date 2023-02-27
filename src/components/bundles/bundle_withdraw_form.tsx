@@ -1,6 +1,7 @@
-import { faMoneyBillTransfer } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faArrowRight, faMoneyBillTransfer } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Grid, InputAdornment, LinearProgress, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, InputAdornment, LinearProgress, TextField, Typography } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import { BigNumber } from "ethers";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
@@ -15,6 +16,7 @@ interface BundleWithdrawFormProps {
     currency: string;
     decimals: number;
     doWithdraw: (bundleId: number, amount: BigNumber) => Promise<boolean>;
+    doCancel: () => void;
 }
 
 export type IWithdrawFormValues = {
@@ -28,12 +30,11 @@ export default function BundleWithdrawForm(props: BundleWithdrawFormProps) {
 
     const balance = BigNumber.from(props.bundle.balance);
     const locked = BigNumber.from(props.bundle.locked);
-    {/* TODO: MZ is this correct? */}
     const maxWithdrawAmountBN = balance.sub(locked);
     const maxWithdrawAmount = parseFloat(formatUnits(maxWithdrawAmountBN, props.decimals));
     const minWithdrawAmount = 1;
 
-    const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IWithdrawFormValues>({ 
+    const { handleSubmit, control, formState, getValues } = useForm<IWithdrawFormValues>({ 
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
@@ -90,17 +91,28 @@ export default function BundleWithdrawForm(props: BundleWithdrawFormProps) {
                         />
                 </Grid>
                 <Grid item xs={12}>
-                    <Button 
-                        variant='contained'
-                        type="submit"
-                        disabled={!readyToSubmit}
-                        fullWidth
-                        sx={{ p: 1 }}
-                    >
-                        <FontAwesomeIcon icon={faMoneyBillTransfer} className="fa" />
-                        {t('action.withdraw')}
-                    </Button>
-                    {/* TODO: cancel button */}
+                    <Box sx={{ display: 'flex', flexDirection: 'row'}}>
+                        <Button 
+                            variant='contained'
+                            type="reset"
+                            fullWidth
+                            onClick={props.doCancel}
+                            sx={{ p: 1, m: 1 }}
+                        >
+                            <FontAwesomeIcon icon={faArrowLeft} className="fa" />
+                            {t('action.cancel')}
+                        </Button>
+                        <Button 
+                            variant='contained'
+                            type="submit"
+                            disabled={!readyToSubmit}
+                            fullWidth
+                            sx={{ p: 1, m: 1 }}
+                        >
+                            <FontAwesomeIcon icon={faMoneyBillTransfer} className="fa" />
+                            {t('action.withdraw')}
+                        </Button>
+                    </Box>
                     {loadingBar}
                 </Grid>
             </Grid>

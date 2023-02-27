@@ -232,6 +232,7 @@ export default function ShowBundle(props: ShowBundleProps) {
                         currency={props.backend.usd2} 
                         decimals={props.backend.usd2Decimals} 
                         doWithdraw={withdrawAmount}
+                        doCancel={() => dispatch(showBundleWithdraw(false))}
                         />
                 }
                 { isShowBundleFund && <BundleFundForm 
@@ -239,6 +240,7 @@ export default function ShowBundle(props: ShowBundleProps) {
                         currency={props.backend.usd2} 
                         decimals={props.backend.usd2Decimals} 
                         doFund={fundBundle}
+                        doCancel={() => dispatch(showBundleFund(false))}
                         />
                 }
             </Grid>
