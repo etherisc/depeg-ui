@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 import { BundleData } from '../../../src/backend/bundle_data';
-import handler from '../../../src/pages/api/bundles/stakeable';
+import handler from '../../../src/pages/api/bundles/active';
 
 jest.mock('../../../src/utils/chain', () => ({
     ...(jest.requireActual('../../../src/utils/chain')),
@@ -28,11 +28,11 @@ jest.mock('../../../src/utils/redis', () => ({
 }));
 
 
-describe('/api/bundles/stakeable', () => {
+describe('/api/bundles/active', () => {
     test('returns all stakable bundles', async () => {
 
         bundles = [ 
-            { // stakeable
+            { // active
                 id: 1,
                 state: 0,
                 createdAt: 200,

@@ -10,7 +10,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Array<BundleData>>
 ) {
-    console.log("getting stakeable bundles from redis");
+    console.log("getting active bundles from redis");
     const bundlesjson = await redisClient.get("bundles");
     
     if (bundlesjson == null) {
@@ -62,8 +62,7 @@ export default async function handler(
                 return false;
             }
         }
-        // TODO: rename -> active
-        console.log("bundle stakeable", bundle.id);
+        console.log("bundle is active", bundle.id);
         return true;
     }));
 }
