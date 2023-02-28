@@ -66,8 +66,8 @@ export default function BundleDetails(props: BundleDetailsProps) {
             <NameValue name={t('apr')} value={<>{props.bundle.apr + " %"}</>}/>
             <NameValue name={t('policies')} value={<>{props.bundle.policies.toString()}</>}/>
             <NameValue name={t('owner')} value={<Address address={props.bundle.owner} iconColor="secondary" />}/>
-            <NameValue name={t('creation_date')} value={<Timestamp at={createdAtTS} />}/> 
-            <NameValue name={t('open_until')} value={<Timestamp at={endTS} />}/>
+            <NameValue name={t('creation_date')} value={<Timestamp at={createdAtTS} withTime={true} />}/> 
+            <NameValue name={t('open_until')} value={<Timestamp at={endTS} withTime={true} />}/>
         </Grid>
     </>);
 }

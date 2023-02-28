@@ -6,11 +6,15 @@ import { formatDateTimeLocal, formatDateTimeUtc, formatDateUtc } from "../utils/
 
 interface TimestampProps {
     at: number;
+    withTime?: boolean;
 }
 
 export default function Timestamp(props: TimestampProps) {   
     const localDateTime = formatDateTimeLocal(props.at);
-    const utcDate = formatDateUtc(props.at);
+    let utcDate = formatDateUtc(props.at);
+    if (props.withTime) {
+        utcDate = formatDateTimeUtc(props.at);
+    }
     const utcDateTime = formatDateTimeUtc(props.at);
     const tooltip = (<>{utcDateTime}<br/>{localDateTime}</>);
     return (<>
