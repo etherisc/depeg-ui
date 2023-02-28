@@ -1,8 +1,8 @@
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tooltip, Typography } from "@mui/material";
-import { formatDateLocal, formatDateTimeLocal, formatDateTimeUtc, formatDateUtc } from "../utils/date";
 import { grey } from "@mui/material/colors";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { formatDateTimeLocal, formatDateTimeUtc, formatDateUtc } from "../utils/date";
 
 interface TimestampProps {
     at: number;

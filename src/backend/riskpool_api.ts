@@ -1,15 +1,14 @@
+import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json';
+import { Coder } from "abi-coder";
 import { BigNumber, ContractReceipt, ContractTransaction, Signer } from "ethers";
 import { DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
-import { BundleData, MAX_BUNDLE } from "./bundle_data";
-import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json'
-import { Coder } from "abi-coder";
-import { TransactionFailedError } from "../utils/error";
-import StakingApi from "./staking_api";
-import { isStakingSupported } from "../utils/staking";
-import { parseUnits } from "ethers/lib/utils";
-import { store } from "../redux/store";
 import { finish, start, waitingForTransaction, waitingForUser } from "../redux/slices/transaction";
+import { store } from "../redux/store";
 import { TrxType } from "../types/trxtype";
+import { TransactionFailedError } from "../utils/error";
+import { isStakingSupported } from "../utils/staking";
+import { BundleData, MAX_BUNDLE } from "./bundle_data";
+import StakingApi from "./staking_api";
 
 export class DepegRiskpoolApi {
 

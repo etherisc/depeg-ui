@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
 import useTransactionNotifications from "../../hooks/trx_notifications";
-import bundles, { showBundle, updateBundle,showBundleWithdraw, showBundleFund } from "../../redux/slices/bundles";
+import { showBundle, showBundleFund, showBundleWithdraw } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { TransactionFailedError } from "../../utils/error";
 import BundleActions from "./bundle_actions";

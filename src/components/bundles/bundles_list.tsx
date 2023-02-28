@@ -1,26 +1,26 @@
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FormControlLabel, Switch } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import LinearProgress from "@mui/material/LinearProgress";
+import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
+import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import dayjs from "dayjs";
+import { BigNumber } from "ethers";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
-import { BackendApi } from "../../backend/backend_api";
-import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
-import LinearProgress from "@mui/material/LinearProgress";
-import { BundleData } from "../../backend/bundle_data";
-import { formatCurrencyBN } from "../../utils/numbers";
-import { LinkBehaviour } from "../link_behaviour";
-import Link from "@mui/material/Link";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import { FormControlLabel, Switch } from "@mui/material";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import dayjs from "dayjs";
-import Timestamp from "../timestamp";
-import { RootState } from "../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { BigNumber } from "ethers";
-import StakeUsageIndicator from "./stake_usage_indicator";
+import { BackendApi } from "../../backend/backend_api";
+import { BundleData } from "../../backend/bundle_data";
+import { addBundle, finishLoading, reset, setMaxActiveBundles, showBundle, startLoading } from "../../redux/slices/bundles";
+import { RootState } from "../../redux/store";
+import { formatCurrencyBN } from "../../utils/numbers";
 import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
-import { addBundle, finishLoading, reset, showBundle, startLoading, setMaxActiveBundles } from "../../redux/slices/bundles";
+import { LinkBehaviour } from "../link_behaviour";
+import Timestamp from "../timestamp";
+import StakeUsageIndicator from "./stake_usage_indicator";
 
 export interface BundlesProps {
     insurance: BackendApi;

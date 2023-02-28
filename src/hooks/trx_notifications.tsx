@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next";
-import { SnackbarKey, useSnackbar } from "notistack";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSnackbar } from "notistack";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { TrxType } from "../types/trxtype";
 

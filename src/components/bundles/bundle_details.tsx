@@ -5,8 +5,6 @@ import { grey } from "@mui/material/colors";
 import { BigNumber } from "ethers";
 import { useTranslation } from "next-i18next";
 import { BundleData } from "../../backend/bundle_data";
-import { formatAddress } from "../../utils/address";
-import { formatDateTimeUtc } from "../../utils/date";
 import { formatCurrencyBN } from "../../utils/numbers";
 import Address from "../address";
 import Timestamp from "../timestamp";
