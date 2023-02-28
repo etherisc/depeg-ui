@@ -21,6 +21,10 @@ jest.mock('react-i18next', () => ({
     },
 }));
 
+jest.mock('next/router', () => ({
+    useRouter: jest.fn()
+}));
+
 describe('When rendering the policies list', () => {
     it('protected wallets, owner and protected wallet icons are shown', async () => {
         const backendApi = mockSimple();
@@ -46,6 +50,7 @@ describe('When rendering the policies list', () => {
                     },
                     policies: {
                         policies: mockPoliciesSimple(),
+                        claimedPolicy: null,
                         isLoading: false,
                         isDepegged: false,
                     }
@@ -97,6 +102,7 @@ describe('When rendering the policies list', () => {
                     },
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
+                        claimedPolicy: null,
                         isLoading: false,
                         isDepegged: true,
                     }
@@ -114,13 +120,13 @@ describe('When rendering the policies list', () => {
         const rows = await screen.findAllByRole("row");
 
         expect(rows[3]).toHaveTextContent("0xccE1…CF63");
-        expect(rows[3]).toHaveTextContent("application_state_5"); // active
+        expect(rows[3]).toHaveTextContent("application_state_8"); // claimable
         expect(rows[3].querySelector('[data-icon="user"]')).not.toBeInTheDocument();
         expect(rows[3].querySelector('[data-icon="shield-halved"]')).toBeInTheDocument();
         expect(rows[3]).toHaveTextContent("action.claim");
     })
 
-    it('a policy that has an oopen claim shows claim info and no claim button ', async () => {
+    it('a policy that has an open claim shows claim info and no claim button ', async () => {
         const backendApi = mockSimple();
 
         renderWithProviders(
@@ -144,6 +150,7 @@ describe('When rendering the policies list', () => {
                     },
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
+                        claimedPolicy: null,
                         isLoading: false,
                         isDepegged: true,
                     }
@@ -158,7 +165,7 @@ describe('When rendering the policies list', () => {
         const rows = await screen.findAllByRole("row");
 
         expect(rows[4]).toHaveTextContent("0xccE1…CF64");
-        expect(rows[4]).toHaveTextContent("application_state_8"); // payout pending
+        expect(rows[4]).toHaveTextContent("application_state_9"); // payout pending
         expect(rows[4]).not.toHaveTextContent("action.claim");
 
         const pendings = await screen.findAllByTestId("claim-pending-icon");
@@ -198,6 +205,7 @@ describe('When rendering the policies list', () => {
                     },
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
+                        claimedPolicy: null,
                         isLoading: false,
                         isDepegged: true,
                     }
@@ -212,7 +220,7 @@ describe('When rendering the policies list', () => {
         const rows = await screen.findAllByRole("row");
 
         expect(rows[4]).toHaveTextContent("0xccE1…CF64");
-        expect(rows[4]).toHaveTextContent("application_state_8"); // payout pending
+        expect(rows[4]).toHaveTextContent("application_state_9"); // payout pending
         expect(rows[4]).not.toHaveTextContent("action.claim");
 
         const pendings = await screen.findAllByTestId("claim-pending-icon");

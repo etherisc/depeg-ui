@@ -21,7 +21,6 @@
     "is_owner": "The connected wallet is the owner of the policy",
     "is_protected": "The connected wallet is protected by the policy",
     "claim_info": "Please confirm the claim transaction on contract {{address}} in your wallet app",
-    "claim_successful": "Your claim the successfully processeed. You will receive payout soon.",
     "error": {
         "transaction_failed": "Transaction failed"
     },
@@ -38,5 +37,12 @@
             "title": "{{currency}} has depegged",
             "message": "Ensure you are connected with the protected wallet, then click the 'claim' button to disburse your claim."
         }
+    },
+    "claim_success": {
+        "alert": {
+            "title": "Your claim has been registered",
+            "message": "You will soon receive the payout to the wallet of the policy holder ({{policy_holder_wallet}})."
+        },
+        "continue_link": "Continue to the policy overview"
     }
 }

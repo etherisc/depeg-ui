@@ -12,12 +12,13 @@ import Typography from "@mui/material/Typography";
 import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, GridSortCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { BigNumber } from "ethers";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { ClaimData, PolicyData, PolicyState } from "../../backend/policy_data";
-import { addPolicy, finishLoading, reset, setDepegged, startLoading } from "../../redux/slices/policies";
+import { addPolicy, finishLoading, reset, setClaimedPolicy, setDepegged, startLoading } from "../../redux/slices/policies";
 import { RootState } from "../../redux/store";
 import { ProductState } from "../../types/product_state";
 import { bigNumberComparator } from "../../utils/bignumber";
@@ -40,6 +41,7 @@ export interface PoliciesProps {
 export default function Policies(props: PoliciesProps) {
     const { t } = useTranslation(['policies', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const router = useRouter();
     const walletAddress = useSelector((state: RootState) => state.account.address);
 
     const dispatch = useDispatch();
@@ -120,7 +122,8 @@ export default function Policies(props: PoliciesProps) {
         return null;
     }
 
-    async function claim(processId: string) {
+    async function claim(policy: PolicyData) {
+        const processId = policy.id;
         let snackbar: SnackbarKey | undefined = undefined;
         try {
             return await props.backend.application.claim(
@@ -164,29 +167,19 @@ export default function Policies(props: PoliciesProps) {
                 throw e;
             }
         } finally {
+            await getPolicies();
+            dispatch(setClaimedPolicy(policy));
             if (snackbar !== undefined) {
                 closeSnackbar(snackbar);
             }
 
-            enqueueSnackbar(
-                t('claim_successful'),
-                { 
-                    variant: "success", 
-                    persist: true,
-                    action: (key) => {
-                        return (
-                            <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                        );
-                    }
-                }
-            );
-            await getPolicies();
+            router.push("/claim_success");
         }
     }
 
     function renderClaimCell(policy: PolicyData) {
         if (policy.isAllowedToClaim) {
-            return (<Button variant="text" color="secondary" onClick={() => claim(policy.id)}>{t('action.claim')}</Button>);
+            return (<Button variant="text" color="secondary" onClick={() => claim(policy)}>{t('action.claim')}</Button>);
         }
         return (<></>);
     }

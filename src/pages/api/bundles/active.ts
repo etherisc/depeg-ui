@@ -10,7 +10,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Array<BundleData>>
 ) {
-    console.log("getting stakeable bundles from redis");
+    console.log("getting active bundles from redis");
     const bundlesjson = await redisClient.get("bundles");
     
     if (bundlesjson == null) {
@@ -22,6 +22,12 @@ export default async function handler(
     const lastBlockTimestamp = await getLastBlockTimestamp(await getVoidSigner());
 
     res.status(200).json(bundles.filter(bundle => {
+        // ignore bundles with state not active
+        if (bundle.state !== 0) {
+            console.log("bundle not active", bundle.id);
+            return false;
+        }
+
         // ignore expired bundles
         if (lastBlockTimestamp > (bundle.createdAt + parseInt(bundle.lifetime))) {
             console.log("bundle expired", bundle.id);
@@ -56,7 +62,7 @@ export default async function handler(
                 return false;
             }
         }
-        console.log("bundle stakeable", bundle.id);
+        console.log("bundle is active", bundle.id);
         return true;
     }));
 }

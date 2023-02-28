@@ -15,7 +15,7 @@ The nextjs backend exposes three services:
 
 - `GET /api/bundles/update` - retrieves all bundles and stores them in redis store 
 - `GET /api/bundles/all` - retrieves all bundles from redis store
-- `GET /api/bundles/stakeable` - retrieves all stakeable bundles from redis store
+- `GET /api/bundles/active` - retrieves all active bundles (which can be used to issue policies) from redis store 
 
 
 ## Dependencies
