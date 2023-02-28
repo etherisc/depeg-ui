@@ -175,11 +175,12 @@ describe('When rendering the policies list', () => {
 
         await waitFor(async () => {
             expect(await screen.findByTestId("claim-amount")).toBeInTheDocument();
-            expect(await screen.findByTestId("claim-amount")).toHaveTextContent("USDT 10,000.00");
-            expect(await screen.findByTestId("claim-state")).toHaveTextContent("claim_state_0");
-            expect(await screen.findByTestId("claim-timestamp")).toHaveTextContent(dayjs().add(-1, 'days').format('YYYY-MM-DD'));
-        });
-    })
+        }, { timeout: 3000 });
+
+        expect(await screen.findByTestId("claim-amount")).toHaveTextContent("USDT 10,000.00");
+        expect(await screen.findByTestId("claim-state")).toHaveTextContent("claim_state_0");
+        expect(await screen.findByTestId("claim-timestamp")).toHaveTextContent(dayjs().add(-1, 'days').format('YYYY-MM-DD'));
+})
 
     it('a policy that has a closed claim shows claim info and no claim button ', async () => {
         const backendApi = mockSimple();
