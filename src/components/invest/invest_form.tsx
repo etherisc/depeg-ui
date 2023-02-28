@@ -441,6 +441,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                         : t(`error.field.${errors.annualPctReturn.type}`, { "ns": "common", "minValue": 0.01, "maxValue": maxAnnualPctReturn })
                                     )
                                     : ""}
+                                data-testid="annual-pct-return"
                                 />}
                         />
                 </Grid>

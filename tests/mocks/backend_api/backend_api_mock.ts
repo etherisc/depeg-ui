@@ -127,7 +127,7 @@ function investMock() {
         minCoverageDuration: 14,
         maxCoverageDuration: 90,
         annualPctReturn: 5,
-        maxAnnualPctReturn: 20,
+        maxAnnualPctReturn: 15,
         isRiskpoolCapacityAvailable() {
             return Promise.resolve(true);
         },
