@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { BundleData } from "../../backend/bundle_data";
-import { REGEX_PATTERN_NUMBER_WITH_DECIMALS } from "../../config/appConfig";
+import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from "../../config/appConfig";
 import { INPUT_VARIANT } from "../../config/theme";
 import { RootState } from "../../redux/store";
 
@@ -89,7 +89,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
                     <Controller
                         name="amount"
                         control={control}
-                        rules={{ required: true, min: minFundAmount, max: maxFundAmount, pattern: REGEX_PATTERN_NUMBER_WITH_DECIMALS }}
+                        rules={{ required: true, min: minFundAmount, max: maxFundAmount, pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('amount')}

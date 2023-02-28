@@ -8,7 +8,7 @@ import { useTranslation } from "next-i18next";
 import { useMemo, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { BundleData } from "../../backend/bundle_data";
-import { REGEX_PATTERN_NUMBER_WITH_DECIMALS } from "../../config/appConfig";
+import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from "../../config/appConfig";
 import { INPUT_VARIANT } from "../../config/theme";
 
 interface BundleWithdrawFormProps {
@@ -70,7 +70,7 @@ export default function BundleWithdrawForm(props: BundleWithdrawFormProps) {
                     <Controller
                         name="amount"
                         control={control}
-                        rules={{ required: true, min: minWithdrawAmount, max: maxWithdrawAmount, pattern: REGEX_PATTERN_NUMBER_WITH_DECIMALS }}
+                        rules={{ required: true, min: minWithdrawAmount, max: maxWithdrawAmount, pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('amount')}
