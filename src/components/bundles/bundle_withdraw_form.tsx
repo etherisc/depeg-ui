@@ -86,7 +86,7 @@ export default function BundleWithdrawForm(props: BundleWithdrawFormProps) {
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.amount.type}`, { "ns": "common", "minValue": `${props.currency} ${minWithdrawAmount}`, "maxValue": `${props.currency} ${maxWithdrawAmount}` })
                                     ) : ""}
-                                data-testid="insuredAmount"
+                                data-testid="amount"
                                 />}
                         />
                 </Grid>
@@ -108,6 +108,7 @@ export default function BundleWithdrawForm(props: BundleWithdrawFormProps) {
                             disabled={!readyToSubmit}
                             fullWidth
                             sx={{ p: 1, m: 1 }}
+                            data-testid="withdraw-button"
                         >
                             <FontAwesomeIcon icon={faMoneyBillTransfer} className="fa" />
                             {t('action.withdraw')}
