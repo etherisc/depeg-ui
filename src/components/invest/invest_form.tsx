@@ -15,7 +15,7 @@ import { INPUT_VARIANT } from '../../config/theme';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { BigNumber } from 'ethers';
-import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_DECIMALS } from '../../config/appConfig';
+import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_TWO_DECIMALS } from '../../config/appConfig';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
@@ -422,7 +422,7 @@ export default function InvestForm(props: InvestFormProperties) {
                             required: true, 
                             min: 0.01, 
                             max: maxAnnualPctReturn,
-                            pattern: REGEX_PATTERN_NUMBER_WITH_DECIMALS,
+                            pattern: REGEX_PATTERN_NUMBER_WITH_TWO_DECIMALS,
                         }}
                         render={({ field }) => 
                             <TextField 
@@ -437,7 +437,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                 error={errors.annualPctReturn !== undefined}
                                 helperText={errors.annualPctReturn !== undefined 
                                     ? ( errors.annualPctReturn.type == 'pattern' 
-                                        ? t(`error.field.numberTypeFloat`, { "ns": "common"})
+                                        ? t(`error.field.numberTypeFloatTwoDec`, { "ns": "common"})
                                         : t(`error.field.${errors.annualPctReturn.type}`, { "ns": "common", "minValue": 0.01, "maxValue": maxAnnualPctReturn })
                                     )
                                     : ""}
