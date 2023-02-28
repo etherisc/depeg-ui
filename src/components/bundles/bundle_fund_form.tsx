@@ -2,7 +2,7 @@ import { faArrowLeft, faMoneyBillTransfer } from "@fortawesome/free-solid-svg-ic
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Box, Button, Checkbox, FormControlLabel, Grid, InputAdornment, LinearProgress, TextField, Typography } from "@mui/material";
 import { BigNumber } from "ethers";
-import { formatUnits, parseUnits } from "ethers/lib/utils";
+import { parseUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -105,7 +105,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.amount.type}`, { "ns": "common", "minValue": `${props.currency} ${minFundAmount}`, "maxValue": `${props.currency} ${maxFundAmount}` })
                                     ) : ""}
-                                data-testid="insuredAmount"
+                                data-testid="amount"
                                 />}
                         />
                 </Grid>
@@ -120,6 +120,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
                                 <Checkbox 
                                     defaultChecked={false}
                                     {...field}
+                                    data-testid="t-and-c"
                                     />
                             } 
                             label={t('checkbox_t_and_c_label')} />}
@@ -133,6 +134,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
                             fullWidth
                             onClick={props.doCancel}
                             sx={{ p: 1, m: 1 }}
+                            data-testid="cancel-button"
                         >
                             <FontAwesomeIcon icon={faArrowLeft} className="fa" />
                             {t('action.cancel')}
@@ -143,6 +145,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
                             disabled={!readyToSubmit}
                             fullWidth
                             sx={{ p: 1, m: 1 }}
+                            data-testid="fund-button"
                             >
                                 <FontAwesomeIcon icon={faMoneyBillTransfer} className="fa" />
                                 {t('action.fund')}
