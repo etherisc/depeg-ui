@@ -107,7 +107,7 @@ export default function ShowBundle(props: ShowBundleProps) {
                 throw e;
             }
         } finally {
-            showSuccessNotification(t('unlock_successful'));
+            showSuccessNotification(t('lock_successful'));
             await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
@@ -143,7 +143,7 @@ export default function ShowBundle(props: ShowBundleProps) {
                 throw e;
             }
         } finally {
-            showSuccessNotification(t('unlock_successful'));
+            showSuccessNotification(t('close_successful'));
             await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
@@ -161,7 +161,7 @@ export default function ShowBundle(props: ShowBundleProps) {
                 throw e;
             }
         } finally {
-            showSuccessNotification(t('unlock_successful'));
+            showSuccessNotification(t('burn_successful'));
             await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }

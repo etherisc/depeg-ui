@@ -75,6 +75,15 @@
     "supported_capital": "Total Supported Capital",
     "no_stakes": "No stakes",
     "wait_for_coins": "Please wait for the coints to be sent to your wallet. This might take some seconds. Do not leave the page of close the browser window",
-    "approval_info": "First - give Etherisc contract at {{address}} permission to take {{currency}} {{amount}} from your wallet.",
-    "wait_for_trx": "Awaiting onchain transaction confirmation"
+    "notification": {
+        "lock_info": "Please confirm locking of the bundle on contract {{address}}",
+        "unlock_info": "Please confirm unlocking of the bundle on contract {{address}}",
+        "close_info": "Please confirm closing of the bundle on contract {{address}}",
+        "burn_info": "Please confirm burning of the bundle on contract {{address}}",
+        "withdraw_info": "Please confirm unstaking from bundle on contract {{address}}",
+        "fund_info": "Please confirm staking the bundle on contract {{address}}",
+        "approval_info": "First - give Etherisc contract at {{address}} permission to take {{currency}} {{amount}} from your wallet.",
+        "trx_info": "Please confirm the transaction in your wallet",
+        "wait_for_trx": "Awaiting onchain transaction confirmation"
+    }
 }

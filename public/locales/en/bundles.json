@@ -49,5 +49,14 @@
     "checkbox_t_and_c_label": "By checking this box, I confirm that I have read and agree to the Terms and Conditions.",
     "title_fund": "Stake",
     "title_withdraw": "Unstake",
-    "amount": "Amount"
+    "amount": "Amount",
+    "withdraw_successful": "Unstaking successful",
+    "fund_successful": "Staking successful",
+    "unlock_successful": "Bundle unlocked",
+    "lock_successful": "Bundle locked",
+    "close_successful": "Bundle closed",
+    "burn_successful": "Bundle burned",
+    "error": {
+        "transaction_failed": "Transaction failed"
+    }
 }
