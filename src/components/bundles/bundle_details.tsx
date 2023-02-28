@@ -42,9 +42,9 @@ export default function BundleDetails(props: BundleDetailsProps) {
             <NameValue name={t('min_max_duration')} value={minDuration + " / " + " " + maxDuration + " " + t('days')}/>
             <NameValue name={t('apr')} value={props.bundle.apr + " %"}/>
             <NameValue name={t('policies')} value={props.bundle.policies.toString()}/>
-            <NameValue name={t('owner')} value={formatAddress(props.bundle.owner)}/>
-            <NameValue name={t('creation_date')} value={formatDateTimeUtc(createdAtTS)}/>
-            <NameValue name={t('open_until')} value={formatDateTimeUtc(endTS)}/>
+            <NameValue name={t('owner')} value={formatAddress(props.bundle.owner)}/> {/* TODO: copyable */}
+            <NameValue name={t('creation_date')} value={formatDateTimeUtc(createdAtTS)}/> {/* TODO: local time */}
+            <NameValue name={t('open_until')} value={formatDateTimeUtc(endTS)}/> {/* TODO: local time */}
         </Grid>
     </>);
 }
@@ -58,7 +58,7 @@ function NameValue(props: { name: string, value: string, tooltip?: string }) {
     }
     return (<>
         <Grid item xs={12} md={5}>
-            {props.name}
+            {props.name}:
         </Grid>
         <Grid item xs={12} md={7}>
             {value}
