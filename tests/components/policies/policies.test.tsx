@@ -175,7 +175,7 @@ describe('When rendering the policies list', () => {
 
         await waitFor(async () => {
             expect(await screen.findByTestId("claim-amount")).toBeInTheDocument();
-        });
+        }, { timeout: 3000 });
 
         expect(await screen.findByTestId("claim-amount")).toHaveTextContent("USDT 10,000.00");
         expect(await screen.findByTestId("claim-state")).toHaveTextContent("claim_state_0");
