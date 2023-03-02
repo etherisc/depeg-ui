@@ -10,6 +10,7 @@ export type BundleData = {
     maxSumInsured: string;
     minDuration: number;
     maxDuration: number;
+    balance: string;
     capital: string;
     locked: string;
     capitalSupport: string | undefined;

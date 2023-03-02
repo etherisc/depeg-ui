@@ -1,19 +1,21 @@
 import { combineReducers, configureStore, PreloadedState } from '@reduxjs/toolkit';
-import chainReducer from './slices/chain';
+import accountReducer from './slices/account';
 import applicationReducer from './slices/application';
 import bundlesReducer from './slices/bundles';
-import accountReducer from './slices/account';
+import chainReducer from './slices/chain';
 import policiesReducer from './slices/policies';
 import priceReducer from './slices/price';
+import transactionReducer from './slices/transaction';
 
 // Create the root reducer separately so we can extract the RootState type
 const rootReducer = combineReducers({
-    chain: chainReducer,
     account: accountReducer,
     application: applicationReducer,
     bundles: bundlesReducer,
+    chain: chainReducer,
     policies: policiesReducer,
     price: priceReducer,
+    transaction: transactionReducer,
 })
 
 export const setupStore = (preloadedState?: PreloadedState<RootState>) => {

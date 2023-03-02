@@ -39,8 +39,19 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
         application: applicationMock(enqueueSnackbar),
         invest: investMock(enqueueSnackbar),
         triggerBundleUpdate(bundleId: number) {
-            return Promise.resolve();
+            return Promise.resolve({} as BundleData);
         },
+        priceFeed: {
+            getLatestPrice(priceRetrieved: (price: PriceInfo, triggeredAt: number, depeggedAt: number) => void): Promise<void> {
+                return Promise.resolve();
+            },
+            getPrice(roundId: BigNumber, priceRetrieved: (price: PriceInfo) => void): Promise<void> {
+                return Promise.resolve();
+            },
+            getAllPricesAfter(after, priceRetrieved, loadingStarted, loadingFinished) {
+                return Promise.resolve();
+            },
+        }
     } as BackendApi;
 }
 
@@ -225,6 +236,27 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         },
         maxBundles(): Promise<number> {
             return Promise.resolve(100);
+        },
+        activeBundles(): Promise<number> {
+            return Promise.resolve(2);
+        },
+        async lockBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async unlockBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async closeBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async burnBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async withdrawBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async fundBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
         },
     } as InvestApi;
 };

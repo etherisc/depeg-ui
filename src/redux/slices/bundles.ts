@@ -4,12 +4,23 @@ import { BundleData } from '../../backend/bundle_data';
 
 export interface BundlesState {
     bundles: BundleData[];
+    maxActiveBundles: number;
     isLoadingBundles: boolean;
+    // if not undefined this will show the bundle details for the given bundle
+    showBundle: BundleData | undefined;
+    // if true this will show the withdraw dialog for the bundle
+    isShowBundleWithdraw: boolean;
+    // if true this will show the fund dialog for the bundle
+    isShowBundleFund: boolean;
 }
 
 const initialState: BundlesState = {
     bundles: [],
+    maxActiveBundles: 0,
+    showBundle: undefined,
     isLoadingBundles: false,
+    isShowBundleWithdraw: false,
+    isShowBundleFund: false,
 }
 
 export const bundlesSlice = createSlice({
@@ -22,6 +33,15 @@ export const bundlesSlice = createSlice({
                 state.bundles.push(action.payload);
             }
         },
+        updateBundle: (state, action: PayloadAction<BundleData>) => {
+            const index = state.bundles.findIndex((bundle) => bundle.id === action.payload.id);
+            if (index !== -1) {
+                state.bundles[index] = action.payload;
+                if (state.showBundle?.id === action.payload.id) {
+                    state.showBundle = action.payload;
+                }
+            }
+        },
         reset: (state) => {
             state.bundles = [];
         },
@@ -31,13 +51,39 @@ export const bundlesSlice = createSlice({
         finishLoading: (state) => {
             state.isLoadingBundles = false;
         },
+        showBundle(state, action: PayloadAction<BundleData|undefined>) {
+            state.showBundle = action.payload;
+            state.isShowBundleFund = false;
+            state.isShowBundleWithdraw = false;
+        },
+        cleanup(state) {
+            state.showBundle = undefined;
+            state.isShowBundleWithdraw = false;
+            state.isShowBundleFund = false;
+        },
+        showBundleWithdraw(state, action: PayloadAction<boolean>) {
+            state.isShowBundleWithdraw = action.payload;
+            state.isShowBundleFund = false;
+        },
+        showBundleFund(state, action: PayloadAction<boolean>) {
+            state.isShowBundleFund = action.payload;
+            state.isShowBundleWithdraw = false;
+        },
+        setMaxActiveBundles(state, action: PayloadAction<number>) {
+            state.maxActiveBundles = action.payload;
+        },
     },
 });
 
 // Action creators are generated for each case reducer function
 export const { 
-    addBundle, reset, 
+    addBundle, updateBundle, reset, 
+    setMaxActiveBundles,
     startLoading, finishLoading,
+    showBundle,
+    cleanup,
+    showBundleWithdraw,
+    showBundleFund,
 } = bundlesSlice.actions;
 
 export default bundlesSlice.reducer;

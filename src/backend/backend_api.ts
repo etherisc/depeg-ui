@@ -19,8 +19,6 @@ export interface BackendApi {
         (
             walletAddress: string, 
             premium: BigNumber,
-            beforeApprovalCallback?: (address: string, currency: string, amount: BigNumber) => void,
-            beforeWaitCallback?: (address: string, currency: string, amount: BigNumber) => void
         ) => Promise<boolean>;
     policy: 
         (
@@ -40,7 +38,7 @@ export interface BackendApi {
     application: ApplicationApi;
     invest: InvestApi;
     priceFeed: PriceFeedApi;
-    triggerBundleUpdate: (bundleId: number) => Promise<void>;
+    triggerBundleUpdate: (bundleId: number, dispatch: Dispatch<AnyAction>) => Promise<BundleData>;
 }
 
 export interface ApplicationApi {
@@ -113,7 +111,22 @@ export interface InvestApi {
     bundleCount(): Promise<number>;
     bundleId(idx: number): Promise<number>;
     bundle(bundleId: number, walletAddress?: string): Promise<BundleData|undefined>;
+    activeBundles(): Promise<number>;
     maxBundles(): Promise<number>;
+    lockBundle(
+        bundleId: number,
+        ): Promise<boolean>;
+    unlockBundle(
+        bundleId: number,
+        ): Promise<boolean>;
+    closeBundle(
+        bundleId: number,
+        ): Promise<boolean>;
+    burnBundle(
+        bundleId: number,
+        ): Promise<boolean>;
+    withdrawBundle(bundleId: number, amount: BigNumber): Promise<boolean>;
+    fundBundle(bundleId: number, amount: BigNumber): Promise<boolean>;
 }
 
 export function getBackendApi(

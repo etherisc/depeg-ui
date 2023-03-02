@@ -166,4 +166,48 @@ export class InvestApiSmartContract implements InvestApi {
         return await(await this.riskpoolApi()).getMaxBundles();
     }
 
+    async activeBundles(): Promise<number> {
+        return await(await this.riskpoolApi()).activeBundles();
+    }
+
+    async lockBundle(
+        bundleId: number,
+    ): Promise<boolean> {
+        const [tx, receipt] = await (await this.riskpoolApi()).lockBundle(bundleId);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
+    }
+
+    async unlockBundle(
+        bundleId: number,
+    ): Promise<boolean> {
+        const [tx, receipt] = await (await this.riskpoolApi()).unlockBundle(bundleId);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
+    }
+
+    async closeBundle(bundleId: number): Promise<boolean> {
+        const [tx, receipt] = await (await this.riskpoolApi()).closeBundle(bundleId);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
+    }
+
+    async burnBundle(bundleId: number): Promise<boolean> {
+        const [tx, receipt] = await (await this.riskpoolApi()).burnBundle(bundleId);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
+    }
+
+    async withdrawBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
+        const [tx, receipt] = await (await this.riskpoolApi()).withdrawBundle(bundleId, amount);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
+    }
+
+    async fundBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
+        const [tx, receipt] = await (await this.riskpoolApi()).fundBundle(bundleId, amount);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
+    }
+
 }
