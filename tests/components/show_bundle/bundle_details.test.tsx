@@ -4,7 +4,7 @@ import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { SnackbarProvider } from 'notistack';
 import { BundleData } from '../../../src/backend/bundle_data';
-import BundleDetails from '../../../src/components/bundles/bundle_details';
+import BundleDetails from '../../../src/components/show_bundle/bundle_details';
 
 jest.mock('react-i18next', () => ({
     ...jest.requireActual('react-i18next'),

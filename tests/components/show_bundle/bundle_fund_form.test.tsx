@@ -3,7 +3,7 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { BundleData } from '../../../src/backend/bundle_data';
-import BundleFundForm from '../../../src/components/bundles/bundle_fund_form';
+import BundleFundForm from '../../../src/components/show_bundle/bundle_fund_form';
 import { renderWithProviders } from '../../util/render_with_provider';
 
 jest.mock('react-i18next', () => ({

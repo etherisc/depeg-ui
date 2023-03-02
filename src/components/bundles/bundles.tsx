@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { RootState } from "../../redux/store";
 import BundlesList from "./bundles_list";
-import ShowBundle from "./show_bundle";
+import ShowBundle from "../show_bundle/show_bundle";
 
 export interface BundlesProps {
     backend: BackendApi;

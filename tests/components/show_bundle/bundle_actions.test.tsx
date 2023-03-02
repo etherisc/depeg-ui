@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { BundleData } from '../../../src/backend/bundle_data';
-import BundleActions from '../../../src/components/bundles/bundle_actions';
+import BundleActions from '../../../src/components/show_bundle/bundle_actions';
 
 jest.mock('react-i18next', () => ({
     ...jest.requireActual('react-i18next'),
