@@ -109,8 +109,8 @@ export default function BundlesList(props: BundlesProps) {
             }
         },
         { 
-            field: 'capital', 
-            headerName: t('table.header.capital'), 
+            field: 'balance', 
+            headerName: t('table.header.balance'), 
             flex: 0.65,
             valueGetter: (params: GridValueGetterParams<string, BundleData>) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
