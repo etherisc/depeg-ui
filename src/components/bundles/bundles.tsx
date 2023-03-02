@@ -110,7 +110,7 @@ export default function Bundles(props: BundlesProps) {
         },
         { 
             field: 'balance', 
-            headerName: t('table.header.balance     '), 
+            headerName: t('table.header.balance'), 
             flex: 0.65,
             valueGetter: (params: GridValueGetterParams<string, BundleData>) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
