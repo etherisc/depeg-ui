@@ -14,7 +14,7 @@ export default function Bundles(props: BundlesProps) {
     if (showBundle !== undefined) {
         return (<ShowBundle backend={props.backend} />);
     } else {
-        return (<BundlesList insurance={props.backend} />);
+        return (<BundlesList backend={props.backend} />);
     }
 
 }
