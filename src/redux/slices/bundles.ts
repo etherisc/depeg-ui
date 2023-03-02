@@ -53,6 +53,8 @@ export const bundlesSlice = createSlice({
         },
         showBundle(state, action: PayloadAction<BundleData|undefined>) {
             state.showBundle = action.payload;
+            state.isShowBundleFund = false;
+            state.isShowBundleWithdraw = false;
         },
         cleanup(state) {
             state.showBundle = undefined;

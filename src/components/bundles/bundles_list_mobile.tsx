@@ -1,6 +1,6 @@
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FormControlLabel, Switch, useMediaQuery, useTheme } from "@mui/material";
+import { FormControlLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch, useMediaQuery, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -21,6 +21,9 @@ import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
 import { LinkBehaviour } from "../link_behaviour";
 import Timestamp from "../timestamp";
 import StakeUsageIndicator from "./stake_usage_indicator";
+import InboxIcon from '@mui/icons-material/Inbox';
+import DraftsIcon from '@mui/icons-material/Drafts';
+import { formatDateLocal, formatDateUtc } from "../../utils/date";
 
 export interface BundlesProps {
     backend: BackendApi;
@@ -205,57 +208,45 @@ export default function BundlesListMobile(props: BundlesProps) {
         );
     }
 
-    const loadingBar = isLoadingBundles ? <LinearProgress /> : null;
-    
+    function renderListItemTitle(bundle: BundleData) {
+        const lifetime = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 'seconds').unix();
+        return (
+            <>
+                {bundle.id} | {bundle.name} 
+                <br/> 
+                {t('table.header.apr')}: {bundle.apr}%, {t('table.header.lifetime')}: {formatDateUtc(lifetime)}
+            </>
+        );
+    }
 
+    function renderListIcon(bundle: BundleData) {
+        if (bundle.owner === address) {
+            return (<><FontAwesomeIcon icon={faUser} /></>)
+        }
+        return (<></>);
+    }
+
+    const loadingBar = isLoadingBundles ? <LinearProgress /> : null;
+    const bundlesToShow = bundles.filter((bundle) => showAllBundles || bundle.owner === address).sort((a, b) => a.apr - b.apr);
 
     return (
         <>
-        Mobile
             <Typography variant="h5" mb={2}>{t('title')}</Typography>
 
             {loadingBar}
 
-            <DataGrid 
-                autoHeight
-                rows={bundles.filter((bundle) => showAllBundles || bundle.owner === address)} 
-                columns={columns} 
-                getRowId={(row) => row.id}
-                components={{
-                    Toolbar: GridToolbar,
-                }}
-                initialState={{
-                    sorting: {
-                        sortModel: [{ field: 'apr', sort: 'asc' }, { field: 'coverageUntil', sort: 'asc' }],
-                    },
-                }}
-                pageSize={pageSize}
-                rowsPerPageOptions={[5, 10, 20, 50]}
-                onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
-                disableSelectionOnClick={true}
-                disableColumnMenu={true}
-                componentsProps={{ 
-                    row: { 
-                        onMouseEnter: (e: MouseEvent) => {
-                            // console.log("enter", e);
-                            // onMouseEnter is also triggered when hovering over the embedded action button and we don't want to change the hover state in that case
-                            if ((e.target as HTMLElement).nodeName !== 'DIV') { 
-                                return;
-                            }
-                            const id = (e.target as HTMLElement).parentElement?.dataset?.id;
-                            setHoveringOverBundleId(id !== undefined ? parseInt(id) : undefined);
-                        },
-                        onMouseLeave: (e: MouseEvent) => {
-                            // console.log("leave", e);
-                            const id = (e.target as HTMLElement).parentElement?.dataset?.id;
-                            if (id === undefined) {
-                                return;
-                            }
-                            setHoveringOverBundleId(undefined);
-                        },
-                    },
-                }}
-                />
+            <List>
+                {bundlesToShow.map((bundle: BundleData) => (
+                    <ListItem disablePadding key={bundle.id}>
+                        <ListItemButton onClick={() => dispatch(showBundle(bundle))}>
+                            <ListItemIcon>
+                                {renderListIcon(bundle)}
+                            </ListItemIcon>
+                            <ListItemText primary={renderListItemTitle(bundle)} />
+                        </ListItemButton>
+                    </ListItem>
+                ))}
+            </List>
         </>
     );
 }
