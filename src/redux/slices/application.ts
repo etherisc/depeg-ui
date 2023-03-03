@@ -5,6 +5,7 @@ import { BundleData } from '../../backend/bundle_data';
 export interface ApplicationState {
     isLoadingBundles: boolean;
     bundles: BundleData[];
+    exampleRate: string;
     applicableBundleIds: number[] | undefined;
     selectedBundleId: number | undefined;
     premium: string | undefined;
@@ -13,6 +14,7 @@ export interface ApplicationState {
 const initialState: ApplicationState = {
     bundles: [],
     isLoadingBundles: false,
+    exampleRate: "0.9",
     applicableBundleIds: undefined,
     selectedBundleId: undefined,
     premium: undefined,
@@ -29,6 +31,7 @@ export const applicationSlice = createSlice({
             }
         },
         reset: (state) => {
+            state.exampleRate = (Math.random() * 0.33 + 0.6).toFixed(2);
             state.bundles = [];
             state.applicableBundleIds = undefined;
             state.selectedBundleId = undefined;

@@ -1,18 +1,27 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Link, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useTranslation } from "next-i18next";
+import { formatCurrency } from "../../utils/numbers";
+import { ProxyType } from "immer/dist/internal";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 interface PayoutExampleProps {
-    disabled: boolean;
     insuredAmount: string | undefined;
+    currency: string;
+    currency2: string;
 }
 
 export default function PayoutExample(props: PayoutExampleProps) {
-    // TODO: disable if props.disabled
-    const currency = 'USDC'; // TODO
-    const currency2 = 'USDT'; // TODO
-    const currencyUSD = 'USD'; // TODO
-    const threshold = '0.995'; // TODO
-    const exampleRate = '0.73'; // TODO
+    const { t } = useTranslation('application');
+    
+    const currency = props.currency;
+    const currency2 = props.currency2;
+    const currencyUSD = 'USD';
+    const threshold = '0.995';
+    const exampleRate = useSelector((state: RootState) => state.application.exampleRate);
+    const pricefeedUrl = process.env.NEXT_PUBLIC_PRICEFEED_URL || 'https://data.chain.link/ethereum/mainnet/stablecoins/usdc-usd';
 
     let insuredAmount = 1000;
 
@@ -24,18 +33,23 @@ export default function PayoutExample(props: PayoutExampleProps) {
 
     return (<>
         <Typography variant="subtitle2" gutterBottom component="div">
-            How does the protection work and how much will I get? 
+            {t('payout_example.title')}
         </Typography>
         <Box>
             <Typography variant="body2" gutterBottom component="div">
-                If the price of {currency} drops below {currencyUSD} {threshold} for more than 24 hours, you will receive a payout in {currency2}.
-                The payout is based on the price of {currency} after 24 hours and will cover your loss at that time. 
+                {t('payout_example.text1', {currency, currency2, currencyUSD, threshold})}
+                (<Link target="_blank" href={pricefeedUrl}>{t('payout_example.reference_pricefeed')}</Link>)
             </Typography>
             <Typography variant="body2" component="div">
-                {/* TODO: 1000 sep */}
-                <b>Example</b>: 
-                If you <b>protect {currency} {insuredAmount.toFixed(2)}</b> from your wallet and the price of {currency} drops and is at {currencyUSD} {exampleRate} 
-                &nbsp;24 hours after dropping below {currencyUSD} {threshold} you will receive a <b>payout</b> of <b>{currency2} {payoutAmount.toFixed(2)}</b>. {/* TODO: hover ((1 - {exampleRate}) * {insuredAmount}) */}
+                <b>{t('example')}</b>:&nbsp;
+                {t('payout_example.text2', { 
+                    currency, currency2, currencyUSD, 
+                    insuredAmount: formatCurrency(insuredAmount, 0), 
+                    exampleRate, 
+                    payoutAmount: formatCurrency(payoutAmount, 0), 
+                    threshold 
+                })}
+                {/* TODO: hover ((1 - {exampleRate}) * {insuredAmount}) */}
             </Typography>
         </Box>
     </>);

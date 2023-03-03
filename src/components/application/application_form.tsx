@@ -377,8 +377,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 </Grid>
                 <Grid item xs={12}>
                     <PayoutExample 
-                        disabled={props.formDisabled}
                         insuredAmount={errors.insuredAmount !== undefined ? undefined : watchInsuredAmount}
+                        currency={props.usd1}
+                        currency2={props.usd2}
                         />
                 </Grid>
                 <Grid item xs={12}>
