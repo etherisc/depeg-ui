@@ -24,6 +24,7 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { AvailableBundleList } from './available_bundle_list';
 import { filterApplicableBundles } from '../../utils/bundles';
 import { clearPremium, setApplicableBundleIds, setPremium } from '../../redux/slices/application';
+import PayoutExample from './payout_example';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -370,6 +371,11 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 minDate={coverageUntilMin}
                                 maxDate={coverageUntilMax}
                                 />}
+                        />
+                </Grid>
+                <Grid item xs={12}>
+                    <PayoutExample 
+                        disabled={props.formDisabled}
                         />
                 </Grid>
                 <Grid item xs={12}>
