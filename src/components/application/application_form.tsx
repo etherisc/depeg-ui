@@ -376,8 +376,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <AvailableBundleList 
                         formDisabled={props.formDisabled}
                         isWalletConnected={isConnected}
-                        currency={props.usd2}
-                        currencyDecimals={props.usd2Decimals}
+                        currency={props.usd1}
+                        currencyDecimals={props.usd1Decimals}
                         bundles={bundles}
                         bundlesLoading={isLoadingBundles} 
                         applicableBundleIds={applicableBundleIds}
