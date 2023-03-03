@@ -84,6 +84,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
     });
 
+    const watchInsuredAmount = watch("insuredAmount");
+
     // premium
     const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
     const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
@@ -376,6 +378,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 <Grid item xs={12}>
                     <PayoutExample 
                         disabled={props.formDisabled}
+                        insuredAmount={errors.insuredAmount !== undefined ? undefined : watchInsuredAmount}
                         />
                 </Grid>
                 <Grid item xs={12}>
