@@ -137,7 +137,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     const calculatePremium = useCallback(async () => {
         if ( ! validateFormState()) {
-            // setValue("premiumAmount", 0);
+            dispatch(setApplicableBundleIds(undefined));
+            dispatch(clearPremium());
             return;
         }
         
