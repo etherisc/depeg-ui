@@ -46,5 +46,12 @@
         "riskpool_capacity_exceeded": "The product has no capacity for additional policies at the moment. Please try again later.",
         "no_matching_bundle": "No risk bundle matching your criteria was found. Please change the amount or duration.",
         "not_connected_no_bundles": "Available bundles will be shown when a wallet is connected."
+    },
+    "example": "Example",
+    "payout_example": {
+        "title": "How does the protection work and how much will I get?",
+        "text1": "If the price of {{currency}} drops below {{currencyUSD}} {{depegThreshold}} and does not recover above {{recoveryThreshold}} within 24 hours, you will receive a payout in {{currency2}}. The payout is based on the price of {{currency}} after 24 hours and will cover your loss at that time (<0>follow this link for the current price</0>). ",
+        "text2": "<0>Example</0>: If you protect {{currency}} {{insuredAmount}} from your wallet and the price of {{currency}} drops and is at {{currencyUSD}} {{exampleRate}} 24 hours after dropping below {{currencyUSD}} {{depegThreshold}}, you will receive a <1>payout of {{currency2}} {{payoutAmount}}</1>.",
+        "calculation_tooltip": "{{currency2}} {{insuredAmount}} * (1 - {{exampleRate}})"
     }
 }
