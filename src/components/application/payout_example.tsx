@@ -24,28 +24,35 @@ export default function PayoutExample(props: PayoutExampleProps) {
     const recoveryThreshold = '0.999';
     const exampleRate = useSelector((state: RootState) => state.application.exampleRate);
 
-    let insuredAmount = 1000;
+    let insuredAmt = 1000;
 
     if (props.insuredAmount !== undefined) {
-        insuredAmount = parseFloat(props.insuredAmount);
+        insuredAmt = parseFloat(props.insuredAmount);
     }
+    const insuredAmount = formatCurrency(insuredAmt, 0);
 
-    const payoutAmount = insuredAmount - insuredAmount * parseFloat(exampleRate);
+    const payoutAmt = insuredAmt - insuredAmt * parseFloat(exampleRate);
+    const payoutAmount = formatCurrency(payoutAmt, 0);
 
     return (<>
         <Typography variant="subtitle2" gutterBottom component="div">
             {t('payout_example.title')}
         </Typography>
         <Box>
-            <Typography variant="body2" gutterBottom component="div">
-                <Trans i18nKey="payout_example.text1" t={t} values={{ currency, currency2, currencyUSD, depegThreshold, recoveryThreshold }}>
+            <Typography variant="body2" gutterBottom component="div" data-testid="text1">
+                <Trans i18nKey="payout_example.text1" t={t} 
+                    values={{ currency, currency2, currencyUSD, depegThreshold, recoveryThreshold }}
+                    >
                     <Link target="_blank" href="/price" className="no_decoration">{t('payout_example.see_price_page')}</Link>
+                    {/* print values for testing */}
+                    {depegThreshold}
+                    {recoveryThreshold}
                 </Trans> 
             </Typography>
-            <Typography variant="body2" component="div">
+            <Typography variant="body2" component="div" data-testid="text2">
                 <Trans i18nKey="payout_example.text2" t={t} values={{
-                        insuredAmount: formatCurrency(insuredAmount, 0),
-                        payoutAmount: formatCurrency(payoutAmount, 0),
+                        insuredAmount,
+                        payoutAmount,
                         currency,
                         currency2,
                         currencyUSD, 
@@ -55,14 +62,14 @@ export default function PayoutExample(props: PayoutExampleProps) {
                 >
                     <b>bold</b>
                     <WithTooltip dottedUnderline tooltipText={t('payout_example.calculation_tooltip', {
-                        insuredAmount: formatCurrency(insuredAmount, 0),
-                        payoutAmount: formatCurrency(payoutAmount, 0),
-                        currency,
+                        insuredAmount,
                         currency2,
-                        currencyUSD, 
                         exampleRate, 
-                        depegThreshold,
                     })}>calculation formula</WithTooltip>
+                    {/* print values for testing */}
+                    {exampleRate}
+                    {insuredAmount}
+                    {payoutAmount}
                 </Trans>
             </Typography>
         </Box>
