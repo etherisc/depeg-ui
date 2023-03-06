@@ -70,7 +70,7 @@ export default function BundleConfirmation(props: BundleConfirmationProps) {
                             </Grid>
                             <Grid item xs={3}>
                                 <Typography variant="body1">
-                                    {t('confirmation.invested_amount')}:
+                                    {t('confirmation.balance')}:
                                 </Typography>
                             </Grid>
                             <Grid item xs={9}>
@@ -86,7 +86,7 @@ export default function BundleConfirmation(props: BundleConfirmationProps) {
                             <Grid item xs={9}>
                                 <Typography variant="body1">
                                 {props.currency} {formatUnits(props.minSumInsured, props.currencyDecimals)}
-                                &nbsp;-&nbsp;
+                                &nbsp;/&nbsp;
                                 {formatUnits(props.maxSumInsured, props.currencyDecimals)}
                                 </Typography>
                             </Grid>
@@ -98,7 +98,7 @@ export default function BundleConfirmation(props: BundleConfirmationProps) {
                             <Grid item xs={9}>
                                 <Typography variant="body1">
                                 {props.minCoverage}
-                                &nbsp;-&nbsp;
+                                &nbsp;/&nbsp;
                                 {props.maxCoverage} {t('days')}
                                 </Typography>
                             </Grid>

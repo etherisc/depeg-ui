@@ -43,10 +43,10 @@
         },
         "title": "Bundle details",
         "id": "Bundle Id",
-        "invested_amount": "Staked amount",
+        "balance": "Balance",
         "sum_insured": "Protected amount",
         "coverage_duration": "Coverage duration",
-        "apr": "APR",
+        "apr": "Annual percentage return",
         "continue_link": "Continue to bundle overview"
     },
     "alert": {
