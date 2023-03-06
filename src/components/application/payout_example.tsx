@@ -19,7 +19,8 @@ export default function PayoutExample(props: PayoutExampleProps) {
     const currency = props.currency;
     const currency2 = props.currency2;
     const currencyUSD = 'USD';
-    const threshold = '0.995';
+    const depegThreshold = '0.995';
+    const recoveryThreshold = '0.999';
     const exampleRate = useSelector((state: RootState) => state.application.exampleRate);
     const pricefeedUrl = process.env.NEXT_PUBLIC_PRICEFEED_URL || 'https://data.chain.link/ethereum/mainnet/stablecoins/usdc-usd';
 
@@ -37,7 +38,7 @@ export default function PayoutExample(props: PayoutExampleProps) {
         </Typography>
         <Box>
             <Typography variant="body2" gutterBottom component="div">
-                {t('payout_example.text1', {currency, currency2, currencyUSD, threshold})}
+                {t('payout_example.text1', {currency, currency2, currencyUSD, depegThreshold, recoveryThreshold})}
                 (<Link target="_blank" href={pricefeedUrl}>{t('payout_example.reference_pricefeed')}</Link>)
             </Typography>
             <Typography variant="body2" component="div">
@@ -47,7 +48,7 @@ export default function PayoutExample(props: PayoutExampleProps) {
                     insuredAmount: formatCurrency(insuredAmount, 0), 
                     exampleRate, 
                     payoutAmount: formatCurrency(payoutAmount, 0), 
-                    threshold 
+                    depegThreshold 
                 })}
                 {/* TODO: hover ((1 - {exampleRate}) * {insuredAmount}) */}
             </Typography>
