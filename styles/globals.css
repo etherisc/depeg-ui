@@ -11,3 +11,8 @@
 a.no_decoration {
     text-decoration: none;
 }
+
+.dotted_underline {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+}

@@ -1,11 +1,12 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Link, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { formatCurrency } from "../../utils/numbers";
 import { ProxyType } from "immer/dist/internal";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import WithTooltip from "../with_tooltip";
 
 interface PayoutExampleProps {
     insuredAmount: string | undefined;
@@ -37,19 +38,32 @@ export default function PayoutExample(props: PayoutExampleProps) {
         </Typography>
         <Box>
             <Typography variant="body2" gutterBottom component="div">
-                {t('payout_example.text1', {currency, currency2, currencyUSD, depegThreshold, recoveryThreshold})}
-                (<Link target="_blank" href="/price" className="no_decoration">{t('payout_example.see_price_page')}</Link>)
+                <Trans i18nKey="payout_example.text1" t={t} values={{ currency, currency2, currencyUSD, depegThreshold, recoveryThreshold }}>
+                    <Link target="_blank" href="/price" className="no_decoration">{t('payout_example.see_price_page')}</Link>
+                </Trans> 
             </Typography>
             <Typography variant="body2" component="div">
-                <b>{t('example')}</b>:&nbsp;
-                {t('payout_example.text2', { 
-                    currency, currency2, currencyUSD, 
-                    insuredAmount: formatCurrency(insuredAmount, 0), 
-                    exampleRate, 
-                    payoutAmount: formatCurrency(payoutAmount, 0), 
-                    depegThreshold 
-                })}
-                {/* TODO: hover ((1 - {exampleRate}) * {insuredAmount}) */}
+                <Trans i18nKey="payout_example.text2" t={t} values={{
+                        insuredAmount: formatCurrency(insuredAmount, 0),
+                        payoutAmount: formatCurrency(payoutAmount, 0),
+                        currency,
+                        currency2,
+                        currencyUSD, 
+                        exampleRate, 
+                        depegThreshold,
+                    }}
+                >
+                    <b>bold</b>
+                    <WithTooltip dottedUnderline tooltipText={t('payout_example.calculation_tooltip', {
+                        insuredAmount: formatCurrency(insuredAmount, 0),
+                        payoutAmount: formatCurrency(payoutAmount, 0),
+                        currency,
+                        currency2,
+                        currencyUSD, 
+                        exampleRate, 
+                        depegThreshold,
+                    })}>calculation formula</WithTooltip>
+                </Trans>
             </Typography>
         </Box>
     </>);
