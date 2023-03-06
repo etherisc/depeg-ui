@@ -7,3 +7,7 @@
 .cursor-pointer {
     cursor: pointer;
 }
+
+a.no_decoration {
+    text-decoration: none;
+}

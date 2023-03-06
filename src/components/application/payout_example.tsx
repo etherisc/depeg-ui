@@ -22,7 +22,6 @@ export default function PayoutExample(props: PayoutExampleProps) {
     const depegThreshold = '0.995';
     const recoveryThreshold = '0.999';
     const exampleRate = useSelector((state: RootState) => state.application.exampleRate);
-    const pricefeedUrl = process.env.NEXT_PUBLIC_PRICEFEED_URL || 'https://data.chain.link/ethereum/mainnet/stablecoins/usdc-usd';
 
     let insuredAmount = 1000;
 
@@ -39,7 +38,7 @@ export default function PayoutExample(props: PayoutExampleProps) {
         <Box>
             <Typography variant="body2" gutterBottom component="div">
                 {t('payout_example.text1', {currency, currency2, currencyUSD, depegThreshold, recoveryThreshold})}
-                (<Link target="_blank" href={pricefeedUrl}>{t('payout_example.reference_pricefeed')}</Link>)
+                (<Link target="_blank" href="/price" className="no_decoration">{t('payout_example.see_price_page')}</Link>)
             </Typography>
             <Typography variant="body2" component="div">
                 <b>{t('example')}</b>:&nbsp;
