@@ -1,20 +1,16 @@
 import { Alert, Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { BigNumber } from "ethers";
 import { useTranslation } from 'next-i18next';
-import { BackendApi } from "../../backend/backend_api";
-import { SnackbarKey, useSnackbar } from "notistack";
-import confetti from "canvas-confetti";
-import InvestForm from "./invest_form";
 import { useRouter } from "next/router";
-import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
+import { SnackbarKey, useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { BackendApi } from "../../backend/backend_api";
+import useTransactionNotifications from "../../hooks/trx_notifications";
+import { RootState } from "../../redux/store";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { REVOKE_INFO_URL } from "../application/application";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import BundleConfirmation from "./bundle_confirmation";
-import { BigNumber } from "ethers";
-import { updateAccountBalance } from "../../utils/chain";
-import useTransactionNotifications from "../../hooks/trx_notifications";
+import InvestForm from "./invest_form";
 
 export interface InvestProps {
     backend: BackendApi;
@@ -104,14 +100,8 @@ export default function Invest(props: InvestProps) {
     }
 
     async function applicationSuccessful(bundleId: number) {
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 }
-        });
-
         await props.backend.triggerBundleUpdate(bundleId, dispatch);
-        updateAccountBalance(signer!, dispatch);
+        router.push("/bundles?confirmation=true&&id=" + bundleId);
     }
 
     async function doApproval(walletAddress: string, investedAmount: BigNumber): Promise<Boolean> {
@@ -265,37 +255,9 @@ export default function Invest(props: InvestProps) {
             }
             setActiveStep(5);
             await applicationSuccessful(parseInt(investResult.bundleId as string));
-            setInvestmentDetails([investResult.bundleId as string, BigNumber.from(investedAmount), 
-                BigNumber.from(minSumInsured), BigNumber.from(maxSumInsured),
-                minDuration, maxDuration,
-                annualPctReturn]);
         } finally {
             enableUnloadWarning(false);
         }
-    }
-
-    let content;
-    if (activeStep < 5) {
-        content = (<InvestForm 
-                        formDisabled={formDisabled || maxBundlesUsed || ! isInvestorWhitelisted || ! riskpoolCapacityAvailable}
-                        usd2={props.backend.usd2}
-                        usd2Decimals={props.backend.usd2Decimals}
-                        backend={props.backend}
-                        readyToSubmit={formReadyForInvest}
-                        invest={invest}
-                    />)
-    } else {
-        content = (<BundleConfirmation
-                        bundleId={investmentDetails[0] as string}
-                        currency={props.backend.usd2}
-                        currencyDecimals={props.backend.usd2Decimals}
-                        investedAmount={investmentDetails[1] as BigNumber}
-                        minSumInsured={investmentDetails[2] as BigNumber}
-                        maxSumInsured={investmentDetails[3] as BigNumber}
-                        minCoverage={investmentDetails[4] as number}
-                        maxCoverage={investmentDetails[5] as number}
-                        apr={investmentDetails[6] as number}
-                        />);
     }
 
     return (
@@ -321,7 +283,14 @@ export default function Invest(props: InvestProps) {
                 { ! riskpoolCapacityAvailable && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.no_riskpool_capacity')}</Alert>)}
                 { maxBundlesUsed && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.max_bundles')}</Alert>)}
 
-                {content}
+                <InvestForm 
+                        formDisabled={formDisabled || maxBundlesUsed || ! isInvestorWhitelisted || ! riskpoolCapacityAvailable}
+                        usd2={props.backend.usd2}
+                        usd2Decimals={props.backend.usd2Decimals}
+                        backend={props.backend}
+                        readyToSubmit={formReadyForInvest}
+                        invest={invest}
+                    />
             </div>
         </>
     );

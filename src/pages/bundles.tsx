@@ -1,21 +1,24 @@
+import confetti from 'canvas-confetti';
+import { i18n, useTranslation } from "next-i18next";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from "next-i18next";
 import Head from "next/head";
-import { i18n } from "next-i18next";
+import { useRouter } from 'next/router';
 import { useSnackbar } from "notistack";
 import { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { getBackendApi } from '../backend/backend_api';
 import Bundles from '../components/bundles/bundles';
-import { useDispatch, useSelector } from 'react-redux';
+import { cleanup, showBundle, showCreationConfirmation } from '../redux/slices/bundles';
 import { RootState } from '../redux/store';
-import { cleanup } from '../redux/slices/bundles';
 
 export default function BundlesPage() {
     const { enqueueSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
     const signer = useSelector((state: RootState) => state.chain.signer);
     const provider = useSelector((state: RootState) => state.chain.provider);
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const dispatch = useDispatch();
+    const router = useRouter();
     
     useEffect(() => {
         dispatch(cleanup());
@@ -27,6 +30,26 @@ export default function BundlesPage() {
         signer,
         provider,
     ), [enqueueSnackbar, signer, provider, t]);
+
+    useEffect(() => {
+        async function fetchBundle(id: number, confirmation: boolean) {
+            const bundle = await backend.invest.bundle(id);
+            router.push(`/bundles`, undefined, { shallow: true });
+            dispatch(showBundle(bundle));
+            
+            if (confirmation) {
+                dispatch(showCreationConfirmation(confirmation));
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+        if (router.isReady && router.query.id !== undefined && isConnected) {
+            fetchBundle(parseInt(router.query.id as string), router.query.confirmation !== undefined);
+        }
+    }, [router.isReady, router.query.id, isConnected]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>

@@ -58,5 +58,11 @@
     "burn_successful": "Bundle burned",
     "error": {
         "transaction_failed": "Transaction failed"
+    },
+    "confirmation": {
+        "alert": {
+            "title": "Payment for Depeg riskpool bundle confirmed",
+            "text": "Your risk bundle is now active and will require DIP staking to enable policies to be purchased"
+        }
     }
 }

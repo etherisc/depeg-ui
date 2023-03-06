@@ -1,6 +1,6 @@
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faCircleDollarToSlot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Grid, Typography } from "@mui/material";
+import { Alert, AlertTitle, Button, Grid, Typography } from "@mui/material";
 import { BigNumber } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
@@ -33,6 +33,7 @@ export default function ShowBundle(props: ShowBundleProps) {
     const isShowBundleFund = useSelector((state: RootState) => state.bundles.isShowBundleFund);
     const maxActiveBundles = useSelector((state: RootState) => state.bundles.maxActiveBundles);
     const walletAddress = useSelector((state: RootState) => state.account.address);
+    const showCreationConfirmation = useSelector((state: RootState) => state.bundles.showCreationConfirmation);
     
     useTransactionNotifications();
 
@@ -216,6 +217,17 @@ export default function ShowBundle(props: ShowBundleProps) {
 
         <Grid container spacing={2} sx={{ mt: 2 }}>
             <Grid item xs={12} md={6}>
+                { showCreationConfirmation && 
+                    <Alert 
+                        severity="success" 
+                        variant="filled" 
+                        sx={{ mb: 2 }}
+                        icon={<FontAwesomeIcon icon={faCircleDollarToSlot} fontSize="4rem" />}
+                        >
+                        <AlertTitle>{t('confirmation.alert.title')}</AlertTitle>
+                        {t('confirmation.alert.text')}
+                    </Alert>
+                }
                 <BundleDetails bundle={bundle!} currency={props.backend.usd2} decimals={props.backend.usd2Decimals} />
             </Grid>
             <Grid item xs={12} md={6}>

@@ -1,13 +1,18 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { BundleData } from '../../backend/bundle_data';
 
 export interface BundlesState {
+    // the list of bundles to display
     bundles: BundleData[];
+    // the maximum number of active bundles
     maxActiveBundles: number;
+    // indicate if the bundles are loading
     isLoadingBundles: boolean;
     // if not undefined this will show the bundle details for the given bundle
     showBundle: BundleData | undefined;
+    // show success dialog in bundle details page after bundle creation
+    showCreationConfirmation: boolean;
     // if true this will show the withdraw dialog for the bundle
     isShowBundleWithdraw: boolean;
     // if true this will show the fund dialog for the bundle
@@ -18,6 +23,7 @@ const initialState: BundlesState = {
     bundles: [],
     maxActiveBundles: 0,
     showBundle: undefined,
+    showCreationConfirmation: false,
     isLoadingBundles: false,
     isShowBundleWithdraw: false,
     isShowBundleFund: false,
@@ -55,6 +61,10 @@ export const bundlesSlice = createSlice({
             state.showBundle = action.payload;
             state.isShowBundleFund = false;
             state.isShowBundleWithdraw = false;
+            state.showCreationConfirmation = false;
+        },
+        showCreationConfirmation(state, action: PayloadAction<boolean>) {
+            state.showCreationConfirmation = action.payload;
         },
         cleanup(state) {
             state.showBundle = undefined;
@@ -84,6 +94,7 @@ export const {
     cleanup,
     showBundleWithdraw,
     showBundleFund,
+    showCreationConfirmation,
 } = bundlesSlice.actions;
 
 export default bundlesSlice.reducer;
