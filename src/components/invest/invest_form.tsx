@@ -19,6 +19,7 @@ import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_TWO_DE
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import TermsAndConditions from '../terms_and_conditions';
 
 const formInputVariant = 'outlined';
 
@@ -459,7 +460,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                     />
                             } 
                             disabled={props.formDisabled}
-                            label={t('checkbox_t_and_c_label')} 
+                            label={<TermsAndConditions />} 
                             />}
                         />
                 </Grid>

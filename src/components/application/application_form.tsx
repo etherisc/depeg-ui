@@ -25,6 +25,7 @@ import { AvailableBundleList } from './available_bundle_list';
 import { filterApplicableBundles } from '../../utils/bundles';
 import { clearPremium, setApplicableBundleIds, setPremium } from '../../redux/slices/application';
 import PayoutExample from './payout_example';
+import TermsAndConditions from '../terms_and_conditions';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -414,16 +415,17 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         control={control}
                         rules={{ required: true }}
                         render={({ field }) => 
-                        <FormControlLabel 
-                            control={
-                                <Checkbox 
-                                    defaultChecked={false}
-                                    {...field}
-                                    />
-                            } 
-                            disabled={props.formDisabled}
-                            label={t('checkbox_t_and_c_label')} />}
-                        />
+                            <FormControlLabel 
+                                control={
+                                    <Checkbox 
+                                        defaultChecked={false}
+                                        {...field}
+                                        />
+                                } 
+                                disabled={props.formDisabled}
+                                label={<TermsAndConditions />}
+                                />
+                        } />
                 </Grid>
                 <Grid item xs={12}>
                     <Button 
