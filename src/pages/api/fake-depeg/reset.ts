@@ -1,10 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { ethers, Signer } from 'ethers';
-import { formatBytes32String, formatUnits, parseUnits } from 'ethers/lib/utils';
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { getErc20Token } from '../../../backend/erc20';
-import { DepegProduct__factory } from '../../../contracts/depeg-contracts';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { redisClient } from '../../../utils/redis';
 
 type Data = {

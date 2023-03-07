@@ -1,7 +1,7 @@
 import { BigNumber, Signer } from "ethers";
 import moment from "moment";
 import { AggregatorV3Interface, AggregatorV3Interface__factory } from "../../contracts/chainlink-contracts";
-import { DepegProduct__factory, IPriceDataProvider, UsdcPriceDataProvider, UsdcPriceDataProvider__factory } from "../../contracts/depeg-contracts";
+import { DepegProduct__factory, UsdcPriceDataProvider, UsdcPriceDataProvider__factory } from "../../contracts/depeg-contracts";
 import { PriceFeedApi } from "./api";
 
 const MAX_DATAPOINTS = 100;
