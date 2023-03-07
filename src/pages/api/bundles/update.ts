@@ -20,6 +20,7 @@ export default async function handler(
     const signer = await getVoidSigner();
     const { depegRiskpool, depegRiskpoolId, instanceService } = await getRiskpool(signer);
     const riskpoolApi = new DepegRiskpoolApi(depegRiskpool, depegRiskpoolId, instanceService, usd2Decimals);
+    await riskpoolApi.initialize();
 
     const updateOnlyBundle = req.query.bundleId as string;
 

@@ -72,6 +72,7 @@ export class InvestApiSmartContract implements InvestApi {
                 (await this.getDepegProductApi()).getRiskpoolId(), 
                 (await this.getDepegProductApi()).getInstanceService(),
                 this.usd2Decimals);
+            await this.doNoUseDirectlydepegRiskpoolApi.initialize();
         }
         return this.doNoUseDirectlydepegRiskpoolApi;
     }

@@ -42,6 +42,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
                 (await this.getDepegProductApi()).getInstanceService(),
                 this.usd2decimals,
                 );
+            await this.doNoUseDirectlyDepegRiskpoolApi.initialize();
         }
         return this.doNoUseDirectlyDepegRiskpoolApi;
     }

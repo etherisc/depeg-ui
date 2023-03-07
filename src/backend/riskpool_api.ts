@@ -37,6 +37,12 @@ export class DepegRiskpoolApi {
         }
     }
 
+    async initialize(): Promise<void> {
+        if (this.stakingApi !== undefined) {
+            await this.stakingApi.initialize();
+        }
+    }
+
     async getCapital(): Promise<BigNumber> {
         return await this.depegRiskpool.getCapital();
     }
