@@ -28,9 +28,11 @@ export default class StakingApi {
         return this.instanceId;
     }
 
-    // TODO: remove riskpoolId
-    async getSupportedCapital(riskpoolId: number, bundleId: number): Promise<BigNumber> {
-        const bundleNftId = await this.chainRegistryContract!.getBundleNftId(await this.getInstanceId(), bundleId);
+    async getSupportedCapital(bundleId: number): Promise<BigNumber> {
+        const instanceId = await this.getInstanceId();
+        // console.log("fetch bundle nft id", instanceId, bundleId);
+        const bundleNftId = await this.chainRegistryContract!.getBundleNftId(instanceId, bundleId);
+        // console.log("bundleNftId", bundleNftId.toNumber());
         return await this.stakingContract.capitalSupport(bundleNftId);
     }
 

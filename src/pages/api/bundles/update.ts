@@ -56,7 +56,6 @@ async function updateBundle(riskpoolApi: DepegRiskpoolApi, bundleId: number): Pr
 
 async function updateAllBundles(riskpoolApi: DepegRiskpoolApi): Promise<Array<BundleData>> {
     const bundles = await riskpoolApi.getBundleData();
-    const storedBundles = await redisClient.get("bundles");
     await redisClient.set("bundles", JSON.stringify(bundles));
     return bundles;
 }

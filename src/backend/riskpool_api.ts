@@ -71,7 +71,7 @@ export class DepegRiskpoolApi {
         let capitalSupport = undefined;
     
         if (this.stakingApi !== undefined) {
-            capitalSupport = await this.stakingApi.getSupportedCapital(this.riskpoolId, bundleId);
+            capitalSupport = await this.stakingApi.getSupportedCapital(bundleId);
         }
 
         return {
