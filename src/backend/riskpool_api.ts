@@ -37,6 +37,12 @@ export class DepegRiskpoolApi {
         }
     }
 
+    async initialize(): Promise<void> {
+        if (this.stakingApi !== undefined) {
+            await this.stakingApi.initialize();
+        }
+    }
+
     async getCapital(): Promise<BigNumber> {
         return await this.depegRiskpool.getCapital();
     }
@@ -65,7 +71,7 @@ export class DepegRiskpoolApi {
         let capitalSupport = undefined;
     
         if (this.stakingApi !== undefined) {
-            capitalSupport = await this.stakingApi.getSupportedCapital(this.riskpoolId, bundleId);
+            capitalSupport = await this.stakingApi.getSupportedCapital(bundleId);
         }
 
         return {

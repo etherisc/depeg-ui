@@ -67,6 +67,7 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     "CHAINLINK_TEST_VERSION()": FunctionFragment;
     "CHAINLINK_USDC_DECIMALS()": FunctionFragment;
     "CHAINLINK_USDC_USD_DEVIATION()": FunctionFragment;
+    "CHAINLINK_USDC_USD_FEED_GOERLI()": FunctionFragment;
     "CHAINLINK_USDC_USD_FEED_MAINNET()": FunctionFragment;
     "CHAINLINK_USDC_USD_HEARTBEAT()": FunctionFragment;
     "DEPEG_RECOVERY_PRICE()": FunctionFragment;
@@ -74,11 +75,13 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     "DEPEG_TRIGGER_PRICE()": FunctionFragment;
     "GANACHE()": FunctionFragment;
     "GANACHE2()": FunctionFragment;
+    "GOERLI()": FunctionFragment;
     "MAINNET()": FunctionFragment;
     "MUMBAI()": FunctionFragment;
     "PRICE_HISTORY_SIZE()": FunctionFragment;
     "PRICE_INFO_HISTORY_DURATION()": FunctionFragment;
-    "USDC_CONTACT_ADDRESS()": FunctionFragment;
+    "USDC_CONTACT_ADDRESS_GOERLI()": FunctionFragment;
+    "USDC_CONTACT_ADDRESS_MAINNET()": FunctionFragment;
     "addRoundData(int256,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "description()": FunctionFragment;
@@ -131,6 +134,7 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
       | "CHAINLINK_TEST_VERSION"
       | "CHAINLINK_USDC_DECIMALS"
       | "CHAINLINK_USDC_USD_DEVIATION"
+      | "CHAINLINK_USDC_USD_FEED_GOERLI"
       | "CHAINLINK_USDC_USD_FEED_MAINNET"
       | "CHAINLINK_USDC_USD_HEARTBEAT"
       | "DEPEG_RECOVERY_PRICE"
@@ -138,11 +142,13 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
       | "DEPEG_TRIGGER_PRICE"
       | "GANACHE"
       | "GANACHE2"
+      | "GOERLI"
       | "MAINNET"
       | "MUMBAI"
       | "PRICE_HISTORY_SIZE"
       | "PRICE_INFO_HISTORY_DURATION"
-      | "USDC_CONTACT_ADDRESS"
+      | "USDC_CONTACT_ADDRESS_GOERLI"
+      | "USDC_CONTACT_ADDRESS_MAINNET"
       | "addRoundData"
       | "decimals"
       | "description"
@@ -209,6 +215,10 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "CHAINLINK_USDC_USD_FEED_GOERLI",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "CHAINLINK_USDC_USD_FEED_MAINNET",
     values?: undefined
   ): string;
@@ -230,6 +240,7 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "GANACHE", values?: undefined): string;
   encodeFunctionData(functionFragment: "GANACHE2", values?: undefined): string;
+  encodeFunctionData(functionFragment: "GOERLI", values?: undefined): string;
   encodeFunctionData(functionFragment: "MAINNET", values?: undefined): string;
   encodeFunctionData(functionFragment: "MUMBAI", values?: undefined): string;
   encodeFunctionData(
@@ -241,7 +252,11 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "USDC_CONTACT_ADDRESS",
+    functionFragment: "USDC_CONTACT_ADDRESS_GOERLI",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "USDC_CONTACT_ADDRESS_MAINNET",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -429,6 +444,10 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "CHAINLINK_USDC_USD_FEED_GOERLI",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "CHAINLINK_USDC_USD_FEED_MAINNET",
     data: BytesLike
   ): Result;
@@ -450,6 +469,7 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "GANACHE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "GANACHE2", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "GOERLI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "MAINNET", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "MUMBAI", data: BytesLike): Result;
   decodeFunctionResult(
@@ -461,7 +481,11 @@ export interface UsdcPriceDataProviderInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "USDC_CONTACT_ADDRESS",
+    functionFragment: "USDC_CONTACT_ADDRESS_GOERLI",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "USDC_CONTACT_ADDRESS_MAINNET",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -815,6 +839,10 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    CHAINLINK_USDC_USD_FEED_GOERLI(
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     CHAINLINK_USDC_USD_FEED_MAINNET(
       overrides?: CallOverrides
     ): Promise<[string]>;
@@ -833,6 +861,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     GANACHE2(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    GOERLI(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     MAINNET(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     MUMBAI(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -843,7 +873,9 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    USDC_CONTACT_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
+    USDC_CONTACT_ADDRESS_GOERLI(overrides?: CallOverrides): Promise<[string]>;
+
+    USDC_CONTACT_ADDRESS_MAINNET(overrides?: CallOverrides): Promise<[string]>;
 
     addRoundData(
       answer: PromiseOrValue<BigNumberish>,
@@ -1055,6 +1087,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
   CHAINLINK_USDC_USD_DEVIATION(overrides?: CallOverrides): Promise<BigNumber>;
 
+  CHAINLINK_USDC_USD_FEED_GOERLI(overrides?: CallOverrides): Promise<string>;
+
   CHAINLINK_USDC_USD_FEED_MAINNET(overrides?: CallOverrides): Promise<string>;
 
   CHAINLINK_USDC_USD_HEARTBEAT(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1069,6 +1103,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
   GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
 
+  GOERLI(overrides?: CallOverrides): Promise<BigNumber>;
+
   MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
 
   MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1077,7 +1113,9 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
   PRICE_INFO_HISTORY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
-  USDC_CONTACT_ADDRESS(overrides?: CallOverrides): Promise<string>;
+  USDC_CONTACT_ADDRESS_GOERLI(overrides?: CallOverrides): Promise<string>;
+
+  USDC_CONTACT_ADDRESS_MAINNET(overrides?: CallOverrides): Promise<string>;
 
   addRoundData(
     answer: PromiseOrValue<BigNumberish>,
@@ -1267,6 +1305,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     CHAINLINK_USDC_USD_DEVIATION(overrides?: CallOverrides): Promise<BigNumber>;
 
+    CHAINLINK_USDC_USD_FEED_GOERLI(overrides?: CallOverrides): Promise<string>;
+
     CHAINLINK_USDC_USD_FEED_MAINNET(overrides?: CallOverrides): Promise<string>;
 
     CHAINLINK_USDC_USD_HEARTBEAT(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1281,6 +1321,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
 
+    GOERLI(overrides?: CallOverrides): Promise<BigNumber>;
+
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
 
     MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1289,7 +1331,9 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     PRICE_INFO_HISTORY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
-    USDC_CONTACT_ADDRESS(overrides?: CallOverrides): Promise<string>;
+    USDC_CONTACT_ADDRESS_GOERLI(overrides?: CallOverrides): Promise<string>;
+
+    USDC_CONTACT_ADDRESS_MAINNET(overrides?: CallOverrides): Promise<string>;
 
     addRoundData(
       answer: PromiseOrValue<BigNumberish>,
@@ -1597,6 +1641,10 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     CHAINLINK_USDC_USD_DEVIATION(overrides?: CallOverrides): Promise<BigNumber>;
 
+    CHAINLINK_USDC_USD_FEED_GOERLI(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     CHAINLINK_USDC_USD_FEED_MAINNET(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1613,6 +1661,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
 
+    GOERLI(overrides?: CallOverrides): Promise<BigNumber>;
+
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
 
     MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1621,7 +1671,9 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     PRICE_INFO_HISTORY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
-    USDC_CONTACT_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
+    USDC_CONTACT_ADDRESS_GOERLI(overrides?: CallOverrides): Promise<BigNumber>;
+
+    USDC_CONTACT_ADDRESS_MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
 
     addRoundData(
       answer: PromiseOrValue<BigNumberish>,
@@ -1787,6 +1839,10 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    CHAINLINK_USDC_USD_FEED_GOERLI(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     CHAINLINK_USDC_USD_FEED_MAINNET(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1811,6 +1867,8 @@ export interface UsdcPriceDataProvider extends BaseContract {
 
     GANACHE2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    GOERLI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     MAINNET(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     MUMBAI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1823,7 +1881,11 @@ export interface UsdcPriceDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    USDC_CONTACT_ADDRESS(
+    USDC_CONTACT_ADDRESS_GOERLI(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    USDC_CONTACT_ADDRESS_MAINNET(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

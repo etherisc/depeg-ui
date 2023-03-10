@@ -1,13 +1,12 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import { BundleData } from "../../../backend/bundle_data"
-import { StaticJsonRpcProvider } from '@ethersproject/providers';
-import { ethers, Signer } from "ethers";
-import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../../../contracts/depeg-contracts";
+import { Signer } from "ethers";
+import { NextApiRequest, NextApiResponse } from "next";
+import { BundleData } from "../../../backend/bundle_data";
 import { getDepegRiskpool, getInstanceService } from "../../../backend/gif_registry";
-import { IInstanceService } from "../../../contracts/gif-interface/IInstanceService";
 import { DepegRiskpoolApi } from "../../../backend/riskpool_api";
-import { redisClient } from "../../../utils/redis";
+import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../../../contracts/depeg-contracts";
+import { IInstanceService } from "../../../contracts/gif-interface/IInstanceService";
 import { getVoidSigner } from "../../../utils/chain";
+import { redisClient } from "../../../utils/redis";
 
 const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
 const usd2Decimals = parseInt(process.env.NEXT_PUBLIC_USD2_DECIMALS ?? "6");
@@ -21,6 +20,7 @@ export default async function handler(
     const signer = await getVoidSigner();
     const { depegRiskpool, depegRiskpoolId, instanceService } = await getRiskpool(signer);
     const riskpoolApi = new DepegRiskpoolApi(depegRiskpool, depegRiskpoolId, instanceService, usd2Decimals);
+    await riskpoolApi.initialize();
 
     const updateOnlyBundle = req.query.bundleId as string;
 
@@ -56,7 +56,6 @@ async function updateBundle(riskpoolApi: DepegRiskpoolApi, bundleId: number): Pr
 
 async function updateAllBundles(riskpoolApi: DepegRiskpoolApi): Promise<Array<BundleData>> {
     const bundles = await riskpoolApi.getBundleData();
-    const storedBundles = await redisClient.get("bundles");
     await redisClient.set("bundles", JSON.stringify(bundles));
     return bundles;
 }

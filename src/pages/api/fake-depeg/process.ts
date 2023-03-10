@@ -1,12 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { ethers, Signer } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { getErc20Token } from '../../../backend/erc20';
+import { formatUnits } from 'ethers/lib/utils';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { getInstanceService } from '../../../backend/gif_registry';
 import { DepegProduct__factory, ERC20__factory } from '../../../contracts/depeg-contracts';
-import { IERC20__factory } from '../../../contracts/gif-interface';
 import { redisClient } from '../../../utils/redis';
 
 
