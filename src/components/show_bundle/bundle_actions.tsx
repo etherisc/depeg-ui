@@ -4,6 +4,7 @@ import { BundleData } from "../../backend/bundle_data";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
+import bundles from "../../redux/slices/bundles";
 
 interface BundleActionsProps {
     bundle: BundleData;
@@ -36,7 +37,7 @@ export default function BundleActions(props: BundleActionsProps) {
     const isUnlockAllowed = isOwner && (state === 1) && (props.activeBundles < props.maxActiveBundles);
     const isFundAllowed = isOwner && (state === 0 || state === 1);
     const isWithdrawAllowed = isOwner && (state !== 3);
-    const isCloseAllowed = isOwner && (state === 0 || state === 1);
+    const isCloseAllowed = isOwner && (state === 0 || state === 1) && props.bundle.policies == 0;
     const isBurnAllowed = isOwner && (state === 2);
 
     async function fund() {
