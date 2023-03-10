@@ -31,6 +31,7 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
   functions: {
     "GANACHE()": FunctionFragment;
     "GANACHE2()": FunctionFragment;
+    "GOERLI()": FunctionFragment;
     "MAINNET()": FunctionFragment;
     "MUMBAI()": FunctionFragment;
     "addRoundData(int256,uint256)": FunctionFragment;
@@ -62,6 +63,7 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "GANACHE"
       | "GANACHE2"
+      | "GOERLI"
       | "MAINNET"
       | "MUMBAI"
       | "addRoundData"
@@ -91,6 +93,7 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
 
   encodeFunctionData(functionFragment: "GANACHE", values?: undefined): string;
   encodeFunctionData(functionFragment: "GANACHE2", values?: undefined): string;
+  encodeFunctionData(functionFragment: "GOERLI", values?: undefined): string;
   encodeFunctionData(functionFragment: "MAINNET", values?: undefined): string;
   encodeFunctionData(functionFragment: "MUMBAI", values?: undefined): string;
   encodeFunctionData(
@@ -173,6 +176,7 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "GANACHE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "GANACHE2", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "GOERLI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "MAINNET", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "MUMBAI", data: BytesLike): Result;
   decodeFunctionResult(
@@ -322,6 +326,8 @@ export interface AggregatorDataProvider extends BaseContract {
 
     GANACHE2(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    GOERLI(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     MAINNET(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     MUMBAI(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -428,6 +434,8 @@ export interface AggregatorDataProvider extends BaseContract {
 
   GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
 
+  GOERLI(overrides?: CallOverrides): Promise<BigNumber>;
+
   MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
 
   MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
@@ -533,6 +541,8 @@ export interface AggregatorDataProvider extends BaseContract {
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
     GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
+
+    GOERLI(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -672,6 +682,8 @@ export interface AggregatorDataProvider extends BaseContract {
 
     GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
 
+    GOERLI(overrides?: CallOverrides): Promise<BigNumber>;
+
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
 
     MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
@@ -762,6 +774,8 @@ export interface AggregatorDataProvider extends BaseContract {
     GANACHE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     GANACHE2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    GOERLI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     MAINNET(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

@@ -67,6 +67,7 @@ export interface IChainRegistryInterface extends utils.Interface {
     "decodeBundleData(uint256)": FunctionFragment;
     "decodeComponentData(uint256)": FunctionFragment;
     "decodeInstanceData(uint256)": FunctionFragment;
+    "decodeStakeData(uint256)": FunctionFragment;
     "decodeTokenData(uint256)": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "getBundleNftId(bytes32,uint256)": FunctionFragment;
@@ -101,6 +102,7 @@ export interface IChainRegistryInterface extends utils.Interface {
       | "decodeBundleData"
       | "decodeComponentData"
       | "decodeInstanceData"
+      | "decodeStakeData"
       | "decodeTokenData"
       | "exists"
       | "getBundleNftId"
@@ -143,6 +145,10 @@ export interface IChainRegistryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "decodeInstanceData",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "decodeStakeData",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -271,6 +277,10 @@ export interface IChainRegistryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "decodeInstanceData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "decodeStakeData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -447,6 +457,11 @@ export interface IChainRegistry extends BaseContract {
         displayName: string;
       }
     >;
+
+    decodeStakeData(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, number] & { target: BigNumber; targetType: number }>;
 
     decodeTokenData(
       id: PromiseOrValue<BigNumberish>,
@@ -638,6 +653,11 @@ export interface IChainRegistry extends BaseContract {
     }
   >;
 
+  decodeStakeData(
+    id: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, number] & { target: BigNumber; targetType: number }>;
+
   decodeTokenData(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -828,6 +848,11 @@ export interface IChainRegistry extends BaseContract {
       }
     >;
 
+    decodeStakeData(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, number] & { target: BigNumber; targetType: number }>;
+
     decodeTokenData(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1016,6 +1041,11 @@ export interface IChainRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    decodeStakeData(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     decodeTokenData(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1174,6 +1204,11 @@ export interface IChainRegistry extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     decodeInstanceData(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    decodeStakeData(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

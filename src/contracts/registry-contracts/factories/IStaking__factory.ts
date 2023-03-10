@@ -466,7 +466,7 @@ const _abi = [
     inputs: [
       {
         internalType: "NftId",
-        name: "stake",
+        name: "bundle",
         type: "uint256",
       },
     ],
@@ -488,6 +488,11 @@ const _abi = [
         type: "uint256",
       },
       {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
         internalType: "string",
         name: "displayName",
         type: "string",
@@ -503,13 +508,18 @@ const _abi = [
         type: "uint40",
       },
       {
-        internalType: "uint256",
-        name: "stakeBalance",
-        type: "uint256",
+        internalType: "bool",
+        name: "stakingSupported",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "unstakingSupported",
+        type: "bool",
       },
       {
         internalType: "uint256",
-        name: "rewardBalance",
+        name: "stakeBalance",
         type: "uint256",
       },
     ],

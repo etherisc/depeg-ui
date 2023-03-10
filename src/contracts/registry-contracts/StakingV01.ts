@@ -1006,7 +1006,7 @@ export interface StakingV01 extends BaseContract {
     ): Promise<[BigNumber]>;
 
     getBundleInfo(
-      stakeId: PromiseOrValue<BigNumberish>,
+      bundleNft: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -1014,19 +1014,23 @@ export interface StakingV01 extends BaseContract {
         BigNumber,
         BigNumber,
         string,
+        string,
         number,
         number,
-        BigNumber,
+        boolean,
+        boolean,
         BigNumber
       ] & {
         instanceId: string;
         riskpoolId: BigNumber;
         bundleId: BigNumber;
+        token: string;
         displayName: string;
         bundleState: number;
         expiryAt: number;
+        stakingSupported: boolean;
+        unstakingSupported: boolean;
         stakeAmount: BigNumber;
-        rewardAmount: BigNumber;
       }
     >;
 
@@ -1323,7 +1327,7 @@ export interface StakingV01 extends BaseContract {
   ): Promise<BigNumber>;
 
   getBundleInfo(
-    stakeId: PromiseOrValue<BigNumberish>,
+    bundleNft: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
     [
@@ -1331,19 +1335,23 @@ export interface StakingV01 extends BaseContract {
       BigNumber,
       BigNumber,
       string,
+      string,
       number,
       number,
-      BigNumber,
+      boolean,
+      boolean,
       BigNumber
     ] & {
       instanceId: string;
       riskpoolId: BigNumber;
       bundleId: BigNumber;
+      token: string;
       displayName: string;
       bundleState: number;
       expiryAt: number;
+      stakingSupported: boolean;
+      unstakingSupported: boolean;
       stakeAmount: BigNumber;
-      rewardAmount: BigNumber;
     }
   >;
 
@@ -1630,7 +1638,7 @@ export interface StakingV01 extends BaseContract {
     ): Promise<BigNumber>;
 
     getBundleInfo(
-      stakeId: PromiseOrValue<BigNumberish>,
+      bundleNft: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -1638,19 +1646,23 @@ export interface StakingV01 extends BaseContract {
         BigNumber,
         BigNumber,
         string,
+        string,
         number,
         number,
-        BigNumber,
+        boolean,
+        boolean,
         BigNumber
       ] & {
         instanceId: string;
         riskpoolId: BigNumber;
         bundleId: BigNumber;
+        token: string;
         displayName: string;
         bundleState: number;
         expiryAt: number;
+        stakingSupported: boolean;
+        unstakingSupported: boolean;
         stakeAmount: BigNumber;
-        rewardAmount: BigNumber;
       }
     >;
 
@@ -2072,7 +2084,7 @@ export interface StakingV01 extends BaseContract {
     ): Promise<BigNumber>;
 
     getBundleInfo(
-      stakeId: PromiseOrValue<BigNumberish>,
+      bundleNft: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2358,7 +2370,7 @@ export interface StakingV01 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getBundleInfo(
-      stakeId: PromiseOrValue<BigNumberish>,
+      bundleNft: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

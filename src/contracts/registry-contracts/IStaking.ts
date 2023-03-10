@@ -581,7 +581,7 @@ export interface IStaking extends BaseContract {
     ): Promise<ContractTransaction>;
 
     getBundleInfo(
-      stake: PromiseOrValue<BigNumberish>,
+      bundle: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -589,19 +589,23 @@ export interface IStaking extends BaseContract {
         BigNumber,
         BigNumber,
         string,
+        string,
         number,
         number,
-        BigNumber,
+        boolean,
+        boolean,
         BigNumber
       ] & {
         instanceId: string;
         riskpoolId: BigNumber;
         bundleId: BigNumber;
+        token: string;
         displayName: string;
         bundleState: number;
         expiryAt: number;
+        stakingSupported: boolean;
+        unstakingSupported: boolean;
         stakeBalance: BigNumber;
-        rewardBalance: BigNumber;
       }
     >;
 
@@ -763,7 +767,7 @@ export interface IStaking extends BaseContract {
   ): Promise<ContractTransaction>;
 
   getBundleInfo(
-    stake: PromiseOrValue<BigNumberish>,
+    bundle: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
     [
@@ -771,19 +775,23 @@ export interface IStaking extends BaseContract {
       BigNumber,
       BigNumber,
       string,
+      string,
       number,
       number,
-      BigNumber,
+      boolean,
+      boolean,
       BigNumber
     ] & {
       instanceId: string;
       riskpoolId: BigNumber;
       bundleId: BigNumber;
+      token: string;
       displayName: string;
       bundleState: number;
       expiryAt: number;
+      stakingSupported: boolean;
+      unstakingSupported: boolean;
       stakeBalance: BigNumber;
-      rewardBalance: BigNumber;
     }
   >;
 
@@ -931,7 +939,7 @@ export interface IStaking extends BaseContract {
     ): Promise<BigNumber>;
 
     getBundleInfo(
-      stake: PromiseOrValue<BigNumberish>,
+      bundle: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -939,19 +947,23 @@ export interface IStaking extends BaseContract {
         BigNumber,
         BigNumber,
         string,
+        string,
         number,
         number,
-        BigNumber,
+        boolean,
+        boolean,
         BigNumber
       ] & {
         instanceId: string;
         riskpoolId: BigNumber;
         bundleId: BigNumber;
+        token: string;
         displayName: string;
         bundleState: number;
         expiryAt: number;
+        stakingSupported: boolean;
+        unstakingSupported: boolean;
         stakeBalance: BigNumber;
-        rewardBalance: BigNumber;
       }
     >;
 
@@ -1213,7 +1225,7 @@ export interface IStaking extends BaseContract {
     ): Promise<BigNumber>;
 
     getBundleInfo(
-      stake: PromiseOrValue<BigNumberish>,
+      bundle: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1362,7 +1374,7 @@ export interface IStaking extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getBundleInfo(
-      stake: PromiseOrValue<BigNumberish>,
+      bundle: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

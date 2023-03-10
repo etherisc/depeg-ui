@@ -178,6 +178,30 @@ const _abi = [
         type: "uint256",
       },
     ],
+    name: "decodeStakeData",
+    outputs: [
+      {
+        internalType: "NftId",
+        name: "target",
+        type: "uint256",
+      },
+      {
+        internalType: "ObjectType",
+        name: "targetType",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "NftId",
+        name: "id",
+        type: "uint256",
+      },
+    ],
     name: "decodeTokenData",
     outputs: [
       {
