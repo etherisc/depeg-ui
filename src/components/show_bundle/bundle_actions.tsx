@@ -75,24 +75,27 @@ export default function BundleActions(props: BundleActionsProps) {
             <Button 
                 onClick={fund}
                 variant="contained" 
-                sx={{ minWidth: '12rem' }}
                 disabled={!isFundAllowed}
+                data-testid="button-fund"
+                sx={{ minWidth: '12rem' }}
                 >{t('action.fund')}</Button>
         </Grid>
         <Grid item xs={12}>
             <Button 
                 onClick={withdraw}
                 variant="contained" 
-                sx={{ minWidth: '12rem' }}
                 disabled={!isWithdrawAllowed}
+                data-testid="button-withdraw"
+                sx={{ minWidth: '12rem' }}
                 >{t('action.withdraw')}</Button>
         </Grid>
         <Grid item xs={12}>
             <Button 
                 onClick={lock}
                 variant="contained" 
-                sx={{ minWidth: '12rem' }}
                 disabled={!isLockAllowed}
+                data-testid="button-lock"
+                sx={{ minWidth: '12rem' }}
                 >{t('action.lock')}</Button>
         </Grid>
         <Grid item xs={12}>
@@ -100,6 +103,7 @@ export default function BundleActions(props: BundleActionsProps) {
                 onClick={unlock}
                 variant="contained" 
                 disabled={!isUnlockAllowed}
+                data-testid="button-unlock"
                 sx={{ minWidth: '12rem' }}
                 >{t('action.unlock')}</Button>
         </Grid>
@@ -108,6 +112,7 @@ export default function BundleActions(props: BundleActionsProps) {
                 onClick={close}
                 variant="contained" 
                 disabled={!isCloseAllowed}
+                data-testid="button-close"
                 sx={{ minWidth: '12rem' }}
                 >{t('action.close')}</Button>
         </Grid>
@@ -116,6 +121,7 @@ export default function BundleActions(props: BundleActionsProps) {
                 onClick={burn}
                 variant="contained" 
                 disabled={!isBurnAllowed}
+                data-testid="button-burn"
                 sx={{ minWidth: '12rem' }}
                 >{t('action.burn')}</Button>
         </Grid>
