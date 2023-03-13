@@ -28,5 +28,7 @@ updates:
       # ignore all updates to this dependency 
     - dependency-name: "@etherisc/depeg-contracts"
       # ignore all updates to this dependency
+    - dependency-name: "@etherisc/registry-contracts"
+      # ignore all updates to this dependency
     reviewers:
       - "doerfli"
