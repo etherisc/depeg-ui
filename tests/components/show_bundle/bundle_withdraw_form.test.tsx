@@ -96,13 +96,37 @@ describe('When rendering the BundleWithdrawForm', () => {
             return expect(e.querySelector("p.MuiFormHelperText-root")).toBeNull();
         });
 
+        act(() => {
+            fireEvent.change(amountInput!, { target: { value: "27123.451" } });
+        });
+        await waitFor(async () => {
+            const e = await screen.findByTestId("amount");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.amountDecimalsType");
+        });
+
+        act(() => {
+            fireEvent.change(amountInput!, { target: { value: "27123,451" } });
+        });
+        await waitFor(async () => {
+            const e = await screen.findByTestId("amount");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.amountDecimalsType");
+        });
+
+        act(() => {
+            fireEvent.change(amountInput!, { target: { value: "27123.45" } });
+        });
+        await waitFor(async () => {
+            const e = await screen.findByTestId("amount");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toBeNull();
+        });
+
 
         act(() => {
             fireEvent.click(fundButton);
         } );
         await waitFor(async () => {
             expect(withdrawMock).toBeCalledTimes(1);
-            expect(withdrawMock).toBeCalledWith(bundle.id, parseUnits("60000", 6));
+            expect(withdrawMock).toBeCalledWith(bundle.id, parseUnits("27123.45", 6));
         });
     })
 

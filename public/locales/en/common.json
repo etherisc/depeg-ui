@@ -40,6 +40,7 @@
             "numberType": "This field must contain a whole number (e.g. 1000)",
             "numberTypeFloat": "This field must contain a decimal number (e.g. 2.53)",
             "amountType": "This field must contain a whole number, no decimals, no separators (e.g. 1000)",
+            "amountDecimalsType": "This field must contain a number with up to two decimals, no separators (e.g. 1000.42)",
             "minLength": "This field must be at least {{minLength}} characters",
             "maxLength": "This field must be at most {{maxLength}} characters",
             "min": "This field must be at least {{minValue}}",
