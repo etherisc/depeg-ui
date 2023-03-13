@@ -26,7 +26,7 @@
         "burn": "Burn",
         "cancel": "Cancel"
     },
-    "title_show_bundle": "Bundle",
+    "title_show_bundle": "Risk bundle",
     "state": "State",
     "balance": "Balance",
     "balance_tooltip": "The balance is the total amount of tokens in the bundle",
@@ -43,7 +43,7 @@
     "days": "Days",
     "apr": "Annual percentage return",
     "policies": "# of protections",
-    "owner": "Bundle owner",
+    "owner": "Owner",
     "creation_date": "Creation date",
     "open_until": "Open until",
     "checkbox_t_and_c_label": "By checking this box, I confirm that I have read and agree to the Terms and Conditions.",
@@ -64,5 +64,8 @@
             "title": "Payment for Depeg riskpool bundle confirmed",
             "text": "Your risk bundle is now active and will require DIP staking to enable policies to be purchased"
         }
+    },
+    "alert": {
+        "actions_only_owner": "Risk bundle management operations are only available to the owner of the risk bundle."
     }
 }
