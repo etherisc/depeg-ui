@@ -32,8 +32,10 @@ export interface OwnableProxyAdminInterface extends utils.Interface {
     "ACTIVATE_SIGNATURE()": FunctionFragment;
     "getImplementation()": FunctionFragment;
     "getProxy()": FunctionFragment;
+    "getProxyCallData(address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setProxy(address)": FunctionFragment;
     "transferAdmin(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "upgrade(address)": FunctionFragment;
@@ -45,8 +47,10 @@ export interface OwnableProxyAdminInterface extends utils.Interface {
       | "ACTIVATE_SIGNATURE"
       | "getImplementation"
       | "getProxy"
+      | "getProxyCallData"
       | "owner"
       | "renounceOwnership"
+      | "setProxy"
       | "transferAdmin"
       | "transferOwnership"
       | "upgrade"
@@ -65,10 +69,18 @@ export interface OwnableProxyAdminInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getProxy", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getProxyCallData",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setProxy",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferAdmin",
@@ -96,11 +108,16 @@ export interface OwnableProxyAdminInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getProxy", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getProxyCallData",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setProxy", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferAdmin",
     data: BytesLike
@@ -167,9 +184,20 @@ export interface OwnableProxyAdmin extends BaseContract {
 
     getProxy(overrides?: CallOverrides): Promise<[string]>;
 
+    getProxyCallData(
+      implementation: PromiseOrValue<string>,
+      implementationOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { data: string }>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setProxy(
+      proxy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -197,9 +225,20 @@ export interface OwnableProxyAdmin extends BaseContract {
 
   getProxy(overrides?: CallOverrides): Promise<string>;
 
+  getProxyCallData(
+    implementation: PromiseOrValue<string>,
+    implementationOwner: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setProxy(
+    proxy: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -229,9 +268,20 @@ export interface OwnableProxyAdmin extends BaseContract {
 
     getProxy(overrides?: CallOverrides): Promise<string>;
 
+    getProxyCallData(
+      implementation: PromiseOrValue<string>,
+      implementationOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    setProxy(
+      proxy: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     transferAdmin(
       newAdmin: PromiseOrValue<string>,
@@ -271,9 +321,20 @@ export interface OwnableProxyAdmin extends BaseContract {
 
     getProxy(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getProxyCallData(
+      implementation: PromiseOrValue<string>,
+      implementationOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setProxy(
+      proxy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -306,9 +367,20 @@ export interface OwnableProxyAdmin extends BaseContract {
 
     getProxy(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getProxyCallData(
+      implementation: PromiseOrValue<string>,
+      implementationOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setProxy(
+      proxy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
