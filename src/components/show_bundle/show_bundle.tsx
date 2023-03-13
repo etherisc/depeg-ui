@@ -49,7 +49,9 @@ export default function ShowBundle(props: ShowBundleProps) {
 
     async function withdrawAmount(bundleId: number, amount: BigNumber): Promise<boolean> {
         try {
-            return await props.backend.invest.withdrawBundle(bundleId, amount);
+            const r = await props.backend.invest.withdrawBundle(bundleId, amount);
+            showSuccessNotification(t('withdraw_successful'));
+            return r;
         } catch(e) {
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
@@ -60,7 +62,6 @@ export default function ShowBundle(props: ShowBundleProps) {
             }
         } finally {
             dispatch(showBundleWithdraw(false));
-            showSuccessNotification(t('withdraw_successful'));
             await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
@@ -79,7 +80,9 @@ export default function ShowBundle(props: ShowBundleProps) {
         }
         
         try {
-            return await props.backend.invest.fundBundle(bundleId, amount);
+            const r = await props.backend.invest.fundBundle(bundleId, amount);
+            showSuccessNotification(t('fund_successful'));
+            return r;
         } catch(e) {
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
@@ -90,7 +93,6 @@ export default function ShowBundle(props: ShowBundleProps) {
             }
         } finally {
             dispatch(showBundleWithdraw(false));
-            showSuccessNotification(t('fund_successful'));
             await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
@@ -98,7 +100,9 @@ export default function ShowBundle(props: ShowBundleProps) {
     async function lock(bundle: BundleData): Promise<boolean> {
         const bundleId = bundle.id;
         try {
-            return await props.backend.invest.lockBundle(bundleId);
+            const r = await props.backend.invest.lockBundle(bundleId);
+            showSuccessNotification(t('lock_successful'));
+            return r;
         } catch(e) {
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
@@ -108,7 +112,6 @@ export default function ShowBundle(props: ShowBundleProps) {
                 throw e;
             }
         } finally {
-            showSuccessNotification(t('lock_successful'));
             await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
@@ -116,7 +119,9 @@ export default function ShowBundle(props: ShowBundleProps) {
     async function unlock(bundle: BundleData): Promise<boolean> {
         const bundleId = bundle.id;
         try {
-            return await props.backend.invest.unlockBundle(bundleId);
+            const r = await props.backend.invest.unlockBundle(bundleId);
+            showSuccessNotification(t('unlock_successful'));
+            return r;
         } catch(e) { 
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
@@ -126,7 +131,6 @@ export default function ShowBundle(props: ShowBundleProps) {
                 throw e;
             }
         } finally {
-            showSuccessNotification(t('unlock_successful'));
             await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
@@ -134,7 +138,9 @@ export default function ShowBundle(props: ShowBundleProps) {
     async function close(bundle: BundleData): Promise<boolean> {
         const bundleId = bundle.id;
         try {
-            return await props.backend.invest.closeBundle(bundleId);
+            const r = await props.backend.invest.closeBundle(bundleId);
+            showSuccessNotification(t('close_successful'));
+            return r;
         } catch(e) { 
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
@@ -144,7 +150,6 @@ export default function ShowBundle(props: ShowBundleProps) {
                 throw e;
             }
         } finally {
-            showSuccessNotification(t('close_successful'));
             await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
@@ -152,7 +157,9 @@ export default function ShowBundle(props: ShowBundleProps) {
     async function burn(bundle: BundleData): Promise<boolean> {
         const bundleId = bundle.id;
         try {
-            return await props.backend.invest.burnBundle(bundleId);
+            const r = await props.backend.invest.burnBundle(bundleId);
+            showSuccessNotification(t('burn_successful'));
+            return r;
         } catch(e) { 
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
@@ -162,7 +169,6 @@ export default function ShowBundle(props: ShowBundleProps) {
                 throw e;
             }
         } finally {
-            showSuccessNotification(t('burn_successful'));
             await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
     }
