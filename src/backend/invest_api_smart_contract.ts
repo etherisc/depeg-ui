@@ -49,7 +49,8 @@ export class InvestApiSmartContract implements InvestApi {
         const riskpoolCapacityLimit = process.env.NEXT_PUBLIC_RISKPOOL_CAPACITY_LIMIT;
         this.riskpoolCapacityLimit = riskpoolCapacityLimit !== undefined ? parseUnits(riskpoolCapacityLimit, usd2Decimals) : undefined;
 
-        this.investorWhitelist = process.env.NEXT_PUBLIC_INVESTOR_WHITELIST?.split(',').map(w => w.trim()) ?? [];
+        const investorWhiteList = process.env.NEXT_PUBLIC_INVESTOR_WHITELIST;
+        this.investorWhitelist = investorWhiteList !== undefined ? investorWhiteList.split(',').map(w => w.trim()) : undefined;
     }
 
     /**
@@ -102,9 +103,19 @@ export class InvestApiSmartContract implements InvestApi {
         return riskpoolCap.sub(capital);
     }
 
+    async isAllowAllAccountsEnabled(): Promise<boolean> {
+        return await (await this.riskpoolApi()).isAllowAllAccountsEnabled();
+    }
+
     async isInvestorWhitelisted(walletAddress: string): Promise<boolean> {
-        console.log("isInvestorWhitelisted", walletAddress, this.investorWhitelist);
-        return this.investorWhitelist!.includes(walletAddress);
+        if (this.investorWhitelist !== undefined) {
+            console.log("isInvestorWhitelisted", walletAddress, this.investorWhitelist);
+            if (this.investorWhitelist.includes(walletAddress)) {
+                return true;
+            }
+        }
+        console.log("isInvestorWhitelisted", walletAddress);
+        return await (await this.riskpoolApi()).isAllowedAccount(walletAddress);
     }
 
 

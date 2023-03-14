@@ -414,5 +414,13 @@ export class DepegRiskpoolApi {
         return this.maxBundleLifetime;
     }
 
+    async isAllowAllAccountsEnabled(): Promise<boolean> {
+        return this.depegRiskpool.isAllowAllAccountsEnabled();
+    }
+
+    async isAllowedAccount(account: string): Promise<boolean> {
+        return this.depegRiskpool.isAllowed(account);
+    }
+
 }
 

@@ -34,13 +34,13 @@ export default function Invest(props: InvestProps) {
     const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ readyToInvest, setReadyToInvest ] = useState(false);
-    const [ investmentDetails, setInvestmentDetails ] = useState(["0", BigNumber.from(0), BigNumber.from(0), BigNumber.from(0), 0, 0, 0 ]);
 
     useEffect(() => {
         async function checkStakingAllowed() {
-            if (isConnected) {
-                if (process.env.NEXT_PUBLIC_FEATURE_INVESTOR_WHITELIST === "true") {
+            if (isConnected && investorAddress !== undefined) {
+                if (! await props.backend.invest.isAllowAllAccountsEnabled()) {
                     const isInvestorWhitelisted = await props.backend.invest.isInvestorWhitelisted(investorAddress!);
+                    console.log("whitelist check result", isInvestorWhitelisted);
                     if (! isInvestorWhitelisted) {
                         setIsInvestorWhitelisted(false);
                         return;

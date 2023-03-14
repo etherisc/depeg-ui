@@ -5,10 +5,10 @@
     "step2": "Stake",
     "step3": "Confirm capital allowance",
     "step4": "Confirm payment",
-    "bundleName": "Risk bundle name",
-    "lifetime": "Risk bundle lifetime",
+    "bundleName": "Name",
+    "lifetime": "Lifetime",
     "lifetime_hint": "During this period new policies can be issued",
-    "lifetimeUntil": "Risk bundle open until",
+    "lifetimeUntil": "Open until",
     "investedAmount": "Staked amount",
     "minSumInsured": "Minimum protected amount",
     "maxSumInsured": "Maximum protected amount",
@@ -16,7 +16,7 @@
     "maxSumInsuredMinError": "Maximum protected amount must not be greater than minimum protected amount",
     "minDuration": "Minimum coverage duration",
     "maxDuration": "Maximum coverage duration",
-    "max_duration_hint": "The maximum duration of the risk bundle can be larger than the risk bundle lifetime",
+    "max_duration_hint": "The maximum coverage duration of the risk bundle can be greater than the risk bundle lifetime",
     "minDurationMinError": "Minimum coverage duration must be at least {{days}} days",
     "minDurationMaxError": "Minimum coverage duration must not be greater than maximum coverage duration",
     "maxDurationMaxError": "Maximum coverage duration must be at least {{days}} days",
@@ -50,7 +50,7 @@
     },
     "alert": {
         "max_bundles": "The maximum number of supported risk bundles has been reached. Please contact the Etherisc team for further information.",
-        "no_riskpool_capacity": "The riskpool is at capacity. Please contact Etherisc if you would like to stake into the riskpool.",
-        "investor_not_whitelisted": "You are not registered as an investor. Please contact Etherisc if you would like to stake into the riskpool."
+        "no_riskpool_capacity": "The riskpool is at capacity. Please contact Etherisc if you would like to stake a risk bundle.",
+        "investor_not_whitelisted": "You are not registered as an investor. Please contact Etherisc if you would like to stake a risk bundle."
     }
 }
