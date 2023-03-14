@@ -2,7 +2,7 @@ import { faArrowLeft, faMoneyBillTransfer } from "@fortawesome/free-solid-svg-ic
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Box, Button, Checkbox, FormControlLabel, Grid, InputAdornment, LinearProgress, TextField, Typography } from "@mui/material";
 import { BigNumber } from "ethers";
-import { parseUnits } from "ethers/lib/utils";
+import { formatUnits, parseUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -18,7 +18,8 @@ interface BundleFundFormProps {
     currency: string;
     decimals: number;
     maxInvestedAmount: BigNumber;
-    getRemainingCapacity: () => Promise<number>;
+    getBundleCapitalCap: () => Promise<BigNumber>;
+    getRemainingRiskpoolCapacity: () => Promise<number>;
     doFund: (bundleId: number, amount: BigNumber) => Promise<boolean>;
     doCancel: () => void;
 }
@@ -34,7 +35,10 @@ export default function BundleFundForm(props: BundleFundFormProps) {
     const [ fundInProgress, setFundInProgress ] = useState(false);
     const [ maxFundAmount, setMaxFundAmount ] = useState(props.maxInvestedAmount.toNumber());
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
-    const getRemainingCapacity = props.getRemainingCapacity;
+    const getRemainingCapacity = props.getRemainingRiskpoolCapacity;
+    const decimals = props.decimals;
+    const bundle = props.bundle;
+    const getBundleCapitalCap = props.getBundleCapitalCap;
 
     const minFundAmount = 1;
 
@@ -48,19 +52,28 @@ export default function BundleFundForm(props: BundleFundFormProps) {
     });
 
     useEffect(() => {
-        async function checkMaxInvestedAmount() {
+        async function checkMaxFundAmount() {
+            let fundAmountMaxBN = parseUnits(maxFundAmount.toString(), decimals);
+
+            const bundleCapital = BigNumber.from(bundle.capital);
+            const bundleCapitalCapBN = await getBundleCapitalCap();
+            // remaining capacity of the bundle
+            fundAmountMaxBN = bundleCapitalCapBN.sub(bundleCapital);
+            let fundAmountMax = parseFloat(formatUnits(fundAmountMaxBN, decimals));
+            console.log("fundAmountMax", fundAmountMax);
+
             const riskpoolRemainingCapacity = await getRemainingCapacity();
             console.log("riskpoolRemainingCapacity", riskpoolRemainingCapacity.toString());
-            if (riskpoolRemainingCapacity < maxFundAmount) {
-                console.log("updating maxFundAmount");
-                setMaxFundAmount(riskpoolRemainingCapacity);
-                setValue("amount", riskpoolRemainingCapacity.toString());
+            if (riskpoolRemainingCapacity < fundAmountMax) {
+                fundAmountMax = riskpoolRemainingCapacity;
             }
+
+            setMaxFundAmount(fundAmountMax);
         }
-        if (process.env.NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT === "true" && isConnected) {
-            checkMaxInvestedAmount();
+        if (isConnected) {
+            checkMaxFundAmount();
         }
-    }, [isConnected, getRemainingCapacity, maxFundAmount, setValue]);
+    }, [isConnected, getRemainingCapacity, maxFundAmount, setValue, bundle, decimals, getBundleCapitalCap]);
 
     const errors = useMemo(() => formState.errors, [formState]);
     

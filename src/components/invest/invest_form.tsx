@@ -135,16 +135,30 @@ export default function InvestForm(props: InvestFormProperties) {
 
     useEffect(() => {
         async function checkMaxInvestedAmount() {
+            // check if bundle cap is small than maxInvestedAmount
+            let investedAmountMax = maxInvestedAmount;
+            const bundleCapitalCapBN = await props.backend.invest.getBundleCapitalCap();
+            const bundleCapitalCap = parseInt(formatUnits(bundleCapitalCapBN, props.usd2Decimals));
+            console.log("bundleCapitalCap", bundleCapitalCap);
+            
+            if (bundleCapitalCap < investedAmountMax) {
+                investedAmountMax = bundleCapitalCap;
+            }
+
             const riskpoolRemainingCapacityBN = await props.backend.invest.riskpoolRemainingCapacity();
             const riskpoolRemainingCapacity = parseInt(formatUnits(riskpoolRemainingCapacityBN, props.usd2Decimals));
             console.log("riskpoolRemainingCapacity", riskpoolRemainingCapacity.toString());
-            if (riskpoolRemainingCapacity < maxInvestedAmount) {
-                console.log("updating maxInvestedAmount");
-                setMaxInvestedAmount(riskpoolRemainingCapacity);
-                setValue("investedAmount", riskpoolRemainingCapacity.toString());
+            if (riskpoolRemainingCapacity < investedAmountMax) {
+                investedAmountMax = riskpoolRemainingCapacity;
+            }
+
+            if (investedAmountMax < maxInvestedAmount) {
+                console.log("updating maxInvestedAmount", investedAmountMax);
+                setMaxInvestedAmount(investedAmountMax);
+                setValue("investedAmount", investedAmountMax.toString());
             }
         }
-        if (process.env.NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT === "true" && isConnected) {
+        if (isConnected) {
             checkMaxInvestedAmount();
         }
     }, [isConnected, props.backend.invest, investProps.maxInvestedAmount, props.usd2Decimals, maxInvestedAmount, setValue]);

@@ -5,6 +5,7 @@ import { DepegRiskpoolApi } from "./riskpool_api";
 import { getInstanceService } from "./gif_registry";
 import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
+import { minBigNumber } from "../utils/bignumber";
 
 export class InvestApiSmartContract implements InvestApi {
     private doNoUseDirectlydepegRiskpoolApi?: DepegRiskpoolApi;
@@ -21,7 +22,7 @@ export class InvestApiSmartContract implements InvestApi {
     annualPctReturn: number;
     maxAnnualPctReturn: number;
     usd2Decimals: number;
-    private riskpoolCapacityLimit?: BigNumber | undefined;
+    private riskpoolCapacityLimit: BigNumber | undefined;
     private investorWhitelist?: string[];
 
     constructor(depegProductApi: DepegProductApi, 
@@ -78,24 +79,27 @@ export class InvestApiSmartContract implements InvestApi {
     }
 
     async isRiskpoolCapacityAvailable(): Promise<boolean> {
-        if (this.riskpoolCapacityLimit === undefined) {
-            return true;
-        }
-
+        const contractRiskpoolCap = (await this.riskpoolApi()).getRiskpoolCapitalCap();
         const riskpoolApi = await this.riskpoolApi();
         const capital = await riskpoolApi.getCapital();
-        const remaining = this.riskpoolCapacityLimit!.sub(capital);
+        let riskpoolCap = contractRiskpoolCap;
+        if (this.riskpoolCapacityLimit !== undefined) {
+            riskpoolCap = minBigNumber(contractRiskpoolCap, this.riskpoolCapacityLimit!);
+        }
+        const remaining = riskpoolCap.sub(capital);
         return this.minInvestedAmount.lte(remaining);
     }
 
     async riskpoolRemainingCapacity(): Promise<BigNumber> {
-        if (this.riskpoolCapacityLimit === undefined) {
-            return BigNumber.from(0);
+        const contractRiskpoolCap = (await this.riskpoolApi()).getRiskpoolCapitalCap();
+        let riskpoolCap = contractRiskpoolCap;
+        if (this.riskpoolCapacityLimit !== undefined) {
+            riskpoolCap = minBigNumber(contractRiskpoolCap, this.riskpoolCapacityLimit!);
         }
-
+        
         const riskpoolApi = await this.riskpoolApi();
         const capital = await riskpoolApi.getCapital();
-        return this.riskpoolCapacityLimit!.sub(capital);
+        return riskpoolCap.sub(capital);
     }
 
     async isInvestorWhitelisted(walletAddress: string): Promise<boolean> {
@@ -209,6 +213,18 @@ export class InvestApiSmartContract implements InvestApi {
         const [tx, receipt] = await (await this.riskpoolApi()).fundBundle(bundleId, amount);
         console.log("tx", tx, "receipt", receipt);
         return receipt.status === 1;
+    }
+
+    async getBundleCapitalCap(): Promise<BigNumber> {
+        return (await this.riskpoolApi()).getBundleCapitalCap();
+    }
+
+    async getBundleLifetimeMin(): Promise<number> {
+        return (await this.riskpoolApi()).getBundleLifetimeMin();
+    }
+
+    async getBundleLifetimeMax(): Promise<number> {
+        return (await this.riskpoolApi()).getBundleLifetimeMax();
     }
 
 }

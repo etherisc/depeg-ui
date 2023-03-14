@@ -207,6 +207,10 @@ export default function ShowBundle(props: ShowBundleProps) {
         const riskpoolRemainingCapacityBN = await props.backend.invest.riskpoolRemainingCapacity();
         return parseInt(formatUnits(riskpoolRemainingCapacityBN, props.backend.usd2Decimals));
     }
+
+    async function getBundleCapitalCap() {
+        return await props.backend.invest.getBundleCapitalCap();
+    }
     
     return (<>
         <Typography variant="h5" mb={2}>
@@ -262,7 +266,8 @@ export default function ShowBundle(props: ShowBundleProps) {
                 { isShowBundleFund && <BundleFundForm 
                         bundle={bundle!} 
                         maxInvestedAmount={props.backend.invest.maxInvestedAmount}
-                        getRemainingCapacity={getRemainingCapacity}
+                        getRemainingRiskpoolCapacity={getRemainingCapacity}
+                        getBundleCapitalCap={getBundleCapitalCap}
                         currency={props.backend.usd2} 
                         decimals={props.backend.usd2Decimals} 
                         doFund={fundBundle}

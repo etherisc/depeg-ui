@@ -48,14 +48,13 @@ export default function Invest(props: InvestProps) {
                         setIsInvestorWhitelisted(true);
                     }
                 }
-                if (process.env.NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT === "true") {
-                    const riskpoolCapacityAvailable = await props.backend.invest.isRiskpoolCapacityAvailable();
-                    if (! riskpoolCapacityAvailable) {
-                        setNoRiskpoolCapacityAvailable(false);
-                        return;
-                    } else {
-                        setNoRiskpoolCapacityAvailable(true);
-                    }
+                const riskpoolCapacityAvailable = await props.backend.invest.isRiskpoolCapacityAvailable();
+                console.log("riskpoolCapacityAvailable", riskpoolCapacityAvailable);
+                if (! riskpoolCapacityAvailable) {
+                    setNoRiskpoolCapacityAvailable(false);
+                    return;
+                } else {
+                    setNoRiskpoolCapacityAvailable(true);
                 }
                 const activeBundleCount = await props.backend.invest.activeBundles();
                 const maxBundles = await props.backend.invest.maxBundles();

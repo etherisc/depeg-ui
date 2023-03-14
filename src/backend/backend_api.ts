@@ -127,6 +127,9 @@ export interface InvestApi {
         ): Promise<boolean>;
     withdrawBundle(bundleId: number, amount: BigNumber): Promise<boolean>;
     fundBundle(bundleId: number, amount: BigNumber): Promise<boolean>;
+    getBundleCapitalCap(): Promise<BigNumber>;
+    getBundleLifetimeMin(): Promise<number>;
+    getBundleLifetimeMax(): Promise<number>;
 }
 
 export function getBackendApi(

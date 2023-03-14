@@ -208,5 +208,14 @@ function investMock() {
         async fundBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
             return Promise.resolve(true);
         },
+        getBundleCapitalCap(): Promise<BigNumber> {
+            return Promise.resolve(BigNumber.from(100000000000));
+        },
+        getBundleLifetimeMin(): Promise<number> {
+            return Promise.resolve(14 * 24 * 60 * 60);
+        },
+        getBundleLifetimeMax(): Promise<number> {
+            return Promise.resolve(180 * 24 * 60 * 60);
+        }
     } as InvestApi;
 };

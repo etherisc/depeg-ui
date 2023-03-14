@@ -86,7 +86,6 @@ Show a page that displays the latest price of the protected coin and (if enabled
 
 Check the riskpool capacity limit before investment and show a warning if the limit is reached.
 
-- `NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT=true` - evaluate the riskpool capacity limit
 - `NEXT_PUBLIC_RISKPOOL_CAPACITY_LIMIT=250000` - configure the riskpool capacity limit to USD2 250000 
 
 #### Investor whitelist
