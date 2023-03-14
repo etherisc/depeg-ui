@@ -1,4 +1,5 @@
 import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json';
+import { ThreeSixty } from '@mui/icons-material';
 import { Coder } from "abi-coder";
 import { BigNumber, ContractReceipt, ContractTransaction, Signer } from "ethers";
 import { DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
@@ -13,10 +14,15 @@ import StakingApi from "./staking_api";
 export class DepegRiskpoolApi {
 
     private depegRiskpool: DepegRiskpool;
-    private signer?: Signer;
     private riskpoolId: number;
     private instanceService: IInstanceService;
     private stakingApi?: StakingApi;
+    private minBundleLifetime = -1;
+    private maxBundleLifetime = -1;
+    // assume 100k usdc as default - will be overwritten by contract
+    private bundleCap = BigNumber.from(100000000000).toString();
+    // assume 1m usdc as default - will be overwritten by contract
+    private riskpoolCap = BigNumber.from(1000000000000).toString();
 
     constructor(
         riskpool: DepegRiskpool,
@@ -26,7 +32,6 @@ export class DepegRiskpoolApi {
         // signer: Signer,
     ) {
         this.depegRiskpool = riskpool;
-        this.signer = riskpool.signer;
         this.riskpoolId = riskpoolId;
         this.instanceService = instanceService;
 
@@ -41,6 +46,11 @@ export class DepegRiskpoolApi {
         if (this.stakingApi !== undefined) {
             await this.stakingApi.initialize();
         }
+
+        this.minBundleLifetime = (await this.depegRiskpool.MIN_BUNDLE_LIFETIME()).toNumber();
+        this.maxBundleLifetime = (await this.depegRiskpool.MAX_BUNDLE_LIFETIME()).toNumber();
+        this.bundleCap = (await this.depegRiskpool.getBundleCapitalCap()).toString();
+        this.riskpoolCap = (await this.depegRiskpool.getRiskpoolCapitalCap()).toString();
     }
 
     async getCapital(): Promise<BigNumber> {
@@ -386,6 +396,22 @@ export class DepegRiskpoolApi {
         } finally {
             store.dispatch(finish());
         }
+    }
+
+    getRiskpoolCapitalCap(): BigNumber {
+        return BigNumber.from(this.riskpoolCap);
+    }
+
+    getBundleCapitalCap(): BigNumber {
+        return BigNumber.from(this.bundleCap);
+    }
+
+    getBundleLifetimeMin(): number {
+        return this.minBundleLifetime;
+    }
+
+    getBundleLifetimeMax(): number {
+        return this.maxBundleLifetime;
     }
 
 }

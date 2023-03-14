@@ -126,9 +126,7 @@ describe('When rendering the BundleFundForm', () => {
         });
     })
 
-    it('the remaining capacity is considered when the riskpool capacity limit feature is enabled', async () => {
-        process.env.NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT = "true";
-        
+    it('the remaining riskpool capacity is considered', async () => {
         const bundle = {
             id: 42,
             riskpoolId: 13,

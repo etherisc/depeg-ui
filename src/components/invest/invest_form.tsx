@@ -144,7 +144,7 @@ export default function InvestForm(props: InvestFormProperties) {
                 setValue("investedAmount", riskpoolRemainingCapacity.toString());
             }
         }
-        if (process.env.NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT === "true" && isConnected) {
+        if (isConnected) {
             checkMaxInvestedAmount();
         }
     }, [isConnected, props.backend.invest, investProps.maxInvestedAmount, props.usd2Decimals, maxInvestedAmount, setValue]);

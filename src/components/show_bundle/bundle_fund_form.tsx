@@ -57,7 +57,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
                 setValue("amount", riskpoolRemainingCapacity.toString());
             }
         }
-        if (process.env.NEXT_PUBLIC_FEATURE_RISKPOOL_CAPACITY_LIMIT === "true" && isConnected) {
+        if (isConnected) {
             checkMaxInvestedAmount();
         }
     }, [isConnected, getRemainingCapacity, maxFundAmount, setValue]);
