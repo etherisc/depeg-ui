@@ -138,7 +138,7 @@ export function getBackendApi(
     
     const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
     if (depegProductContractAddress == null) {
-        console.log("Using mock insurance API");
+        console.log("Using mock API");
         return BackendApiMock(enqueueSnackbar);
     } else {
         console.log("Using smart contract", depegProductContractAddress);

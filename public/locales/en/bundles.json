@@ -17,7 +17,7 @@
     "action": {
         "create_bundle": "Create new risk bundle",
         "all_mine_bundles": "Show all risk bundles",
-        "details": "Show bundle",
+        "details": "Details",
         "fund": "Stake",
         "withdraw": "Unstake",
         "lock": "Lock",
@@ -29,7 +29,7 @@
     "title_show_bundle": "Risk bundle",
     "state": "State",
     "balance": "Balance",
-    "balance_tooltip": "The balance is the total amount of tokens in the bundle",
+    "balance_tooltip": "The balance is the total amount of tokens in the risk bundle",
     "capacity": "Capacity",
     "capacity_tooltip": "The capacity is the amount of tokens not in use",
     "locked": "Locked capital",
@@ -52,16 +52,16 @@
     "amount": "Amount",
     "withdraw_successful": "Unstaking successful",
     "fund_successful": "Staking successful",
-    "unlock_successful": "Bundle unlocked",
-    "lock_successful": "Bundle locked",
-    "close_successful": "Bundle closed",
-    "burn_successful": "Bundle burned",
+    "unlock_successful": "Risk bundle unlocked",
+    "lock_successful": "Risk bundle locked",
+    "close_successful": "Risk bundle closed",
+    "burn_successful": "Risk bundle burned",
     "error": {
         "transaction_failed": "Transaction failed"
     },
     "confirmation": {
         "alert": {
-            "title": "Payment for Depeg riskpool bundle confirmed",
+            "title": "Payment for Depeg risk bundle confirmed",
             "text": "Your risk bundle is now active and will require DIP staking to enable policies to be purchased"
         }
     },

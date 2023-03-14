@@ -14,7 +14,7 @@
     "coverageDurationUntil": "Coverage until *",
     "premiumAmount": "Premium",
     "button_buy": "Buy",
-    "application_success": "Congratulations, your policy has been issued successfully!",
+    "application_success": "Congratulations, your protection has been issued successfully!",
     "days": "Days",
     "error_no_matching_bundle_found": "No risk bundle matching your criteria was found",
     "error_wallet_balance_too_low": "The wallet does not contain enough {{currency}} to pay for the premium",
@@ -23,7 +23,7 @@
     "apply_info": "Second - please confirm issuing your protection on contract {{address}}",
     "apply_wait": "Transaction created, waiting for onchain confirmation",
     "bundles": {
-        "title": "Please choose from the bundles below",
+        "title": "Please choose from the risk bundles below",
         "id": "ID",
         "name": "Name",
         "suminsured": "Min / max amount",
@@ -32,19 +32,18 @@
         "capacity": "Capacity",
         "stake_usage": "Stakes"
     },
-    "matched_bundle": "This policy will be protected by bundle '{{name}}' with an APR rate of {{apr}}%.",
     "confirmation": {
         "alert": {
             "title": "Payment for Depeg protection premium confirmed, your protection is now active.",
-            "text": "{{currency}} {{amount}} in wallet {{walletAddress}} are protected against depeg until {{endDate}}. Your policy ID is {{policyId}}."
+            "text": "{{currency}} {{amount}} in wallet {{walletAddress}} are protected against depeg until {{endDate}}. Your protection ID is {{policyId}}."
         },
         "continue_link": "Continue"
     },
     "alert": {
         "product_not_active": "Depeg Protection is not available for purchase at the moment. Please try again later.",
-        "riskpool_capacity_exceeded": "The product has no capacity for additional policies at the moment. Please try again later.",
+        "riskpool_capacity_exceeded": "The product has no capacity for additional coverage at the moment. Please try again later.",
         "no_matching_bundle": "No risk bundle matching your criteria was found. Please change the amount or duration.",
-        "not_connected_no_bundles": "Available bundles will be shown when a wallet is connected."
+        "not_connected_no_bundles": "Available risk bundles will be shown when a wallet is connected."
     },
     "example": "Example",
     "payout_example": {
