@@ -414,7 +414,7 @@ export class DepegRiskpoolApi {
         return this.maxBundleLifetime;
     }
 
-    async getIsAllowedAccountsEnabled(): Promise<boolean> {
+    async isAllowAllAccountsEnabled(): Promise<boolean> {
         return this.depegRiskpool.isAllowAllAccountsEnabled();
     }
 
