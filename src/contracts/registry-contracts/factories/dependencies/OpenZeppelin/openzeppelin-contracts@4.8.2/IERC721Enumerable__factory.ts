@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  IERC721MetadataUpgradeable,
-  IERC721MetadataUpgradeableInterface,
-} from "../../../../dependencies/OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.2/IERC721MetadataUpgradeable";
+  IERC721Enumerable,
+  IERC721EnumerableInterface,
+} from "../../../../dependencies/OpenZeppelin/openzeppelin-contracts@4.8.2/IERC721Enumerable";
 
 const _abi = [
   {
@@ -166,19 +166,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "name",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",
@@ -286,13 +273,19 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "symbol",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "tokenByIndex",
     outputs: [
       {
-        internalType: "string",
+        internalType: "uint256",
         name: "",
-        type: "string",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -301,17 +294,35 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
         internalType: "uint256",
-        name: "tokenId",
+        name: "index",
         type: "uint256",
       },
     ],
-    name: "tokenURI",
+    name: "tokenOfOwnerByIndex",
     outputs: [
       {
-        internalType: "string",
+        internalType: "uint256",
         name: "",
-        type: "string",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalSupply",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -342,19 +353,15 @@ const _abi = [
   },
 ] as const;
 
-export class IERC721MetadataUpgradeable__factory {
+export class IERC721Enumerable__factory {
   static readonly abi = _abi;
-  static createInterface(): IERC721MetadataUpgradeableInterface {
-    return new utils.Interface(_abi) as IERC721MetadataUpgradeableInterface;
+  static createInterface(): IERC721EnumerableInterface {
+    return new utils.Interface(_abi) as IERC721EnumerableInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IERC721MetadataUpgradeable {
-    return new Contract(
-      address,
-      _abi,
-      signerOrProvider
-    ) as IERC721MetadataUpgradeable;
+  ): IERC721Enumerable {
+    return new Contract(address, _abi, signerOrProvider) as IERC721Enumerable;
   }
 }

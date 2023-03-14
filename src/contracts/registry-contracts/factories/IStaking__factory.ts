@@ -600,7 +600,7 @@ const _abi = [
     name: "getRegistry",
     outputs: [
       {
-        internalType: "contract ChainRegistryV01",
+        internalType: "contract IChainRegistry",
         name: "",
         type: "address",
       },

@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export interface IERC721EnumerableUpgradeableInterface extends utils.Interface {
+export interface IERC721EnumerableInterface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -218,12 +218,12 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface IERC721EnumerableUpgradeable extends BaseContract {
+export interface IERC721Enumerable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IERC721EnumerableUpgradeableInterface;
+  interface: IERC721EnumerableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

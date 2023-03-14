@@ -10,11 +10,7 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -24,7 +20,7 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export interface ERC165UpgradeableInterface extends utils.Interface {
+export interface ERC165Interface extends utils.Interface {
   functions: {
     "supportsInterface(bytes4)": FunctionFragment;
   };
@@ -41,26 +37,15 @@ export interface ERC165UpgradeableInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {
-    "Initialized(uint8)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
+  events: {};
 }
 
-export interface InitializedEventObject {
-  version: number;
-}
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
-
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-
-export interface ERC165Upgradeable extends BaseContract {
+export interface ERC165 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC165UpgradeableInterface;
+  interface: ERC165Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -100,10 +85,7 @@ export interface ERC165Upgradeable extends BaseContract {
     ): Promise<boolean>;
   };
 
-  filters: {
-    "Initialized(uint8)"(version?: null): InitializedEventFilter;
-    Initialized(version?: null): InitializedEventFilter;
-  };
+  filters: {};
 
   estimateGas: {
     supportsInterface(

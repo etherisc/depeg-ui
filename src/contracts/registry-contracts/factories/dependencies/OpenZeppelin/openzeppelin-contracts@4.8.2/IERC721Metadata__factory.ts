@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  IERC721Upgradeable,
-  IERC721UpgradeableInterface,
-} from "../../../../dependencies/OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.2/IERC721Upgradeable";
+  IERC721Metadata,
+  IERC721MetadataInterface,
+} from "../../../../dependencies/OpenZeppelin/openzeppelin-contracts@4.8.2/IERC721Metadata";
 
 const _abi = [
   {
@@ -166,6 +166,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "name",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -273,6 +286,38 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "symbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "tokenURI",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -297,15 +342,15 @@ const _abi = [
   },
 ] as const;
 
-export class IERC721Upgradeable__factory {
+export class IERC721Metadata__factory {
   static readonly abi = _abi;
-  static createInterface(): IERC721UpgradeableInterface {
-    return new utils.Interface(_abi) as IERC721UpgradeableInterface;
+  static createInterface(): IERC721MetadataInterface {
+    return new utils.Interface(_abi) as IERC721MetadataInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IERC721Upgradeable {
-    return new Contract(address, _abi, signerOrProvider) as IERC721Upgradeable;
+  ): IERC721Metadata {
+    return new Contract(address, _abi, signerOrProvider) as IERC721Metadata;
   }
 }

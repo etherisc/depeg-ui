@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  ERC721EnumerableUpgradeable,
-  ERC721EnumerableUpgradeableInterface,
-} from "../../../../dependencies/OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.2/ERC721EnumerableUpgradeable";
+  IERC721,
+  IERC721Interface,
+} from "../../../../dependencies/OpenZeppelin/openzeppelin-contracts@4.8.2/IERC721";
 
 const _abi = [
   {
@@ -58,19 +58,6 @@ const _abi = [
       },
     ],
     name: "ApprovalForAll",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint8",
-        name: "version",
-        type: "uint8",
-      },
-    ],
-    name: "Initialized",
     type: "event",
   },
   {
@@ -128,7 +115,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "balance",
         type: "uint256",
       },
     ],
@@ -147,7 +134,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "operator",
         type: "address",
       },
     ],
@@ -179,19 +166,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "name",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",
@@ -203,7 +177,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "owner",
         type: "address",
       },
     ],
@@ -270,7 +244,7 @@ const _abi = [
       },
       {
         internalType: "bool",
-        name: "approved",
+        name: "_approved",
         type: "bool",
       },
     ],
@@ -293,94 +267,6 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "symbol",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-    ],
-    name: "tokenByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-    ],
-    name: "tokenOfOwnerByIndex",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "tokenURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -411,19 +297,15 @@ const _abi = [
   },
 ] as const;
 
-export class ERC721EnumerableUpgradeable__factory {
+export class IERC721__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC721EnumerableUpgradeableInterface {
-    return new utils.Interface(_abi) as ERC721EnumerableUpgradeableInterface;
+  static createInterface(): IERC721Interface {
+    return new utils.Interface(_abi) as IERC721Interface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC721EnumerableUpgradeable {
-    return new Contract(
-      address,
-      _abi,
-      signerOrProvider
-    ) as ERC721EnumerableUpgradeable;
+  ): IERC721 {
+    return new Contract(address, _abi, signerOrProvider) as IERC721;
   }
 }

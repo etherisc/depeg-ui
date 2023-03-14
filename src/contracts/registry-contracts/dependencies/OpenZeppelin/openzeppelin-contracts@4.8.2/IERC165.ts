@@ -20,7 +20,7 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export interface IERC165UpgradeableInterface extends utils.Interface {
+export interface IERC165Interface extends utils.Interface {
   functions: {
     "supportsInterface(bytes4)": FunctionFragment;
   };
@@ -40,12 +40,12 @@ export interface IERC165UpgradeableInterface extends utils.Interface {
   events: {};
 }
 
-export interface IERC165Upgradeable extends BaseContract {
+export interface IERC165 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IERC165UpgradeableInterface;
+  interface: IERC165Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

@@ -27,17 +27,20 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export interface IERC721UpgradeableInterface extends utils.Interface {
+export interface IERC721MetadataInterface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
+    "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "symbol()": FunctionFragment;
+    "tokenURI(uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
 
@@ -47,11 +50,14 @@ export interface IERC721UpgradeableInterface extends utils.Interface {
       | "balanceOf"
       | "getApproved"
       | "isApprovedForAll"
+      | "name"
       | "ownerOf"
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
       | "supportsInterface"
+      | "symbol"
+      | "tokenURI"
       | "transferFrom"
   ): FunctionFragment;
 
@@ -71,6 +77,7 @@ export interface IERC721UpgradeableInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
     values: [PromiseOrValue<BigNumberish>]
@@ -100,6 +107,11 @@ export interface IERC721UpgradeableInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "tokenURI",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
     values: [
@@ -119,6 +131,7 @@ export interface IERC721UpgradeableInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom(address,address,uint256)",
@@ -136,6 +149,8 @@ export interface IERC721UpgradeableInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
     data: BytesLike
@@ -188,12 +203,12 @@ export type TransferEvent = TypedEvent<
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
-export interface IERC721Upgradeable extends BaseContract {
+export interface IERC721Metadata extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IERC721UpgradeableInterface;
+  interface: IERC721MetadataInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -237,6 +252,8 @@ export interface IERC721Upgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    name(overrides?: CallOverrides): Promise<[string]>;
+
     ownerOf(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -268,6 +285,13 @@ export interface IERC721Upgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    symbol(overrides?: CallOverrides): Promise<[string]>;
+
+    tokenURI(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     transferFrom(
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
@@ -297,6 +321,8 @@ export interface IERC721Upgradeable extends BaseContract {
     operator: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  name(overrides?: CallOverrides): Promise<string>;
 
   ownerOf(
     tokenId: PromiseOrValue<BigNumberish>,
@@ -329,6 +355,13 @@ export interface IERC721Upgradeable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  symbol(overrides?: CallOverrides): Promise<string>;
+
+  tokenURI(
+    tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   transferFrom(
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
@@ -358,6 +391,8 @@ export interface IERC721Upgradeable extends BaseContract {
       operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    name(overrides?: CallOverrides): Promise<string>;
 
     ownerOf(
       tokenId: PromiseOrValue<BigNumberish>,
@@ -389,6 +424,13 @@ export interface IERC721Upgradeable extends BaseContract {
       interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    symbol(overrides?: CallOverrides): Promise<string>;
+
+    tokenURI(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     transferFrom(
       from: PromiseOrValue<string>,
@@ -456,6 +498,8 @@ export interface IERC721Upgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    name(overrides?: CallOverrides): Promise<BigNumber>;
+
     ownerOf(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -484,6 +528,13 @@ export interface IERC721Upgradeable extends BaseContract {
 
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    symbol(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tokenURI(
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -518,6 +569,8 @@ export interface IERC721Upgradeable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     ownerOf(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -546,6 +599,13 @@ export interface IERC721Upgradeable extends BaseContract {
 
     supportsInterface(
       interfaceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    tokenURI(
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

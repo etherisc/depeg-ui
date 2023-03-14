@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  IERC165Upgradeable,
-  IERC165UpgradeableInterface,
-} from "../../../../dependencies/OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.2/IERC165Upgradeable";
+  ERC165,
+  ERC165Interface,
+} from "../../../../dependencies/OpenZeppelin/openzeppelin-contracts@4.8.2/ERC165";
 
 const _abi = [
   {
@@ -31,15 +31,12 @@ const _abi = [
   },
 ] as const;
 
-export class IERC165Upgradeable__factory {
+export class ERC165__factory {
   static readonly abi = _abi;
-  static createInterface(): IERC165UpgradeableInterface {
-    return new utils.Interface(_abi) as IERC165UpgradeableInterface;
+  static createInterface(): ERC165Interface {
+    return new utils.Interface(_abi) as ERC165Interface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): IERC165Upgradeable {
-    return new Contract(address, _abi, signerOrProvider) as IERC165Upgradeable;
+  static connect(address: string, signerOrProvider: Signer | Provider): ERC165 {
+    return new Contract(address, _abi, signerOrProvider) as ERC165;
   }
 }

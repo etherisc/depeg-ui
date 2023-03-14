@@ -2,13 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ContextUpgradeable__factory } from "./ContextUpgradeable__factory";
-export { ERC165Upgradeable__factory } from "./ERC165Upgradeable__factory";
-export { ERC721EnumerableUpgradeable__factory } from "./ERC721EnumerableUpgradeable__factory";
-export { ERC721Upgradeable__factory } from "./ERC721Upgradeable__factory";
-export { IERC165Upgradeable__factory } from "./IERC165Upgradeable__factory";
-export { IERC721EnumerableUpgradeable__factory } from "./IERC721EnumerableUpgradeable__factory";
-export { IERC721MetadataUpgradeable__factory } from "./IERC721MetadataUpgradeable__factory";
-export { IERC721ReceiverUpgradeable__factory } from "./IERC721ReceiverUpgradeable__factory";
-export { IERC721Upgradeable__factory } from "./IERC721Upgradeable__factory";
 export { Initializable__factory } from "./Initializable__factory";
 export { OwnableUpgradeable__factory } from "./OwnableUpgradeable__factory";

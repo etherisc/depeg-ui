@@ -4,10 +4,7 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type {
-  IERC721EnumerableUpgradeable,
-  IERC721EnumerableUpgradeableInterface,
-} from "../../../../dependencies/OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.2/IERC721EnumerableUpgradeable";
+import type { IChainNft, IChainNftInterface } from "../IChainNft";
 
 const _abi = [
   {
@@ -130,11 +127,56 @@ const _abi = [
         type: "uint256",
       },
     ],
+    name: "burn",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "exists",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
     name: "getApproved",
     outputs: [
       {
         internalType: "address",
         name: "operator",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getRegistry",
+    outputs: [
+      {
+        internalType: "contract IChainRegistry",
+        name: "registry",
         type: "address",
       },
     ],
@@ -163,6 +205,30 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "uri",
+        type: "string",
+      },
+    ],
+    name: "mint",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -249,6 +315,24 @@ const _abi = [
       },
     ],
     name: "setApprovalForAll",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "uri",
+        type: "string",
+      },
+    ],
+    name: "setURI",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -353,19 +437,15 @@ const _abi = [
   },
 ] as const;
 
-export class IERC721EnumerableUpgradeable__factory {
+export class IChainNft__factory {
   static readonly abi = _abi;
-  static createInterface(): IERC721EnumerableUpgradeableInterface {
-    return new utils.Interface(_abi) as IERC721EnumerableUpgradeableInterface;
+  static createInterface(): IChainNftInterface {
+    return new utils.Interface(_abi) as IChainNftInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IERC721EnumerableUpgradeable {
-    return new Contract(
-      address,
-      _abi,
-      signerOrProvider
-    ) as IERC721EnumerableUpgradeable;
+  ): IChainNft {
+    return new Contract(address, _abi, signerOrProvider) as IChainNft;
   }
 }

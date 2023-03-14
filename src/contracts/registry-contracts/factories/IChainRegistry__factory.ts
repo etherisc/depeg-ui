@@ -48,6 +48,37 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "NftId",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "enum IChainRegistry.ObjectState",
+        name: "stateNew",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "enum IChainRegistry.ObjectState",
+        name: "stateOld",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "setBy",
+        type: "address",
+      },
+    ],
+    name: "LogChainRegistryObjectStateSet",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "blockNumber",
     outputs: [
@@ -178,6 +209,25 @@ const _abi = [
         type: "uint256",
       },
     ],
+    name: "decodeRegistryData",
+    outputs: [
+      {
+        internalType: "address",
+        name: "registry",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "NftId",
+        name: "id",
+        type: "uint256",
+      },
+    ],
     name: "decodeStakeData",
     outputs: [
       {
@@ -241,7 +291,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "bundleId",
+        name: "componentId",
         type: "uint256",
       },
     ],
@@ -270,6 +320,25 @@ const _abi = [
         internalType: "ChainId",
         name: "chain",
         type: "bytes5",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "ChainId",
+        name: "chain",
+        type: "bytes5",
+      },
+    ],
+    name: "getChainNftId",
+    outputs: [
+      {
+        internalType: "NftId",
+        name: "id",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -307,11 +376,43 @@ const _abi = [
         type: "bytes32",
       },
     ],
+    name: "getInstanceNftId",
+    outputs: [
+      {
+        internalType: "NftId",
+        name: "id",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "instanceId",
+        type: "bytes32",
+      },
+    ],
     name: "getInstanceServiceFacade",
     outputs: [
       {
         internalType: "contract IInstanceServiceFacade",
         name: "instanceService",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getNft",
+    outputs: [
+      {
+        internalType: "contract IChainNft",
+        name: "",
         type: "address",
       },
     ],
@@ -334,68 +435,6 @@ const _abi = [
         internalType: "uint256",
         name: "idx",
         type: "uint256",
-      },
-    ],
-    name: "getNftId",
-    outputs: [
-      {
-        internalType: "NftId",
-        name: "id",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "ChainId",
-        name: "chain",
-        type: "bytes5",
-      },
-    ],
-    name: "getNftId",
-    outputs: [
-      {
-        internalType: "NftId",
-        name: "id",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "ChainId",
-        name: "chain",
-        type: "bytes5",
-      },
-      {
-        internalType: "address",
-        name: "implementation",
-        type: "address",
-      },
-    ],
-    name: "getNftId",
-    outputs: [
-      {
-        internalType: "NftId",
-        name: "id",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "instanceId",
-        type: "bytes32",
       },
     ],
     name: "getNftId",
@@ -442,6 +481,11 @@ const _abi = [
             type: "uint8",
           },
           {
+            internalType: "string",
+            name: "uri",
+            type: "string",
+          },
+          {
             internalType: "bytes",
             name: "data",
             type: "bytes",
@@ -465,6 +509,62 @@ const _abi = [
         internalType: "struct IChainRegistry.NftInfo",
         name: "",
         type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "ChainId",
+        name: "chain",
+        type: "bytes5",
+      },
+    ],
+    name: "getRegistryNftId",
+    outputs: [
+      {
+        internalType: "NftId",
+        name: "id",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getStaking",
+    outputs: [
+      {
+        internalType: "contract IStaking",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "ChainId",
+        name: "chain",
+        type: "bytes5",
+      },
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "getTokenNftId",
+    outputs: [
+      {
+        internalType: "NftId",
+        name: "id",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -513,6 +613,25 @@ const _abi = [
         internalType: "uint256",
         name: "numberOfObjects",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "NftId",
+        name: "id",
+        type: "uint256",
+      },
+    ],
+    name: "ownerOf",
+    outputs: [
+      {
+        internalType: "address",
+        name: "nftOwner",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -608,6 +727,11 @@ const _abi = [
         name: "chain",
         type: "bytes5",
       },
+      {
+        internalType: "string",
+        name: "uri",
+        type: "string",
+      },
     ],
     name: "registerChain",
     outputs: [
@@ -631,6 +755,11 @@ const _abi = [
         internalType: "uint256",
         name: "componentId",
         type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "uri",
+        type: "string",
       },
     ],
     name: "registerComponent",
@@ -656,6 +785,11 @@ const _abi = [
         name: "displayName",
         type: "string",
       },
+      {
+        internalType: "string",
+        name: "uri",
+        type: "string",
+      },
     ],
     name: "registerInstance",
     outputs: [
@@ -679,6 +813,11 @@ const _abi = [
         internalType: "address",
         name: "registry",
         type: "address",
+      },
+      {
+        internalType: "string",
+        name: "uri",
+        type: "string",
       },
     ],
     name: "registerRegistry",
@@ -728,6 +867,11 @@ const _abi = [
         name: "token",
         type: "address",
       },
+      {
+        internalType: "string",
+        name: "uri",
+        type: "string",
+      },
     ],
     name: "registerToken",
     outputs: [
@@ -737,6 +881,24 @@ const _abi = [
         type: "uint256",
       },
     ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "NftId",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        internalType: "enum IChainRegistry.ObjectState",
+        name: "state",
+        type: "uint8",
+      },
+    ],
+    name: "setObjectState",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

@@ -33,6 +33,7 @@ export declare namespace IChainRegistry {
     chain: PromiseOrValue<BytesLike>;
     t: PromiseOrValue<BigNumberish>;
     state: PromiseOrValue<BigNumberish>;
+    uri: PromiseOrValue<string>;
     data: PromiseOrValue<BytesLike>;
     mintedIn: PromiseOrValue<BigNumberish>;
     updatedIn: PromiseOrValue<BigNumberish>;
@@ -45,6 +46,7 @@ export declare namespace IChainRegistry {
     number,
     number,
     string,
+    string,
     number,
     number,
     number
@@ -53,6 +55,7 @@ export declare namespace IChainRegistry {
     chain: string;
     t: number;
     state: number;
+    uri: string;
     data: string;
     mintedIn: number;
     updatedIn: number;
@@ -86,11 +89,10 @@ export declare namespace Versionable {
 
 export interface ChainRegistryV01Interface extends utils.Interface {
   functions: {
-    "BASE_URI()": FunctionFragment;
+    "BASE_DID()": FunctionFragment;
     "BUNDLE()": FunctionFragment;
     "CHAIN()": FunctionFragment;
     "INSTANCE()": FunctionFragment;
-    "NAME()": FunctionFragment;
     "ORACLE()": FunctionFragment;
     "POLICY()": FunctionFragment;
     "PRODUCT()": FunctionFragment;
@@ -98,57 +100,50 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     "REGISTRY()": FunctionFragment;
     "RISKPOOL()": FunctionFragment;
     "STAKE()": FunctionFragment;
-    "SYMBOL()": FunctionFragment;
     "TOKEN()": FunctionFragment;
     "UNDEFINED()": FunctionFragment;
     "activate(address)": FunctionFragment;
     "activateAndSetOwner(address,address)": FunctionFragment;
-    "approve(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
     "blockNumber()": FunctionFragment;
     "chains()": FunctionFragment;
     "decodeBundleData(uint256)": FunctionFragment;
     "decodeComponentData(uint256)": FunctionFragment;
     "decodeInstanceData(uint256)": FunctionFragment;
+    "decodeRegistryData(uint256)": FunctionFragment;
     "decodeStakeData(uint256)": FunctionFragment;
     "decodeTokenData(uint256)": FunctionFragment;
     "exists(uint256)": FunctionFragment;
-    "getApproved(uint256)": FunctionFragment;
     "getBundleNftId(bytes32,uint256)": FunctionFragment;
     "getChainId(uint256)": FunctionFragment;
+    "getChainNftId(bytes5)": FunctionFragment;
     "getComponentNftId(bytes32,uint256)": FunctionFragment;
+    "getInstanceNftId(bytes32)": FunctionFragment;
     "getInstanceServiceFacade(bytes32)": FunctionFragment;
+    "getNft()": FunctionFragment;
     "getNftId(bytes5,uint8,uint256)": FunctionFragment;
-    "getNftId(bytes5)": FunctionFragment;
-    "getNftId(bytes5,address)": FunctionFragment;
-    "getNftId(bytes32)": FunctionFragment;
     "getNftInfo(uint256)": FunctionFragment;
+    "getRegistryNftId(bytes5)": FunctionFragment;
+    "getStaking()": FunctionFragment;
+    "getTokenNftId(bytes5,address)": FunctionFragment;
     "getVersion(uint256)": FunctionFragment;
     "getVersionInfo(uint48)": FunctionFragment;
     "intToBytes(uint256,uint8)": FunctionFragment;
     "isActivated(uint48)": FunctionFragment;
-    "isApprovedForAll(address,address)": FunctionFragment;
-    "name()": FunctionFragment;
-    "nftURI(uint256)": FunctionFragment;
     "objects(bytes5,uint8)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "probeInstance(address)": FunctionFragment;
     "registerBundle(bytes32,uint256,uint256,string,uint256)": FunctionFragment;
-    "registerChain(bytes5)": FunctionFragment;
-    "registerComponent(bytes32,uint256)": FunctionFragment;
-    "registerInstance(address,string)": FunctionFragment;
-    "registerRegistry(bytes5,address)": FunctionFragment;
+    "registerChain(bytes5,string)": FunctionFragment;
+    "registerComponent(bytes32,uint256,string)": FunctionFragment;
+    "registerInstance(address,string,string)": FunctionFragment;
+    "registerRegistry(bytes5,address,string)": FunctionFragment;
     "registerStake(uint256,address)": FunctionFragment;
-    "registerToken(bytes5,address)": FunctionFragment;
+    "registerToken(bytes5,address,string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "safeTransferFrom(address,address,uint256)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
-    "setApprovalForAll(address,bool)": FunctionFragment;
+    "setNftContract(address,address)": FunctionFragment;
+    "setObjectState(uint256,uint8)": FunctionFragment;
     "setStakingContract(address)": FunctionFragment;
-    "stakingContract()": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "symbol()": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
     "toInt(bytes5)": FunctionFragment;
     "toInt(uint32)": FunctionFragment;
@@ -157,11 +152,7 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     "toString(bytes5)": FunctionFragment;
     "toString(address)": FunctionFragment;
     "toString(uint256)": FunctionFragment;
-    "tokenByIndex(uint256)": FunctionFragment;
-    "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
-    "tokenURI(uint256)": FunctionFragment;
-    "totalSupply()": FunctionFragment;
-    "transferFrom(address,address,uint256)": FunctionFragment;
+    "tokenDID(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "version()": FunctionFragment;
     "versionParts()": FunctionFragment;
@@ -170,11 +161,10 @@ export interface ChainRegistryV01Interface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "BASE_URI"
+      | "BASE_DID"
       | "BUNDLE"
       | "CHAIN"
       | "INSTANCE"
-      | "NAME"
       | "ORACLE"
       | "POLICY"
       | "PRODUCT"
@@ -182,38 +172,35 @@ export interface ChainRegistryV01Interface extends utils.Interface {
       | "REGISTRY"
       | "RISKPOOL"
       | "STAKE"
-      | "SYMBOL"
       | "TOKEN"
       | "UNDEFINED"
       | "activate"
       | "activateAndSetOwner"
-      | "approve"
-      | "balanceOf"
       | "blockNumber"
       | "chains"
       | "decodeBundleData"
       | "decodeComponentData"
       | "decodeInstanceData"
+      | "decodeRegistryData"
       | "decodeStakeData"
       | "decodeTokenData"
       | "exists"
-      | "getApproved"
       | "getBundleNftId"
       | "getChainId"
+      | "getChainNftId"
       | "getComponentNftId"
+      | "getInstanceNftId"
       | "getInstanceServiceFacade"
-      | "getNftId(bytes5,uint8,uint256)"
-      | "getNftId(bytes5)"
-      | "getNftId(bytes5,address)"
-      | "getNftId(bytes32)"
+      | "getNft"
+      | "getNftId"
       | "getNftInfo"
+      | "getRegistryNftId"
+      | "getStaking"
+      | "getTokenNftId"
       | "getVersion"
       | "getVersionInfo"
       | "intToBytes"
       | "isActivated"
-      | "isApprovedForAll"
-      | "name"
-      | "nftURI"
       | "objects"
       | "owner"
       | "ownerOf"
@@ -226,13 +213,9 @@ export interface ChainRegistryV01Interface extends utils.Interface {
       | "registerStake"
       | "registerToken"
       | "renounceOwnership"
-      | "safeTransferFrom(address,address,uint256)"
-      | "safeTransferFrom(address,address,uint256,bytes)"
-      | "setApprovalForAll"
+      | "setNftContract"
+      | "setObjectState"
       | "setStakingContract"
-      | "stakingContract"
-      | "supportsInterface"
-      | "symbol"
       | "toChain"
       | "toInt(bytes5)"
       | "toInt(uint32)"
@@ -241,22 +224,17 @@ export interface ChainRegistryV01Interface extends utils.Interface {
       | "toString(bytes5)"
       | "toString(address)"
       | "toString(uint256)"
-      | "tokenByIndex"
-      | "tokenOfOwnerByIndex"
-      | "tokenURI"
-      | "totalSupply"
-      | "transferFrom"
+      | "tokenDID"
       | "transferOwnership"
       | "version"
       | "versionParts"
       | "versions"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "BASE_URI", values?: undefined): string;
+  encodeFunctionData(functionFragment: "BASE_DID", values?: undefined): string;
   encodeFunctionData(functionFragment: "BUNDLE", values?: undefined): string;
   encodeFunctionData(functionFragment: "CHAIN", values?: undefined): string;
   encodeFunctionData(functionFragment: "INSTANCE", values?: undefined): string;
-  encodeFunctionData(functionFragment: "NAME", values?: undefined): string;
   encodeFunctionData(functionFragment: "ORACLE", values?: undefined): string;
   encodeFunctionData(functionFragment: "POLICY", values?: undefined): string;
   encodeFunctionData(functionFragment: "PRODUCT", values?: undefined): string;
@@ -264,7 +242,6 @@ export interface ChainRegistryV01Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "REGISTRY", values?: undefined): string;
   encodeFunctionData(functionFragment: "RISKPOOL", values?: undefined): string;
   encodeFunctionData(functionFragment: "STAKE", values?: undefined): string;
-  encodeFunctionData(functionFragment: "SYMBOL", values?: undefined): string;
   encodeFunctionData(functionFragment: "TOKEN", values?: undefined): string;
   encodeFunctionData(functionFragment: "UNDEFINED", values?: undefined): string;
   encodeFunctionData(
@@ -274,14 +251,6 @@ export interface ChainRegistryV01Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "activateAndSetOwner",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "approve",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "balanceOf",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "blockNumber",
@@ -301,6 +270,10 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "decodeRegistryData",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "decodeStakeData",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -313,10 +286,6 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getApproved",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getBundleNftId",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -325,15 +294,24 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getChainNftId",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getComponentNftId",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getInstanceNftId",
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "getInstanceServiceFacade",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(functionFragment: "getNft", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getNftId(bytes5,uint8,uint256)",
+    functionFragment: "getNftId",
     values: [
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BigNumberish>,
@@ -341,20 +319,20 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "getNftId(bytes5)",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getNftId(bytes5,address)",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getNftId(bytes32)",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getNftInfo",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRegistryNftId",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStaking",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenNftId",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getVersion",
@@ -370,15 +348,6 @@ export interface ChainRegistryV01Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "isActivated",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isApprovedForAll",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "nftURI",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -406,19 +375,31 @@ export interface ChainRegistryV01Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "registerChain",
-    values: [PromiseOrValue<BytesLike>]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "registerComponent",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "registerInstance",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "registerRegistry",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "registerStake",
@@ -426,46 +407,28 @@ export interface ChainRegistryV01Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "registerToken",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "safeTransferFrom(address,address,uint256)",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
+    functionFragment: "setNftContract",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setApprovalForAll",
-    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
+    functionFragment: "setObjectState",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setStakingContract",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "stakingContract",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "toChain",
     values: [PromiseOrValue<BigNumberish>]
@@ -499,28 +462,8 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "tokenByIndex",
+    functionFragment: "tokenDID",
     values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenOfOwnerByIndex",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenURI",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferFrom",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -533,11 +476,10 @@ export interface ChainRegistryV01Interface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "versions", values?: undefined): string;
 
-  decodeFunctionResult(functionFragment: "BASE_URI", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "BASE_DID", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "BUNDLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "CHAIN", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "INSTANCE", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "NAME", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ORACLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "POLICY", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "PRODUCT", data: BytesLike): Result;
@@ -545,7 +487,6 @@ export interface ChainRegistryV01Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "REGISTRY", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "RISKPOOL", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "STAKE", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "SYMBOL", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "TOKEN", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "UNDEFINED", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "activate", data: BytesLike): Result;
@@ -553,8 +494,6 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     functionFragment: "activateAndSetOwner",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "blockNumber",
     data: BytesLike
@@ -573,6 +512,10 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "decodeRegistryData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "decodeStakeData",
     data: BytesLike
   ): Result;
@@ -582,39 +525,38 @@ export interface ChainRegistryV01Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getApproved",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getBundleNftId",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getChainId", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getChainNftId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getComponentNftId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getInstanceNftId",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getInstanceServiceFacade",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getNftId(bytes5,uint8,uint256)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getNftId(bytes5)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getNftId(bytes5,address)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getNftId(bytes32)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "getNft", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getNftId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getNftInfo", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getRegistryNftId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getStaking", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenNftId",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getVersion", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getVersionInfo",
@@ -625,12 +567,6 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     functionFragment: "isActivated",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "isApprovedForAll",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "nftURI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "objects", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
@@ -671,30 +607,17 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "safeTransferFrom(address,address,uint256)",
+    functionFragment: "setNftContract",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "safeTransferFrom(address,address,uint256,bytes)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setApprovalForAll",
+    functionFragment: "setObjectState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setStakingContract",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "stakingContract",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "supportsInterface",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "toChain", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "toInt(bytes5)",
@@ -724,23 +647,7 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     functionFragment: "toString(uint256)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenByIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenOfOwnerByIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferFrom",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "tokenDID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
@@ -753,49 +660,23 @@ export interface ChainRegistryV01Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "versions", data: BytesLike): Result;
 
   events: {
-    "Approval(address,address,uint256)": EventFragment;
-    "ApprovalForAll(address,address,bool)": EventFragment;
     "Initialized(uint8)": EventFragment;
     "LogChainRegistryObjectRegistered(uint256,bytes5,uint8,uint8,address)": EventFragment;
+    "LogChainRegistryObjectStateSet(uint256,uint8,uint8,address)": EventFragment;
     "LogVersionableActivated(uint48,address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "Transfer(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "LogChainRegistryObjectRegistered"
   ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LogChainRegistryObjectStateSet"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogVersionableActivated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
-
-export interface ApprovalEventObject {
-  owner: string;
-  approved: string;
-  tokenId: BigNumber;
-}
-export type ApprovalEvent = TypedEvent<
-  [string, string, BigNumber],
-  ApprovalEventObject
->;
-
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
-
-export interface ApprovalForAllEventObject {
-  owner: string;
-  operator: string;
-  approved: boolean;
-}
-export type ApprovalForAllEvent = TypedEvent<
-  [string, string, boolean],
-  ApprovalForAllEventObject
->;
-
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
 export interface InitializedEventObject {
   version: number;
@@ -818,6 +699,20 @@ export type LogChainRegistryObjectRegisteredEvent = TypedEvent<
 
 export type LogChainRegistryObjectRegisteredEventFilter =
   TypedEventFilter<LogChainRegistryObjectRegisteredEvent>;
+
+export interface LogChainRegistryObjectStateSetEventObject {
+  id: BigNumber;
+  stateNew: number;
+  stateOld: number;
+  setBy: string;
+}
+export type LogChainRegistryObjectStateSetEvent = TypedEvent<
+  [BigNumber, number, number, string],
+  LogChainRegistryObjectStateSetEventObject
+>;
+
+export type LogChainRegistryObjectStateSetEventFilter =
+  TypedEventFilter<LogChainRegistryObjectStateSetEvent>;
 
 export interface LogVersionableActivatedEventObject {
   version: number;
@@ -843,18 +738,6 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
-
-export interface TransferEventObject {
-  from: string;
-  to: string;
-  tokenId: BigNumber;
-}
-export type TransferEvent = TypedEvent<
-  [string, string, BigNumber],
-  TransferEventObject
->;
-
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
 export interface ChainRegistryV01 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -883,15 +766,13 @@ export interface ChainRegistryV01 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    BASE_URI(overrides?: CallOverrides): Promise<[string]>;
+    BASE_DID(overrides?: CallOverrides): Promise<[string]>;
 
     BUNDLE(overrides?: CallOverrides): Promise<[number]>;
 
     CHAIN(overrides?: CallOverrides): Promise<[number]>;
 
     INSTANCE(overrides?: CallOverrides): Promise<[number]>;
-
-    NAME(overrides?: CallOverrides): Promise<[string]>;
 
     ORACLE(overrides?: CallOverrides): Promise<[number]>;
 
@@ -907,8 +788,6 @@ export interface ChainRegistryV01 extends BaseContract {
 
     STAKE(overrides?: CallOverrides): Promise<[number]>;
 
-    SYMBOL(overrides?: CallOverrides): Promise<[string]>;
-
     TOKEN(overrides?: CallOverrides): Promise<[number]>;
 
     UNDEFINED(overrides?: CallOverrides): Promise<[number]>;
@@ -923,17 +802,6 @@ export interface ChainRegistryV01 extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    approve(
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     blockNumber(overrides?: CallOverrides): Promise<[number]>;
 
@@ -976,6 +844,11 @@ export interface ChainRegistryV01 extends BaseContract {
       }
     >;
 
+    decodeRegistryData(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { registry: string }>;
+
     decodeStakeData(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -991,11 +864,6 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    getApproved(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     getBundleNftId(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
@@ -1007,9 +875,19 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { chain: string }>;
 
+    getChainNftId(
+      chain: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { id: BigNumber }>;
+
     getComponentNftId(
       instanceId: PromiseOrValue<BytesLike>,
       componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { id: BigNumber }>;
+
+    getInstanceNftId(
+      instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { id: BigNumber }>;
 
@@ -1018,26 +896,12 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { instanceService: string }>;
 
-    "getNftId(bytes5,uint8,uint256)"(
+    getNft(overrides?: CallOverrides): Promise<[string] & { nft: string }>;
+
+    getNftId(
       chain: PromiseOrValue<BytesLike>,
       t: PromiseOrValue<BigNumberish>,
       idx: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { id: BigNumber }>;
-
-    "getNftId(bytes5)"(
-      chain: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { id: BigNumber }>;
-
-    "getNftId(bytes5,address)"(
-      chain: PromiseOrValue<BytesLike>,
-      implementation: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { id: BigNumber }>;
-
-    "getNftId(bytes32)"(
-      instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { id: BigNumber }>;
 
@@ -1045,6 +909,21 @@ export interface ChainRegistryV01 extends BaseContract {
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[IChainRegistry.NftInfoStructOutput]>;
+
+    getRegistryNftId(
+      chain: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { id: BigNumber }>;
+
+    getStaking(
+      overrides?: CallOverrides
+    ): Promise<[string] & { staking: string }>;
+
+    getTokenNftId(
+      chain: PromiseOrValue<BytesLike>,
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { id: BigNumber }>;
 
     getVersion(
       idx: PromiseOrValue<BigNumberish>,
@@ -1067,19 +946,6 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    name(overrides?: CallOverrides): Promise<[string]>;
-
-    nftURI(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     objects(
       chain: PromiseOrValue<BytesLike>,
       t: PromiseOrValue<BigNumberish>,
@@ -1089,9 +955,9 @@ export interface ChainRegistryV01 extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     ownerOf(
-      tokenId: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[string] & { nftOwner: string }>;
 
     probeInstance(
       registryAddress: PromiseOrValue<string>,
@@ -1118,24 +984,28 @@ export interface ChainRegistryV01 extends BaseContract {
 
     registerChain(
       chain: PromiseOrValue<BytesLike>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
       componentId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     registerInstance(
       instanceRegistry: PromiseOrValue<string>,
       displayName: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     registerRegistry(
       chain: PromiseOrValue<BytesLike>,
       registry: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1148,6 +1018,7 @@ export interface ChainRegistryV01 extends BaseContract {
     registerToken(
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1155,24 +1026,15 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "safeTransferFrom(address,address,uint256)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
+    setNftContract(
+      nft: PromiseOrValue<string>,
+      newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
+    setObjectState(
+      id: PromiseOrValue<BigNumberish>,
+      stateNew: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1180,17 +1042,6 @@ export interface ChainRegistryV01 extends BaseContract {
       staking: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    stakingContract(
-      overrides?: CallOverrides
-    ): Promise<[string] & { staking: string }>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    symbol(overrides?: CallOverrides): Promise<[string]>;
 
     toChain(
       chainId: PromiseOrValue<BigNumberish>,
@@ -1232,30 +1083,10 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    tokenByIndex(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    tokenOfOwnerByIndex(
-      owner: PromiseOrValue<string>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    tokenURI(
-      id: PromiseOrValue<BigNumberish>,
+    tokenDID(
+      tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -1273,15 +1104,13 @@ export interface ChainRegistryV01 extends BaseContract {
     versions(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
-  BASE_URI(overrides?: CallOverrides): Promise<string>;
+  BASE_DID(overrides?: CallOverrides): Promise<string>;
 
   BUNDLE(overrides?: CallOverrides): Promise<number>;
 
   CHAIN(overrides?: CallOverrides): Promise<number>;
 
   INSTANCE(overrides?: CallOverrides): Promise<number>;
-
-  NAME(overrides?: CallOverrides): Promise<string>;
 
   ORACLE(overrides?: CallOverrides): Promise<number>;
 
@@ -1297,8 +1126,6 @@ export interface ChainRegistryV01 extends BaseContract {
 
   STAKE(overrides?: CallOverrides): Promise<number>;
 
-  SYMBOL(overrides?: CallOverrides): Promise<string>;
-
   TOKEN(overrides?: CallOverrides): Promise<number>;
 
   UNDEFINED(overrides?: CallOverrides): Promise<number>;
@@ -1313,17 +1140,6 @@ export interface ChainRegistryV01 extends BaseContract {
     newOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  approve(
-    to: PromiseOrValue<string>,
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  balanceOf(
-    owner: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   blockNumber(overrides?: CallOverrides): Promise<number>;
 
@@ -1364,6 +1180,11 @@ export interface ChainRegistryV01 extends BaseContract {
     }
   >;
 
+  decodeRegistryData(
+    id: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   decodeStakeData(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -1379,11 +1200,6 @@ export interface ChainRegistryV01 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  getApproved(
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   getBundleNftId(
     instanceId: PromiseOrValue<BytesLike>,
     bundleId: PromiseOrValue<BigNumberish>,
@@ -1395,9 +1211,19 @@ export interface ChainRegistryV01 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getChainNftId(
+    chain: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getComponentNftId(
     instanceId: PromiseOrValue<BytesLike>,
     componentId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getInstanceNftId(
+    instanceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1406,26 +1232,12 @@ export interface ChainRegistryV01 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  "getNftId(bytes5,uint8,uint256)"(
+  getNft(overrides?: CallOverrides): Promise<string>;
+
+  getNftId(
     chain: PromiseOrValue<BytesLike>,
     t: PromiseOrValue<BigNumberish>,
     idx: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getNftId(bytes5)"(
-    chain: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getNftId(bytes5,address)"(
-    chain: PromiseOrValue<BytesLike>,
-    implementation: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getNftId(bytes32)"(
-    instanceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1433,6 +1245,19 @@ export interface ChainRegistryV01 extends BaseContract {
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<IChainRegistry.NftInfoStructOutput>;
+
+  getRegistryNftId(
+    chain: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getStaking(overrides?: CallOverrides): Promise<string>;
+
+  getTokenNftId(
+    chain: PromiseOrValue<BytesLike>,
+    token: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getVersion(
     idx: PromiseOrValue<BigNumberish>,
@@ -1455,19 +1280,6 @@ export interface ChainRegistryV01 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isApprovedForAll(
-    owner: PromiseOrValue<string>,
-    operator: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  name(overrides?: CallOverrides): Promise<string>;
-
-  nftURI(
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   objects(
     chain: PromiseOrValue<BytesLike>,
     t: PromiseOrValue<BigNumberish>,
@@ -1477,7 +1289,7 @@ export interface ChainRegistryV01 extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   ownerOf(
-    tokenId: PromiseOrValue<BigNumberish>,
+    id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -1506,24 +1318,28 @@ export interface ChainRegistryV01 extends BaseContract {
 
   registerChain(
     chain: PromiseOrValue<BytesLike>,
+    uri: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   registerComponent(
     instanceId: PromiseOrValue<BytesLike>,
     componentId: PromiseOrValue<BigNumberish>,
+    uri: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   registerInstance(
     instanceRegistry: PromiseOrValue<string>,
     displayName: PromiseOrValue<string>,
+    uri: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   registerRegistry(
     chain: PromiseOrValue<BytesLike>,
     registry: PromiseOrValue<string>,
+    uri: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1536,6 +1352,7 @@ export interface ChainRegistryV01 extends BaseContract {
   registerToken(
     chain: PromiseOrValue<BytesLike>,
     token: PromiseOrValue<string>,
+    uri: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1543,24 +1360,15 @@ export interface ChainRegistryV01 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "safeTransferFrom(address,address,uint256)"(
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    tokenId: PromiseOrValue<BigNumberish>,
+  setNftContract(
+    nft: PromiseOrValue<string>,
+    newOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "safeTransferFrom(address,address,uint256,bytes)"(
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    tokenId: PromiseOrValue<BigNumberish>,
-    data: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setApprovalForAll(
-    operator: PromiseOrValue<string>,
-    approved: PromiseOrValue<boolean>,
+  setObjectState(
+    id: PromiseOrValue<BigNumberish>,
+    stateNew: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1568,15 +1376,6 @@ export interface ChainRegistryV01 extends BaseContract {
     staking: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  stakingContract(overrides?: CallOverrides): Promise<string>;
-
-  supportsInterface(
-    interfaceId: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  symbol(overrides?: CallOverrides): Promise<string>;
 
   toChain(
     chainId: PromiseOrValue<BigNumberish>,
@@ -1618,30 +1417,10 @@ export interface ChainRegistryV01 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  tokenByIndex(
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  tokenOfOwnerByIndex(
-    owner: PromiseOrValue<string>,
-    index: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  tokenURI(
-    id: PromiseOrValue<BigNumberish>,
+  tokenDID(
+    tokenId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
-
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  transferFrom(
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    tokenId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
@@ -1659,15 +1438,13 @@ export interface ChainRegistryV01 extends BaseContract {
   versions(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    BASE_URI(overrides?: CallOverrides): Promise<string>;
+    BASE_DID(overrides?: CallOverrides): Promise<string>;
 
     BUNDLE(overrides?: CallOverrides): Promise<number>;
 
     CHAIN(overrides?: CallOverrides): Promise<number>;
 
     INSTANCE(overrides?: CallOverrides): Promise<number>;
-
-    NAME(overrides?: CallOverrides): Promise<string>;
 
     ORACLE(overrides?: CallOverrides): Promise<number>;
 
@@ -1683,8 +1460,6 @@ export interface ChainRegistryV01 extends BaseContract {
 
     STAKE(overrides?: CallOverrides): Promise<number>;
 
-    SYMBOL(overrides?: CallOverrides): Promise<string>;
-
     TOKEN(overrides?: CallOverrides): Promise<number>;
 
     UNDEFINED(overrides?: CallOverrides): Promise<number>;
@@ -1699,17 +1474,6 @@ export interface ChainRegistryV01 extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    approve(
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     blockNumber(overrides?: CallOverrides): Promise<number>;
 
@@ -1750,6 +1514,11 @@ export interface ChainRegistryV01 extends BaseContract {
       }
     >;
 
+    decodeRegistryData(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     decodeStakeData(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1765,11 +1534,6 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    getApproved(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     getBundleNftId(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
@@ -1781,9 +1545,19 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getChainNftId(
+      chain: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getComponentNftId(
       instanceId: PromiseOrValue<BytesLike>,
       componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getInstanceNftId(
+      instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1792,26 +1566,12 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "getNftId(bytes5,uint8,uint256)"(
+    getNft(overrides?: CallOverrides): Promise<string>;
+
+    getNftId(
       chain: PromiseOrValue<BytesLike>,
       t: PromiseOrValue<BigNumberish>,
       idx: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getNftId(bytes5)"(
-      chain: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getNftId(bytes5,address)"(
-      chain: PromiseOrValue<BytesLike>,
-      implementation: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getNftId(bytes32)"(
-      instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1819,6 +1579,19 @@ export interface ChainRegistryV01 extends BaseContract {
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<IChainRegistry.NftInfoStructOutput>;
+
+    getRegistryNftId(
+      chain: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getStaking(overrides?: CallOverrides): Promise<string>;
+
+    getTokenNftId(
+      chain: PromiseOrValue<BytesLike>,
+      token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getVersion(
       idx: PromiseOrValue<BigNumberish>,
@@ -1841,19 +1614,6 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    name(overrides?: CallOverrides): Promise<string>;
-
-    nftURI(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     objects(
       chain: PromiseOrValue<BytesLike>,
       t: PromiseOrValue<BigNumberish>,
@@ -1863,7 +1623,7 @@ export interface ChainRegistryV01 extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     ownerOf(
-      tokenId: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -1892,24 +1652,28 @@ export interface ChainRegistryV01 extends BaseContract {
 
     registerChain(
       chain: PromiseOrValue<BytesLike>,
+      uri: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
       componentId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     registerInstance(
       instanceRegistry: PromiseOrValue<string>,
       displayName: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     registerRegistry(
       chain: PromiseOrValue<BytesLike>,
       registry: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1922,29 +1686,21 @@ export interface ChainRegistryV01 extends BaseContract {
     registerToken(
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    "safeTransferFrom(address,address,uint256)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
+    setNftContract(
+      nft: PromiseOrValue<string>,
+      newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
+    setObjectState(
+      id: PromiseOrValue<BigNumberish>,
+      stateNew: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1952,15 +1708,6 @@ export interface ChainRegistryV01 extends BaseContract {
       staking: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    stakingContract(overrides?: CallOverrides): Promise<string>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    symbol(overrides?: CallOverrides): Promise<string>;
 
     toChain(
       chainId: PromiseOrValue<BigNumberish>,
@@ -2002,30 +1749,10 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    tokenByIndex(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenOfOwnerByIndex(
-      owner: PromiseOrValue<string>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenURI(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
+    tokenDID(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -2044,28 +1771,6 @@ export interface ChainRegistryV01 extends BaseContract {
   };
 
   filters: {
-    "Approval(address,address,uint256)"(
-      owner?: PromiseOrValue<string> | null,
-      approved?: PromiseOrValue<string> | null,
-      tokenId?: PromiseOrValue<BigNumberish> | null
-    ): ApprovalEventFilter;
-    Approval(
-      owner?: PromiseOrValue<string> | null,
-      approved?: PromiseOrValue<string> | null,
-      tokenId?: PromiseOrValue<BigNumberish> | null
-    ): ApprovalEventFilter;
-
-    "ApprovalForAll(address,address,bool)"(
-      owner?: PromiseOrValue<string> | null,
-      operator?: PromiseOrValue<string> | null,
-      approved?: null
-    ): ApprovalForAllEventFilter;
-    ApprovalForAll(
-      owner?: PromiseOrValue<string> | null,
-      operator?: PromiseOrValue<string> | null,
-      approved?: null
-    ): ApprovalForAllEventFilter;
-
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
@@ -2083,6 +1788,19 @@ export interface ChainRegistryV01 extends BaseContract {
       state?: null,
       to?: null
     ): LogChainRegistryObjectRegisteredEventFilter;
+
+    "LogChainRegistryObjectStateSet(uint256,uint8,uint8,address)"(
+      id?: null,
+      stateNew?: null,
+      stateOld?: null,
+      setBy?: null
+    ): LogChainRegistryObjectStateSetEventFilter;
+    LogChainRegistryObjectStateSet(
+      id?: null,
+      stateNew?: null,
+      stateOld?: null,
+      setBy?: null
+    ): LogChainRegistryObjectStateSetEventFilter;
 
     "LogVersionableActivated(uint48,address,address)"(
       version?: null,
@@ -2103,29 +1821,16 @@ export interface ChainRegistryV01 extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
-
-    "Transfer(address,address,uint256)"(
-      from?: PromiseOrValue<string> | null,
-      to?: PromiseOrValue<string> | null,
-      tokenId?: PromiseOrValue<BigNumberish> | null
-    ): TransferEventFilter;
-    Transfer(
-      from?: PromiseOrValue<string> | null,
-      to?: PromiseOrValue<string> | null,
-      tokenId?: PromiseOrValue<BigNumberish> | null
-    ): TransferEventFilter;
   };
 
   estimateGas: {
-    BASE_URI(overrides?: CallOverrides): Promise<BigNumber>;
+    BASE_DID(overrides?: CallOverrides): Promise<BigNumber>;
 
     BUNDLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     CHAIN(overrides?: CallOverrides): Promise<BigNumber>;
 
     INSTANCE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    NAME(overrides?: CallOverrides): Promise<BigNumber>;
 
     ORACLE(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2141,8 +1846,6 @@ export interface ChainRegistryV01 extends BaseContract {
 
     STAKE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    SYMBOL(overrides?: CallOverrides): Promise<BigNumber>;
-
     TOKEN(overrides?: CallOverrides): Promise<BigNumber>;
 
     UNDEFINED(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2156,17 +1859,6 @@ export interface ChainRegistryV01 extends BaseContract {
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    approve(
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     blockNumber(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2188,6 +1880,11 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    decodeRegistryData(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     decodeStakeData(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2203,11 +1900,6 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getApproved(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getBundleNftId(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
@@ -2219,9 +1911,19 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getChainNftId(
+      chain: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getComponentNftId(
       instanceId: PromiseOrValue<BytesLike>,
       componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getInstanceNftId(
+      instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2230,31 +1932,30 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getNftId(bytes5,uint8,uint256)"(
+    getNft(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getNftId(
       chain: PromiseOrValue<BytesLike>,
       t: PromiseOrValue<BigNumberish>,
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getNftId(bytes5)"(
-      chain: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getNftId(bytes5,address)"(
-      chain: PromiseOrValue<BytesLike>,
-      implementation: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getNftId(bytes32)"(
-      instanceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getNftInfo(
       id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRegistryNftId(
+      chain: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getStaking(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTokenNftId(
+      chain: PromiseOrValue<BytesLike>,
+      token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2279,19 +1980,6 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    nftURI(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     objects(
       chain: PromiseOrValue<BytesLike>,
       t: PromiseOrValue<BigNumberish>,
@@ -2301,7 +1989,7 @@ export interface ChainRegistryV01 extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     ownerOf(
-      tokenId: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2321,24 +2009,28 @@ export interface ChainRegistryV01 extends BaseContract {
 
     registerChain(
       chain: PromiseOrValue<BytesLike>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
       componentId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     registerInstance(
       instanceRegistry: PromiseOrValue<string>,
       displayName: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     registerRegistry(
       chain: PromiseOrValue<BytesLike>,
       registry: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2351,6 +2043,7 @@ export interface ChainRegistryV01 extends BaseContract {
     registerToken(
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2358,24 +2051,15 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "safeTransferFrom(address,address,uint256)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
+    setNftContract(
+      nft: PromiseOrValue<string>,
+      newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
+    setObjectState(
+      id: PromiseOrValue<BigNumberish>,
+      stateNew: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2383,15 +2067,6 @@ export interface ChainRegistryV01 extends BaseContract {
       staking: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    stakingContract(overrides?: CallOverrides): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
     toChain(
       chainId: PromiseOrValue<BigNumberish>,
@@ -2433,29 +2108,9 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    tokenByIndex(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenOfOwnerByIndex(
-      owner: PromiseOrValue<string>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenURI(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
+    tokenDID(
       tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     transferOwnership(
@@ -2471,15 +2126,13 @@ export interface ChainRegistryV01 extends BaseContract {
   };
 
   populateTransaction: {
-    BASE_URI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    BASE_DID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     BUNDLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     CHAIN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     INSTANCE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    NAME(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ORACLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2495,8 +2148,6 @@ export interface ChainRegistryV01 extends BaseContract {
 
     STAKE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    SYMBOL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     TOKEN(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     UNDEFINED(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2510,17 +2161,6 @@ export interface ChainRegistryV01 extends BaseContract {
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    approve(
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     blockNumber(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2542,6 +2182,11 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    decodeRegistryData(
+      id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     decodeStakeData(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2557,11 +2202,6 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getApproved(
-      tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getBundleNftId(
       instanceId: PromiseOrValue<BytesLike>,
       bundleId: PromiseOrValue<BigNumberish>,
@@ -2573,9 +2213,19 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getChainNftId(
+      chain: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getComponentNftId(
       instanceId: PromiseOrValue<BytesLike>,
       componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getInstanceNftId(
+      instanceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2584,31 +2234,30 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getNftId(bytes5,uint8,uint256)"(
+    getNft(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getNftId(
       chain: PromiseOrValue<BytesLike>,
       t: PromiseOrValue<BigNumberish>,
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getNftId(bytes5)"(
-      chain: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getNftId(bytes5,address)"(
-      chain: PromiseOrValue<BytesLike>,
-      implementation: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getNftId(bytes32)"(
-      instanceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getNftInfo(
       id: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRegistryNftId(
+      chain: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getStaking(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTokenNftId(
+      chain: PromiseOrValue<BytesLike>,
+      token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2633,19 +2282,6 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    nftURI(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     objects(
       chain: PromiseOrValue<BytesLike>,
       t: PromiseOrValue<BigNumberish>,
@@ -2655,7 +2291,7 @@ export interface ChainRegistryV01 extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ownerOf(
-      tokenId: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2675,24 +2311,28 @@ export interface ChainRegistryV01 extends BaseContract {
 
     registerChain(
       chain: PromiseOrValue<BytesLike>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     registerComponent(
       instanceId: PromiseOrValue<BytesLike>,
       componentId: PromiseOrValue<BigNumberish>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     registerInstance(
       instanceRegistry: PromiseOrValue<string>,
       displayName: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     registerRegistry(
       chain: PromiseOrValue<BytesLike>,
       registry: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2705,6 +2345,7 @@ export interface ChainRegistryV01 extends BaseContract {
     registerToken(
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
+      uri: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2712,24 +2353,15 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "safeTransferFrom(address,address,uint256)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
+    setNftContract(
+      nft: PromiseOrValue<string>,
+      newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "safeTransferFrom(address,address,uint256,bytes)"(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      tokenId: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
+    setObjectState(
+      id: PromiseOrValue<BigNumberish>,
+      stateNew: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2737,15 +2369,6 @@ export interface ChainRegistryV01 extends BaseContract {
       staking: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    stakingContract(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     toChain(
       chainId: PromiseOrValue<BigNumberish>,
@@ -2787,29 +2410,9 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    tokenByIndex(
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    tokenOfOwnerByIndex(
-      owner: PromiseOrValue<string>,
-      index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    tokenURI(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
+    tokenDID(
       tokenId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferOwnership(

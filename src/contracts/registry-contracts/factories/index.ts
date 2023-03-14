@@ -3,6 +3,7 @@
 /* eslint-disable */
 export * as dependencies from "./dependencies";
 export { BaseTypes__factory } from "./BaseTypes__factory";
+export { ChainNft__factory } from "./ChainNft__factory";
 export { ChainRegistryV01__factory } from "./ChainRegistryV01__factory";
 export { ChainRegistryV02__factory } from "./ChainRegistryV02__factory";
 export { DIP__factory } from "./DIP__factory";
@@ -11,6 +12,7 @@ export { DemoV10__factory } from "./DemoV10__factory";
 export { DemoV11__factory } from "./DemoV11__factory";
 export { DemoV111__factory } from "./DemoV111__factory";
 export { IBaseTypes__factory } from "./IBaseTypes__factory";
+export { IChainNft__factory } from "./IChainNft__factory";
 export { IChainRegistry__factory } from "./IChainRegistry__factory";
 export { IInstanceRegistryFacade__factory } from "./IInstanceRegistryFacade__factory";
 export { IInstanceServiceFacade__factory } from "./IInstanceServiceFacade__factory";
