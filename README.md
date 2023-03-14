@@ -73,6 +73,13 @@ NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN=5
 NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN_MAXIMUM=10
 ```
 
+#### Override Riskpool capacity limit
+
+Check the riskpool capacity limit and show a warning if the limit is reached (works only if the configured limit is smaller than then limit defined in the smart contract).
+
+- `NEXT_PUBLIC_RISKPOOL_CAPACITY_LIMIT=250000` - configure the riskpool capacity limit to USD2 250000 
+
+
 ### Feature flags
 #### Price
 
@@ -82,11 +89,6 @@ Show a page that displays the latest price of the protected coin and (if enabled
 - `NEXT_PUBLIC_FEATURE_PRICE_HISTORY=true` - show price history of the protected coin
 - `NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA=true` - enable loading of fake data for price history
 
-#### Riskpool capacity limit
-
-Check the riskpool capacity limit before investment and show a warning if the limit is reached.
-
-- `NEXT_PUBLIC_RISKPOOL_CAPACITY_LIMIT=250000` - configure the riskpool capacity limit to USD2 250000 
 
 #### Investor whitelist
 
