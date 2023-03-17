@@ -7,9 +7,6 @@ import 'chartjs-adapter-moment';
 import { useTranslation } from "next-i18next";
 import Color from "color";
 
-const TRIGGER_PRICE = 0.995;
-const RECOVERY_PRICE = 0.999;
-
 
 interface PriceHistoryProps {
     name: string;
@@ -27,6 +24,11 @@ export default function PriceHistory(props: PriceHistoryProps) {
     const { t } = useTranslation(['price', 'common']);
     const theme = useTheme();
 
+    const triggerThresholdStr = process.env.NEXT_PUBLIC_DEPEG_TRIGGER_THRESHOLD || '0.995';
+    const triggerPrice = parseFloat(triggerThresholdStr);
+    const recoveryThresholdStr = process.env.NEXT_PUBLIC_DEPEG_RECOVERY_THRESHOLD || '0.999';
+    const recoveryPrice = parseFloat(recoveryThresholdStr);
+    
     let labels = [] as string[];
     let dataset = [] as any;
 
@@ -51,7 +53,7 @@ export default function PriceHistory(props: PriceHistoryProps) {
         if (props.depeggedAt != 0 && ts >= props.depeggedAt) {
             return theme.palette.error.dark;
         }
-        if (value < TRIGGER_PRICE) {
+        if (value < triggerPrice) {
             return theme.palette.error.dark;
         }
         return theme.palette.primary.light;
@@ -77,7 +79,7 @@ export default function PriceHistory(props: PriceHistoryProps) {
         }
         
         
-        if (p0.parsed.y <= TRIGGER_PRICE || p1.parsed.y <= TRIGGER_PRICE) {
+        if (p0.parsed.y <= triggerPrice || p1.parsed.y <= triggerPrice) {
             console.log("red");
             return theme.palette.warning.light;
         }
@@ -98,8 +100,8 @@ export default function PriceHistory(props: PriceHistoryProps) {
             {
                 label: "Trigger",
                 data: props.prices.length > 0 ? [
-                    { x: props.prices[0].timestamp * 1000, y: TRIGGER_PRICE },
-                    { x: props.prices[props.prices.length - 1].timestamp * 1000, y: TRIGGER_PRICE },
+                    { x: props.prices[0].timestamp * 1000, y: triggerPrice },
+                    { x: props.prices[props.prices.length - 1].timestamp * 1000, y: triggerPrice },
                 ] : [],
                 borderColor: Color(theme.palette.error.light).fade(0.7).hexa(),
                 // no point, no hover, no hit
@@ -110,8 +112,8 @@ export default function PriceHistory(props: PriceHistoryProps) {
             {
                 label: "Recovery",
                 data: props.prices.length > 0 ? [
-                    { x: props.prices[0].timestamp * 1000, y: RECOVERY_PRICE },
-                    { x: props.prices[props.prices.length - 1].timestamp * 1000, y: RECOVERY_PRICE },
+                    { x: props.prices[0].timestamp * 1000, y: recoveryPrice },
+                    { x: props.prices[props.prices.length - 1].timestamp * 1000, y: recoveryPrice },
                 ] : [],
                 borderColor: Color(theme.palette.success.light).fade(0.7).hexa(),
                 // no point, no hover, no hit

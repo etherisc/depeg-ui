@@ -20,8 +20,9 @@ export default function PayoutExample(props: PayoutExampleProps) {
     const currency = props.currency;
     const currency2 = props.currency2;
     const currencyUSD = 'USD';
-    const depegThreshold = '0.995';
-    const recoveryThreshold = '0.999';
+    const triggerThreshold = process.env.NEXT_PUBLIC_DEPEG_TRIGGER_THRESHOLD || '0.995';
+    const recoveryThreshold = process.env.NEXT_PUBLIC_DEPEG_RECOVERY_THRESHOLD || '0.999';
+    const recoveryWindowHours = process.env.NEXT_PUBLIC_DEPEG_RECOVERY_WINDOW_HOURS || '24';
     const exampleRate = useSelector((state: RootState) => state.application.exampleRate);
 
     let insuredAmt = 1000;
@@ -41,12 +42,13 @@ export default function PayoutExample(props: PayoutExampleProps) {
         <Box>
             <Typography variant="body2" gutterBottom component="div" data-testid="text1">
                 <Trans i18nKey="payout_example.text1" t={t} 
-                    values={{ currency, currency2, currencyUSD, depegThreshold, recoveryThreshold }}
+                    values={{ currency, currency2, currencyUSD, triggerThreshold, recoveryThreshold, recoveryWindowHours }}
                     >
                     <Link target="_blank" href="/price" className="no_decoration">{t('payout_example.see_price_page')}</Link>
                     {/* print values for testing */}
-                    {depegThreshold}
+                    {triggerThreshold}
                     {recoveryThreshold}
+                    {recoveryWindowHours}
                 </Trans> 
             </Typography>
             <Typography variant="body2" component="div" data-testid="text2">
@@ -57,7 +59,7 @@ export default function PayoutExample(props: PayoutExampleProps) {
                         currency2,
                         currencyUSD, 
                         exampleRate, 
-                        depegThreshold,
+                        triggerThreshold,
                     }}
                 >
                     <b>bold</b>
