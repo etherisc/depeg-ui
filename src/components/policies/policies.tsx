@@ -49,8 +49,10 @@ export default function Policies(props: PoliciesProps) {
     const isLoading = useSelector((state: RootState) => state.policies.isLoading);
     const isDepegged = useSelector((state: RootState) => state.policies.isDepegged);
 
-    const [ pageSize, setPageSize ] = useState(10);
-
+    const [paginationModel, setPaginationModel] = useState({
+        pageSize: 10,
+        page: 0,
+    });
     const [ showActivePoliciesOnly, setShowActivePoliciesOnly ] = useState<boolean>(false);
     function handleShowActivePoliciesOnlyChange(event: React.ChangeEvent<HTMLInputElement>) {
         setShowActivePoliciesOnly(! showActivePoliciesOnly);
@@ -229,7 +231,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'id', 
             headerName: t('table.header.policyId'), 
             flex: 0.8,
-            valueGetter: (params: GridValueGetterParams<string, PolicyData>) => params.row,
+            valueGetter: (params: GridValueGetterParams) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return (<><Address address={params.value!.id} iconColor="secondary.main" />{ownerBadge(params.value!)}</>);
             },
@@ -240,7 +242,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'protectedWallet', 
             headerName: t('table.header.walletAddress'), 
             flex: 0.8,
-            valueGetter: (params: GridValueGetterParams<string, PolicyData>) => params.row,
+            valueGetter: (params: GridValueGetterParams) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return (<><Address address={params.value!.protectedWallet} iconColor="secondary.main" />{protectedByBadge(params.value!)}</>);
             },
@@ -251,7 +253,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'suminsured', 
             headerName: t('table.header.insuredAmount'), 
             flex: 0.8,
-            valueGetter: (params: GridValueGetterParams<string, PolicyData>) => BigNumber.from(params.value),
+            valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.backend.usd1} ${formatCurrency(params.value.toNumber(), props.backend.usd1Decimals)}`,
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2),
         },
@@ -259,7 +261,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'createdAt', 
             headerName: t('table.header.createdDate'), 
             flex: 0.7,
-            renderCell: (params: GridRenderCellParams<number>) => <Timestamp at={params?.value ?? 0} />,
+            renderCell: (params: GridRenderCellParams) => <Timestamp at={params?.value ?? 0} />,
             sortComparator: gridNumberComparator,
         },
         { 
@@ -362,10 +364,10 @@ export default function Policies(props: PoliciesProps) {
                         sortModel: [{ field: 'coverageUntil', sort: 'asc' }],
                     },
                 }}
-                pageSize={pageSize}
-                rowsPerPageOptions={[5, 10, 20, 50]}
-                onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
-                disableSelectionOnClick={true}
+                paginationModel={paginationModel}
+                pageSizeOptions={[5, 10, 20, 50]}
+                onPaginationModelChange={setPaginationModel}
+                disableRowSelectionOnClick={true}
                 disableColumnMenu={true}
                 columnBuffer={7}
                 />
