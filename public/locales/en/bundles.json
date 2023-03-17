@@ -2,14 +2,72 @@
     "title": "Risk bundles",
     "table": {
         "header": {
-            "id": "Bundle Id",
-            "capital": "Invested / remaining capital",
+            "id": "Id",
+            "name": "Name",
+            "lifetime": "Open until",
+            "balance": "Balance",
+            "capacity": "Capacity",
             "policies": "Policies",
             "state": "State",
-            "created": "Created Date"
+            "created": "Created",
+            "stake_usage": "Stakes",
+            "apr": "APR"
         }
     },  
     "action": {
-        "create_bundle": "Create new risk bundle"
+        "create_bundle": "Create new risk bundle",
+        "all_mine_bundles": "Show all risk bundles",
+        "details": "Details",
+        "fund": "Stake",
+        "withdraw": "Unstake",
+        "lock": "Lock",
+        "unlock": "Unlock",
+        "close": "Close",
+        "burn": "Burn",
+        "cancel": "Cancel"
+    },
+    "title_show_bundle": "Risk bundle",
+    "state": "State",
+    "balance": "Balance",
+    "balance_tooltip": "The balance is the total amount of tokens in the risk bundle",
+    "capital": "Capital",
+    "capital_tooltip": "The capital is the total amount of tokens invested by the owner of the risk bundle",
+    "capacity": "Capacity",
+    "capacity_tooltip": "The capacity is the amount of tokens not in use",
+    "locked": "Locked capital",
+    "locked_tooltip": "The locked capital is the amount of tokens that are currently used to cover active protections",
+    "supported_capital": "Supported capital",
+    "supported_capital_tooltip": "The supported capital is the total amount of tokens that are by staking",
+    "supported_capital_remaining": "Effective capacity",
+    "supported_capital_remaining_tooltip": "The effective capacity is the amount of tokens available to new protections",
+    "min_max_sum_insured": "Protected amount",
+    "min_max_duration": "Coverage duration",
+    "days": "Days",
+    "apr": "Annual percentage return",
+    "policies": "# of protections",
+    "owner": "Owner",
+    "creation_date": "Creation date",
+    "open_until": "Open until",
+    "checkbox_t_and_c_label": "By checking this box, I confirm that I have read and agree to the Terms and Conditions.",
+    "title_fund": "Stake",
+    "title_withdraw": "Unstake",
+    "amount": "Amount",
+    "withdraw_successful": "Unstaking successful",
+    "fund_successful": "Staking successful",
+    "unlock_successful": "Risk bundle unlocked",
+    "lock_successful": "Risk bundle locked",
+    "close_successful": "Risk bundle closed",
+    "burn_successful": "Risk bundle burned",
+    "error": {
+        "transaction_failed": "Transaction failed"
+    },
+    "confirmation": {
+        "alert": {
+            "title": "Payment for Depeg risk bundle confirmed",
+            "text": "Your risk bundle is now active and will require DIP staking to enable policies to be purchased"
+        }
+    },
+    "alert": {
+        "actions_only_owner": "Risk bundle management operations are only available to the owner of the risk bundle."
     }
 }

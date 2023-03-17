@@ -2,16 +2,21 @@
     "title": "Create a new risk bundle",
     "step0": "Connect wallet",
     "step1": "Enter data",
-    "step2": "Invest",
+    "step2": "Stake",
     "step3": "Confirm capital allowance",
     "step4": "Confirm payment",
-    "investedAmount": "Invested amount",
-    "minSumInsured": "Minimum insured amount",
-    "maxSumInsured": "Maximum insured amount",
-    "minSumInsuredMaxError": "Minimum insured amount must not be greater than maximum insured amount",
-    "maxSumInsuredMinError": "Maximum insured amount must not be greater than minimum insured amount",
+    "bundleName": "Name",
+    "lifetime": "Lifetime",
+    "lifetime_hint": "During this period new policies can be issued",
+    "lifetimeUntil": "Open until",
+    "investedAmount": "Staked amount",
+    "minSumInsured": "Minimum protected amount",
+    "maxSumInsured": "Maximum protected amount",
+    "minSumInsuredMaxError": "Minimum protected amount must not be greater than maximum protected amount",
+    "maxSumInsuredMinError": "Maximum protected amount must not be greater than minimum protected amount",
     "minDuration": "Minimum coverage duration",
     "maxDuration": "Maximum coverage duration",
+    "max_duration_hint": "The maximum coverage duration of the risk bundle can be greater than the risk bundle lifetime",
     "minDurationMinError": "Minimum coverage duration must be at least {{days}} days",
     "minDurationMaxError": "Minimum coverage duration must not be greater than maximum coverage duration",
     "maxDurationMaxError": "Maximum coverage duration must be at least {{days}} days",
@@ -19,12 +24,33 @@
     "annualPercentageReturn": "Annual percentage return",
     "annualPctReturnMinError": "Annual percentage return cannot be 0%",
     "annualPctReturnMaxError": "Annual percentage return must be at most {{pct}}%",
-    "checkbox_t_and_c_label": "By checking this box, I confirm that I have read and agree to the Terms and Conditions.",
-    "button_invest": "Invest",
-    "application_success": "Congratulations, your riskpool bundle investment has been successful!",
+    "button_invest": "Stake",
+    "application_success": "Congratulations, you have staked a new risk bundle!",
     "days": "Days",
-    "approval_info": "To fund the risk pool bundle, the GIF treasury contract at {{address}} needs permission to transfer {{currency}} {{amount}} to the depeg insurance riskpool. Please confirm this allowance in your wallet app.",
-    "approval_wait": "Treasury allowance created, waiting for onchain confirmation",
-    "invest_info": "Please confirm execution of the riskpool investment transaction on contract {{address}} in your wallet app",
-    "invest_wait": "Transaction created, waiting for onchain confirmation"
+    "invest_info": "Second - please confirm risk bundle creation on contract {{address}}",
+    "invest_wait": "Transaction created, waiting for onchain confirmation",
+    "balance_insufficient": "{{currency}} balance of wallet is insufficient to fund this risk bundle",
+    "error": {
+        "name": {
+            "pattern": "Name may only include letters, numbers, underscore (_), dash (-) and space"
+        }
+    },
+    "confirmation": {
+        "alert": {
+            "title": "Payment for Depeg risk bundle confirmed",
+            "text": "Your risk bundle is now active and will require DIP staking to enable policies to be purchased"
+        },
+        "title": "Risk bundle details",
+        "id": "Risk bundle Id",
+        "balance": "Balance",
+        "sum_insured": "Protected amount",
+        "coverage_duration": "Coverage duration",
+        "apr": "Annual percentage return",
+        "continue_link": "Continue to risk bundle overview"
+    },
+    "alert": {
+        "max_bundles": "The maximum number of supported risk bundles has been reached. Please contact the Etherisc team for further information.",
+        "no_riskpool_capacity": "The riskpool is at capacity. Please contact Etherisc if you would like to stake a risk bundle.",
+        "investor_not_whitelisted": "You are not registered as an investor. Please contact Etherisc if you would like to stake a risk bundle."
+    }
 }

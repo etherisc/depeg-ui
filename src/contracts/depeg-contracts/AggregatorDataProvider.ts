@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -26,35 +30,85 @@ import type {
 export interface AggregatorDataProviderInterface extends utils.Interface {
   functions: {
     "GANACHE()": FunctionFragment;
+    "GANACHE2()": FunctionFragment;
+    "GOERLI()": FunctionFragment;
     "MAINNET()": FunctionFragment;
+    "MUMBAI()": FunctionFragment;
+    "addRoundData(int256,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "description()": FunctionFragment;
+    "deviation()": FunctionFragment;
+    "getAnswer(uint256)": FunctionFragment;
     "getChainlinkAggregatorAddress()": FunctionFragment;
     "getRoundData(uint80)": FunctionFragment;
+    "getTimestamp(uint256)": FunctionFragment;
+    "heartbeat()": FunctionFragment;
+    "heartbeatMargin()": FunctionFragment;
+    "isExceedingDeviation(uint256,uint256)": FunctionFragment;
+    "isExceedingHeartbeat(uint256,uint256)": FunctionFragment;
+    "isMainnet()": FunctionFragment;
+    "isTestnet()": FunctionFragment;
+    "latestAnswer()": FunctionFragment;
+    "latestRound()": FunctionFragment;
     "latestRoundData()": FunctionFragment;
+    "latestTimestamp()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
     "setRoundData(uint80,int256,uint256,uint256,uint80)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
     "version()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "GANACHE"
+      | "GANACHE2"
+      | "GOERLI"
       | "MAINNET"
+      | "MUMBAI"
+      | "addRoundData"
       | "decimals"
       | "description"
+      | "deviation"
+      | "getAnswer"
       | "getChainlinkAggregatorAddress"
       | "getRoundData"
+      | "getTimestamp"
+      | "heartbeat"
+      | "heartbeatMargin"
+      | "isExceedingDeviation"
+      | "isExceedingHeartbeat"
+      | "isMainnet"
+      | "isTestnet"
+      | "latestAnswer"
+      | "latestRound"
       | "latestRoundData"
+      | "latestTimestamp"
+      | "owner"
+      | "renounceOwnership"
       | "setRoundData"
+      | "transferOwnership"
       | "version"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "GANACHE", values?: undefined): string;
+  encodeFunctionData(functionFragment: "GANACHE2", values?: undefined): string;
+  encodeFunctionData(functionFragment: "GOERLI", values?: undefined): string;
   encodeFunctionData(functionFragment: "MAINNET", values?: undefined): string;
+  encodeFunctionData(functionFragment: "MUMBAI", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "addRoundData",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "description",
     values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "deviation", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getAnswer",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getChainlinkAggregatorAddress",
@@ -65,7 +119,43 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getTimestamp",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(functionFragment: "heartbeat", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "heartbeatMargin",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isExceedingDeviation",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isExceedingHeartbeat",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(functionFragment: "isMainnet", values?: undefined): string;
+  encodeFunctionData(functionFragment: "isTestnet", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "latestAnswer",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "latestRound",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "latestRoundData",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "latestTimestamp",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -78,15 +168,28 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "version", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "GANACHE", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "GANACHE2", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "GOERLI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "MAINNET", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "MUMBAI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addRoundData",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "deviation", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getAnswer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getChainlinkAggregatorAddress",
     data: BytesLike
@@ -96,17 +199,101 @@ export interface AggregatorDataProviderInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "heartbeat", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "heartbeatMargin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isExceedingDeviation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isExceedingHeartbeat",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "isMainnet", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "isTestnet", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "latestAnswer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "latestRound",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "latestRoundData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "latestTimestamp",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setRoundData",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "AnswerUpdated(int256,uint256,uint256)": EventFragment;
+    "NewRound(uint256,address,uint256)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AnswerUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewRound"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export interface AnswerUpdatedEventObject {
+  current: BigNumber;
+  roundId: BigNumber;
+  updatedAt: BigNumber;
+}
+export type AnswerUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber],
+  AnswerUpdatedEventObject
+>;
+
+export type AnswerUpdatedEventFilter = TypedEventFilter<AnswerUpdatedEvent>;
+
+export interface NewRoundEventObject {
+  roundId: BigNumber;
+  startedBy: string;
+  startedAt: BigNumber;
+}
+export type NewRoundEvent = TypedEvent<
+  [BigNumber, string, BigNumber],
+  NewRoundEventObject
+>;
+
+export type NewRoundEventFilter = TypedEventFilter<NewRoundEvent>;
+
+export interface OwnershipTransferredEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferredEventObject
+>;
+
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
 
 export interface AggregatorDataProvider extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -137,11 +324,30 @@ export interface AggregatorDataProvider extends BaseContract {
   functions: {
     GANACHE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    GANACHE2(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    GOERLI(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     MAINNET(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MUMBAI(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    addRoundData(
+      answer: PromiseOrValue<BigNumberish>,
+      startedAt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
     description(overrides?: CallOverrides): Promise<[string]>;
+
+    deviation(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getAnswer(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<[string]>;
 
@@ -158,6 +364,35 @@ export interface AggregatorDataProvider extends BaseContract {
       }
     >;
 
+    getTimestamp(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    heartbeat(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    heartbeatMargin(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    isExceedingDeviation(
+      price1: PromiseOrValue<BigNumberish>,
+      price2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isExceeding: boolean }>;
+
+    isExceedingHeartbeat(
+      time1: PromiseOrValue<BigNumberish>,
+      time2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isExceeding: boolean }>;
+
+    isMainnet(overrides?: CallOverrides): Promise<[boolean]>;
+
+    isTestnet(overrides?: CallOverrides): Promise<[boolean]>;
+
+    latestAnswer(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    latestRound(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     latestRoundData(
       overrides?: CallOverrides
     ): Promise<
@@ -170,6 +405,14 @@ export interface AggregatorDataProvider extends BaseContract {
       }
     >;
 
+    latestTimestamp(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setRoundData(
       roundId: PromiseOrValue<BigNumberish>,
       answer: PromiseOrValue<BigNumberish>,
@@ -179,16 +422,40 @@ export interface AggregatorDataProvider extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     version(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
+  GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
+
+  GOERLI(overrides?: CallOverrides): Promise<BigNumber>;
+
   MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
+
+  addRoundData(
+    answer: PromiseOrValue<BigNumberish>,
+    startedAt: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
   description(overrides?: CallOverrides): Promise<string>;
+
+  deviation(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getAnswer(
+    roundId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -205,6 +472,35 @@ export interface AggregatorDataProvider extends BaseContract {
     }
   >;
 
+  getTimestamp(
+    roundId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  heartbeat(overrides?: CallOverrides): Promise<BigNumber>;
+
+  heartbeatMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+  isExceedingDeviation(
+    price1: PromiseOrValue<BigNumberish>,
+    price2: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isExceedingHeartbeat(
+    time1: PromiseOrValue<BigNumberish>,
+    time2: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  isMainnet(overrides?: CallOverrides): Promise<boolean>;
+
+  isTestnet(overrides?: CallOverrides): Promise<boolean>;
+
+  latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
+
+  latestRound(overrides?: CallOverrides): Promise<BigNumber>;
+
   latestRoundData(
     overrides?: CallOverrides
   ): Promise<
@@ -217,6 +513,14 @@ export interface AggregatorDataProvider extends BaseContract {
     }
   >;
 
+  latestTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  renounceOwnership(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setRoundData(
     roundId: PromiseOrValue<BigNumberish>,
     answer: PromiseOrValue<BigNumberish>,
@@ -226,16 +530,40 @@ export interface AggregatorDataProvider extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  transferOwnership(
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   version(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
+
+    GOERLI(overrides?: CallOverrides): Promise<BigNumber>;
+
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
+
+    addRoundData(
+      answer: PromiseOrValue<BigNumberish>,
+      startedAt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
     description(overrides?: CallOverrides): Promise<string>;
+
+    deviation(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getAnswer(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getChainlinkAggregatorAddress(overrides?: CallOverrides): Promise<string>;
 
@@ -252,6 +580,35 @@ export interface AggregatorDataProvider extends BaseContract {
       }
     >;
 
+    getTimestamp(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    heartbeat(overrides?: CallOverrides): Promise<BigNumber>;
+
+    heartbeatMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isExceedingDeviation(
+      price1: PromiseOrValue<BigNumberish>,
+      price2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isExceedingHeartbeat(
+      time1: PromiseOrValue<BigNumberish>,
+      time2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isMainnet(overrides?: CallOverrides): Promise<boolean>;
+
+    isTestnet(overrides?: CallOverrides): Promise<boolean>;
+
+    latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    latestRound(overrides?: CallOverrides): Promise<BigNumber>;
+
     latestRoundData(
       overrides?: CallOverrides
     ): Promise<
@@ -264,6 +621,12 @@ export interface AggregatorDataProvider extends BaseContract {
       }
     >;
 
+    latestTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
     setRoundData(
       roundId: PromiseOrValue<BigNumberish>,
       answer: PromiseOrValue<BigNumberish>,
@@ -273,19 +636,74 @@ export interface AggregatorDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     version(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
-  filters: {};
+  filters: {
+    "AnswerUpdated(int256,uint256,uint256)"(
+      current?: PromiseOrValue<BigNumberish> | null,
+      roundId?: PromiseOrValue<BigNumberish> | null,
+      updatedAt?: null
+    ): AnswerUpdatedEventFilter;
+    AnswerUpdated(
+      current?: PromiseOrValue<BigNumberish> | null,
+      roundId?: PromiseOrValue<BigNumberish> | null,
+      updatedAt?: null
+    ): AnswerUpdatedEventFilter;
+
+    "NewRound(uint256,address,uint256)"(
+      roundId?: PromiseOrValue<BigNumberish> | null,
+      startedBy?: PromiseOrValue<string> | null,
+      startedAt?: null
+    ): NewRoundEventFilter;
+    NewRound(
+      roundId?: PromiseOrValue<BigNumberish> | null,
+      startedBy?: PromiseOrValue<string> | null,
+      startedAt?: null
+    ): NewRoundEventFilter;
+
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
+  };
 
   estimateGas: {
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
+    GANACHE2(overrides?: CallOverrides): Promise<BigNumber>;
+
+    GOERLI(overrides?: CallOverrides): Promise<BigNumber>;
+
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MUMBAI(overrides?: CallOverrides): Promise<BigNumber>;
+
+    addRoundData(
+      answer: PromiseOrValue<BigNumberish>,
+      startedAt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     description(overrides?: CallOverrides): Promise<BigNumber>;
+
+    deviation(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getAnswer(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getChainlinkAggregatorAddress(
       overrides?: CallOverrides
@@ -296,7 +714,44 @@ export interface AggregatorDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTimestamp(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    heartbeat(overrides?: CallOverrides): Promise<BigNumber>;
+
+    heartbeatMargin(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isExceedingDeviation(
+      price1: PromiseOrValue<BigNumberish>,
+      price2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isExceedingHeartbeat(
+      time1: PromiseOrValue<BigNumberish>,
+      time2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isMainnet(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isTestnet(overrides?: CallOverrides): Promise<BigNumber>;
+
+    latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    latestRound(overrides?: CallOverrides): Promise<BigNumber>;
+
     latestRoundData(overrides?: CallOverrides): Promise<BigNumber>;
+
+    latestTimestamp(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     setRoundData(
       roundId: PromiseOrValue<BigNumberish>,
@@ -307,17 +762,41 @@ export interface AggregatorDataProvider extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     version(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     GANACHE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    GANACHE2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    GOERLI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     MAINNET(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MUMBAI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    addRoundData(
+      answer: PromiseOrValue<BigNumberish>,
+      startedAt: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    deviation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getAnswer(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getChainlinkAggregatorAddress(
       overrides?: CallOverrides
@@ -328,7 +807,44 @@ export interface AggregatorDataProvider extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getTimestamp(
+      roundId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    heartbeat(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    heartbeatMargin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isExceedingDeviation(
+      price1: PromiseOrValue<BigNumberish>,
+      price2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isExceedingHeartbeat(
+      time1: PromiseOrValue<BigNumberish>,
+      time2: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isMainnet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isTestnet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    latestAnswer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    latestRound(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     latestRoundData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    latestTimestamp(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     setRoundData(
       roundId: PromiseOrValue<BigNumberish>,
@@ -336,6 +852,11 @@ export interface AggregatorDataProvider extends BaseContract {
       startedAt: PromiseOrValue<BigNumberish>,
       updatedAt: PromiseOrValue<BigNumberish>,
       answeredInRound: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

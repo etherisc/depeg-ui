@@ -96,9 +96,11 @@ export declare namespace IPolicy {
 export declare namespace DepegRiskpool {
   export type BundleInfoStruct = {
     bundleId: PromiseOrValue<BigNumberish>;
+    name: PromiseOrValue<string>;
     state: PromiseOrValue<BigNumberish>;
     tokenId: PromiseOrValue<BigNumberish>;
     owner: PromiseOrValue<string>;
+    lifetime: PromiseOrValue<BigNumberish>;
     minSumInsured: PromiseOrValue<BigNumberish>;
     maxSumInsured: PromiseOrValue<BigNumberish>;
     minDuration: PromiseOrValue<BigNumberish>;
@@ -113,6 +115,7 @@ export declare namespace DepegRiskpool {
 
   export type BundleInfoStructOutput = [
     BigNumber,
+    string,
     number,
     BigNumber,
     string,
@@ -125,12 +128,15 @@ export declare namespace DepegRiskpool {
     BigNumber,
     BigNumber,
     BigNumber,
+    BigNumber,
     BigNumber
   ] & {
     bundleId: BigNumber;
+    name: string;
     state: number;
     tokenId: BigNumber;
     owner: string;
+    lifetime: BigNumber;
     minSumInsured: BigNumber;
     maxSumInsured: BigNumber;
     minDuration: BigNumber;
@@ -148,10 +154,12 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   functions: {
     "APR_100_PERCENTAGE()": FunctionFragment;
     "DEFAULT_FILTER_DATA_STRUCTURE()": FunctionFragment;
+    "EMPTY_STRING_HASH()": FunctionFragment;
     "FULL_COLLATERALIZATION_LEVEL()": FunctionFragment;
     "MAX_APR()": FunctionFragment;
     "MAX_BUNDLE_LIFETIME()": FunctionFragment;
     "MAX_POLICY_DURATION()": FunctionFragment;
+    "MIN_BUNDLE_LIFETIME()": FunctionFragment;
     "ONE_YEAR_DURATION()": FunctionFragment;
     "USD_CAPITAL_CAP()": FunctionFragment;
     "activeBundles()": FunctionFragment;
@@ -164,14 +172,15 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "calculatePremium(uint256,uint256,uint256)": FunctionFragment;
     "closeBundle(uint256)": FunctionFragment;
     "collateralizePolicy(bytes32,uint256)": FunctionFragment;
+    "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "createBundle(bytes,uint256)": FunctionFragment;
-    "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "declineCallback()": FunctionFragment;
     "decodeApplicationParameterFromData(bytes)": FunctionFragment;
     "decodeBundleParamsFromFilter(bytes)": FunctionFragment;
     "defundBundle(uint256,uint256)": FunctionFragment;
-    "encodeApplicationParameterAsData(uint256,uint256)": FunctionFragment;
-    "encodeBundleParamsAsFilter(uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "detailedBundleApplicationMatch(uint256,uint256,uint256,uint256,uint256,uint256,(uint8,uint256,uint256,bytes,uint256,uint256))": FunctionFragment;
+    "encodeApplicationParameterAsData(address,uint256,uint256,uint256)": FunctionFragment;
+    "encodeBundleParamsAsFilter(string,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "fundBundle(uint256,uint256)": FunctionFragment;
     "getActiveBundleId(uint256)": FunctionFragment;
     "getActiveBundleIds()": FunctionFragment;
@@ -195,13 +204,16 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "getOneYearDuration()": FunctionFragment;
     "getOwner()": FunctionFragment;
     "getRegistry()": FunctionFragment;
-    "getStakingDataProvider()": FunctionFragment;
+    "getRiskpoolCapitalCap()": FunctionFragment;
+    "getStaking()": FunctionFragment;
     "getState()": FunctionFragment;
     "getSumOfSumInsuredCap()": FunctionFragment;
     "getSupportedCapitalAmount(uint256)": FunctionFragment;
     "getTotalValueLocked()": FunctionFragment;
     "getType()": FunctionFragment;
     "getWallet()": FunctionFragment;
+    "isAllowAllAccountsEnabled()": FunctionFragment;
+    "isAllowed(address)": FunctionFragment;
     "isHigherPriorityBundle(uint256,uint256)": FunctionFragment;
     "isOracle()": FunctionFragment;
     "isProduct()": FunctionFragment;
@@ -215,9 +227,12 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "releasePolicy(bytes32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "resumeCallback()": FunctionFragment;
+    "setAllowAccount(address,bool)": FunctionFragment;
+    "setAllowAllAccounts(bool)": FunctionFragment;
+    "setCapitalCaps(uint256,uint256)": FunctionFragment;
     "setId(uint256)": FunctionFragment;
     "setMaximumNumberOfActiveBundles(uint256)": FunctionFragment;
-    "setStakingDataProvider(address)": FunctionFragment;
+    "setStakingAddress(address)": FunctionFragment;
     "suspendCallback()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "unlockBundle(uint256)": FunctionFragment;
@@ -228,10 +243,12 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "APR_100_PERCENTAGE"
       | "DEFAULT_FILTER_DATA_STRUCTURE"
+      | "EMPTY_STRING_HASH"
       | "FULL_COLLATERALIZATION_LEVEL"
       | "MAX_APR"
       | "MAX_BUNDLE_LIFETIME"
       | "MAX_POLICY_DURATION"
+      | "MIN_BUNDLE_LIFETIME"
       | "ONE_YEAR_DURATION"
       | "USD_CAPITAL_CAP"
       | "activeBundles"
@@ -244,12 +261,13 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "calculatePremium"
       | "closeBundle"
       | "collateralizePolicy"
+      | "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"
       | "createBundle(bytes,uint256)"
-      | "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"
       | "declineCallback"
       | "decodeApplicationParameterFromData"
       | "decodeBundleParamsFromFilter"
       | "defundBundle"
+      | "detailedBundleApplicationMatch"
       | "encodeApplicationParameterAsData"
       | "encodeBundleParamsAsFilter"
       | "fundBundle"
@@ -275,13 +293,16 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "getOneYearDuration"
       | "getOwner"
       | "getRegistry"
-      | "getStakingDataProvider"
+      | "getRiskpoolCapitalCap"
+      | "getStaking"
       | "getState"
       | "getSumOfSumInsuredCap"
       | "getSupportedCapitalAmount"
       | "getTotalValueLocked"
       | "getType"
       | "getWallet"
+      | "isAllowAllAccountsEnabled"
+      | "isAllowed"
       | "isHigherPriorityBundle"
       | "isOracle"
       | "isProduct"
@@ -295,9 +316,12 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "releasePolicy"
       | "renounceOwnership"
       | "resumeCallback"
+      | "setAllowAccount"
+      | "setAllowAllAccounts"
+      | "setCapitalCaps"
       | "setId"
       | "setMaximumNumberOfActiveBundles"
-      | "setStakingDataProvider"
+      | "setStakingAddress"
       | "suspendCallback"
       | "transferOwnership"
       | "unlockBundle"
@@ -313,6 +337,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "EMPTY_STRING_HASH",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "FULL_COLLATERALIZATION_LEVEL",
     values?: undefined
   ): string;
@@ -323,6 +351,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "MAX_POLICY_DURATION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MIN_BUNDLE_LIFETIME",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -375,12 +407,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "createBundle(bytes,uint256)",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)",
+    functionFragment: "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)",
     values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -388,6 +418,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createBundle(bytes,uint256)",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "declineCallback",
@@ -406,12 +440,31 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "detailedBundleApplicationMatch",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      IPolicy.ApplicationStruct
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "encodeApplicationParameterAsData",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "encodeBundleParamsAsFilter",
     values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -503,7 +556,11 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getStakingDataProvider",
+    functionFragment: "getRiskpoolCapitalCap",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStaking",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getState", values?: undefined): string;
@@ -521,6 +578,14 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "getType", values?: undefined): string;
   encodeFunctionData(functionFragment: "getWallet", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "isAllowAllAccountsEnabled",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isAllowed",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "isHigherPriorityBundle",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
@@ -565,6 +630,18 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setAllowAccount",
+    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAllowAllAccounts",
+    values: [PromiseOrValue<boolean>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setCapitalCaps",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setId",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -573,7 +650,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setStakingDataProvider",
+    functionFragment: "setStakingAddress",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -602,6 +679,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "EMPTY_STRING_HASH",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "FULL_COLLATERALIZATION_LEVEL",
     data: BytesLike
   ): Result;
@@ -612,6 +693,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "MAX_POLICY_DURATION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MIN_BUNDLE_LIFETIME",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -657,11 +742,11 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "createBundle(bytes,uint256)",
+    functionFragment: "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)",
+    functionFragment: "createBundle(bytes,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -678,6 +763,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "defundBundle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "detailedBundleApplicationMatch",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -763,9 +852,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getStakingDataProvider",
+    functionFragment: "getRiskpoolCapitalCap",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getStaking", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getState", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getSumOfSumInsuredCap",
@@ -781,6 +871,11 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getType", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getWallet", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isAllowAllAccountsEnabled",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "isAllowed", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isHigherPriorityBundle",
     data: BytesLike
@@ -818,13 +913,25 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     functionFragment: "resumeCallback",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAllowAccount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAllowAllAccounts",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setCapitalCaps",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setMaximumNumberOfActiveBundles",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setStakingDataProvider",
+    functionFragment: "setStakingAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -845,9 +952,15 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "LogBasicRiskpoolBundlesAndPolicies(uint256,uint256)": EventFragment;
+    "LogAllowAccountSet(address,bool)": EventFragment;
+    "LogAllowAllAccountsSet(bool)": EventFragment;
     "LogBasicRiskpoolCandidateBundleAmountCheck(uint256,uint256,uint256,uint256)": EventFragment;
+    "LogBasicRiskpoolCapitalCheck(uint256,uint256)": EventFragment;
+    "LogBasicRiskpoolCapitalization(uint256,uint256,uint256,uint256,bool)": EventFragment;
+    "LogBundleCapitalSet(uint256,uint256)": EventFragment;
+    "LogBundleExpired(uint256,uint256,uint256)": EventFragment;
     "LogBundleMatchesApplication(uint256,bool,bool,bool)": EventFragment;
+    "LogBundleMismatch(uint256,uint256)": EventFragment;
     "LogComponentApproved(uint256)": EventFragment;
     "LogComponentArchived(uint256)": EventFragment;
     "LogComponentCreated(bytes32,uint8,address,address)": EventFragment;
@@ -868,6 +981,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "LogRiskpoolBundleLocked(uint256)": EventFragment;
     "LogRiskpoolBundleMatchesPolicy(uint256,bool)": EventFragment;
     "LogRiskpoolBundleUnlocked(uint256)": EventFragment;
+    "LogRiskpoolCapitalSet(uint256,uint256)": EventFragment;
     "LogRiskpoolCollateralLocked(bytes32,uint256,bool)": EventFragment;
     "LogRiskpoolCollateralReleased(bytes32,uint256)": EventFragment;
     "LogRiskpoolCreated(address)": EventFragment;
@@ -878,15 +992,23 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
-  getEvent(
-    nameOrSignatureOrTopic: "LogBasicRiskpoolBundlesAndPolicies"
-  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogAllowAccountSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogAllowAllAccountsSet"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "LogBasicRiskpoolCandidateBundleAmountCheck"
   ): EventFragment;
   getEvent(
+    nameOrSignatureOrTopic: "LogBasicRiskpoolCapitalCheck"
+  ): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "LogBasicRiskpoolCapitalization"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogBundleCapitalSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogBundleExpired"): EventFragment;
+  getEvent(
     nameOrSignatureOrTopic: "LogBundleMatchesApplication"
   ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogBundleMismatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogComponentApproved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogComponentArchived"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogComponentCreated"): EventFragment;
@@ -911,6 +1033,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     nameOrSignatureOrTopic: "LogRiskpoolBundleMatchesPolicy"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogRiskpoolBundleUnlocked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogRiskpoolCapitalSet"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "LogRiskpoolCollateralLocked"
   ): EventFragment;
@@ -927,17 +1050,28 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
-export interface LogBasicRiskpoolBundlesAndPoliciesEventObject {
-  activeBundles: BigNumber;
-  policies: BigNumber;
+export interface LogAllowAccountSetEventObject {
+  account: string;
+  allowAccount: boolean;
 }
-export type LogBasicRiskpoolBundlesAndPoliciesEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  LogBasicRiskpoolBundlesAndPoliciesEventObject
+export type LogAllowAccountSetEvent = TypedEvent<
+  [string, boolean],
+  LogAllowAccountSetEventObject
 >;
 
-export type LogBasicRiskpoolBundlesAndPoliciesEventFilter =
-  TypedEventFilter<LogBasicRiskpoolBundlesAndPoliciesEvent>;
+export type LogAllowAccountSetEventFilter =
+  TypedEventFilter<LogAllowAccountSetEvent>;
+
+export interface LogAllowAllAccountsSetEventObject {
+  allowAllAccounts: boolean;
+}
+export type LogAllowAllAccountsSetEvent = TypedEvent<
+  [boolean],
+  LogAllowAllAccountsSetEventObject
+>;
+
+export type LogAllowAllAccountsSetEventFilter =
+  TypedEventFilter<LogAllowAllAccountsSetEvent>;
 
 export interface LogBasicRiskpoolCandidateBundleAmountCheckEventObject {
   index: BigNumber;
@@ -953,6 +1087,58 @@ export type LogBasicRiskpoolCandidateBundleAmountCheckEvent = TypedEvent<
 export type LogBasicRiskpoolCandidateBundleAmountCheckEventFilter =
   TypedEventFilter<LogBasicRiskpoolCandidateBundleAmountCheckEvent>;
 
+export interface LogBasicRiskpoolCapitalCheckEventObject {
+  activeBundles: BigNumber;
+  policies: BigNumber;
+}
+export type LogBasicRiskpoolCapitalCheckEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  LogBasicRiskpoolCapitalCheckEventObject
+>;
+
+export type LogBasicRiskpoolCapitalCheckEventFilter =
+  TypedEventFilter<LogBasicRiskpoolCapitalCheckEvent>;
+
+export interface LogBasicRiskpoolCapitalizationEventObject {
+  activeBundles: BigNumber;
+  capital: BigNumber;
+  lockedCapital: BigNumber;
+  collateralAmount: BigNumber;
+  capacityIsAvailable: boolean;
+}
+export type LogBasicRiskpoolCapitalizationEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber, boolean],
+  LogBasicRiskpoolCapitalizationEventObject
+>;
+
+export type LogBasicRiskpoolCapitalizationEventFilter =
+  TypedEventFilter<LogBasicRiskpoolCapitalizationEvent>;
+
+export interface LogBundleCapitalSetEventObject {
+  bundleCapitalNew: BigNumber;
+  bundleCapitalOld: BigNumber;
+}
+export type LogBundleCapitalSetEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  LogBundleCapitalSetEventObject
+>;
+
+export type LogBundleCapitalSetEventFilter =
+  TypedEventFilter<LogBundleCapitalSetEvent>;
+
+export interface LogBundleExpiredEventObject {
+  bundleId: BigNumber;
+  createdAt: BigNumber;
+  lifetime: BigNumber;
+}
+export type LogBundleExpiredEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber],
+  LogBundleExpiredEventObject
+>;
+
+export type LogBundleExpiredEventFilter =
+  TypedEventFilter<LogBundleExpiredEvent>;
+
 export interface LogBundleMatchesApplicationEventObject {
   bundleId: BigNumber;
   sumInsuredOk: boolean;
@@ -966,6 +1152,18 @@ export type LogBundleMatchesApplicationEvent = TypedEvent<
 
 export type LogBundleMatchesApplicationEventFilter =
   TypedEventFilter<LogBundleMatchesApplicationEvent>;
+
+export interface LogBundleMismatchEventObject {
+  bundleId: BigNumber;
+  bundleIdRequested: BigNumber;
+}
+export type LogBundleMismatchEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  LogBundleMismatchEventObject
+>;
+
+export type LogBundleMismatchEventFilter =
+  TypedEventFilter<LogBundleMismatchEvent>;
 
 export interface LogComponentApprovedEventObject {
   id: BigNumber;
@@ -1199,6 +1397,18 @@ export type LogRiskpoolBundleUnlockedEvent = TypedEvent<
 export type LogRiskpoolBundleUnlockedEventFilter =
   TypedEventFilter<LogRiskpoolBundleUnlockedEvent>;
 
+export interface LogRiskpoolCapitalSetEventObject {
+  poolCapitalNew: BigNumber;
+  poolCapitalOld: BigNumber;
+}
+export type LogRiskpoolCapitalSetEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  LogRiskpoolCapitalSetEventObject
+>;
+
+export type LogRiskpoolCapitalSetEventFilter =
+  TypedEventFilter<LogRiskpoolCapitalSetEvent>;
+
 export interface LogRiskpoolCollateralLockedEventObject {
   processId: string;
   collateralAmount: BigNumber;
@@ -1324,6 +1534,8 @@ export interface DepegRiskpool extends BaseContract {
 
     DEFAULT_FILTER_DATA_STRUCTURE(overrides?: CallOverrides): Promise<[string]>;
 
+    EMPTY_STRING_HASH(overrides?: CallOverrides): Promise<[string]>;
+
     FULL_COLLATERALIZATION_LEVEL(
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -1333,6 +1545,8 @@ export interface DepegRiskpool extends BaseContract {
     MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1385,18 +1599,20 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "createBundle(bytes,uint256)"(
-      filter: PromiseOrValue<BytesLike>,
-      initialAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"(
+    "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       policyMinSumInsured: PromiseOrValue<BigNumberish>,
       policyMaxSumInsured: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      initialAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "createBundle(bytes,uint256)"(
+      filter: PromiseOrValue<BytesLike>,
       initialAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1409,14 +1625,29 @@ export interface DepegRiskpool extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber] & { duration: BigNumber; maxPremium: BigNumber }
+      [string, BigNumber, BigNumber, BigNumber] & {
+        wallet: string;
+        duration: BigNumber;
+        bundleId: BigNumber;
+        maxPremium: BigNumber;
+      }
     >;
 
     decodeBundleParamsFromFilter(
       filter: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        name: string;
+        lifetime: BigNumber;
         minSumInsured: BigNumber;
         maxSumInsured: BigNumber;
         minDuration: BigNumber;
@@ -1431,13 +1662,28 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    detailedBundleApplicationMatch(
+      bundleId: PromiseOrValue<BigNumberish>,
+      minSumInsured: PromiseOrValue<BigNumberish>,
+      maxSumInsured: PromiseOrValue<BigNumberish>,
+      minDuration: PromiseOrValue<BigNumberish>,
+      maxDuration: PromiseOrValue<BigNumberish>,
+      annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      application: IPolicy.ApplicationStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     encodeApplicationParameterAsData(
+      wallet: PromiseOrValue<string>,
       duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string] & { data: string }>;
 
     encodeBundleParamsAsFilter(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
       maxSumInsured: PromiseOrValue<BigNumberish>,
       minDuration: PromiseOrValue<BigNumberish>,
@@ -1529,9 +1775,11 @@ export interface DepegRiskpool extends BaseContract {
 
     getRegistry(overrides?: CallOverrides): Promise<[string]>;
 
-    getStakingDataProvider(
+    getRiskpoolCapitalCap(
       overrides?: CallOverrides
-    ): Promise<[string] & { stakingDataProvider: string }>;
+    ): Promise<[BigNumber] & { poolCapitalCap: BigNumber }>;
+
+    getStaking(overrides?: CallOverrides): Promise<[string]>;
 
     getState(overrides?: CallOverrides): Promise<[number]>;
 
@@ -1547,6 +1795,15 @@ export interface DepegRiskpool extends BaseContract {
     getType(overrides?: CallOverrides): Promise<[number]>;
 
     getWallet(overrides?: CallOverrides): Promise<[string]>;
+
+    isAllowAllAccountsEnabled(
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { allowAllAccounts: boolean }>;
+
+    isAllowed(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { allowed: boolean }>;
 
     isHigherPriorityBundle(
       firstBundleId: PromiseOrValue<BigNumberish>,
@@ -1600,6 +1857,23 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setAllowAccount(
+      account: PromiseOrValue<string>,
+      allowAccount: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setAllowAllAccounts(
+      allowAllAccounts: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setCapitalCaps(
+      poolCapitalCap: PromiseOrValue<BigNumberish>,
+      bundleCapitalCap: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setId(
       id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1610,8 +1884,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setStakingDataProvider(
-      dataProviderAddress: PromiseOrValue<string>,
+    setStakingAddress(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1638,6 +1912,8 @@ export interface DepegRiskpool extends BaseContract {
 
   DEFAULT_FILTER_DATA_STRUCTURE(overrides?: CallOverrides): Promise<string>;
 
+  EMPTY_STRING_HASH(overrides?: CallOverrides): Promise<string>;
+
   FULL_COLLATERALIZATION_LEVEL(overrides?: CallOverrides): Promise<BigNumber>;
 
   MAX_APR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1645,6 +1921,8 @@ export interface DepegRiskpool extends BaseContract {
   MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
   MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
   ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1697,18 +1975,20 @@ export interface DepegRiskpool extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "createBundle(bytes,uint256)"(
-    filter: PromiseOrValue<BytesLike>,
-    initialAmount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"(
+  "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+    name: PromiseOrValue<string>,
+    lifetime: PromiseOrValue<BigNumberish>,
     policyMinSumInsured: PromiseOrValue<BigNumberish>,
     policyMaxSumInsured: PromiseOrValue<BigNumberish>,
     policyMinDuration: PromiseOrValue<BigNumberish>,
     policyMaxDuration: PromiseOrValue<BigNumberish>,
     annualPercentageReturn: PromiseOrValue<BigNumberish>,
+    initialAmount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "createBundle(bytes,uint256)"(
+    filter: PromiseOrValue<BytesLike>,
     initialAmount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1721,14 +2001,29 @@ export interface DepegRiskpool extends BaseContract {
     data: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber] & { duration: BigNumber; maxPremium: BigNumber }
+    [string, BigNumber, BigNumber, BigNumber] & {
+      wallet: string;
+      duration: BigNumber;
+      bundleId: BigNumber;
+      maxPremium: BigNumber;
+    }
   >;
 
   decodeBundleParamsFromFilter(
     filter: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+    [
+      string,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      name: string;
+      lifetime: BigNumber;
       minSumInsured: BigNumber;
       maxSumInsured: BigNumber;
       minDuration: BigNumber;
@@ -1743,13 +2038,28 @@ export interface DepegRiskpool extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  detailedBundleApplicationMatch(
+    bundleId: PromiseOrValue<BigNumberish>,
+    minSumInsured: PromiseOrValue<BigNumberish>,
+    maxSumInsured: PromiseOrValue<BigNumberish>,
+    minDuration: PromiseOrValue<BigNumberish>,
+    maxDuration: PromiseOrValue<BigNumberish>,
+    annualPercentageReturn: PromiseOrValue<BigNumberish>,
+    application: IPolicy.ApplicationStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   encodeApplicationParameterAsData(
+    wallet: PromiseOrValue<string>,
     duration: PromiseOrValue<BigNumberish>,
+    bundleId: PromiseOrValue<BigNumberish>,
     maxPremium: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   encodeBundleParamsAsFilter(
+    name: PromiseOrValue<string>,
+    lifetime: PromiseOrValue<BigNumberish>,
     minSumInsured: PromiseOrValue<BigNumberish>,
     maxSumInsured: PromiseOrValue<BigNumberish>,
     minDuration: PromiseOrValue<BigNumberish>,
@@ -1825,7 +2135,9 @@ export interface DepegRiskpool extends BaseContract {
 
   getRegistry(overrides?: CallOverrides): Promise<string>;
 
-  getStakingDataProvider(overrides?: CallOverrides): Promise<string>;
+  getRiskpoolCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getStaking(overrides?: CallOverrides): Promise<string>;
 
   getState(overrides?: CallOverrides): Promise<number>;
 
@@ -1841,6 +2153,13 @@ export interface DepegRiskpool extends BaseContract {
   getType(overrides?: CallOverrides): Promise<number>;
 
   getWallet(overrides?: CallOverrides): Promise<string>;
+
+  isAllowAllAccountsEnabled(overrides?: CallOverrides): Promise<boolean>;
+
+  isAllowed(
+    account: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   isHigherPriorityBundle(
     firstBundleId: PromiseOrValue<BigNumberish>,
@@ -1894,6 +2213,23 @@ export interface DepegRiskpool extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setAllowAccount(
+    account: PromiseOrValue<string>,
+    allowAccount: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setAllowAllAccounts(
+    allowAllAccounts: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setCapitalCaps(
+    poolCapitalCap: PromiseOrValue<BigNumberish>,
+    bundleCapitalCap: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setId(
     id: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1904,8 +2240,8 @@ export interface DepegRiskpool extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setStakingDataProvider(
-    dataProviderAddress: PromiseOrValue<string>,
+  setStakingAddress(
+    stakingAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1932,6 +2268,8 @@ export interface DepegRiskpool extends BaseContract {
 
     DEFAULT_FILTER_DATA_STRUCTURE(overrides?: CallOverrides): Promise<string>;
 
+    EMPTY_STRING_HASH(overrides?: CallOverrides): Promise<string>;
+
     FULL_COLLATERALIZATION_LEVEL(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_APR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1939,6 +2277,8 @@ export interface DepegRiskpool extends BaseContract {
     MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1987,18 +2327,20 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "createBundle(bytes,uint256)"(
-      filter: PromiseOrValue<BytesLike>,
-      initialAmount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"(
+    "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       policyMinSumInsured: PromiseOrValue<BigNumberish>,
       policyMaxSumInsured: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      initialAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "createBundle(bytes,uint256)"(
+      filter: PromiseOrValue<BytesLike>,
       initialAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2009,14 +2351,29 @@ export interface DepegRiskpool extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber] & { duration: BigNumber; maxPremium: BigNumber }
+      [string, BigNumber, BigNumber, BigNumber] & {
+        wallet: string;
+        duration: BigNumber;
+        bundleId: BigNumber;
+        maxPremium: BigNumber;
+      }
     >;
 
     decodeBundleParamsFromFilter(
       filter: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
+      [
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ] & {
+        name: string;
+        lifetime: BigNumber;
         minSumInsured: BigNumber;
         maxSumInsured: BigNumber;
         minDuration: BigNumber;
@@ -2031,13 +2388,28 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    detailedBundleApplicationMatch(
+      bundleId: PromiseOrValue<BigNumberish>,
+      minSumInsured: PromiseOrValue<BigNumberish>,
+      maxSumInsured: PromiseOrValue<BigNumberish>,
+      minDuration: PromiseOrValue<BigNumberish>,
+      maxDuration: PromiseOrValue<BigNumberish>,
+      annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      application: IPolicy.ApplicationStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     encodeApplicationParameterAsData(
+      wallet: PromiseOrValue<string>,
       duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     encodeBundleParamsAsFilter(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
       maxSumInsured: PromiseOrValue<BigNumberish>,
       minDuration: PromiseOrValue<BigNumberish>,
@@ -2115,7 +2487,9 @@ export interface DepegRiskpool extends BaseContract {
 
     getRegistry(overrides?: CallOverrides): Promise<string>;
 
-    getStakingDataProvider(overrides?: CallOverrides): Promise<string>;
+    getRiskpoolCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStaking(overrides?: CallOverrides): Promise<string>;
 
     getState(overrides?: CallOverrides): Promise<number>;
 
@@ -2131,6 +2505,13 @@ export interface DepegRiskpool extends BaseContract {
     getType(overrides?: CallOverrides): Promise<number>;
 
     getWallet(overrides?: CallOverrides): Promise<string>;
+
+    isAllowAllAccountsEnabled(overrides?: CallOverrides): Promise<boolean>;
+
+    isAllowed(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     isHigherPriorityBundle(
       firstBundleId: PromiseOrValue<BigNumberish>,
@@ -2176,6 +2557,23 @@ export interface DepegRiskpool extends BaseContract {
 
     resumeCallback(overrides?: CallOverrides): Promise<void>;
 
+    setAllowAccount(
+      account: PromiseOrValue<string>,
+      allowAccount: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setAllowAllAccounts(
+      allowAllAccounts: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setCapitalCaps(
+      poolCapitalCap: PromiseOrValue<BigNumberish>,
+      bundleCapitalCap: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setId(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2186,8 +2584,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setStakingDataProvider(
-      dataProviderAddress: PromiseOrValue<string>,
+    setStakingAddress(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2207,14 +2605,21 @@ export interface DepegRiskpool extends BaseContract {
   };
 
   filters: {
-    "LogBasicRiskpoolBundlesAndPolicies(uint256,uint256)"(
-      activeBundles?: null,
-      policies?: null
-    ): LogBasicRiskpoolBundlesAndPoliciesEventFilter;
-    LogBasicRiskpoolBundlesAndPolicies(
-      activeBundles?: null,
-      policies?: null
-    ): LogBasicRiskpoolBundlesAndPoliciesEventFilter;
+    "LogAllowAccountSet(address,bool)"(
+      account?: null,
+      allowAccount?: null
+    ): LogAllowAccountSetEventFilter;
+    LogAllowAccountSet(
+      account?: null,
+      allowAccount?: null
+    ): LogAllowAccountSetEventFilter;
+
+    "LogAllowAllAccountsSet(bool)"(
+      allowAllAccounts?: null
+    ): LogAllowAllAccountsSetEventFilter;
+    LogAllowAllAccountsSet(
+      allowAllAccounts?: null
+    ): LogAllowAllAccountsSetEventFilter;
 
     "LogBasicRiskpoolCandidateBundleAmountCheck(uint256,uint256,uint256,uint256)"(
       index?: null,
@@ -2229,6 +2634,50 @@ export interface DepegRiskpool extends BaseContract {
       collateralAmount?: null
     ): LogBasicRiskpoolCandidateBundleAmountCheckEventFilter;
 
+    "LogBasicRiskpoolCapitalCheck(uint256,uint256)"(
+      activeBundles?: null,
+      policies?: null
+    ): LogBasicRiskpoolCapitalCheckEventFilter;
+    LogBasicRiskpoolCapitalCheck(
+      activeBundles?: null,
+      policies?: null
+    ): LogBasicRiskpoolCapitalCheckEventFilter;
+
+    "LogBasicRiskpoolCapitalization(uint256,uint256,uint256,uint256,bool)"(
+      activeBundles?: null,
+      capital?: null,
+      lockedCapital?: null,
+      collateralAmount?: null,
+      capacityIsAvailable?: null
+    ): LogBasicRiskpoolCapitalizationEventFilter;
+    LogBasicRiskpoolCapitalization(
+      activeBundles?: null,
+      capital?: null,
+      lockedCapital?: null,
+      collateralAmount?: null,
+      capacityIsAvailable?: null
+    ): LogBasicRiskpoolCapitalizationEventFilter;
+
+    "LogBundleCapitalSet(uint256,uint256)"(
+      bundleCapitalNew?: null,
+      bundleCapitalOld?: null
+    ): LogBundleCapitalSetEventFilter;
+    LogBundleCapitalSet(
+      bundleCapitalNew?: null,
+      bundleCapitalOld?: null
+    ): LogBundleCapitalSetEventFilter;
+
+    "LogBundleExpired(uint256,uint256,uint256)"(
+      bundleId?: null,
+      createdAt?: null,
+      lifetime?: null
+    ): LogBundleExpiredEventFilter;
+    LogBundleExpired(
+      bundleId?: null,
+      createdAt?: null,
+      lifetime?: null
+    ): LogBundleExpiredEventFilter;
+
     "LogBundleMatchesApplication(uint256,bool,bool,bool)"(
       bundleId?: null,
       sumInsuredOk?: null,
@@ -2241,6 +2690,15 @@ export interface DepegRiskpool extends BaseContract {
       durationOk?: null,
       premiumOk?: null
     ): LogBundleMatchesApplicationEventFilter;
+
+    "LogBundleMismatch(uint256,uint256)"(
+      bundleId?: null,
+      bundleIdRequested?: null
+    ): LogBundleMismatchEventFilter;
+    LogBundleMismatch(
+      bundleId?: null,
+      bundleIdRequested?: null
+    ): LogBundleMismatchEventFilter;
 
     "LogComponentApproved(uint256)"(id?: null): LogComponentApprovedEventFilter;
     LogComponentApproved(id?: null): LogComponentApprovedEventFilter;
@@ -2376,6 +2834,15 @@ export interface DepegRiskpool extends BaseContract {
       bundleId?: null
     ): LogRiskpoolBundleUnlockedEventFilter;
 
+    "LogRiskpoolCapitalSet(uint256,uint256)"(
+      poolCapitalNew?: null,
+      poolCapitalOld?: null
+    ): LogRiskpoolCapitalSetEventFilter;
+    LogRiskpoolCapitalSet(
+      poolCapitalNew?: null,
+      poolCapitalOld?: null
+    ): LogRiskpoolCapitalSetEventFilter;
+
     "LogRiskpoolCollateralLocked(bytes32,uint256,bool)"(
       processId?: null,
       collateralAmount?: null,
@@ -2442,6 +2909,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    EMPTY_STRING_HASH(overrides?: CallOverrides): Promise<BigNumber>;
+
     FULL_COLLATERALIZATION_LEVEL(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_APR(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2449,6 +2918,8 @@ export interface DepegRiskpool extends BaseContract {
     MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2501,18 +2972,20 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "createBundle(bytes,uint256)"(
-      filter: PromiseOrValue<BytesLike>,
-      initialAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"(
+    "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       policyMinSumInsured: PromiseOrValue<BigNumberish>,
       policyMaxSumInsured: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      initialAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "createBundle(bytes,uint256)"(
+      filter: PromiseOrValue<BytesLike>,
       initialAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -2537,13 +3010,28 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    detailedBundleApplicationMatch(
+      bundleId: PromiseOrValue<BigNumberish>,
+      minSumInsured: PromiseOrValue<BigNumberish>,
+      maxSumInsured: PromiseOrValue<BigNumberish>,
+      minDuration: PromiseOrValue<BigNumberish>,
+      maxDuration: PromiseOrValue<BigNumberish>,
+      annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      application: IPolicy.ApplicationStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     encodeApplicationParameterAsData(
+      wallet: PromiseOrValue<string>,
       duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     encodeBundleParamsAsFilter(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
       maxSumInsured: PromiseOrValue<BigNumberish>,
       minDuration: PromiseOrValue<BigNumberish>,
@@ -2621,7 +3109,9 @@ export interface DepegRiskpool extends BaseContract {
 
     getRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getStakingDataProvider(overrides?: CallOverrides): Promise<BigNumber>;
+    getRiskpoolCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStaking(overrides?: CallOverrides): Promise<BigNumber>;
 
     getState(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2637,6 +3127,13 @@ export interface DepegRiskpool extends BaseContract {
     getType(overrides?: CallOverrides): Promise<BigNumber>;
 
     getWallet(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isAllowAllAccountsEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isAllowed(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isHigherPriorityBundle(
       firstBundleId: PromiseOrValue<BigNumberish>,
@@ -2690,6 +3187,23 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setAllowAccount(
+      account: PromiseOrValue<string>,
+      allowAccount: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setAllowAllAccounts(
+      allowAllAccounts: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setCapitalCaps(
+      poolCapitalCap: PromiseOrValue<BigNumberish>,
+      bundleCapitalCap: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setId(
       id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2700,8 +3214,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setStakingDataProvider(
-      dataProviderAddress: PromiseOrValue<string>,
+    setStakingAddress(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2733,6 +3247,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    EMPTY_STRING_HASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     FULL_COLLATERALIZATION_LEVEL(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2744,6 +3260,10 @@ export interface DepegRiskpool extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     MAX_POLICY_DURATION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MIN_BUNDLE_LIFETIME(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2798,18 +3318,20 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "createBundle(bytes,uint256)"(
-      filter: PromiseOrValue<BytesLike>,
-      initialAmount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"(
+    "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       policyMinSumInsured: PromiseOrValue<BigNumberish>,
       policyMaxSumInsured: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      initialAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "createBundle(bytes,uint256)"(
+      filter: PromiseOrValue<BytesLike>,
       initialAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -2834,13 +3356,28 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    detailedBundleApplicationMatch(
+      bundleId: PromiseOrValue<BigNumberish>,
+      minSumInsured: PromiseOrValue<BigNumberish>,
+      maxSumInsured: PromiseOrValue<BigNumberish>,
+      minDuration: PromiseOrValue<BigNumberish>,
+      maxDuration: PromiseOrValue<BigNumberish>,
+      annualPercentageReturn: PromiseOrValue<BigNumberish>,
+      application: IPolicy.ApplicationStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     encodeApplicationParameterAsData(
+      wallet: PromiseOrValue<string>,
       duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     encodeBundleParamsAsFilter(
+      name: PromiseOrValue<string>,
+      lifetime: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
       maxSumInsured: PromiseOrValue<BigNumberish>,
       minDuration: PromiseOrValue<BigNumberish>,
@@ -2932,9 +3469,11 @@ export interface DepegRiskpool extends BaseContract {
 
     getRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getStakingDataProvider(
+    getRiskpoolCapitalCap(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getStaking(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2954,6 +3493,15 @@ export interface DepegRiskpool extends BaseContract {
     getType(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getWallet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isAllowAllAccountsEnabled(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isAllowed(
+      account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     isHigherPriorityBundle(
       firstBundleId: PromiseOrValue<BigNumberish>,
@@ -3007,6 +3555,23 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setAllowAccount(
+      account: PromiseOrValue<string>,
+      allowAccount: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setAllowAllAccounts(
+      allowAllAccounts: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setCapitalCaps(
+      poolCapitalCap: PromiseOrValue<BigNumberish>,
+      bundleCapitalCap: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setId(
       id: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3017,8 +3582,8 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setStakingDataProvider(
-      dataProviderAddress: PromiseOrValue<string>,
+    setStakingAddress(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

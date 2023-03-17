@@ -1,18 +1,19 @@
-import { Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/app_context";
+import { Alert, Button, Step, StepLabel, Stepper, Typography } from "@mui/material";
+import { BigNumber } from "ethers";
 import { useTranslation } from 'next-i18next';
-import { InsuranceApi } from "../../backend/insurance_api";
-import { SnackbarKey, useSnackbar } from "notistack";
-import confetti from "canvas-confetti";
-import InvestForm from "./invest_form";
 import { useRouter } from "next/router";
-import { formatCurrency } from "../../utils/numbers";
+import { SnackbarKey, useSnackbar } from "notistack";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { BackendApi } from "../../backend/backend_api";
+import useTransactionNotifications from "../../hooks/trx_notifications";
+import { RootState } from "../../redux/store";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { REVOKE_INFO_URL } from "../application/application";
+import InvestForm from "./invest_form";
 
 export interface InvestProps {
-    insurance: InsuranceApi;
+    backend: BackendApi;
 }
 
 const steps = ['step0', 'step1', 'step2', 'step3', 'step4'];
@@ -21,18 +22,60 @@ export default function Invest(props: InvestProps) {
     const { t } = useTranslation(['invest', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const router = useRouter();
+    const dispatch = useDispatch();
+    useTransactionNotifications();
 
-    const appContext = useContext(AppContext);
-    const [ activeStep, setActiveStep ] = useState(appContext?.data.signer === undefined ? 0 : 1);
+    const signer = useSelector((state: RootState) => state.chain.signer);
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    const investorAddress = useSelector((state: RootState) => state.account.address);
+    const [ isInvestorWhitelisted, setIsInvestorWhitelisted ] = useState(true);
+    const [ riskpoolCapacityAvailable, setNoRiskpoolCapacityAvailable ] = useState(true);
+    const [ maxBundlesUsed, setMaxBundlesUsed ] = useState(false);
+    const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ readyToInvest, setReadyToInvest ] = useState(false);
 
+    useEffect(() => {
+        async function checkStakingAllowed() {
+            if (isConnected && investorAddress !== undefined) {
+                if (! await props.backend.invest.isAllowAllAccountsEnabled()) {
+                    const isInvestorWhitelisted = await props.backend.invest.isInvestorWhitelisted(investorAddress!);
+                    console.log("whitelist check result", isInvestorWhitelisted);
+                    if (! isInvestorWhitelisted) {
+                        setIsInvestorWhitelisted(false);
+                        return;
+                    } else {
+                        setIsInvestorWhitelisted(true);
+                    }
+                }
+                const riskpoolCapacityAvailable = await props.backend.invest.isRiskpoolCapacityAvailable();
+                console.log("riskpoolCapacityAvailable", riskpoolCapacityAvailable);
+                if (! riskpoolCapacityAvailable) {
+                    setNoRiskpoolCapacityAvailable(false);
+                    return;
+                } else {
+                    setNoRiskpoolCapacityAvailable(true);
+                }
+                const activeBundleCount = await props.backend.invest.activeBundles();
+                const maxBundles = await props.backend.invest.maxBundles();
+                console.log("activeBundleCount", activeBundleCount, "maxBundles", maxBundles);
+                if (activeBundleCount >= maxBundles) {
+                    setMaxBundlesUsed(true);
+                } else {
+                    setMaxBundlesUsed(false);
+                }
+            }    
+        }
+        checkStakingAllowed();
+    }, [isConnected, props.backend.invest, investorAddress]);
+
+            
 
     // change steps according to application state
     useEffect(() => {
-        if (appContext?.data.signer === undefined) {
+        if (! isConnected) {
             setActiveStep(0);
-        } else if (activeStep < 1 && appContext?.data.signer !== undefined) {
+        } else if (activeStep < 1 && isConnected) {
             setActiveStep(1);
         } else if (activeStep == 1 && readyToInvest) {
             setActiveStep(2);
@@ -41,7 +84,7 @@ export default function Invest(props: InvestProps) {
         } else if (activeStep > 4) { // application completed
             setFormDisabled(true);
         }
-    }, [appContext?.data.signer, activeStep, readyToInvest]);
+    }, [isConnected, activeStep, readyToInvest]);
 
     useEffect(() => {
         if (activeStep < 1 || activeStep > 2) {
@@ -55,53 +98,21 @@ export default function Invest(props: InvestProps) {
         setReadyToInvest(isFormReady);
     }
 
-    function applicationSuccessful() {
-        enqueueSnackbar(
-            t('application_success'),
-            { 
-                variant: 'success', 
-                autoHideDuration: 5000, 
-                preventDuplicate: true,
-            }
-        );
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 }
-        });
-        // redirect to bundle list (/bundles)
-        router.push("/bundles");
+    async function applicationSuccessful(bundleId: number) {
+        await props.backend.triggerBundleUpdate(bundleId, dispatch);
+        router.push("/bundles?confirmation=true&&id=" + bundleId);
     }
 
-    async function doApproval(walletAddress: string, investedAmount: number): Promise<Boolean> {
-        let snackbar: SnackbarKey | undefined = undefined;
+    async function doApproval(walletAddress: string, investedAmount: BigNumber): Promise<Boolean> {
         try {
-            return await props.insurance.createTreasuryApproval(
+            return await props.backend.createTreasuryApproval(
                 walletAddress, 
                 investedAmount, 
-                (address, currency, amount) => {
-                    snackbar = enqueueSnackbar(
-                        t('approval_info', { address, currency, amount: formatCurrency(amount, props.insurance.usd2Decimals) }),
-                        { variant: "warning", persist: true }
-                    );
-                },
-                (address, currency, amount) => {
-                    if (snackbar !== undefined) {
-                        closeSnackbar(snackbar);
-                    }
-                    snackbar = enqueueSnackbar(
-                        t('approval_wait'),
-                        { variant: "info", persist: true }
-                    );
-                },
             );
         } catch(e) { 
             if ( e instanceof ApprovalFailedError) {
                 console.log("approval failed", e);
-                if (snackbar !== undefined) {
-                    closeSnackbar(snackbar);
-                }
-
+        
                 enqueueSnackbar(
                     t('error.approval_failed', { ns: 'common', error: e.code }),
                     { 
@@ -118,17 +129,20 @@ export default function Invest(props: InvestProps) {
             } else {
                 throw e;
             }
-        } finally {
-            if (snackbar !== undefined) {
-                closeSnackbar(snackbar);
-            }
         }
     }
 
-    async function doInvest(investorWalletAddress: string, investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number): Promise<boolean> {
+    async function doInvest(
+        name: string, lifetime: number, investorWalletAddress: string, 
+        investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+        minDuration: number, maxDuration: number, 
+        annualPctReturn: number
+    ): Promise<{ status: boolean, bundleId: string | undefined}> {
         let snackbar: SnackbarKey | undefined = undefined; 
         try {
-            return await props.insurance.invest.invest(
+            return await props.backend.invest.invest(
+                name, 
+                lifetime,
                 investorWalletAddress, 
                 investedAmount, 
                 minSumInsured, 
@@ -170,7 +184,7 @@ export default function Invest(props: InvestProps) {
                         }
                     }
                 );
-                return Promise.resolve(false);
+                return { status: false, bundleId: undefined};
             } else {
                 throw e;
             }
@@ -209,11 +223,22 @@ export default function Invest(props: InvestProps) {
         }
     }
 
-    async function invest(investedAmount: number, minSumInsured: number, maxSumInsured: number, minDuration: number, maxDuration: number, annualPctReturn: number) {
+    async function invest(
+        name: string, lifetime: number, investedAmount: BigNumber, 
+        minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+        minDuration: number, maxDuration: number, annualPctReturn: number
+    ) {
         try {
             enableUnloadWarning(true);
+            const investorWalletAddress = await signer!.getAddress();
+            if (! await checkBalance(investorWalletAddress, BigNumber.from(investedAmount))) {
+                enqueueSnackbar(
+                    t('balance_insufficient', { currency: props.backend.usd2 }),
+                    { variant: "error", autoHideDuration: 3000 }
+                );
+                return;
+            }
             setActiveStep(3);
-            const investorWalletAddress = await appContext!!.data.signer!!.getAddress();
             const approvalSuccess = await doApproval(investorWalletAddress, investedAmount);
             if ( ! approvalSuccess) {
                 setActiveStep(2);
@@ -221,14 +246,14 @@ export default function Invest(props: InvestProps) {
                 return;
             }
             setActiveStep(4);
-            const investSuccess = await doInvest(investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
-            if ( ! investSuccess) {
+            const investResult = await doInvest(name, lifetime, investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+            if ( ! investResult.status) {
                 setActiveStep(2);
                 showAllowanceNotice();
                 return;
             }
             setActiveStep(5);
-            applicationSuccessful();
+            await applicationSuccessful(parseInt(investResult.bundleId as string));
         } finally {
             enableUnloadWarning(false);
         }
@@ -237,7 +262,7 @@ export default function Invest(props: InvestProps) {
     return (
         <>
             <div>
-                <Typography variant="h5" mb={2}>{t('title', { currency: props.insurance.usd2 })}</Typography>
+                <Typography variant="h5" mb={2}>{t('title', { currency: props.backend.usd2 })}</Typography>
 
                 <Stepper activeStep={activeStep} sx={{ display: { 'xs': 'none', 'md': 'flex' }}}>
                     {steps.map((label) => {
@@ -253,15 +278,23 @@ export default function Invest(props: InvestProps) {
                     })}
                 </Stepper>
 
+                { ! isInvestorWhitelisted && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.investor_not_whitelisted')}</Alert>)}
+                { ! riskpoolCapacityAvailable && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.no_riskpool_capacity')}</Alert>)}
+                { maxBundlesUsed && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.max_bundles')}</Alert>)}
+
                 <InvestForm 
-                    disabled={formDisabled}
-                    usd2={props.insurance.usd2}
-                    usd2Decimals={props.insurance.usd2Decimals}
-                    insurance={props.insurance}
-                    formReadyForInvest={formReadyForInvest}
-                    invest={invest}
-                />
+                        formDisabled={formDisabled || maxBundlesUsed || ! isInvestorWhitelisted || ! riskpoolCapacityAvailable}
+                        usd2={props.backend.usd2}
+                        usd2Decimals={props.backend.usd2Decimals}
+                        backend={props.backend}
+                        readyToSubmit={formReadyForInvest}
+                        invest={invest}
+                    />
             </div>
         </>
     );
+
+    async function checkBalance(walletAddress: string, amount: BigNumber): Promise<boolean> {
+        return await props.backend.hasUsd2Balance(walletAddress, amount);
+    }
 }

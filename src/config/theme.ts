@@ -1,5 +1,4 @@
 import { createTheme } from '@mui/material/styles';
-import red from '@mui/material/colors/red';
 
 // etherisc main colors
 // red: EE4620
@@ -12,8 +11,8 @@ import red from '@mui/material/colors/red';
 export const etheriscTheme = createTheme({
     palette: {
         background: {
-            default: 'hsl(222,74%,96%)',
-            paper: 'hsl(222,74%,96%)'
+            // default: 'hsl(222,74%,96%)',
+            // paper: 'hsl(222,74%,96%)'
         },
         primary: {
             // light: will be calculated from palette.primary.main,
@@ -22,11 +21,26 @@ export const etheriscTheme = createTheme({
             // contrastText: will be calculated to contrast with palette.primary.main
         },
         secondary: {
-            // light: will be calculated from palette.secondary.main,
-            main: "#9577F7",
+            // main: "#9577F7", // purple
+            main: "#F8B83A", // yellow
             // dark: will be calculated from palette.secondary.main,
             // contrastText: will be calculated to contrast with palette.secondary.main
-            contrastText: "#fff"
+            // contrastText: "#fff" // white
+            contrastText: "#000000DE" // black
+        },
+    },
+    components: {
+        MuiIcon: {
+            styleOverrides: {
+                root: {
+                    // Match 24px = 3 * 2 + 1.125 * 16
+                    boxSizing: 'content-box',
+                    padding: 3,
+                    fontSize: '1.125rem',
+                },
+            },
         },
     },
 });
+
+export const INPUT_VARIANT = 'filled';

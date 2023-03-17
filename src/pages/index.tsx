@@ -4,21 +4,23 @@ import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
-import { getInsuranceApi } from "../backend/insurance_api";
-import { AppContext } from "../context/app_context";
-import { useContext, useMemo } from "react";
+import { getBackendApi } from "../backend/backend_api";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 export default function ApplicationPage() {
   const { enqueueSnackbar } = useSnackbar();
   const {t} = useTranslation('common');
-  const appContext = useContext(AppContext);
+  const signer = useSelector((state: RootState) => state.chain.signer);
+  const provider = useSelector((state: RootState) => state.chain.provider);
 
-  const insurance = useMemo(() => getInsuranceApi(
+  const insurance = useMemo(() => getBackendApi(
     enqueueSnackbar,
     t,
-    appContext.data.signer,
-    appContext.data.provider,
-  ), [enqueueSnackbar, appContext, t]);
+    signer,
+    provider,
+  ), [enqueueSnackbar, signer, provider, t]);
   
   return (
     <>

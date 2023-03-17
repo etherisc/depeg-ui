@@ -1,37 +1,71 @@
-import { ContractReceipt, ContractTransaction, Signer } from "ethers";
-import { DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
-import { BundleData } from "./bundle_data";
-import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json'
+import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json';
+import { ThreeSixty } from '@mui/icons-material';
 import { Coder } from "abi-coder";
+import { BigNumber, ContractReceipt, ContractTransaction, Signer } from "ethers";
+import { DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
+import { finish, start, waitingForTransaction, waitingForUser } from "../redux/slices/transaction";
+import { store } from "../redux/store";
+import { TrxType } from "../types/trxtype";
 import { TransactionFailedError } from "../utils/error";
+import { isStakingSupported } from "../utils/staking";
+import { BundleData, MAX_BUNDLE } from "./bundle_data";
+import StakingApi from "./staking_api";
 
 export class DepegRiskpoolApi {
 
     private depegRiskpool: DepegRiskpool;
-    private signer?: Signer;
     private riskpoolId: number;
     private instanceService: IInstanceService;
+    private stakingApi?: StakingApi;
+    private minBundleLifetime = -1;
+    private maxBundleLifetime = -1;
+    // assume 100k usdc as default - will be overwritten by contract
+    private bundleCap = BigNumber.from(100000000000).toString();
+    // assume 1m usdc as default - will be overwritten by contract
+    private riskpoolCap = BigNumber.from(1000000000000).toString();
 
     constructor(
         riskpool: DepegRiskpool,
         riskpoolId: number,
         instanceService: IInstanceService,
+        usd2Decimals: number,
         // signer: Signer,
     ) {
         this.depegRiskpool = riskpool;
-        this.signer = riskpool.signer;
         this.riskpoolId = riskpoolId;
         this.instanceService = instanceService;
+
+
+        const stakingAddress = process.env.NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS;
+        if (stakingAddress !== undefined) {
+            this.stakingApi = new StakingApi(stakingAddress, riskpool.signer, instanceService);
+        }
+    }
+
+    async initialize(): Promise<void> {
+        if (this.stakingApi !== undefined) {
+            await this.stakingApi.initialize();
+        }
+
+        this.minBundleLifetime = (await this.depegRiskpool.MIN_BUNDLE_LIFETIME()).toNumber();
+        this.maxBundleLifetime = (await this.depegRiskpool.MAX_BUNDLE_LIFETIME()).toNumber();
+        this.bundleCap = (await this.depegRiskpool.getBundleCapitalCap()).toString();
+        this.riskpoolCap = (await this.depegRiskpool.getRiskpoolCapitalCap()).toString();
+    }
+
+    async getCapital(): Promise<BigNumber> {
+        return await this.depegRiskpool.getCapital();
     }
 
     async getBundleData(
     ): Promise<Array<BundleData>> {
-        const activeBundleIds = await this.depegRiskpool.getActiveBundleIds();
+        const numBundles = (await this.depegRiskpool.bundles()).toNumber();
+        console.log("number of bundles: " + numBundles);
     
         let bundleData = new Array<BundleData>();
     
-        for (let i = 0; i < activeBundleIds.length; i++) {
-            const bundleId = activeBundleIds[i].toNumber();
+        for (let i = 0; i < numBundles; i++) {
+            const bundleId = (await this.depegRiskpool.getBundleId(i)).toNumber();
             console.log('bundleId', bundleId);
             const bundle = await this.getBundleDataByBundleId(bundleId);
             bundleData.push(bundle);
@@ -41,63 +75,99 @@ export class DepegRiskpoolApi {
     }
     
     async getBundleDataByBundleId(bundleId: number): Promise<BundleData> {
-        const bundleInfo = await this.depegRiskpool.getBundleInfo(bundleId);
-        const [ _bId, state, tokenId, owner, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn, capitalSupportedByStaking, capital, lockedCapital, balance, createdAt ] = bundleInfo;
+        const { name, state, tokenId, owner, lifetime, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn, capital, lockedCapital, createdAt, balance } = await this.depegRiskpool.getBundleInfo(bundleId);
         const apr = 100 * annualPercentageReturn.toNumber() / (await this.depegRiskpool.getApr100PercentLevel()).toNumber();
         const policies = await this.depegRiskpool.getActivePolicies(bundleId);
+        let capitalSupport = undefined;
     
+        if (this.stakingApi !== undefined) {
+            capitalSupport = await this.stakingApi.getSupportedCapital(bundleId);
+        }
+
         return {
+            id: bundleId,
             riskpoolId: this.riskpoolId,
             owner: owner,
-            bundleId: bundleId,
             apr: apr,
-            minSumInsured: minSumInsured.toNumber(),
-            maxSumInsured: maxSumInsured.toNumber(),
+            minSumInsured: minSumInsured.toString(),
+            maxSumInsured: maxSumInsured.toString(),
             minDuration: minDuration.toNumber(),
             maxDuration: maxDuration.toNumber(),
-            capital: capital.toNumber(),
-            locked: lockedCapital.toNumber(),
-            capacity: capital.toNumber() - lockedCapital.toNumber(),
+            balance: balance.toString(),
+            capital: capital.toString(),
+            locked: lockedCapital.toString(),
+            capitalSupport: capitalSupport?.toString(),
+            capacity: capital.sub(lockedCapital).toString(),
             policies: policies.toNumber(),
             state: state,
             tokenId: tokenId.toNumber(),
             createdAt: createdAt.toNumber(),
+            name: name,
+            lifetime: lifetime.toString(),
         } as BundleData;
     }
     
     getBestQuote(
         bundleData: Array<BundleData>, 
-        sumInsured: number, 
-        duration: number
+        sumInsured: BigNumber, 
+        duration: number,
+        lastBlockTimestamp: number
     ): BundleData {
         return bundleData.reduce((best, bundle) => {
-            if (sumInsured < bundle.minSumInsured) {
+            if (lastBlockTimestamp > (bundle.createdAt + parseInt(bundle.lifetime))) {
                 return best;
             }
-            if (sumInsured > bundle.maxSumInsured) {
+            const minSumInsured = BigNumber.from(bundle.minSumInsured);
+            const maxSumInsured = BigNumber.from(bundle.maxSumInsured);
+            if (sumInsured.lt(minSumInsured)) {
+                console.log("sumInsured less that min sum insured", sumInsured, bundle);
+                return best;
+            }
+            if (sumInsured.gt(maxSumInsured)) {
+                console.log("sumInsured greater that max sum insured", sumInsured, bundle);
                 return best;
             }
             if (duration < bundle.minDuration) {
+                console.log("duration less that min duration", duration, bundle);
                 return best;
             }
             if (duration > bundle.maxDuration) {
+                console.log("duration greater that max duration", duration, bundle);
                 return best;
             }
             if (best.apr < bundle.apr) {
+                console.log("bundle apr larger than best apr so far (best, bundle)", best, bundle);
                 return best;
             }
-            if (sumInsured > bundle.capacity) {
+            const capacity = BigNumber.from(bundle.capacity);
+            if (sumInsured.gt(capacity)) {
+                console.log("sumInsured greater than capacity", sumInsured, bundle);
                 return best;
             }
+            if (isStakingSupported) {
+                if (bundle.capitalSupport === undefined) {
+                    console.log("no stakes defined on bundle", bundle);
+                    return best;
+                }
+                const lockedCapital = BigNumber.from(bundle.locked);
+                const stakesRemaining = BigNumber.from(bundle.capitalSupport).sub(lockedCapital)
+                if (stakesRemaining.lte(0)) {
+                    console.log("no stakes remaining on bundle", bundle);
+                    return best;
+                }
+            }
+            console.log("bundle selected", bundle);
             return bundle;
-        }, { apr: 100, minDuration: Number.MAX_VALUE, maxDuration: Number.MIN_VALUE, minSumInsured: Number.MAX_VALUE, maxSumInsured: Number.MIN_VALUE } as BundleData);
+        }, MAX_BUNDLE);
     }
     
     async createBundle(
+        name: string,
+        lifetime: number,
         investorWalletAddress: string, 
-        investedAmount: number, 
-        minSumInsured: number, 
-        maxSumInsured: number, 
+        investedAmount: BigNumber, 
+        minSumInsured: BigNumber, 
+        maxSumInsured: BigNumber, 
         minDuration: number, 
         maxDuration: number, 
         annualPctReturn: number,
@@ -112,7 +182,9 @@ export class DepegRiskpoolApi {
             beforeInvestCallback(riskpoolAddress);
         }
         try {
-            const tx = await this.depegRiskpool["createBundle(uint256,uint256,uint256,uint256,uint256,uint256)"](
+            const tx = await this.depegRiskpool["createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"](
+                name,
+                lifetime,
                 minSumInsured, 
                 maxSumInsured, 
                 minDuration * 86400, 
@@ -123,8 +195,6 @@ export class DepegRiskpoolApi {
                 beforeWaitCallback(riskpoolAddress);
             }
             const receipt = await tx.wait();
-            const bundleId = this.extractBundleIdFromApplicationLogs(receipt.logs);
-            console.log("bundleId", bundleId);
             return Promise.resolve([tx, receipt]);
         } catch (e) {
             console.log("caught error while creating bundle: ", e);
@@ -165,7 +235,7 @@ export class DepegRiskpoolApi {
     }
     
     async getBundleId(idx: number): Promise<number> {
-        console.log("getBundleId");
+        // console.log("getBundleId");
         return (await this.depegRiskpool.getBundleId(idx)).toNumber();
     }
     
@@ -178,19 +248,178 @@ export class DepegRiskpoolApi {
      * nft tokens for a given owner.
      */
     async getBundle(
-        walletAddress: string, 
-        bundleTokenAddress: string, 
-        bundleId: number
+        bundleId: number,
+        walletAddress?: string, 
     ): Promise<BundleData|undefined> {
-        console.log("getBundle", bundleId);
+        // console.log("getBundle", bundleId);
         const bundle = await this.getBundleDataByBundleId(bundleId);
-        console.log(bundle);
-        if (bundle.owner !== walletAddress) {
+        // console.log(bundle);
+        if (walletAddress !== undefined && bundle.owner !== walletAddress) {
             // owner mismatch
             console.log("owner mismatch");
             return undefined;
         }
         return bundle;
+    }
+
+    async activeBundles(): Promise<number> {
+        return (await this.instanceService.activeBundles(this.riskpoolId)).toNumber();
+    }
+
+    async getMaxBundles(): Promise<number> {
+        return (await this.instanceService.getMaximumNumberOfActiveBundles(this.riskpoolId)).toNumber();
+    }
+
+    async lockBundle(
+        bundleId: number,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("riskpoolapi - lockBundle");
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_LOCK }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            const tx = await this.depegRiskpool.lockBundle(bundleId);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while locking bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
+    async unlockBundle(
+        bundleId: number,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("riskpoolapi - unlockBundle");
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_UNLOCK }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            const tx = await this.depegRiskpool.unlockBundle(bundleId);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while unlocking bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
+    async closeBundle(
+        bundleId: number,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("riskpoolapi - closeBundle");
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_CLOSE }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            const tx = await this.depegRiskpool.closeBundle(bundleId);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while closing bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
+    async burnBundle(
+        bundleId: number,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("riskpoolapi - burnBundle");
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_BURN }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            const tx = await this.depegRiskpool.burnBundle(bundleId);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while burning bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
+    async withdrawBundle(
+        bundleId: number,
+        amount: BigNumber,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("riskpoolapi - withdrawBundle");
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_WITHDRAW }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            const tx = await this.depegRiskpool.defundBundle(bundleId, amount);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while withdrawing from bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
+    async fundBundle(
+        bundleId: number,
+        amount: BigNumber,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("riskpoolapi - fundBundle");
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_FUND }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            const tx = await this.depegRiskpool.fundBundle(bundleId, amount);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while withdrawing from bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
+    getRiskpoolCapitalCap(): BigNumber {
+        return BigNumber.from(this.riskpoolCap);
+    }
+
+    getBundleCapitalCap(): BigNumber {
+        return BigNumber.from(this.bundleCap);
+    }
+
+    getBundleLifetimeMin(): number {
+        return this.minBundleLifetime;
+    }
+
+    getBundleLifetimeMax(): number {
+        return this.maxBundleLifetime;
+    }
+
+    async isAllowAllAccountsEnabled(): Promise<boolean> {
+        return this.depegRiskpool.isAllowAllAccountsEnabled();
+    }
+
+    async isAllowedAccount(account: string): Promise<boolean> {
+        return this.depegRiskpool.isAllowed(account);
     }
 
 }

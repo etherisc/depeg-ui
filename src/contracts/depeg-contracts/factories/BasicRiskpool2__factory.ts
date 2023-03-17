@@ -16,25 +16,6 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "activeBundles",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "policies",
-        type: "uint256",
-      },
-    ],
-    name: "LogBasicRiskpoolBundlesAndPolicies",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
         name: "index",
         type: "uint256",
       },
@@ -58,6 +39,62 @@ const _abi = [
       },
     ],
     name: "LogBasicRiskpoolCandidateBundleAmountCheck",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "activeBundles",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "policies",
+        type: "uint256",
+      },
+    ],
+    name: "LogBasicRiskpoolCapitalCheck",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "activeBundles",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "capital",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "lockedCapital",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "collateralAmount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "capacityIsAvailable",
+        type: "bool",
+      },
+    ],
+    name: "LogBasicRiskpoolCapitalization",
     type: "event",
   },
   {
@@ -1466,7 +1503,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
 export class BasicRiskpool2__factory {
   static readonly abi = _abi;

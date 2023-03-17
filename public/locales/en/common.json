@@ -1,24 +1,30 @@
 {
-    "apptitle": "Etherisc depeg protection",
+    "apptitle": "Etherisc Depeg Protection",
     "apptitle_short": "Depeg Protection",
+    "terms_and_conditions": "By checking this box, I confirm that I have read and agree to the <0>Terms and Conditions</0>.",
     "nav": {
         "link": {
-            "invest": "Invest",
+            "invest": "Stake",
             "policies": "Policies",
             "bundles": "Risk bundles",
-            "apply": "Apply"
+            "apply": "Apply",
+            "price": "Price"
         }
     },
     "action": {
         "switch_network": "Switch to network '{{network}}'",
-        "login_walletconnect": "Login with WalletConnect",
-        "login_metamask": "Login with Metamask",
-        "login": "Login",
+        "login_walletconnect": "Connect with WalletConnect",
+        "login_walletconnect_short": "WalletConnect",
+        "login_metamask": "Connect with Metamask",
+        "login_metamask_short": "Metamask",
+        "login": "Connect",
         "disconnect": "Disconnect",
         "close": "Close",
         "hide": "Hide",
-        "address_copied": "Address copied to clipboard"
+        "address_copied": "Value copied to clipboard",
+        "dismiss" : "Dismiss"
     },
+    "login_select": "Please choose a wallet",
     "warning": {
         "unload_page": "The transaction is still pending. Please do not leave the page or close the browser window."
     },
@@ -27,15 +33,28 @@
         "unexpected_network": "Please connect your wallet to '{{network}}'",
         "metamask_not_found": "Missing metamask plugin - get it from",
         "wallet_connect_failed": "WalletConnect login failed or cancelled",
-        "currencyTextFieldMinValue": "{{fieldName}} must be at least {{currency}} {{amount}}",
-        "currencyTextFieldMaxValue": "{{fieldName}} must be at most {{currency}} {{amount}}",
-        "numericTextFieldMinValue": "{{fieldName}} must be at least {{value}} {{unit}}",
-        "numericTextFieldMaxValue": "{{fieldName}} must be at most {{value}} {{unit}}",
-        "valueRequired": "{{fieldName}} cannot be empty",
-        "notANumber": "{{fieldName}} must be a number",
+        "field": {
+            "required": "This field is required",
+            "walletType": "This field must contain a ethereum address (0x...)",
+            "isAddress": "This field must contain a valid ethereum address",
+            "numberType": "This field must contain a whole number (e.g. 1000)",
+            "numberTypeFloat": "This field must contain a decimal number (e.g. 2.53)",
+            "amountType": "This field must contain a whole number, no decimals, no separators (e.g. 1000)",
+            "amountDecimalsType": "This field must contain a number with up to two decimals, no separators (e.g. 1000.42)",
+            "minLength": "This field must be at least {{minLength}} characters",
+            "maxLength": "This field must be at most {{maxLength}} characters",
+            "min": "This field must be at least {{minValue}}",
+            "max": "This field must be at most {{maxValue}}",
+            "minmax": "The minimum value must be smaller than the maximum value",
+            "balance": "The amount is larger than your available balance"
+        },
         "approval_failed": "Setting allowance permission in wallet app failed. Reason: {{error}}",
         "transaction_failed": "The blockchain transaction failed. Reason: {{error}}",
         "allowance_revoke_notice": "Due to the failed transaction, there might be a pending allowance on your wallet. For more information on this, please have a look"
+    },
+    "help": {
+        "faucet": "Click this link to receive some {{currency}} from the faucet",
+        "faucet_copy": "Copy {{currency}} address to clipboard"
     },
     "application_state_0": "Unknown",
     "application_state_1": "Applied",
@@ -45,12 +64,28 @@
     "application_state_5": "Active",
     "application_state_6": "Expired",
     "application_state_7": "Closed",
-    "application_state_8": "Payout expected",
-    "application_state_9": "Paid out",
+    "application_state_8": "Claimable",
+    "application_state_9": "Payout pending",
+    "application_state_10": "Paid & Closed",
     "bundle_state_0": "Active",
     "bundle_state_1": "Locked",
     "bundle_state_2": "Closed",
     "bundle_state_3": "Burned",
     "coins_sent": "Some coins have been sent to your wallet for testing purposes",
-    "wait_for_coins": "Please wait for the coints to be sent to your wallet. This might take some seconds. Do not leave the page of close the browser window"
+    "stake_usage": "Stake Usage",
+    "locked_capital": "Locked Capital",
+    "supported_capital": "Total Supported Capital",
+    "no_stakes": "No stakes",
+    "wait_for_coins": "Please wait for the coints to be sent to your wallet. This might take some seconds. Do not leave the page of close the browser window",
+    "notification": {
+        "lock_info": "Please confirm locking of the bundle on contract {{address}}",
+        "unlock_info": "Please confirm unlocking of the bundle on contract {{address}}",
+        "close_info": "Please confirm closing of the bundle on contract {{address}}",
+        "burn_info": "Please confirm burning of the bundle on contract {{address}}",
+        "withdraw_info": "Please confirm unstaking from bundle on contract {{address}}",
+        "fund_info": "Please confirm staking the bundle on contract {{address}}",
+        "approval_info": "First - give Etherisc contract at {{address}} permission to take {{currency}} {{amount}} from your wallet.",
+        "trx_info": "Please confirm the transaction in your wallet",
+        "wait_for_trx": "Awaiting onchain transaction confirmation"
+    }
 }

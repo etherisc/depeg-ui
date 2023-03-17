@@ -1,36 +1,55 @@
 {
-    "title": "Apply for {{currency}} depeg protection",
+    "title": "Apply for {{currency}} Depeg Protection",
     "step0": "Connect wallet",
     "step1": "Enter data",
     "step2": "Buy",
     "step3": "Confirm premium allowance",
     "step4": "Confirm payment",
-    "insuredWallet": "Insured wallet",
-    "insuredWalletHelper": "Important: Ensure you own the private keys to this wallet as full access will required to claim the payout",
-    "insuredWalletRequired": "Insured wallet is required",
-    "insuredWalletInvalid": "Insured wallet is not valid address",
-    "insuredAmount": "Insured amount",
+    "insuredWallet": "Protected wallet",
+    "insuredWalletHelper": "Important: Ensure you own the private keys to this wallet as full access is required to claim the payout",
+    "insuredWalletRequired": "Protected wallet is required",
+    "insuredWalletInvalid": "Protected wallet is not valid address",
+    "insuredAmount": "Protected amount",
     "coverageDurationDays": "Coverage duration",
     "coverageDurationUntil": "Coverage until *",
     "premiumAmount": "Premium",
-    "checkbox_t_and_c_label": "By checking this box, I confirm that I have read and agree to the Terms and Conditions.",
     "button_buy": "Buy",
-    "application_success": "Congratulations, your policy has been issued successfully!",
+    "application_success": "Congratulations, your protection has been issued successfully!",
     "days": "Days",
     "error_no_matching_bundle_found": "No risk bundle matching your criteria was found",
     "error_wallet_balance_too_low": "The wallet does not contain enough {{currency}} to pay for the premium",
     "bundle_loading": "Fetching risk bundle information from blockchain",
     "premium_calculation_in_progress": "Premium is being calculated",
-    "approval_info": "To issue a policy, the GIF treasury contract at {{address}} needs permission to transfer {{currency}} {{amount}} to the depeg insurance. Please confirm this allowance in your wallet app.",
-    "approval_wait": "Treasury allowance created, waiting for onchain confirmation",
-    "apply_info": "Please confirm execution of the policy application transaction on contract {{address}} in your wallet app",
+    "apply_info": "Second - please confirm issuing your protection on contract {{address}}",
     "apply_wait": "Transaction created, waiting for onchain confirmation",
     "bundles": {
-        "title": "Available risk pool bundles",
-        "bundle": "Bundle",
-        "suminsured": "Min / max insured amount",
-        "duration": "Min / max coverage duration",
-        "apr": "APR (%)",
-        "capacity": "Capacity"
+        "title": "Please choose from the risk bundles below",
+        "id": "ID",
+        "name": "Name",
+        "suminsured": "Min / max amount",
+        "duration": "Min / max duration",
+        "apr": "APR",
+        "capacity": "Capacity",
+        "stake_usage": "Stakes"
+    },
+    "confirmation": {
+        "alert": {
+            "title": "Payment for Depeg protection premium confirmed, your protection is now active.",
+            "text": "{{currency}} {{amount}} in wallet {{walletAddress}} are protected against depeg until {{endDate}}. Your protection ID is {{policyId}}."
+        },
+        "continue_link": "Continue"
+    },
+    "alert": {
+        "product_not_active": "Depeg Protection is not available for purchase at the moment. Please try again later.",
+        "riskpool_capacity_exceeded": "The product has no capacity for additional coverage at the moment. Please try again later.",
+        "no_matching_bundle": "No risk bundle matching your criteria was found. Please change the amount or duration.",
+        "not_connected_no_bundles": "Available risk bundles will be shown when a wallet is connected."
+    },
+    "example": "Example",
+    "payout_example": {
+        "title": "How does the protection work and how much will I get?",
+        "text1": "If the price of {{currency}} drops below {{currencyUSD}} {{triggerThreshold}} and does not recover above {{recoveryThreshold}} within {{recoveryWindowHours}} hours, you will receive a payout in {{currency2}}. The payout is based on the price of {{currency}} after 24 hours and will cover your loss at that time (<0>follow this link for the current price</0>). ",
+        "text2": "<0>Example</0>: If you protect {{currency}} {{insuredAmount}} from your wallet and the price of {{currency}} drops and is at {{currencyUSD}} {{exampleRate}} 24 hours after dropping below {{currencyUSD}} {{depegThreshold}}, you will receive a <1>payout of {{currency2}} {{payoutAmount}}</1>.",
+        "calculation_tooltip": "{{currency2}} {{insuredAmount}} * (1 - {{exampleRate}})"
     }
 }

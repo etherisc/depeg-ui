@@ -1,22 +1,37 @@
 import { BigNumber } from "ethers/lib/ethers";
 
 export interface PolicyData {
-    owner: string
-    processId: string;
+    id: string;
+    policyHolder: string;
+    protectedWallet: string;
     applicationState: number;
     policyState?: number;
     payoutState?: number;
-    createdAt: BigNumber;
-    duration: BigNumber;
-    premium: BigNumber;
-    suminsured: BigNumber;
+    createdAt: number;
+    duration: number;
+    premium: string;
+    suminsured: string;
+    isAllowedToClaim: boolean;
+    claim: ClaimData | undefined;
 }
 
 export enum PolicyState {
     UNKNOWN, 
     APPLIED, REVOKED, UNDERWRITTEN, DECLINED,
     ACTIVE, EXPIRED, CLOSED, 
-    PAYOUT_EXPECTED, PAIDOUT,
+    CLAIMABLE, PAYOUT_EXPECTED, PAIDOUT, 
+}
+
+export interface ClaimData {
+    state: ClaimState;
+    actualAmount: string;
+    paidAmount: string | undefined;
+    claimAmount: string;
+    claimCreatedAt: number;
+}
+
+export enum ClaimState {
+    APPLIED, CONFIRMED, DECLINED, CLOSED
 }
 
 export const APPLICATION_STATE_APPLIED = 0;

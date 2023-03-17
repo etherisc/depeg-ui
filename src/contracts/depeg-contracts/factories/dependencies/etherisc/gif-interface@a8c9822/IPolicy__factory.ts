@@ -711,7 +711,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
 export class IPolicy__factory {
   static readonly abi = _abi;

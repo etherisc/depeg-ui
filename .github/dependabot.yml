@@ -20,13 +20,15 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 25
+    open-pull-requests-limit: 30
     ignore:
     - dependency-name: "@types/node" 
       versions: ["19.x"]
     - dependency-name: "@etherisc/gif-interface"
       # ignore all updates to this dependency 
     - dependency-name: "@etherisc/depeg-contracts"
+      # ignore all updates to this dependency
+    - dependency-name: "@etherisc/registry-contracts"
       # ignore all updates to this dependency
     reviewers:
       - "doerfli"

@@ -1,45 +1,47 @@
-import { useContext, useState } from "react";
-import { AppContext } from "../../context/app_context";
 import Typography from '@mui/material/Typography'
-import { utils } from "ethers";
-import { Web3Provider } from "@ethersproject/providers";
-import { DOT } from "../../utils/chars";
+import { useDispatch, useSelector } from "react-redux";
+import { setBlock } from "../../redux/slices/chain";
+import { RootState } from "../../redux/store";
+import moment from "moment";
+import { Tooltip } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons"; 
 
 export default function ChainData() {
 
-    const appContext = useContext(AppContext);
     let chainData = (<></>);
-    const [lastBlock, setLastBlock] = useState(0);
-    const [gasPrice, setGasPrice] = useState("");
+    const dispatch = useDispatch();
 
-    const getAndSubscribeToLastBlock = async (provider: Web3Provider) => {
-        // get current block number
-        setLastBlock(await provider.getBlockNumber());
-        // get current gas price
-        setGasPrice(utils.formatUnits(await provider.getGasPrice(), "gwei"));
-
-        // now subscribe to future updates
-        provider.on("block", async (blockNumber) => {
-            setLastBlock(blockNumber);
-            setGasPrice(utils.formatUnits(await provider.getGasPrice(), "gwei"));
-        });
-    };
+    const blockNumber = useSelector((state: RootState) => state.chain.blockNumber);
+    const blockTime = useSelector((state: RootState) => state.chain.blockTime);
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     
-    if (appContext?.data.provider !== undefined) {
-        const provider = appContext?.data.provider;
-        getAndSubscribeToLastBlock(provider);
-    } else {
-        if (lastBlock !== 0) {
-            setLastBlock(0);
+    function formatUtc(timestamp: number): string {
+        return moment(timestamp * 1000).utc().format("YYYY-MM-DD HH:mm:ss") + " UTC";
+    }
+
+    function formatLocal(timestamp: number): string {
+        return moment(timestamp * 1000).format("YYYY-MM-DD HH:mm:ss") + " Local";
+    }
+    
+    if (! isConnected) {
+        if (blockNumber !== 0) {
+            dispatch(setBlock([0, 0]));
         }
     }
 
+    let timestamp = `Time: ${formatUtc(blockTime)} / ${formatLocal(blockTime)}`;
+    timestamp += `, Block time: ${blockTime}`;
+    timestamp += `, Block number: ${blockTime}`;
 
-    if (lastBlock > 0) {
+    if (blockNumber > 0) {
         chainData = (
-            <Typography variant="body2" sx={{ fontSize: '10px', ml: 1 }}>
-                {gasPrice} gwei {DOT} {lastBlock}
-            </Typography>
+            <Tooltip title={timestamp}>
+                <Typography variant="body2" sx={{ fontSize: '10px', ml: 1 }}>
+                    {blockNumber} 
+                    <FontAwesomeIcon icon={faCircleInfo} className="fa" />
+                </Typography>
+            </Tooltip>
         );
     }
     

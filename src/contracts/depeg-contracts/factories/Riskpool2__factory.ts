@@ -1249,7 +1249,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
 export class Riskpool2__factory {
   static readonly abi = _abi;

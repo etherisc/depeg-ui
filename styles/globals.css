@@ -1,0 +1,18 @@
+.fa {
+    /* height: 24px; */
+    width: 24px;
+    margin-right: 4px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+a.no_decoration {
+    text-decoration: none;
+}
+
+.dotted_underline {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+}

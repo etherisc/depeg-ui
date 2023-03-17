@@ -1,24 +1,27 @@
+import { BigNumber, ethers } from "ethers";
 import { NoBundleFoundError, BalanceTooSmallError } from "../utils/error";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { hasBalance } from "./erc20";
-import { ApplicationApi } from "./insurance_api";
+import { ApplicationApi } from "./backend_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
 
 export class ApplicationApiSmartContract implements ApplicationApi {
     private depegProductApi: DepegProductApi;
     private doNoUseDirectlyDepegRiskpoolApi?: DepegRiskpoolApi;
-    insuredAmountMin: number;
-    insuredAmountMax: number;
+    insuredAmountMin: BigNumber;
+    insuredAmountMax: BigNumber;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
+    usd2decimals: number;
     
-    constructor(depegProductApi: DepegProductApi, insuredAmountMin: number, insuredAmountMax: number, coverageDurationDaysMin: number, coverageDurationDaysMax: number) {
+    constructor(depegProductApi: DepegProductApi, insuredAmountMin: BigNumber, insuredAmountMax: BigNumber, coverageDurationDaysMin: number, coverageDurationDaysMax: number, usd2decimals: number) {
         this.insuredAmountMin = insuredAmountMin;
         this.insuredAmountMax = insuredAmountMax;
         this.coverageDurationDaysMin = coverageDurationDaysMin;
         this.coverageDurationDaysMax = coverageDurationDaysMax;
         this.depegProductApi = depegProductApi;
+        this.usd2decimals = usd2decimals;
     }
 
     /**
@@ -36,65 +39,103 @@ export class ApplicationApiSmartContract implements ApplicationApi {
             this.doNoUseDirectlyDepegRiskpoolApi = new DepegRiskpoolApi(
                 (await this.getDepegProductApi()).getDepegRiskpool(), 
                 (await this.getDepegProductApi()).getRiskpoolId(), 
-                (await this.getDepegProductApi()).getInstanceService()
+                (await this.getDepegProductApi()).getInstanceService(),
+                this.usd2decimals,
                 );
+            await this.doNoUseDirectlyDepegRiskpoolApi.initialize();
         }
         return this.doNoUseDirectlyDepegRiskpoolApi;
     }
     
-    async getRiskBundles() {
+    async getRiskBundles(handleBundle: (bundle: BundleData) => void) {
         if ((await this.getDepegProductApi())!.isVoidSigner()) {
-            return Promise.resolve([]);
+            return;
         }
 
         console.log("retrieving risk bundles from smart contract");
         console.log(`riskpoolId: ${(await this.getDepegProductApi())!.getRiskpoolId()}`);
-        return await (await this.riskpoolApi()).getBundleData();
+        const bundles = await (await this.riskpoolApi()).getBundleData();
+
+        for (const bundle of bundles) {
+            const capacity = BigNumber.from(bundle.capacity);
+            // ignore bundles with no capacity
+            if (capacity.lte(0)) {
+                continue;
+            }
+            // ignore bundles with less capacity then min protected amount (inconsistent)
+            if (BigNumber.from(bundle.minSumInsured).gt(capacity)) {
+                continue;
+            }
+            const capitalSupport = bundle.capitalSupport;
+            if (capitalSupport !== undefined) {
+                // console.log("bundleid", bundle.id, "locked", bundle.locked, "capitalSupport", capitalSupport.toString());
+                // if supported capital is defined, then only bundles with locked capital less than the capital support are used
+                if (BigNumber.from(bundle.locked).gte(BigNumber.from(capitalSupport))) {
+                    continue;
+                }
+                console.log("stakes available", bundle.id);
+            }
+            handleBundle(bundle);
+        }
     }
 
-    async calculatePremium(walletAddress: string, insuredAmount: number, coverageDurationDays: number, bundles: Array<BundleData>): Promise<number> {
-        if ((await this.getDepegProductApi())!.isVoidSigner()) {
-            console.log('no chain connection, no premium calculation');
-            return Promise.resolve(0);
+    async fetchStakeableRiskBundles(handleBundle: (bundle: BundleData) => void): Promise<void> {
+        const res = await fetch("/api/bundles/active");
+        if (res.status == 200) {
+            const bundles = await res.json() as BundleData[];
+            bundles.forEach(bundle => handleBundle(bundle));
+        } else {
+            throw new Error(`invalid response from backend. statuscode ${res.status}. test: ${res.text}`);
         }
+    }   
 
-        const durationSecs = coverageDurationDays * 24 * 60 * 60;
-        console.log("calculatePremium", walletAddress, insuredAmount, coverageDurationDays);
-        console.log("bundleData", bundles);
-        const bestBundle = (await this.riskpoolApi()).getBestQuote(bundles, insuredAmount, durationSecs);
-        if (bestBundle.minDuration == Number.MAX_VALUE) { 
-            throw new NoBundleFoundError();
-        }
+    async calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
+        console.log("calculatePremium", walletAddress, insuredAmount.toNumber(), coverageDurationSeconds);
         
-        // TODO avoid this
         const depegProduct = (await this.getDepegProductApi())!.getDepegProduct();
-
-        console.log("bestBundle", bestBundle);
-        const netPremium = (await depegProduct.calculateNetPremium(insuredAmount, durationSecs, bestBundle.bundleId)).toNumber();
+        const netPremium = (await depegProduct.calculateNetPremium(insuredAmount, coverageDurationSeconds, bundle.id));
         console.log("netPremium", netPremium);
-        const premium = (await depegProduct.calculatePremium(netPremium)).toNumber();
-        console.log("premium", premium);
-
-        if (! await hasBalance(walletAddress, premium, await depegProduct.getToken(), (await this.getDepegProductApi())!.getSigner())) {
-            throw new BalanceTooSmallError();
-        }
-
-        return Promise.resolve(premium);
+        const premium = (await depegProduct.calculatePremium(netPremium));
+        console.log("premium", premium.toNumber());
+        return premium;
     }
 
     async applyForPolicy(
             walletAddress: string, 
-            insuredAmount: number, 
-            coverageDurationDays: number,
-            premium: number,
+            insuredAmount: BigNumber, 
+            coverageDurationSeconds: number,
+            bundleId: number,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void,
-        ) {
-        console.log("applyForPolicy", walletAddress, insuredAmount, coverageDurationDays, premium);
-        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(insuredAmount, coverageDurationDays, premium, beforeApplyCallback, beforeWaitCallback);
-        let processId = (await this.getDepegProductApi())!.extractProcessIdFromApplicationLogs(receipt.logs);
+        ): Promise<{ status: boolean, processId: string|undefined}> {
+        console.log("applyForPolicy", walletAddress, insuredAmount, coverageDurationSeconds, bundleId);
+        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
+        const processId = (await this.getDepegProductApi())!.extractProcessIdFromApplicationLogs(receipt.logs);
         console.log(`processId: ${processId}`);
-        // TODO: return real result
-        return Promise.resolve(true);
+        return {
+            status: receipt.status === 1, 
+            processId
+        };
     }
+
+    async lastBlockTimestamp(): Promise<number> {
+        const blockNumber = await this.depegProductApi.getSigner().provider?.getBlockNumber() ?? 0;
+        const block = await this.depegProductApi.getSigner().provider?.getBlock(blockNumber);
+        return block?.timestamp ?? 0;
+    }
+
+    async claim(
+        processId: string,
+        beforeTrxCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+    ): Promise<{ status: boolean, claimId: string|undefined}> {
+        const [tx, receipt] = await (await this.getDepegProductApi())!.claim(processId, beforeTrxCallback, beforeWaitCallback);
+        const claimId = (await this.getDepegProductApi())!.extractClaimIdFromLogs(receipt.logs);
+        console.log(`claimId: ${claimId}`);
+        return {
+            status: receipt.status === 1, 
+            claimId
+        };
+    }
+
 }

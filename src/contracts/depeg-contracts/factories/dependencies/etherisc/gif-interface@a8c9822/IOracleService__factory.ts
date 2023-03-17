@@ -28,7 +28,7 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as const;
 
 export class IOracleService__factory {
   static readonly abi = _abi;

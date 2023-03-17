@@ -1,44 +1,55 @@
+import confetti from 'canvas-confetti';
+import { i18n, useTranslation } from "next-i18next";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from "next-i18next";
 import Head from "next/head";
-import { i18n } from "next-i18next";
-import { useSnackbar } from "notistack";
-import Policies from '../components/policies/policies';
-import { useContext, useEffect, useMemo } from 'react';
-import { getInsuranceApi } from '../backend/insurance_api';
-import { AppContext } from '../context/app_context';
 import { useRouter } from 'next/router';
-import { Signer } from 'ethers/lib/ethers';
+import { useSnackbar } from "notistack";
+import { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getBackendApi } from '../backend/backend_api';
 import Bundles from '../components/bundles/bundles';
+import { cleanup, showBundle, showCreationConfirmation } from '../redux/slices/bundles';
+import { RootState } from '../redux/store';
 
 export default function BundlesPage() {
     const { enqueueSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
-    const appContext = useContext(AppContext);
+    const signer = useSelector((state: RootState) => state.chain.signer);
+    const provider = useSelector((state: RootState) => state.chain.provider);
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    const dispatch = useDispatch();
     const router = useRouter();
+    
+    useEffect(() => {
+        dispatch(cleanup());
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps 
 
-    const insurance = useMemo(() => getInsuranceApi(
+    const backend = useMemo(() => getBackendApi(
         enqueueSnackbar,
         t,
-        appContext.data.signer,
-        appContext.data.provider,
-    ), [enqueueSnackbar, appContext, t]);
+        signer,
+        provider,
+    ), [enqueueSnackbar, signer, provider, t]);
 
-    
-    // TODO: reenable this once we can get a bundle count quickly
-    // // if wallet has no policies, redirect to application page
-    // async function redirectToInvest(signer: Signer | undefined) {
-    //     if ( appContext.data.signer !== undefined && await insurance.policiesCount(await signer!!.getAddress()) === 0 ) {
-    //         router.push('/invest');
-    //         return;
-    //     }
-    // }
-
-    // redirectToInvest(appContext.data.signer);
-
-    // useEffect(() => {
-        // redirectToInvest(appContext.data.signer);
-    // }, [appContext.data.signer]);
+    useEffect(() => {
+        async function fetchBundle(id: number, confirmation: boolean) {
+            const bundle = await backend.invest.bundle(id);
+            router.push(`/bundles`, undefined, { shallow: true });
+            dispatch(showBundle(bundle));
+            
+            if (confirmation) {
+                dispatch(showCreationConfirmation(confirmation));
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+        if (router.isReady && router.query.id !== undefined && isConnected) {
+            fetchBundle(parseInt(router.query.id as string), router.query.confirmation !== undefined);
+        }
+    }, [router.isReady, router.query.id, isConnected]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
@@ -46,7 +57,7 @@ export default function BundlesPage() {
                 <title>{t('apptitle')}</title>
             </Head>
 
-            <Bundles insurance={insurance} />
+            <Bundles backend={backend} />
         </>
     )
 }
