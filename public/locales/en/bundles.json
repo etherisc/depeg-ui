@@ -30,6 +30,8 @@
     "state": "State",
     "balance": "Balance",
     "balance_tooltip": "The balance is the total amount of tokens in the risk bundle",
+    "capital": "Capital",
+    "capital_tooltip": "The capital is the total amount of tokens invested by the owner of the risk bundle",
     "capacity": "Capacity",
     "capacity_tooltip": "The capacity is the amount of tokens not in use",
     "locked": "Locked capital",

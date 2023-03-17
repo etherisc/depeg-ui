@@ -31,7 +31,7 @@ describe('When displaying the bundle detail component', () => {
             capital: parseUnits("100000", 6).toString(),
             balance: parseUnits("100123", 6).toString(),
             capacity: parseUnits("90000", 6).toString(),
-            locked: parseUnits("10000", 6).toString(),
+            locked: parseUnits("12000", 6).toString(),
             capitalSupport: parseUnits("80000", 6).toString(),
             minSumInsured: parseUnits("1123", 6).toString(),
             maxSumInsured: parseUnits("10456", 6).toString(),
@@ -55,10 +55,11 @@ describe('When displaying the bundle detail component', () => {
 
         expect(screen.getByText('bundle_state_1')).toBeInTheDocument();
         expect(screen.getByText('USDT 100,123.00')).toBeInTheDocument(); // balance
+        expect(screen.getByText('USDT 100,000.00')).toBeInTheDocument(); // capital
         expect(screen.getByText('USDT 90,000.00')).toBeInTheDocument(); // capacity
-        expect(screen.getByText('USDT 10,000.00')).toBeInTheDocument(); // locked
+        expect(screen.getByText('USDT 12,000.00')).toBeInTheDocument(); // locked
         expect(screen.getByText('USDT 80,000.00')).toBeInTheDocument(); // capital support
-        expect(screen.getByText('USDT 70,000.00')).toBeInTheDocument(); // remaining capital support
+        expect(screen.getByText('USDT 68,000.00')).toBeInTheDocument(); // remaining capital support
         expect(screen.getByTestId("bundle-details")).toHaveTextContent('1,123.00'); // min sum insured
         expect(screen.getByTestId("bundle-details")).toHaveTextContent('10,456.00'); // max sum insured
         expect(screen.getByText('11 / 28 days')).toBeInTheDocument(); // min / max duration
