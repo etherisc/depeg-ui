@@ -1,31 +1,31 @@
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
-import TextField from '@mui/material/TextField'
+import TextField from '@mui/material/TextField';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+import { BigNumber, ethers } from 'ethers';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BundleData, MAX_BUNDLE } from '../../backend/bundle_data';
-import { ApplicationApi, BackendApi } from '../../backend/backend_api';
-import Premium from './premium';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { INPUT_VARIANT } from '../../config/theme';
-import { DatePicker } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
-import { BigNumber, ethers } from 'ethers';
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { ApplicationApi, BackendApi } from '../../backend/backend_api';
+import { BundleData, MAX_BUNDLE } from '../../backend/bundle_data';
 import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from '../../config/appConfig';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
-import { AvailableBundleList } from './available_bundle_list';
-import { filterApplicableBundles } from '../../utils/bundles';
+import { INPUT_VARIANT } from '../../config/theme';
 import { clearPremium, setApplicableBundleIds, setPremium } from '../../redux/slices/application';
-import PayoutExample from './payout_example';
+import { RootState } from '../../redux/store';
+import { filterApplicableBundles } from '../../utils/bundles';
 import TermsAndConditions from '../terms_and_conditions';
+import { AvailableBundleList } from './available_bundle_list';
+import PayoutExample from './payout_example';
+import Premium from './premium';
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -45,7 +45,7 @@ export type IAplicationFormValues = {
     insuredWallet: string;
     insuredAmount: string;
     coverageDuration: string;
-    coverageEndDate: string;
+    coverageEndDate: Dayjs;
     termsAndConditions: boolean;
 };
 
@@ -58,11 +58,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const applicableBundleIds = useSelector((state: RootState) => state.application.applicableBundleIds);
     const selectedBundleId = useSelector((state: RootState) => state.application.selectedBundleId);
     const premium = useSelector((state: RootState) => state.application.premium);
-
-    // update wallet address when it changes
-    useEffect(() => {
-        setValue("insuredWallet", props.connectedWalletAddress);
-    }, [props.connectedWalletAddress]);
 
     const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin.toNumber());
     const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax.toNumber());
@@ -80,12 +75,17 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             insuredWallet: "",
             insuredAmount: undefined,
             coverageDuration: props.applicationApi.coverageDurationDaysMax.toString(),
-            coverageEndDate: dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days').format("YYYY-MM-DD"),
+            coverageEndDate: dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days'),
             termsAndConditions: false,
         }
     });
 
     const watchInsuredAmount = watch("insuredAmount");
+
+    // update wallet address when it changes
+    useEffect(() => {
+        setValue("insuredWallet", props.connectedWalletAddress);
+    }, [props.connectedWalletAddress, setValue]);
 
     // premium
     const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
@@ -208,7 +208,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setCoverageDaysMax(maxCoverageDays);
             const coverageDays = maxCoverageDays < 30 ? maxCoverageDays : 30;
             setValue("coverageDuration", coverageDays.toString());
-            setValue("coverageEndDate", dayjs().add(coverageDays, 'days').format("YYYY-MM-DD"));
+            setValue("coverageEndDate", dayjs().add(coverageDays, 'days'));
             setCoverageUntilMin(dayjs().add(minCoverageDays, 'days'));
             setCoverageUntilMax(dayjs().add(maxCoverageDays, 'days'));
 
@@ -332,7 +332,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 {...field} 
                                 onBlur={async (e) => { 
                                     field.onBlur(); 
-                                    setValue("coverageEndDate", dayjs().startOf('day').add(parseInt(e.target.value), 'days').format("YYYY-MM-DD"));
+                                    setValue("coverageEndDate", dayjs().startOf('day').add(parseInt(e.target.value), 'days'));
                                     await calculatePremium();
                                 }}
                                 InputProps={{
@@ -357,15 +357,14 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                             <DatePicker
                                 {...field} 
                                 label={t('coverageDurationUntil')}
-                                inputFormat="DD.MM.YYYY"
+                                format="DD.MM.YYYY"
                                 disabled={props.formDisabled}
-                                renderInput={(params) => 
-                                    <TextField 
-                                        {...params}
-                                        fullWidth 
-                                        variant={INPUT_VARIANT} 
-                                        />
-                                }
+                                slotProps={{ 
+                                    textField: { 
+                                        variant: INPUT_VARIANT,
+                                        fullWidth: true, 
+                                    }
+                                }}
                                 onAccept={async (date) => {
                                     setValue("coverageDuration", dayjs(date).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
                                     await calculatePremium();
