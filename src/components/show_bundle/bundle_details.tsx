@@ -25,7 +25,7 @@ export default function BundleDetails(props: BundleDetailsProps) {
     const capital = BigNumber.from(props.bundle.capital);
     const locked = BigNumber.from(props.bundle.locked);
     const capitalSupport = BigNumber.from(props.bundle.capitalSupport);
-    const capitalSupportRemaining = BigNumber.from(props.bundle.capitalSupport).sub(locked);
+    let capitalSupportRemaining = BigNumber.from(props.bundle.capitalSupport).sub(locked);
     const minSumInsured = BigNumber.from(props.bundle.minSumInsured);
     const maxSumInsured = BigNumber.from(props.bundle.maxSumInsured);
     const minDuration = props.bundle.minDuration / 86400;
@@ -33,6 +33,10 @@ export default function BundleDetails(props: BundleDetailsProps) {
     const state = props.bundle.state;
     const createdAtTS = props.bundle.createdAt;
     const endTS = props.bundle.createdAt + BigNumber.from(props.bundle.lifetime).toNumber();
+
+    if (capitalSupportRemaining.lt(0)) {
+        capitalSupportRemaining = BigNumber.from(0);
+    }
 
     return (<>
         <Grid container spacing={1} data-testid="bundle-details">
