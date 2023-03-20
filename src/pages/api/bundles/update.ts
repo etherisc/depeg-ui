@@ -3,8 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { BundleData } from "../../../backend/bundle_data";
 import { getDepegRiskpool, getInstanceService } from "../../../backend/gif_registry";
 import { DepegRiskpoolApi } from "../../../backend/riskpool_api";
-import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../../../contracts/depeg-contracts";
-import { IInstanceService } from "../../../contracts/gif-interface/IInstanceService";
+import { DepegProduct, DepegProduct__factory, DepegRiskpool, IInstanceService } from "../../../contracts/depeg-contracts";
 import { getVoidSigner } from "../../../utils/chain";
 import { redisClient } from "../../../utils/redis";
 
@@ -60,7 +59,14 @@ async function updateAllBundles(riskpoolApi: DepegRiskpoolApi): Promise<Array<Bu
     return bundles;
 }
 
-async function getRiskpool(signer: Signer): Promise<{ depegProduct: DepegProduct, depegRiskpool: DepegRiskpool, depegRiskpoolId: number, instanceService: IInstanceService }> {
+async function getRiskpool(signer: Signer): 
+        Promise<{ 
+            depegProduct: DepegProduct, 
+            depegRiskpool: DepegRiskpool, 
+            depegRiskpoolId: number, 
+            instanceService: IInstanceService 
+        }> 
+{
     const depegProduct = DepegProduct__factory.connect(depegProductContractAddress, signer);
     const registryAddress = await depegProduct.getRegistry();
     const instanceService = await getInstanceService(registryAddress, signer);
