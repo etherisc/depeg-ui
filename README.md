@@ -52,6 +52,8 @@ NEXT_PUBLIC_CHAIN_TOKEN_DECIMALS=18
 NEXT_PUBLIC_CHAIN_TOKEN_BLOCKEXPLORER_URL=https://mumbai.polygonscan.com/
 NEXT_PUBLIC_CHAIN_TOKEN_FAUCET_URL=https://faucet.polygon.technology/
 
+# private chain rpc url for backend
+#BACKEND_CHAIN_RPC_URL=https://polygon-testnet-rpc.allthatnode.com:8545
 
 # Depeg configuration
 NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS=0x5930513a430E4D0171870aAe73c1e70edcc1917d

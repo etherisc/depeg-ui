@@ -2,7 +2,7 @@ import { BigNumber } from "ethers";
 import { NextApiRequest, NextApiResponse } from "next";
 import { BundleData } from "../../../backend/bundle_data";
 import { minBigNumber } from "../../../utils/bignumber";
-import { getLastBlockTimestamp, getVoidSigner } from "../../../utils/chain";
+import { getBackendVoidSigner, getLastBlockTimestamp } from "../../../utils/chain";
 import { redisClient } from "../../../utils/redis";
 
 
@@ -19,7 +19,7 @@ export default async function handler(
     }        
 
     const bundles = JSON.parse(bundlesjson) as Array<BundleData>;
-    const lastBlockTimestamp = await getLastBlockTimestamp(await getVoidSigner());
+    const lastBlockTimestamp = await getLastBlockTimestamp(await getBackendVoidSigner());
 
     res.status(200).json(bundles.filter(bundle => {
         // ignore bundles with state not active

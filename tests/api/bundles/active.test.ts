@@ -5,6 +5,7 @@ import handler from '../../../src/pages/api/bundles/active';
 jest.mock('../../../src/utils/chain', () => ({
     ...(jest.requireActual('../../../src/utils/chain')),
     getVoidSigner: jest.fn(),
+    getBackendVoidSigner: jest.fn(),
     getLastBlockTimestamp: jest.fn().mockImplementation(() => 100),
 }));
 

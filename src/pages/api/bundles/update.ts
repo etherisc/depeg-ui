@@ -4,7 +4,7 @@ import { BundleData } from "../../../backend/bundle_data";
 import { getDepegRiskpool, getInstanceService } from "../../../backend/gif_registry";
 import { DepegRiskpoolApi } from "../../../backend/riskpool_api";
 import { DepegProduct, DepegProduct__factory, DepegRiskpool, IInstanceService } from "../../../contracts/depeg-contracts";
-import { getVoidSigner } from "../../../utils/chain";
+import { getBackendVoidSigner } from "../../../utils/chain";
 import { redisClient } from "../../../utils/redis";
 
 const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
@@ -16,7 +16,7 @@ export default async function handler(
 ) {
     console.log("called /api/bundles/update");
 
-    const signer = await getVoidSigner();
+    const signer = await getBackendVoidSigner();
     const { depegRiskpool, depegRiskpoolId, instanceService } = await getRiskpool(signer);
     const riskpoolApi = new DepegRiskpoolApi(depegRiskpool, depegRiskpoolId, instanceService, usd2Decimals);
     await riskpoolApi.initialize();
