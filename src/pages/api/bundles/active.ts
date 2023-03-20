@@ -57,7 +57,7 @@ export default async function handler(
                 console.log("remaining capacity less than 0", bundle.id);
                 return false;
             }
-            if (remainingCapacity.lte(BigNumber.from(bundle.minSumInsured))) {
+            if (remainingCapacity.lt(BigNumber.from(bundle.minSumInsured))) {
                 console.log("remaining capacity less than min sum insured", bundle.id);
                 return false;
             }
