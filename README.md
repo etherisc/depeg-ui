@@ -200,6 +200,12 @@ dokku redis:link depeg-test-goerli-redis goerli-depeg
 # enable let's encrypt for https certificates
 dokku letsencrypt:enable goerli-depeg
 
+# configure backend chain rpc url
+dokku config:set goerli-depeg BACKEND_CHAIN_RPC_URL=<chain rpc url>
+
+# initial update of the bundle cache (probably empty)
+curl https://<application-url>/api/bundles/update
+
 # app should be ready now - open in browser
 
 # do not forget to configure a cronjob to regularly update the bundles. e.g.
