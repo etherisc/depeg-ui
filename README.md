@@ -166,6 +166,50 @@ We use [dokku](https://dokku.com/) for deployment.
 With the current setup (dokku repo is added as remote repo called `dokku` to the local git), deployment is triggered by running the following command in the root directory of the project:
 
 ```
-git push dokku develop:main
+git push dokku <branch-to-deploy>:main
 ```
+
+#### Initial instance setup
+
+Replace application name (`goerli-setup`) with whatever fits your need. DNS is expected to be prepared in advance.
+
+```
+# create dokku application 
+dokku apps:create goerli-depeg
+
+# add new domain and remove default domain
+dokku domains:add goerli-depeg depeg.goerli.etherisc.com
+dokku domains:remove goerli-depeg goerli-depeg.depeg-test.etherisc.com
+
+# configure dokku docker build to load correct instance environment during build
+dokku docker-options:add goerli-depeg build --build-arg INSTANCE=goerli
+
+# set correct proxy ports for http and https
+dokku proxy:ports-remove goerli-depeg http:80:5000
+dokku proxy:ports-add goerli-depeg http:80:3000
+dokku proxy:ports-add goerli-depeg https:443:3000
+
+# create and link redis instance
+dokku redis:create depeg-test-goerli-redis
+dokku redis:link depeg-test-goerli-redis goerli-depeg
+
+# now push deployment via git 
+# 1. add new git remote 'git remote add dokku-goerli dokku@<host>:goerli-staking'
+# 2. 'git push dokku-goerli develop:main'
+
+# enable let's encrypt for https certificates
+dokku letsencrypt:enable goerli-depeg
+
+# app should be ready now - open in browser
+
+# do not forget to configure a cronjob to regularly update the bundles. e.g.
+# '*/5 * * * * curl https://depeg.goerli.etherisc.com/api/bundles/update'
+```
+
+#### Dokku documentaton links: 
+
+- https://dokku.com/docs/deployment/application-deployment/
+- https://dokku.com/docs/advanced-usage/docker-options/
+- https://dokku.com/docs/configuration/domains/
+- https://github.com/dokku/dokku-redis
 
