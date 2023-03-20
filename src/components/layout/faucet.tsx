@@ -73,7 +73,7 @@ export default function Faucet() {
                 <FontAwesomeIcon icon={faCopy} className="fa cursor-pointer" />
             </Typography>
         </Button>
-        {chainTokenFaucetUrl !== undefined && <span>
+        {chainTokenFaucetUrl !== undefined && <>
             <Typography variant="body2" sx={{ fontSize: '10px' }} >
                 {DOT}
             </Typography>
@@ -83,6 +83,6 @@ export default function Faucet() {
                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="fa cursor-pointer" />
                 </Typography>
             </Button>
-        </span>}
+        </>}
     </>);
 }
