@@ -1,9 +1,8 @@
 import { Coder } from "abi-coder";
 import DepegProductBuild from '@etherisc/depeg-contracts/build/contracts/DepegProduct.json';
 import { BigNumber, ContractReceipt, ContractTransaction, Signer, VoidSigner } from "ethers";
-import { DepegProduct, DepegProduct__factory, DepegRiskpool } from "../contracts/depeg-contracts";
+import { DepegProduct, DepegProduct__factory, DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
-import { IInstanceService } from "../contracts/gif-interface";
 import { APPLICATION_STATE_UNDERWRITTEN, PAYOUT_STATE_EXPECTED, PAYOUT_STATE_PAIDOUT, PolicyData } from "./policy_data";
 import { TransactionFailedError } from "../utils/error";
 import { ProductState } from "../types/product_state";

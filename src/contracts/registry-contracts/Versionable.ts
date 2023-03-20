@@ -53,7 +53,7 @@ export declare namespace Versionable {
 
 export interface VersionableInterface extends utils.Interface {
   functions: {
-    "activate(address)": FunctionFragment;
+    "activate(address,address)": FunctionFragment;
     "blockNumber()": FunctionFragment;
     "getVersion(uint256)": FunctionFragment;
     "getVersionInfo(uint48)": FunctionFragment;
@@ -85,7 +85,7 @@ export interface VersionableInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "activate",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "blockNumber",
@@ -209,6 +209,7 @@ export interface Versionable extends BaseContract {
   functions: {
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -263,6 +264,7 @@ export interface Versionable extends BaseContract {
 
   activate(
     implementation: PromiseOrValue<string>,
+    activatedBy: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -317,6 +319,7 @@ export interface Versionable extends BaseContract {
   callStatic: {
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -385,6 +388,7 @@ export interface Versionable extends BaseContract {
   estimateGas: {
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -436,6 +440,7 @@ export interface Versionable extends BaseContract {
   populateTransaction: {
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

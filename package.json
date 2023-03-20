@@ -11,7 +11,6 @@
     "testLoop": "jest --watch",
     "test": "jest",
     "lint": "next lint",
-    "typechainGifInterfaceTypes": "typechain --target ethers-v5 --out-dir src/contracts/gif-interface './node_modules/@etherisc/gif-interface/build/**/*json'",
     "typechainDepegTypes": "typechain --target ethers-v5 --out-dir src/contracts/depeg-contracts './node_modules/@etherisc/depeg-contracts/build/contracts/**/*json'",
     "typechainChainlinkTypes": "typechain --target ethers-v5 --out-dir src/contracts/chainlink-contracts './node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json'",
     "typechainRegistryTypes": "typechain --target ethers-v5 --out-dir src/contracts/registry-contracts './node_modules/@etherisc/registry-contracts/build/contracts/**/*json'"
@@ -57,9 +56,8 @@
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.6.1",
-    "@etherisc/depeg-contracts": "0.0.2-b0f08ed",
-    "@etherisc/gif-interface": "2.0.0-a8c9822",
-    "@etherisc/registry-contracts": "0.0.2-212cdd5",
+    "@etherisc/depeg-contracts": "0.0.2-5e0be55",
+    "@etherisc/registry-contracts": "0.0.2-542802e",
     "@hookform/devtools": "^4.3.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",

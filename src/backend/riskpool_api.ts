@@ -1,7 +1,6 @@
 import IRiskpoolBuild from '@etherisc/gif-interface/build/contracts/IRiskpool.json';
-import { ThreeSixty } from '@mui/icons-material';
 import { Coder } from "abi-coder";
-import { BigNumber, ContractReceipt, ContractTransaction, Signer } from "ethers";
+import { BigNumber, ContractReceipt, ContractTransaction } from "ethers";
 import { DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
 import { finish, start, waitingForTransaction, waitingForUser } from "../redux/slices/transaction";
 import { store } from "../redux/store";

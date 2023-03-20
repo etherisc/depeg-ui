@@ -102,8 +102,8 @@ export interface ChainRegistryV02Interface extends utils.Interface {
     "STAKE()": FunctionFragment;
     "TOKEN()": FunctionFragment;
     "UNDEFINED()": FunctionFragment;
-    "activate(address)": FunctionFragment;
-    "activateAndSetOwner(address,address)": FunctionFragment;
+    "activate(address,address)": FunctionFragment;
+    "activateAndSetOwner(address,address,address)": FunctionFragment;
     "blockNumber()": FunctionFragment;
     "chains()": FunctionFragment;
     "decodeBundleData(uint256)": FunctionFragment;
@@ -246,11 +246,15 @@ export interface ChainRegistryV02Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "UNDEFINED", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "activate",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "activateAndSetOwner",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "blockNumber",
@@ -794,12 +798,14 @@ export interface ChainRegistryV02 extends BaseContract {
 
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1132,12 +1138,14 @@ export interface ChainRegistryV02 extends BaseContract {
 
   activate(
     implementation: PromiseOrValue<string>,
+    activatedBy: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   activateAndSetOwner(
     implementation: PromiseOrValue<string>,
     newOwner: PromiseOrValue<string>,
+    activatedBy: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1466,12 +1474,14 @@ export interface ChainRegistryV02 extends BaseContract {
 
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1852,12 +1862,14 @@ export interface ChainRegistryV02 extends BaseContract {
 
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2154,12 +2166,14 @@ export interface ChainRegistryV02 extends BaseContract {
 
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

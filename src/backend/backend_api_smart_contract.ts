@@ -1,19 +1,18 @@
-import { BigNumber, Signer } from "ethers";
-import { ApplicationApi, BackendApi, InvestApi } from "./backend_api";
-import { createApprovalForTreasury } from "./treasury";
-import { DepegProductApi } from "./depeg_product_api";
-import { PolicyData } from "./policy_data";
-import { ApplicationApiSmartContract } from "./application_api_smart_contract";
-import { InvestApiSmartContract } from "./invest_api_smart_contract";
-import { hasBalance } from "./erc20";
-import { PriceFeed } from "./price_feed/price_feed";
-import { PriceFeedApi } from "./price_feed/api";
-import { ProductState } from "../types/product_state";
-import { json } from "stream/consumers";
-import { BundleData } from "./bundle_data";
-import { Dispatch } from "react";
-import { setMaxActiveBundles, updateBundle } from "../redux/slices/bundles";
 import { AnyAction } from "@reduxjs/toolkit";
+import { BigNumber, Signer } from "ethers";
+import { Dispatch } from "react";
+import { updateBundle } from "../redux/slices/bundles";
+import { ProductState } from "../types/product_state";
+import { ApplicationApiSmartContract } from "./application_api_smart_contract";
+import { ApplicationApi, BackendApi, InvestApi } from "./backend_api";
+import { BundleData } from "./bundle_data";
+import { DepegProductApi } from "./depeg_product_api";
+import { hasBalance } from "./erc20";
+import { InvestApiSmartContract } from "./invest_api_smart_contract";
+import { PolicyData } from "./policy_data";
+import { PriceFeedApi } from "./price_feed/api";
+import { PriceFeed } from "./price_feed/price_feed";
+import { createApprovalForTreasury } from "./treasury";
 
 export class BackendApiSmartContract implements BackendApi {
 

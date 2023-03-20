@@ -1,11 +1,10 @@
-import { BundleData } from "./bundle_data";
-import { DepegProductApi } from "./depeg_product_api";
-import { InvestApi } from "./backend_api";
-import { DepegRiskpoolApi } from "./riskpool_api";
-import { getInstanceService } from "./gif_registry";
 import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { minBigNumber } from "../utils/bignumber";
+import { InvestApi } from "./backend_api";
+import { BundleData } from "./bundle_data";
+import { DepegProductApi } from "./depeg_product_api";
+import { DepegRiskpoolApi } from "./riskpool_api";
 
 export class InvestApiSmartContract implements InvestApi {
     private doNoUseDirectlydepegRiskpoolApi?: DepegRiskpoolApi;

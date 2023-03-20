@@ -29,7 +29,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "LogStakingNewStake",
+    name: "LogStakingNewStakeCreated",
     type: "event",
   },
   {
@@ -619,6 +619,19 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "implementsIStaking",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
   {

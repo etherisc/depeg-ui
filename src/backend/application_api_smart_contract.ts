@@ -1,9 +1,7 @@
-import { BigNumber, ethers } from "ethers";
-import { NoBundleFoundError, BalanceTooSmallError } from "../utils/error";
+import { BigNumber } from "ethers";
+import { ApplicationApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
-import { hasBalance } from "./erc20";
-import { ApplicationApi } from "./backend_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
 
 export class ApplicationApiSmartContract implements ApplicationApi {

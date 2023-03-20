@@ -1,5 +1,5 @@
 import { BigNumber, Signer } from "ethers";
-import { IInstanceService } from "../contracts/gif-interface";
+import { IInstanceService } from "../contracts/depeg-contracts";
 import { IChainRegistry, IChainRegistry__factory, IStaking, IStaking__factory } from "../contracts/registry-contracts";
 
 export default class StakingApi {
