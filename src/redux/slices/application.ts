@@ -31,7 +31,7 @@ export const applicationSlice = createSlice({
             }
         },
         reset: (state) => {
-            state.exampleRate = "0.85";
+            state.exampleRate = "0.9";
             state.bundles = [];
             state.applicableBundleIds = undefined;
             state.selectedBundleId = undefined;

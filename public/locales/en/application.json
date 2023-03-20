@@ -48,8 +48,8 @@
     "example": "Example",
     "payout_example": {
         "title": "How does the protection work and how much will I get?",
-        "text1": "If the price of {{currency}} drops below {{currencyUSD}} {{triggerThreshold}} and does not recover above {{recoveryThreshold}} within {{recoveryWindowHours}} hours, you will receive a payout in {{currency2}}. The payout is based on the price of {{currency}} after 24 hours and will cover your loss at that time (<0>follow this link for the current price</0>). ",
-        "text2": "<0>Example</0>: If you protect {{currency}} {{insuredAmount}} from your wallet and the price of {{currency}} drops and is at {{currencyUSD}} {{exampleRate}} 24 hours after dropping below {{currencyUSD}} {{triggerThreshold}}, you will receive a <1>payout of {{currency2}} {{payoutAmount}}</1>.",
+        "text1": "If the price of {{currency}} drops below {{currencyUSD}} {{triggerThreshold}} and does not recover above {{recoveryThreshold}} within {{recoveryWindowHours}} hours, you will receive a payout in {{currency2}}. The payout is based on the price of {{currency}} after 24 hours and will cover your loss at that time (<0>follow this link for the current price</0>). Payouts are capped at {{currency}} {{minimumPrice}} ({{maximumDepegPct}}% depeg).",
+        "text2": "<0>Example</0>: If you protect {{currency}} {{insuredAmount}} from your wallet and the price of {{currency}} drops and is at {{currencyUSD}} {{exampleRate}} 24 hours after dropping below {{currencyUSD}} {{triggerThreshold}}, you will receive a <1>payout of {{currency2}} {{payoutAmount}}</1>. The maximum payout is {{currency2}} {{maxProtectedAmount}}.",
         "calculation_tooltip": "{{currency2}} {{insuredAmount}} * (1 - {{exampleRate}})"
     }
 }
