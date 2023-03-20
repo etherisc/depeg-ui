@@ -31,7 +31,7 @@ export const applicationSlice = createSlice({
             }
         },
         reset: (state) => {
-            state.exampleRate = (Math.random() * 0.33 + 0.6).toFixed(2);
+            state.exampleRate = "0.85";
             state.bundles = [];
             state.applicableBundleIds = undefined;
             state.selectedBundleId = undefined;
