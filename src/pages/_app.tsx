@@ -16,6 +16,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { etheriscTheme } from '../config/theme';
 import Layout from '../components/layout/layout';
 import { faCartShopping, faShieldHalved, faSackDollar, faCoins, faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { GoogleAnalytics } from "nextjs-google-analytics";
 
 // The following import prevents a Font Awesome icon server-side rendering bug,
 // where the icons flash from a very large icon down to a properly sized one:
@@ -35,6 +36,9 @@ export function App(appProps: AppProps) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
+      {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID !== undefined && 
+        <GoogleAnalytics trackPageViews />
+      }
       <ThemeProvider theme={etheriscTheme}>
         <CssBaseline enableColorScheme />
         <Provider store={store}>

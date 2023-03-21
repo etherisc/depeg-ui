@@ -14,6 +14,7 @@ import { RootState } from "../../redux/store";
 import { ProductState } from "../../types/product_state";
 import { updateAccountBalance } from "../../utils/chain";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
+import { ga_event } from "../../utils/google_analytics";
 import ApplicationForm from "./application_form";
 import PolicyConfirmation from "./policy_confirmation";
 
@@ -216,23 +217,28 @@ export default function Application(props: ApplicationProps) {
     }
 
     async function applyForPolicy(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, premium: BigNumber, bundleId: number) {
+        ga_event("trx_start_application", { category: 'chain_trx' });
         try {
             enableUnloadWarning(true);
 
             setActiveStep(3);
             const approvalSuccess = await doApproval(walletAddress, premium);
             if ( ! approvalSuccess) {
+                ga_event("trx_fail_application_approve", { category: 'chain_trx' });
                 setActiveStep(2);
                 showAllowanceNotice();
                 return;
             }
+            ga_event("trx_success_application_approve", { category: 'chain_trx' });
             setActiveStep(4);
             const applicationResult = await doApplication(walletAddress, insuredAmount, coverageDurationSeconds, bundleId);
             if ( ! applicationResult.status ) {
+                ga_event("trx_fail_application", { category: 'chain_trx' });
                 setActiveStep(2);
                 showAllowanceNotice();
                 return;
             }
+            ga_event("trx_success_application", { category: 'chain_trx' });
             setActiveStep(5);
             await applicationSuccessful(bundleId);
             setProctectionDetails([applicationResult.processId as string, walletAddress, insuredAmount, coverageDurationSeconds])
