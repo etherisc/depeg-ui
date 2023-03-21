@@ -82,6 +82,12 @@ export const bundlesSlice = createSlice({
         setMaxActiveBundles(state, action: PayloadAction<number>) {
             state.maxActiveBundles = action.payload;
         },
+        resetNavigation(state) {
+            state.isShowBundleWithdraw = false;
+            state.isShowBundleFund = false;
+            state.showCreationConfirmation = false;
+            state.showBundle = undefined;
+        }
     },
 });
 
@@ -95,6 +101,7 @@ export const {
     showBundleWithdraw,
     showBundleFund,
     showCreationConfirmation,
+    resetNavigation,
 } = bundlesSlice.actions;
 
 export default bundlesSlice.reducer;
