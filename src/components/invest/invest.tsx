@@ -9,6 +9,7 @@ import { BackendApi } from "../../backend/backend_api";
 import useTransactionNotifications from "../../hooks/trx_notifications";
 import { RootState } from "../../redux/store";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
+import { ga_event } from "../../utils/google_analytics";
 import { REVOKE_INFO_URL } from "../application/application";
 import InvestForm from "./invest_form";
 
@@ -228,6 +229,7 @@ export default function Invest(props: InvestProps) {
         minSumInsured: BigNumber, maxSumInsured: BigNumber, 
         minDuration: number, maxDuration: number, annualPctReturn: number
     ) {
+        ga_event("trx_start_stake", { category: 'chain_trx' });
         try {
             enableUnloadWarning(true);
             const investorWalletAddress = await signer!.getAddress();
@@ -241,17 +243,21 @@ export default function Invest(props: InvestProps) {
             setActiveStep(3);
             const approvalSuccess = await doApproval(investorWalletAddress, investedAmount);
             if ( ! approvalSuccess) {
+                ga_event("trx_fail_stake_approve", { category: 'chain_trx' });
                 setActiveStep(2);
                 showAllowanceNotice();
                 return;
             }
+            ga_event("trx_success_stake_approve", { category: 'chain_trx' });
             setActiveStep(4);
             const investResult = await doInvest(name, lifetime, investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
             if ( ! investResult.status) {
+                ga_event("trx_fail_stake", { category: 'chain_trx' });
                 setActiveStep(2);
                 showAllowanceNotice();
                 return;
             }
+            ga_event("trx_success_stake", { category: 'chain_trx' });
             setActiveStep(5);
             await applicationSuccessful(parseInt(investResult.bundleId as string));
         } finally {
