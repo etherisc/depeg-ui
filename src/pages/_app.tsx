@@ -26,6 +26,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '../redux/store';
 import { removeSigner } from '../utils/chain';
+import { resetSelectedBundle } from '../redux/slices/bundles';
 config.autoAddCss = false; /* eslint-disable import/first */
 
 export function App(appProps: AppProps) {
@@ -54,7 +55,7 @@ export default appWithTranslation(App);
 
 export function AppWithBlockchainConnection(appProps: AppProps) {
   const { t } = useTranslation('common');
-  const reduxDispatch = useDispatch();
+  const dispatch = useDispatch();
   const provider = useSelector((state: RootState) => state.chain.provider);
 
   if (provider != undefined) {
@@ -69,9 +70,9 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
       window.ethereum.on('accountsChanged', function (accounts: string[]) {
         console.log('accountsChanged', accounts);
         if (accounts.length == 0) {
-          removeSigner(reduxDispatch);
+          removeSigner(dispatch);
         } else {
-          getAndUpdateWalletAccount(reduxDispatch);
+          getAndUpdateWalletAccount(dispatch);
         }
         location.reload();
       });
@@ -89,14 +90,14 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
   }
 
   let items = [
-    [t('nav.link.apply'), '/', faCartShopping],
-    [t('nav.link.policies'), '/policies', faShieldHalved],
-    [t('nav.link.invest'), '/stake', faSackDollar],
-    [t('nav.link.bundles'), '/bundles', faCoins],
+    [t('nav.link.apply'), '/', null, faCartShopping],
+    [t('nav.link.policies'), '/policies', null, faShieldHalved],
+    [t('nav.link.invest'), '/stake', null, faSackDollar],
+    [t('nav.link.bundles'), '/bundles', () => dispatch(resetSelectedBundle()), faCoins],
   ];
 
   if (process.env.NEXT_PUBLIC_FEATURE_PRICE === 'true') {
-    items.push([t('nav.link.price'), '/price', faChartLine]);
+    items.push([t('nav.link.price'), '/price', null, faChartLine]);
   }
 
   appProps.pageProps.items = items;
