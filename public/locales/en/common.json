@@ -87,5 +87,8 @@
         "approval_info": "First - give Etherisc contract at {{address}} permission to take {{currency}} {{amount}} from your wallet.",
         "trx_info": "Please confirm the transaction in your wallet",
         "wait_for_trx": "Awaiting onchain transaction confirmation"
+    },
+    "footer": {
+        "staking_website_link_title": "Etherisc DIP Staking"
     }
 }
