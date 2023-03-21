@@ -37,6 +37,7 @@ export interface ChainNftInterface extends utils.Interface {
     "exists(uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getRegistry()": FunctionFragment;
+    "implementsIChainNft()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "mint(address,string)": FunctionFragment;
     "name()": FunctionFragment;
@@ -64,6 +65,7 @@ export interface ChainNftInterface extends utils.Interface {
       | "exists"
       | "getApproved"
       | "getRegistry"
+      | "implementsIChainNft"
       | "isApprovedForAll"
       | "mint"
       | "name"
@@ -105,6 +107,10 @@ export interface ChainNftInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getRegistry",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "implementsIChainNft",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -187,6 +193,10 @@ export interface ChainNftInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRegistry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "implementsIChainNft",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -340,6 +350,8 @@ export interface ChainNft extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { registry: string }>;
 
+    implementsIChainNft(overrides?: CallOverrides): Promise<[boolean]>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -451,6 +463,8 @@ export interface ChainNft extends BaseContract {
 
   getRegistry(overrides?: CallOverrides): Promise<string>;
 
+  implementsIChainNft(overrides?: CallOverrides): Promise<boolean>;
+
   isApprovedForAll(
     owner: PromiseOrValue<string>,
     operator: PromiseOrValue<string>,
@@ -561,6 +575,8 @@ export interface ChainNft extends BaseContract {
     ): Promise<string>;
 
     getRegistry(overrides?: CallOverrides): Promise<string>;
+
+    implementsIChainNft(overrides?: CallOverrides): Promise<boolean>;
 
     isApprovedForAll(
       owner: PromiseOrValue<string>,
@@ -709,6 +725,8 @@ export interface ChainNft extends BaseContract {
 
     getRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
+    implementsIChainNft(overrides?: CallOverrides): Promise<BigNumber>;
+
     isApprovedForAll(
       owner: PromiseOrValue<string>,
       operator: PromiseOrValue<string>,
@@ -820,6 +838,10 @@ export interface ChainNft extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    implementsIChainNft(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       owner: PromiseOrValue<string>,

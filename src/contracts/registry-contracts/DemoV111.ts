@@ -53,8 +53,8 @@ export declare namespace Versionable {
 
 export interface DemoV111Interface extends utils.Interface {
   functions: {
-    "activate(address)": FunctionFragment;
-    "activateAndSetOwner(address,address)": FunctionFragment;
+    "activate(address,address)": FunctionFragment;
+    "activateAndSetOwner(address,address,address)": FunctionFragment;
     "blockNumber()": FunctionFragment;
     "getVersion(uint256)": FunctionFragment;
     "getVersionInfo(uint48)": FunctionFragment;
@@ -103,11 +103,15 @@ export interface DemoV111Interface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "activate",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "activateAndSetOwner",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "blockNumber",
@@ -292,12 +296,14 @@ export interface DemoV111 extends BaseContract {
   functions: {
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -376,12 +382,14 @@ export interface DemoV111 extends BaseContract {
 
   activate(
     implementation: PromiseOrValue<string>,
+    activatedBy: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   activateAndSetOwner(
     implementation: PromiseOrValue<string>,
     newOwner: PromiseOrValue<string>,
+    activatedBy: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -460,12 +468,14 @@ export interface DemoV111 extends BaseContract {
   callStatic: {
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -568,12 +578,14 @@ export interface DemoV111 extends BaseContract {
   estimateGas: {
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -649,12 +661,14 @@ export interface DemoV111 extends BaseContract {
   populateTransaction: {
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

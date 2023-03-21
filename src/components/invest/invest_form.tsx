@@ -1,23 +1,23 @@
+import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+import { BigNumber } from 'ethers';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useMemo, useState } from 'react';
-import { BackendApi } from '../../backend/backend_api';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
-import { Controller, set, SubmitHandler, useForm } from 'react-hook-form';
-import { TextField } from '@mui/material';
-import { INPUT_VARIANT } from '../../config/theme';
-import { DatePicker } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
-import { BigNumber } from 'ethers';
-import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_TWO_DECIMALS } from '../../config/appConfig';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
+import { BackendApi } from '../../backend/backend_api';
+import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_TWO_DECIMALS } from '../../config/appConfig';
+import { INPUT_VARIANT } from '../../config/theme';
 import { RootState } from '../../redux/store';
 import TermsAndConditions from '../terms_and_conditions';
 
@@ -39,7 +39,7 @@ export interface InvestFormProperties {
 export type IInvestFormValues = {
     bundleName: string,
     lifetime: string;
-    lifetimeEndDate: string;
+    lifetimeEndDate: Dayjs;
     investedAmount: string;
     insuredAmountMin: string;
     insuredAmountMax: string;
@@ -55,9 +55,9 @@ export default function InvestForm(props: InvestFormProperties) {
 
     const investProps = props.backend.invest;
     const minLifetimeDays = investProps.minLifetime;
-    const minLifetimeEndDate = dayjs().add(minLifetimeDays, 'days').format("YYYY-MM-DD");
+    const minLifetimeEndDate = dayjs().add(minLifetimeDays, 'days');
     const maxLifetimeDays = investProps.maxLifetime;
-    const maxLifetimeEndDate = dayjs().add(maxLifetimeDays, 'days').format("YYYY-MM-DD");
+    const maxLifetimeEndDate = dayjs().add(maxLifetimeDays, 'days');
     const minInvestedAmount = investProps.minInvestedAmount.toNumber();
     const [ maxInvestedAmount, setMaxInvestedAmount ] = useState(investProps.maxInvestedAmount.toNumber());
     const minSumInsured = investProps.minSumInsured.toNumber();
@@ -75,7 +75,7 @@ export default function InvestForm(props: InvestFormProperties) {
         defaultValues: {
             bundleName: '',
             lifetime: defaultLifetime.toString(),
-            lifetimeEndDate: dayjs().add(defaultLifetime, 'days').format("YYYY-MM-DD"),
+            lifetimeEndDate: dayjs().add(defaultLifetime, 'days'),
             investedAmount: maxInvestedAmount.toString(),
             insuredAmountMin: minSumInsured.toString(),
             insuredAmountMax: maxSumInsured.toString(),
@@ -223,7 +223,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                 }}
                                 onBlur={(e) => {
                                     field.onBlur();
-                                    setValue("lifetimeEndDate", dayjs().startOf('day').add(parseInt(e.target.value), 'days').format("YYYY-MM-DD"));
+                                    setValue("lifetimeEndDate", dayjs().startOf('day').add(parseInt(e.target.value), 'days'));
                                 }}
                                 error={errors.lifetime !== undefined}
                                 helperText={errors.lifetime !== undefined 
@@ -243,18 +243,17 @@ export default function InvestForm(props: InvestFormProperties) {
                             <DatePicker
                                 {...field} 
                                 label={t('lifetimeUntil')}
-                                inputFormat="DD.MM.YYYY"
+                                format="DD.MM.YYYY"
                                 disabled={props.formDisabled}
-                                renderInput={(params) => 
-                                    <TextField 
-                                        {...params}
-                                        fullWidth 
-                                        variant={INPUT_VARIANT} 
-                                        />
-                                }
-                                onAccept={(value: string|null) => {
+                                slotProps={{ 
+                                    textField: { 
+                                        variant: INPUT_VARIANT,
+                                        fullWidth: true, 
+                                    }
+                                }}
+                                onAccept={(value: Dayjs|null) => {
                                     if (value !== null) {
-                                        setValue("lifetime", dayjs(value).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
+                                        setValue("lifetime", value.startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
                                     }
                                 }}
                                 disablePast={true}

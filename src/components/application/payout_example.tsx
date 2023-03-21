@@ -23,6 +23,8 @@ export default function PayoutExample(props: PayoutExampleProps) {
     const triggerThreshold = process.env.NEXT_PUBLIC_DEPEG_TRIGGER_THRESHOLD || '0.995';
     const recoveryThreshold = process.env.NEXT_PUBLIC_DEPEG_RECOVERY_THRESHOLD || '0.999';
     const recoveryWindowHours = process.env.NEXT_PUBLIC_DEPEG_RECOVERY_WINDOW_HOURS || '24';
+    const minimumPrice = process.env.NEXT_PUBLIC_DEPEG_MINIMUM_PRICE || '0.80';
+    const maximumDepegPct = process.env.NEXT_PUBLIC_DEPEG_MAXIMUM_DEPEG_PCT || '20';
     const exampleRate = useSelector((state: RootState) => state.application.exampleRate);
 
     let insuredAmt = 1000;
@@ -34,6 +36,7 @@ export default function PayoutExample(props: PayoutExampleProps) {
 
     const payoutAmt = insuredAmt - insuredAmt * parseFloat(exampleRate);
     const payoutAmount = formatCurrency(payoutAmt, 0);
+    const maxProtectedAmount = formatCurrency(insuredAmt * (1 - parseFloat(minimumPrice)), 0);
 
     return (<>
         <Typography variant="subtitle2" gutterBottom component="div">
@@ -42,13 +45,15 @@ export default function PayoutExample(props: PayoutExampleProps) {
         <Box>
             <Typography variant="body2" gutterBottom component="div" data-testid="text1">
                 <Trans i18nKey="payout_example.text1" t={t} 
-                    values={{ currency, currency2, currencyUSD, triggerThreshold, recoveryThreshold, recoveryWindowHours }}
+                    values={{ currency, currency2, currencyUSD, triggerThreshold, recoveryThreshold, recoveryWindowHours, minimumPrice, maximumDepegPct }}
                     >
                     <Link target="_blank" href="/price" className="no_decoration">{t('payout_example.see_price_page')}</Link>
                     {/* print values for testing */}
                     {triggerThreshold}
                     {recoveryThreshold}
                     {recoveryWindowHours}
+                    {minimumPrice}
+                    {maximumDepegPct}
                 </Trans> 
             </Typography>
             <Typography variant="body2" component="div" data-testid="text2">
@@ -60,6 +65,7 @@ export default function PayoutExample(props: PayoutExampleProps) {
                         currencyUSD, 
                         exampleRate, 
                         triggerThreshold,
+                        maxProtectedAmount,
                     }}
                 >
                     <b>bold</b>
@@ -72,6 +78,7 @@ export default function PayoutExample(props: PayoutExampleProps) {
                     {exampleRate}
                     {insuredAmount}
                     {payoutAmount}
+                    {maxProtectedAmount}
                 </Trans>
             </Typography>
         </Box>

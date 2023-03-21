@@ -4,7 +4,6 @@
 export * as dependencies from "./dependencies";
 export { AggregatorDataProvider__factory } from "./AggregatorDataProvider__factory";
 export { BasicRiskpool2__factory } from "./BasicRiskpool2__factory";
-export { BasicRiskpool2b__factory } from "./BasicRiskpool2b__factory";
 export { BundleRegistry__factory } from "./BundleRegistry__factory";
 export { ComponentRegistry__factory } from "./ComponentRegistry__factory";
 export { DIP__factory } from "./DIP__factory";

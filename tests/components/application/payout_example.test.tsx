@@ -45,9 +45,12 @@ describe('When rendering the PayoutExample', () => {
 
         expect(screen.getByTestId('text1')).toHaveTextContent("0.995");
         expect(screen.getByTestId('text1')).toHaveTextContent("0.999");
+        expect(screen.getByTestId('text1')).toHaveTextContent("0.80"); // lowest price
+        expect(screen.getByTestId('text1')).toHaveTextContent("20"); // max depeg pct
         expect(screen.getByTestId('text2')).toHaveTextContent("0.9");
         expect(screen.getByTestId('text2')).toHaveTextContent("1,000.00");
         expect(screen.getByTestId('text2')).toHaveTextContent("100.00");
+        expect(screen.getByTestId('text2')).toHaveTextContent("200.00"); // max payout
     })
 
     it('with given amount the correct amounts and thresholds are shown', async () => {

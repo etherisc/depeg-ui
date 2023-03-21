@@ -32,7 +32,7 @@ export interface OwnableProxyAdminInterface extends utils.Interface {
     "ACTIVATE_SIGNATURE()": FunctionFragment;
     "getImplementation()": FunctionFragment;
     "getProxy()": FunctionFragment;
-    "getProxyCallData(address,address)": FunctionFragment;
+    "getProxyCallData(address,address,address)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setProxy(address)": FunctionFragment;
@@ -71,7 +71,11 @@ export interface OwnableProxyAdminInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "getProxy", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getProxyCallData",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -187,6 +191,7 @@ export interface OwnableProxyAdmin extends BaseContract {
     getProxyCallData(
       implementation: PromiseOrValue<string>,
       implementationOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string] & { data: string }>;
 
@@ -228,6 +233,7 @@ export interface OwnableProxyAdmin extends BaseContract {
   getProxyCallData(
     implementation: PromiseOrValue<string>,
     implementationOwner: PromiseOrValue<string>,
+    activatedBy: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -271,6 +277,7 @@ export interface OwnableProxyAdmin extends BaseContract {
     getProxyCallData(
       implementation: PromiseOrValue<string>,
       implementationOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -324,6 +331,7 @@ export interface OwnableProxyAdmin extends BaseContract {
     getProxyCallData(
       implementation: PromiseOrValue<string>,
       implementationOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -370,6 +378,7 @@ export interface OwnableProxyAdmin extends BaseContract {
     getProxyCallData(
       implementation: PromiseOrValue<string>,
       implementationOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

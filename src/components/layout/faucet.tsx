@@ -73,14 +73,16 @@ export default function Faucet() {
                 <FontAwesomeIcon icon={faCopy} className="fa cursor-pointer" />
             </Typography>
         </Button>
-        <Typography variant="body2" sx={{ fontSize: '10px' }} >
-            {DOT}
-        </Typography>
-        <Button variant="text" sx={{ p: 0, ml: 1 }} href={chainTokenFaucetUrl!} target="_blank" rel="noreferrer">
+        {chainTokenFaucetUrl !== undefined && <>
             <Typography variant="body2" sx={{ fontSize: '10px' }} >
-                {chainTokenSymbol} faucet
-                <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="fa cursor-pointer" />
+                {DOT}
             </Typography>
-        </Button>
+            <Button variant="text" sx={{ p: 0, ml: 1 }} href={chainTokenFaucetUrl!} target="_blank" rel="noreferrer">
+                <Typography variant="body2" sx={{ fontSize: '10px' }} >
+                    {chainTokenSymbol} faucet
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="fa cursor-pointer" />
+                </Typography>
+            </Button>
+        </>}
     </>);
 }

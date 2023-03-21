@@ -1,4 +1,4 @@
-import { BigNumber, ContractReceipt, ContractTransaction, ethers, Signer } from "ethers";
+import { BigNumber, ContractReceipt, ContractTransaction, Signer } from "ethers";
 import { finish, start, waitingForTransaction, waitingForUser } from "../redux/slices/transaction";
 import { store } from "../redux/store";
 import { TrxType } from "../types/trxtype";

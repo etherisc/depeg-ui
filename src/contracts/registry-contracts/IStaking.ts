@@ -71,6 +71,7 @@ export interface IStakingInterface extends utils.Interface {
     "getInfo(uint256)": FunctionFragment;
     "getRegistry()": FunctionFragment;
     "getStakingWallet()": FunctionFragment;
+    "implementsIStaking()": FunctionFragment;
     "isStakeOwner(uint256,address)": FunctionFragment;
     "isStakingSupported(uint256)": FunctionFragment;
     "isStakingSupportedForType(uint8)": FunctionFragment;
@@ -106,6 +107,7 @@ export interface IStakingInterface extends utils.Interface {
       | "getInfo"
       | "getRegistry"
       | "getStakingWallet"
+      | "implementsIStaking"
       | "isStakeOwner"
       | "isStakingSupported"
       | "isStakingSupportedForType"
@@ -178,6 +180,10 @@ export interface IStakingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getStakingWallet",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "implementsIStaking",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -304,6 +310,10 @@ export interface IStakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "implementsIStaking",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isStakeOwner",
     data: BytesLike
   ): Result;
@@ -363,7 +373,7 @@ export interface IStakingInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "LogStakingNewStake(uint256,address,uint256)": EventFragment;
+    "LogStakingNewStakeCreated(uint256,address,uint256)": EventFragment;
     "LogStakingRewardRateSet(address,uint256,uint256)": EventFragment;
     "LogStakingRewardReservesDecreased(address,uint256,uint256)": EventFragment;
     "LogStakingRewardReservesIncreased(address,uint256,uint256)": EventFragment;
@@ -374,7 +384,7 @@ export interface IStakingInterface extends utils.Interface {
     "LogStakingUnstaked(uint256,address,uint256,uint256,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "LogStakingNewStake"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogStakingNewStakeCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogStakingRewardRateSet"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "LogStakingRewardReservesDecreased"
@@ -389,18 +399,18 @@ export interface IStakingInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "LogStakingUnstaked"): EventFragment;
 }
 
-export interface LogStakingNewStakeEventObject {
+export interface LogStakingNewStakeCreatedEventObject {
   target: BigNumber;
   user: string;
   id: BigNumber;
 }
-export type LogStakingNewStakeEvent = TypedEvent<
+export type LogStakingNewStakeCreatedEvent = TypedEvent<
   [BigNumber, string, BigNumber],
-  LogStakingNewStakeEventObject
+  LogStakingNewStakeCreatedEventObject
 >;
 
-export type LogStakingNewStakeEventFilter =
-  TypedEventFilter<LogStakingNewStakeEvent>;
+export type LogStakingNewStakeCreatedEventFilter =
+  TypedEventFilter<LogStakingNewStakeCreatedEvent>;
 
 export interface LogStakingRewardRateSetEventObject {
   user: string;
@@ -626,6 +636,8 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { stakingWallet: string }>;
 
+    implementsIStaking(overrides?: CallOverrides): Promise<[boolean]>;
+
     isStakeOwner(
       id: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
@@ -806,6 +818,8 @@ export interface IStaking extends BaseContract {
 
   getStakingWallet(overrides?: CallOverrides): Promise<string>;
 
+  implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
+
   isStakeOwner(
     id: PromiseOrValue<BigNumberish>,
     user: PromiseOrValue<string>,
@@ -978,6 +992,8 @@ export interface IStaking extends BaseContract {
 
     getStakingWallet(overrides?: CallOverrides): Promise<string>;
 
+    implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
+
     isStakeOwner(
       id: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
@@ -1070,16 +1086,16 @@ export interface IStaking extends BaseContract {
   };
 
   filters: {
-    "LogStakingNewStake(uint256,address,uint256)"(
+    "LogStakingNewStakeCreated(uint256,address,uint256)"(
       target?: null,
       user?: null,
       id?: null
-    ): LogStakingNewStakeEventFilter;
-    LogStakingNewStake(
+    ): LogStakingNewStakeCreatedEventFilter;
+    LogStakingNewStakeCreated(
       target?: null,
       user?: null,
       id?: null
-    ): LogStakingNewStakeEventFilter;
+    ): LogStakingNewStakeCreatedEventFilter;
 
     "LogStakingRewardRateSet(address,uint256,uint256)"(
       user?: null,
@@ -1240,6 +1256,8 @@ export interface IStaking extends BaseContract {
 
     getStakingWallet(overrides?: CallOverrides): Promise<BigNumber>;
 
+    implementsIStaking(overrides?: CallOverrides): Promise<BigNumber>;
+
     isStakeOwner(
       id: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
@@ -1388,6 +1406,10 @@ export interface IStaking extends BaseContract {
     getRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getStakingWallet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    implementsIStaking(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     isStakeOwner(
       id: PromiseOrValue<BigNumberish>,

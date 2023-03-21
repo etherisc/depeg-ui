@@ -40,7 +40,10 @@ export default function BundlesListDesktop(props: BundlesProps) {
     const investmentApi = props.backend.invest;
     
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
-    const [ pageSize, setPageSize ] = useState(10);
+    const [paginationModel, setPaginationModel] = useState({
+        pageSize: 10,
+        page: 0,
+    });
     const [ showAllBundles, setShowAllBundles ] = useState(true);
     const [ hoveringOverBundleId, setHoveringOverBundleId ] = useState<number | undefined>(undefined);
 
@@ -82,7 +85,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'id', 
             headerName: t('table.header.id'), 
             flex: 0.2,
-            valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
+            valueGetter: (params: GridValueGetterParams) => params.row,
             renderCell: (params: GridRenderCellParams<BundleData>) => {
                 if (params.value?.owner === address) {
                     return (<>{params.value?.id} &nbsp; <FontAwesomeIcon icon={faUser} /></>)
@@ -114,7 +117,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'balance', 
             headerName: t('table.header.balance'), 
             flex: 0.65,
-            valueGetter: (params: GridValueGetterParams<string, BundleData>) => BigNumber.from(params.value),
+            valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
                 const capital = formatCurrencyBN(params.value, props.backend.usd2Decimals);
                 return `${props.backend.usd2} ${capital}`;
@@ -124,7 +127,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'capacity', 
             headerName: t('table.header.capacity'), 
             flex: 0.65,
-            valueGetter: (params: GridValueGetterParams<string, BundleData>) => BigNumber.from(params.value),
+            valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
                 const capacity = formatCurrencyBN(params.value, props.backend.usd2Decimals);
                 return `${props.backend.usd2} ${capacity}`
@@ -134,8 +137,8 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'lifetime', 
             headerName: t('table.header.lifetime'), 
             flex: 0.5,
-            valueGetter: (params: GridValueGetterParams<any, BundleData>) => params.row,
-            colSpan: (params: GridCellParams<BundleData>) => mouseHovering(params.value!.id) ? 2 : 1,
+            valueGetter: (params: GridValueGetterParams) => params.row,
+            colSpan: (params: GridCellParams<BundleData>) => mouseHovering(params.row.id) ? 2 : 1,
             renderCell: (params: GridRenderCellParams<BundleData>) => {
                 if (mouseHovering(params.value!.id)) {
                     return (renderActions(params.value!));
@@ -148,7 +151,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
         },
         {
             field: 'policies', 
-            colSpan: (params: GridCellParams<BundleData>) => mouseHovering(params.value!.id) ? 0 : 1,
+            colSpan: (params: GridCellParams<BundleData>) => mouseHovering(params.row.id) ? 0 : 1,
             headerName: t('table.header.policies'), 
             flex: 0.3
         },
@@ -159,7 +162,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'stakeUsage', 
             headerName: t('table.header.stake_usage'), 
             flex: 0.3,
-            valueGetter: (params: GridValueGetterParams<any, BundleData>) => {
+            valueGetter: (params: GridValueGetterParams) => {
                 const capitalSupport = params.row.capitalSupport !== undefined ? BigNumber.from(params.row.capitalSupport) : undefined;
                 const lockedCapital = params.row.locked !== undefined ? BigNumber.from(params.row.locked) : BigNumber.from(0);
                 let stakeUsage = calculateStakeUsage(capitalSupport, lockedCapital);
@@ -228,14 +231,14 @@ export default function BundlesListDesktop(props: BundlesProps) {
                         sortModel: [{ field: 'apr', sort: 'asc' }, { field: 'coverageUntil', sort: 'asc' }],
                     },
                 }}
-                pageSize={pageSize}
-                rowsPerPageOptions={[5, 10, 20, 50]}
-                onPageSizeChange={(newPageSize: number) => setPageSize(newPageSize)}
-                disableSelectionOnClick={true}
+                paginationModel={paginationModel}
+                pageSizeOptions={[5, 10, 20, 50]}
+                onPaginationModelChange={setPaginationModel}
+                disableRowSelectionOnClick={true}
                 disableColumnMenu={true}
                 componentsProps={{ 
                     row: { 
-                        onMouseEnter: (e: MouseEvent) => {
+                        onMouseEnter: (e: any) => {
                             // console.log("enter", e);
                             // onMouseEnter is also triggered when hovering over the embedded action button and we don't want to change the hover state in that case
                             if ((e.target as HTMLElement).nodeName !== 'DIV') { 
@@ -244,7 +247,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
                             const id = (e.target as HTMLElement).parentElement?.dataset?.id;
                             setHoveringOverBundleId(id !== undefined ? parseInt(id) : undefined);
                         },
-                        onMouseLeave: (e: MouseEvent) => {
+                        onMouseLeave: (e: any) => {
                             // console.log("leave", e);
                             const id = (e.target as HTMLElement).parentElement?.dataset?.id;
                             if (id === undefined) {

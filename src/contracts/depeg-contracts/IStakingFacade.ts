@@ -25,10 +25,14 @@ export interface IStakingFacadeInterface extends utils.Interface {
   functions: {
     "capitalSupport(uint256)": FunctionFragment;
     "getRegistry()": FunctionFragment;
+    "implementsIStaking()": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "capitalSupport" | "getRegistry"
+    nameOrSignatureOrTopic:
+      | "capitalSupport"
+      | "getRegistry"
+      | "implementsIStaking"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -39,6 +43,10 @@ export interface IStakingFacadeInterface extends utils.Interface {
     functionFragment: "getRegistry",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "implementsIStaking",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "capitalSupport",
@@ -46,6 +54,10 @@ export interface IStakingFacadeInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRegistry",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "implementsIStaking",
     data: BytesLike
   ): Result;
 
@@ -85,6 +97,8 @@ export interface IStakingFacade extends BaseContract {
     ): Promise<[BigNumber] & { capitalAmount: BigNumber }>;
 
     getRegistry(overrides?: CallOverrides): Promise<[string]>;
+
+    implementsIStaking(overrides?: CallOverrides): Promise<[boolean]>;
   };
 
   capitalSupport(
@@ -94,6 +108,8 @@ export interface IStakingFacade extends BaseContract {
 
   getRegistry(overrides?: CallOverrides): Promise<string>;
 
+  implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
+
   callStatic: {
     capitalSupport(
       targetNftId: PromiseOrValue<BigNumberish>,
@@ -101,6 +117,8 @@ export interface IStakingFacade extends BaseContract {
     ): Promise<BigNumber>;
 
     getRegistry(overrides?: CallOverrides): Promise<string>;
+
+    implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {};
@@ -112,6 +130,8 @@ export interface IStakingFacade extends BaseContract {
     ): Promise<BigNumber>;
 
     getRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
+    implementsIStaking(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -121,5 +141,9 @@ export interface IStakingFacade extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    implementsIStaking(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

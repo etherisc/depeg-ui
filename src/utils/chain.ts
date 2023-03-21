@@ -78,6 +78,16 @@ export async function getVoidSigner(): Promise<Signer> {
     return new ethers.VoidSigner("0x0000000000000000000000000000000000000000", provider);
 }
 
+/**
+ * Returns a signer that is connected to the chain defined in the env variable NEXT_PUBLIC_CHAIN_RPC_URL.
+ * 
+ * @returns a signer that can be used to sign transactions but cannot send them
+ */
+export async function getBackendVoidSigner(): Promise<Signer> {
+    const provider = new StaticJsonRpcProvider(process.env.BACKEND_CHAIN_RPC_URL || process.env.NEXT_PUBLIC_CHAIN_RPC_URL);
+    return new ethers.VoidSigner("0x0000000000000000000000000000000000000000", provider);
+}
+
 
 export async function getLastBlockTimestamp(signer: Signer): Promise<number> {
     const blockNumber = await signer.provider?.getBlockNumber() ?? 0;

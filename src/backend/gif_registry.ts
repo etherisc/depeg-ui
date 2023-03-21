@@ -1,9 +1,6 @@
 import { Signer } from "ethers";
 import { formatBytes32String } from "ethers/lib/utils";
-import { DepegRiskpool, DepegRiskpool__factory } from "../contracts/depeg-contracts";
-import { IInstanceService, IRiskpoolService, IRiskpoolService__factory } from "../contracts/gif-interface";
-import { IInstanceService__factory } from "../contracts/gif-interface/factories/IInstanceService__factory";
-import { IRegistry__factory } from "../contracts/gif-interface/factories/IRegistry__factory";
+import { DepegRiskpool, DepegRiskpool__factory, IInstanceService, IInstanceService__factory, IRegistry__factory, IRiskpoolService, IRiskpoolService__factory } from "../contracts/depeg-contracts";
 
 export async function getInstanceService(registryAddress: string, signer: Signer): Promise<IInstanceService> {
     console.log("getInstanceService", registryAddress);

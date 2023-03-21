@@ -158,8 +158,11 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "FULL_COLLATERALIZATION_LEVEL()": FunctionFragment;
     "MAX_APR()": FunctionFragment;
     "MAX_BUNDLE_LIFETIME()": FunctionFragment;
+    "MAX_POLICY_COVERAGE()": FunctionFragment;
     "MAX_POLICY_DURATION()": FunctionFragment;
     "MIN_BUNDLE_LIFETIME()": FunctionFragment;
+    "MIN_POLICY_COVERAGE()": FunctionFragment;
+    "MIN_POLICY_DURATION()": FunctionFragment;
     "ONE_YEAR_DURATION()": FunctionFragment;
     "USD_CAPITAL_CAP()": FunctionFragment;
     "activeBundles()": FunctionFragment;
@@ -247,8 +250,11 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "FULL_COLLATERALIZATION_LEVEL"
       | "MAX_APR"
       | "MAX_BUNDLE_LIFETIME"
+      | "MAX_POLICY_COVERAGE"
       | "MAX_POLICY_DURATION"
       | "MIN_BUNDLE_LIFETIME"
+      | "MIN_POLICY_COVERAGE"
+      | "MIN_POLICY_DURATION"
       | "ONE_YEAR_DURATION"
       | "USD_CAPITAL_CAP"
       | "activeBundles"
@@ -350,11 +356,23 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "MAX_POLICY_COVERAGE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "MAX_POLICY_DURATION",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "MIN_BUNDLE_LIFETIME",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MIN_POLICY_COVERAGE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MIN_POLICY_DURATION",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -692,11 +710,23 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "MAX_POLICY_COVERAGE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "MAX_POLICY_DURATION",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "MIN_BUNDLE_LIFETIME",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MIN_POLICY_COVERAGE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MIN_POLICY_DURATION",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1544,9 +1574,15 @@ export interface DepegRiskpool extends BaseContract {
 
     MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    MAX_POLICY_COVERAGE(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MIN_POLICY_COVERAGE(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MIN_POLICY_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1920,9 +1956,15 @@ export interface DepegRiskpool extends BaseContract {
 
   MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
+  MAX_POLICY_COVERAGE(overrides?: CallOverrides): Promise<BigNumber>;
+
   MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
   MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MIN_POLICY_COVERAGE(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MIN_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
   ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2276,9 +2318,15 @@ export interface DepegRiskpool extends BaseContract {
 
     MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
+    MAX_POLICY_COVERAGE(overrides?: CallOverrides): Promise<BigNumber>;
+
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
     MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_POLICY_COVERAGE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2917,9 +2965,15 @@ export interface DepegRiskpool extends BaseContract {
 
     MAX_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
 
+    MAX_POLICY_COVERAGE(overrides?: CallOverrides): Promise<BigNumber>;
+
     MAX_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
     MIN_BUNDLE_LIFETIME(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_POLICY_COVERAGE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MIN_POLICY_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -3259,11 +3313,23 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    MAX_POLICY_COVERAGE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     MAX_POLICY_DURATION(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     MIN_BUNDLE_LIFETIME(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MIN_POLICY_COVERAGE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MIN_POLICY_DURATION(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

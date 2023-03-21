@@ -94,8 +94,8 @@ export interface StakingV01Interface extends utils.Interface {
     "MULTIPLIER_HALF()": FunctionFragment;
     "ROUNDING_DEFAULT()": FunctionFragment;
     "YEAR_DURATION()": FunctionFragment;
-    "activate(address)": FunctionFragment;
-    "activateAndSetOwner(address,address)": FunctionFragment;
+    "activate(address,address)": FunctionFragment;
+    "activateAndSetOwner(address,address,address)": FunctionFragment;
     "blockNumber()": FunctionFragment;
     "calculateCapitalSupport(bytes5,address,uint256)": FunctionFragment;
     "calculateRequiredStaking(bytes5,address,uint256)": FunctionFragment;
@@ -115,6 +115,7 @@ export interface StakingV01Interface extends utils.Interface {
     "getStakingWallet()": FunctionFragment;
     "getVersion(uint256)": FunctionFragment;
     "getVersionInfo(uint48)": FunctionFragment;
+    "implementsIStaking()": FunctionFragment;
     "intToBytes(uint256,uint8)": FunctionFragment;
     "isActivated(uint48)": FunctionFragment;
     "isStakeOwner(uint256,address)": FunctionFragment;
@@ -186,6 +187,7 @@ export interface StakingV01Interface extends utils.Interface {
       | "getStakingWallet"
       | "getVersion"
       | "getVersionInfo"
+      | "implementsIStaking"
       | "intToBytes"
       | "isActivated"
       | "isStakeOwner"
@@ -266,11 +268,15 @@ export interface StakingV01Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "activate",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "activateAndSetOwner",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "blockNumber",
@@ -349,6 +355,10 @@ export interface StakingV01Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getVersionInfo",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "implementsIStaking",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "intToBytes",
@@ -590,6 +600,10 @@ export interface StakingV01Interface extends utils.Interface {
     functionFragment: "getVersionInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "implementsIStaking",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "intToBytes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isActivated",
@@ -703,7 +717,7 @@ export interface StakingV01Interface extends utils.Interface {
 
   events: {
     "Initialized(uint8)": EventFragment;
-    "LogStakingNewStake(uint256,address,uint256)": EventFragment;
+    "LogStakingNewStakeCreated(uint256,address,uint256)": EventFragment;
     "LogStakingRewardRateSet(address,uint256,uint256)": EventFragment;
     "LogStakingRewardReservesDecreased(address,uint256,uint256)": EventFragment;
     "LogStakingRewardReservesIncreased(address,uint256,uint256)": EventFragment;
@@ -717,7 +731,7 @@ export interface StakingV01Interface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LogStakingNewStake"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogStakingNewStakeCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogStakingRewardRateSet"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "LogStakingRewardReservesDecreased"
@@ -741,18 +755,18 @@ export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
-export interface LogStakingNewStakeEventObject {
+export interface LogStakingNewStakeCreatedEventObject {
   target: BigNumber;
   user: string;
   id: BigNumber;
 }
-export type LogStakingNewStakeEvent = TypedEvent<
+export type LogStakingNewStakeCreatedEvent = TypedEvent<
   [BigNumber, string, BigNumber],
-  LogStakingNewStakeEventObject
+  LogStakingNewStakeCreatedEventObject
 >;
 
-export type LogStakingNewStakeEventFilter =
-  TypedEventFilter<LogStakingNewStakeEvent>;
+export type LogStakingNewStakeCreatedEventFilter =
+  TypedEventFilter<LogStakingNewStakeCreatedEvent>;
 
 export interface LogStakingRewardRateSetEventObject {
   user: string;
@@ -940,12 +954,14 @@ export interface StakingV01 extends BaseContract {
 
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1071,6 +1087,8 @@ export interface StakingV01 extends BaseContract {
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[Versionable.VersionInfoStructOutput]>;
+
+    implementsIStaking(overrides?: CallOverrides): Promise<[boolean]>;
 
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
@@ -1261,12 +1279,14 @@ export interface StakingV01 extends BaseContract {
 
   activate(
     implementation: PromiseOrValue<string>,
+    activatedBy: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   activateAndSetOwner(
     implementation: PromiseOrValue<string>,
     newOwner: PromiseOrValue<string>,
+    activatedBy: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1386,6 +1406,8 @@ export interface StakingV01 extends BaseContract {
     _version: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<Versionable.VersionInfoStructOutput>;
+
+  implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
 
   intToBytes(
     x: PromiseOrValue<BigNumberish>,
@@ -1572,12 +1594,14 @@ export interface StakingV01 extends BaseContract {
 
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1697,6 +1721,8 @@ export interface StakingV01 extends BaseContract {
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<Versionable.VersionInfoStructOutput>;
+
+    implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
 
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
@@ -1861,16 +1887,16 @@ export interface StakingV01 extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "LogStakingNewStake(uint256,address,uint256)"(
+    "LogStakingNewStakeCreated(uint256,address,uint256)"(
       target?: null,
       user?: null,
       id?: null
-    ): LogStakingNewStakeEventFilter;
-    LogStakingNewStake(
+    ): LogStakingNewStakeCreatedEventFilter;
+    LogStakingNewStakeCreated(
       target?: null,
       user?: null,
       id?: null
-    ): LogStakingNewStakeEventFilter;
+    ): LogStakingNewStakeCreatedEventFilter;
 
     "LogStakingRewardRateSet(address,uint256,uint256)"(
       user?: null,
@@ -2018,12 +2044,14 @@ export interface StakingV01 extends BaseContract {
 
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2113,6 +2141,8 @@ export interface StakingV01 extends BaseContract {
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    implementsIStaking(overrides?: CallOverrides): Promise<BigNumber>;
 
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
@@ -2304,12 +2334,14 @@ export interface StakingV01 extends BaseContract {
 
     activate(
       implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     activateAndSetOwner(
       implementation: PromiseOrValue<string>,
       newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2397,6 +2429,10 @@ export interface StakingV01 extends BaseContract {
 
     getVersionInfo(
       _version: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    implementsIStaking(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
