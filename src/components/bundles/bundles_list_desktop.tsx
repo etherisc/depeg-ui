@@ -79,7 +79,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
         return (<Box display="flex" justifyContent="flex-end" minWidth="100%">
             <Button variant="text" color="secondary" onClick={() => {
                 ga_event("bundle_details", { category: 'navigation' });
-                dispatch(showBundle(bundleData))
+                dispatch(showBundle(bundleData));
             }} >{t('action.details')}</Button>
         </Box>)
     }
