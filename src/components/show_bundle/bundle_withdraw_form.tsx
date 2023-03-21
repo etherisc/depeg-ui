@@ -31,7 +31,7 @@ export default function BundleWithdrawForm(props: BundleWithdrawFormProps) {
     const balance = BigNumber.from(props.bundle.balance);
     const locked = BigNumber.from(props.bundle.locked);
     const maxWithdrawAmountBN = balance.sub(locked);
-    const maxWithdrawAmount = parseFloat(formatUnits(maxWithdrawAmountBN, props.decimals));
+    const maxWithdrawAmount = parseFloat(formatUnits(maxWithdrawAmountBN, props.decimals)).toFixed(2);
     const minWithdrawAmount = 1;
 
     const { handleSubmit, control, formState, getValues } = useForm<IWithdrawFormValues>({ 
