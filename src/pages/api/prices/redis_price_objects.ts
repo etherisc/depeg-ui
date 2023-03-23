@@ -10,9 +10,9 @@ export class Price extends Entity {
 }
 
 export const PRICE_SCHEMA = new Schema(Price, {
-    roundId: { type: 'number' },
+    roundId: { type: 'number', sortable: true },
     price: { type: 'number' },
-    timestamp: { type: 'date' },
+    timestamp: { type: 'date', sortable: true },
 }, {
     dataStructure: 'HASH'
 });

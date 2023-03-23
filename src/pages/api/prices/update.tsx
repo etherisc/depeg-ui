@@ -18,7 +18,7 @@ export default async function handler(
     const latestPrice = await priceRepository.search().sortBy('roundId', 'DESC').return.first();
     console.log("latestPrice", latestPrice);
 
-    const prices = await fetchPrices(aggregator, parseInt(latestPrice?.roundId ?? '0'));    
+    const prices = await fetchPrices(aggregator, parseInt(latestPrice?.roundId || '0'));    
 
     for (const price of prices) {
         priceRepository.createAndSave({ roundId: price.roundId, price: price.price, timestamp: new Date(price.timestamp * 1000)});
