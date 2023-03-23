@@ -256,7 +256,7 @@ export default function Policies(props: PoliciesProps) {
             valueGetter: (params: GridValueGetterParams) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 const protectedAmount = BigNumber.from(params.value!.suminsured);
-                const payoutCap = BigNumber.from(params.value!.payoutCap);
+                const payoutCap = BigNumber.from(params.value!.payoutCap || 0);
                 return (<>
                     {props.backend.usd1} {formatCurrency(protectedAmount.toNumber(), props.backend.usd1Decimals)}
                     <Tooltip title={t('payoutcap_hint', { 'currency': props.backend.usd2, 'payoutcap': formatCurrency(payoutCap.toNumber(), props.backend.usd1Decimals)})}>
