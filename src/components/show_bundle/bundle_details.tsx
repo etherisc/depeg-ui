@@ -51,16 +51,18 @@ export default function BundleDetails(props: BundleDetailsProps) {
                     {symbol + " " + formatCurrencyBN(capital, props.decimals)} 
                     <WithTooltip tooltipText={t('capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
-            <NameValue name={t('capacity')} value={
-            <>
-                {symbol + " " + formatCurrencyBN(capacity, props.decimals)}
-                <WithTooltip tooltipText={t('capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
-            </>} />
             <NameValue name={t('locked')} value={
                 <>
                     {symbol + " " + formatCurrencyBN(locked, props.decimals)}
                     <WithTooltip tooltipText={t('locked_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>}  />
+            {/* TODO: multiply with protected amount factor */}
+            {/* TODO: next 4 should be USDC */}
+            <NameValue name={t('capacity')} value={
+            <>
+                {symbol + " " + formatCurrencyBN(capacity, props.decimals)}
+                <WithTooltip tooltipText={t('capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
+            </>} />
             <NameValue name={t('supported_capital')} value={
                 <>
                     {symbol + " " + formatCurrencyBN(capitalSupport, props.decimals)}

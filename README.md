@@ -185,16 +185,16 @@ dokku domains:remove goerli-depeg goerli-depeg.depeg-test.etherisc.com
 dokku docker-options:add goerli-depeg build --build-arg INSTANCE=goerli
 
 # set correct proxy ports for http and https
-dokku proxy:ports-remove goerli-depeg http:80:5000
-dokku proxy:ports-add goerli-depeg http:80:3000
 dokku proxy:ports-add goerli-depeg https:443:3000
+dokku proxy:ports-add goerli-depeg http:80:3000
+dokku proxy:ports-remove goerli-depeg http:80:5000
 
 # create and link redis instance
 dokku redis:create depeg-test-goerli-redis
 dokku redis:link depeg-test-goerli-redis goerli-depeg
 
 # now push deployment via git 
-# 1. add new git remote 'git remote add dokku-goerli dokku@<host>:goerli-staking'
+# 1. add new git remote 'git remote add dokku-goerli dokku@<host>:goerli-depeg'
 # 2. 'git push dokku-goerli develop:main'
 
 # enable let's encrypt for https certificates
