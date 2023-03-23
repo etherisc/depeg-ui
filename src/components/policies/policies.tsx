@@ -259,7 +259,7 @@ export default function Policies(props: PoliciesProps) {
                 const payoutCap = BigNumber.from(params.value!.payoutCap);
                 return (<>
                     {props.backend.usd1} {formatCurrency(protectedAmount.toNumber(), props.backend.usd1Decimals)}
-                    <Tooltip title={t('payoutcap_hint', { 'currency': props.backend.usd1, 'payoutcap': formatCurrency(payoutCap.toNumber(), props.backend.usd1Decimals)})}>
+                    <Tooltip title={t('payoutcap_hint', { 'currency': props.backend.usd2, 'payoutcap': formatCurrency(payoutCap.toNumber(), props.backend.usd1Decimals)})}>
                         <Typography color={grey[400]} component="span">
                             <FontAwesomeIcon icon={faCircleInfo} className="fa" />
                         </Typography>
