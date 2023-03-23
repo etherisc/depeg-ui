@@ -15,6 +15,8 @@ export class DepegProductApi {
     private depegRiskpool?: DepegRiskpool;
     private depegRiskpoolId?: number;
     private instanceService?: IInstanceService;
+    // the factor to calculate the protected amount based on the sum insured 
+    private protectedAmountFactor = 1;
 
     constructor(
         depegProductAddress: string,
@@ -30,6 +32,7 @@ export class DepegProductApi {
         this.instanceService = await getInstanceService(registryAddress, this.signer);
         this.depegRiskpoolId = (await this.depegProduct.getRiskpoolId()).toNumber();
         this.depegRiskpool = await getDepegRiskpool(this.instanceService, this.depegRiskpoolId);
+        this.protectedAmountFactor = 100 / (await this.depegRiskpool.getSumInsuredPercentage()).toNumber();
     }
 
     isInitialized(): boolean {
@@ -200,7 +203,7 @@ export class DepegProductApi {
             payoutState: payoutState,
             createdAt: createdAt.toNumber(),
             premium: premiumAmount.toString(),
-            suminsured: sumInsuredAmount.toString(),
+            suminsured: sumInsuredAmount.mul(this.protectedAmountFactor).toString(),
             duration: duration.toNumber(),
             isAllowedToClaim: false,
         } as PolicyData;
