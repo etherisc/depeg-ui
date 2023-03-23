@@ -12,6 +12,7 @@ import { BundleData } from "../../backend/bundle_data";
 import { addBundle, finishLoading, reset, setMaxActiveBundles, showBundle, startLoading } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { formatDateUtc } from "../../utils/date";
+import { ga_event } from "../../utils/google_analytics";
 
 export interface BundlesProps {
     backend: BackendApi;
@@ -83,7 +84,10 @@ export default function BundlesListMobile(props: BundlesProps) {
             <List>
                 {bundlesToShow.map((bundle: BundleData) => (
                     <ListItem disablePadding key={bundle.id}>
-                        <ListItemButton onClick={() => dispatch(showBundle(bundle))}>
+                        <ListItemButton onClick={() => {
+                            ga_event("bundle_details", { category: 'navigation' });
+                            dispatch(showBundle(bundle));
+                        }}>
                             <ListItemIcon>
                                 {renderListIcon(bundle)}
                             </ListItemIcon>

@@ -18,7 +18,7 @@ import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import FaucetListItem from './faucet_list_item';
 
 interface HeaderProps {
-    items: Array<[string, string, IconDefinition]>;
+    items: Array<[string, string, () => void | null, IconDefinition]>;
     title: string;
 }
 
@@ -57,8 +57,8 @@ export default function Header(props: HeaderProps) {
     let listitems = [];
 
     props.items.forEach((item, i) => {
-        const [text, href, icon] = item;
-        links.push(<HeaderLink text={text} href={href} key={`k-${i}`} icon={icon} />);
+        const [text, href, selfAction, icon] = item;
+        links.push(<HeaderLink text={text} href={href} key={`k-${i}`} icon={icon} selfAction={selfAction} />);
         listitems.push(getListItem(text, href, icon));
     });
     listitems.push(<FaucetListItem key="faucet" />);

@@ -19,7 +19,7 @@ import { BackendApi } from '../../backend/backend_api';
 import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_TWO_DECIMALS } from '../../config/appConfig';
 import { INPUT_VARIANT } from '../../config/theme';
 import { RootState } from '../../redux/store';
-import TermsAndConditions from '../terms_and_conditions';
+import TermsOfService from '../terms_of_service';
 
 const formInputVariant = 'outlined';
 
@@ -473,7 +473,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                     />
                             } 
                             disabled={props.formDisabled}
-                            label={<TermsAndConditions />} 
+                            label={<TermsOfService />} 
                             />}
                         />
                 </Grid>

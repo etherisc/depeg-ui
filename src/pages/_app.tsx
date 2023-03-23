@@ -16,6 +16,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { etheriscTheme } from '../config/theme';
 import Layout from '../components/layout/layout';
 import { faCartShopping, faShieldHalved, faSackDollar, faCoins, faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { GoogleAnalytics } from "nextjs-google-analytics";
 
 // The following import prevents a Font Awesome icon server-side rendering bug,
 // where the icons flash from a very large icon down to a properly sized one:
@@ -25,6 +26,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '../redux/store';
 import { removeSigner } from '../utils/chain';
+import { resetSelectedBundle } from '../redux/slices/bundles';
 config.autoAddCss = false; /* eslint-disable import/first */
 
 export function App(appProps: AppProps) {
@@ -35,6 +37,9 @@ export function App(appProps: AppProps) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
+      {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID !== undefined && 
+        <GoogleAnalytics trackPageViews />
+      }
       <ThemeProvider theme={etheriscTheme}>
         <CssBaseline enableColorScheme />
         <Provider store={store}>
@@ -50,7 +55,7 @@ export default appWithTranslation(App);
 
 export function AppWithBlockchainConnection(appProps: AppProps) {
   const { t } = useTranslation('common');
-  const reduxDispatch = useDispatch();
+  const dispatch = useDispatch();
   const provider = useSelector((state: RootState) => state.chain.provider);
 
   if (provider != undefined) {
@@ -65,9 +70,9 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
       window.ethereum.on('accountsChanged', function (accounts: string[]) {
         console.log('accountsChanged', accounts);
         if (accounts.length == 0) {
-          removeSigner(reduxDispatch);
+          removeSigner(dispatch);
         } else {
-          getAndUpdateWalletAccount(reduxDispatch);
+          getAndUpdateWalletAccount(dispatch);
         }
         location.reload();
       });
@@ -85,14 +90,14 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
   }
 
   let items = [
-    [t('nav.link.apply'), '/', faCartShopping],
-    [t('nav.link.policies'), '/policies', faShieldHalved],
-    [t('nav.link.invest'), '/stake', faSackDollar],
-    [t('nav.link.bundles'), '/bundles', faCoins],
+    [t('nav.link.apply'), '/', null, faCartShopping],
+    [t('nav.link.policies'), '/policies', null, faShieldHalved],
+    [t('nav.link.invest'), '/stake', null, faSackDollar],
+    [t('nav.link.bundles'), '/bundles', () => dispatch(resetSelectedBundle()), faCoins],
   ];
 
   if (process.env.NEXT_PUBLIC_FEATURE_PRICE === 'true') {
-    items.push([t('nav.link.price'), '/price', faChartLine]);
+    items.push([t('nav.link.price'), '/price', null, faChartLine]);
   }
 
   appProps.pageProps.items = items;

@@ -12,6 +12,7 @@ import useTransactionNotifications from "../../hooks/trx_notifications";
 import { showBundle, showBundleFund, showBundleWithdraw } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { TransactionFailedError } from "../../utils/error";
+import { ga_event } from "../../utils/google_analytics";
 import BundleActions from "./bundle_actions";
 import BundleDetails from "./bundle_details";
 import BundleFundForm from "./bundle_fund_form";
@@ -38,21 +39,26 @@ export default function ShowBundle(props: ShowBundleProps) {
     useTransactionNotifications();
 
     async function fund(bundle: BundleData): Promise<boolean> {
+        ga_event("bundle_fund", { category: 'navigation' });
         dispatch(showBundleFund(true));
         return Promise.resolve(true);   
     }
 
     async function withdraw(bundle: BundleData): Promise<boolean> {
+        ga_event("bundle_defund", { category: 'navigation' });
         dispatch(showBundleWithdraw(true));
         return Promise.resolve(true);
     }
 
     async function withdrawAmount(bundleId: number, amount: BigNumber): Promise<boolean> {
+        ga_event("trx_start_unstake", { category: 'chain_trx' });
         try {
             const r = await props.backend.invest.withdrawBundle(bundleId, amount);
             showSuccessNotification(t('withdraw_successful'));
+            ga_event("trx_success_unstake", { category: 'chain_trx' });
             return r;
         } catch(e) {
+            ga_event("trx_fail_unstake", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
                 showTrxFailedNotification(e);
@@ -67,9 +73,12 @@ export default function ShowBundle(props: ShowBundleProps) {
     }
 
     async function fundBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
+        ga_event("trx_start_stake_add", { category: 'chain_trx' });
         try {
             await props.backend.createTreasuryApproval(walletAddress!, amount);
+            ga_event("trx_success_stake_add_approval", { category: 'chain_trx' });
         } catch(e) {
+            ga_event("trx_fail_stake_add_approval", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
                 showTrxFailedNotification(e);
@@ -81,9 +90,11 @@ export default function ShowBundle(props: ShowBundleProps) {
         
         try {
             const r = await props.backend.invest.fundBundle(bundleId, amount);
+            ga_event("trx_success_stake_add", { category: 'chain_trx' });
             showSuccessNotification(t('fund_successful'));
             return r;
         } catch(e) {
+            ga_event("trx_fail_stake_add", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
                 showTrxFailedNotification(e);
@@ -99,11 +110,14 @@ export default function ShowBundle(props: ShowBundleProps) {
 
     async function lock(bundle: BundleData): Promise<boolean> {
         const bundleId = bundle.id;
+        ga_event("trx_start_lock", { category: 'chain_trx' });
         try {
             const r = await props.backend.invest.lockBundle(bundleId);
+            ga_event("trx_success_lock", { category: 'chain_trx' });
             showSuccessNotification(t('lock_successful'));
             return r;
         } catch(e) {
+            ga_event("trx_fail_lock", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
                 showTrxFailedNotification(e);
@@ -118,11 +132,14 @@ export default function ShowBundle(props: ShowBundleProps) {
 
     async function unlock(bundle: BundleData): Promise<boolean> {
         const bundleId = bundle.id;
+        ga_event("trx_start_unlock", { category: 'chain_trx' });
         try {
             const r = await props.backend.invest.unlockBundle(bundleId);
+            ga_event("trx_success_unlock", { category: 'chain_trx' });
             showSuccessNotification(t('unlock_successful'));
             return r;
         } catch(e) { 
+            ga_event("trx_fail_unlock", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
                 showTrxFailedNotification(e);
@@ -137,11 +154,14 @@ export default function ShowBundle(props: ShowBundleProps) {
 
     async function close(bundle: BundleData): Promise<boolean> {
         const bundleId = bundle.id;
+        ga_event("trx_start_close", { category: 'chain_trx' });
         try {
             const r = await props.backend.invest.closeBundle(bundleId);
+            ga_event("trx_success_close", { category: 'chain_trx' });
             showSuccessNotification(t('close_successful'));
             return r;
         } catch(e) { 
+            ga_event("trx_fail_close", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
                 showTrxFailedNotification(e);
@@ -156,11 +176,14 @@ export default function ShowBundle(props: ShowBundleProps) {
 
     async function burn(bundle: BundleData): Promise<boolean> {
         const bundleId = bundle.id;
+        ga_event("trx_start_burn", { category: 'chain_trx' });
         try {
             const r = await props.backend.invest.burnBundle(bundleId);
+            ga_event("trx_success_burn", { category: 'chain_trx' });
             showSuccessNotification(t('burn_successful'));
             return r;
         } catch(e) { 
+            ga_event("trx_fail_burn", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
                 showTrxFailedNotification(e);

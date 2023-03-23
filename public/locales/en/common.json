@@ -1,7 +1,7 @@
 {
     "apptitle": "Etherisc Depeg Protection",
     "apptitle_short": "Depeg Protection",
-    "terms_and_conditions": "By checking this box, I confirm that I have read and agree to the <0>Terms and Conditions</0>.",
+    "terms_and_conditions": "By checking this box, I confirm that I have read and agree to the <0>Terms of service</0>.",
     "nav": {
         "link": {
             "invest": "Stake",
@@ -87,5 +87,8 @@
         "approval_info": "First - give Etherisc contract at {{address}} permission to take {{currency}} {{amount}} from your wallet.",
         "trx_info": "Please confirm the transaction in your wallet",
         "wait_for_trx": "Awaiting onchain transaction confirmation"
+    },
+    "footer": {
+        "staking_website_link_title": "Etherisc DIP Staking"
     }
 }

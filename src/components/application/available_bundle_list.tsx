@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { BundleData } from "../../backend/bundle_data";
 import { RootState } from "../../redux/store";
 import { minBigNumber } from "../../utils/bignumber";
+import { ga_event } from "../../utils/google_analytics";
 import { formatCurrencyBN } from "../../utils/numbers";
 
 interface AvailableBundleListProps {
@@ -151,6 +152,7 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
             if (compProps.formDisabled) {
                 return;
             }
+            ga_event("application_switch_bundle", { category: 'navigation' });
             compProps.onBundleSelected(bundle)
         }}
         sx={{ 

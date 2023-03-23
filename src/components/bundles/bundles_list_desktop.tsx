@@ -16,6 +16,7 @@ import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
 import { addBundle, finishLoading, reset, setMaxActiveBundles, showBundle, startLoading } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
+import { ga_event } from "../../utils/google_analytics";
 import { formatCurrencyBN } from "../../utils/numbers";
 import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
 import { LinkBehaviour } from "../link_behaviour";
@@ -76,7 +77,10 @@ export default function BundlesListDesktop(props: BundlesProps) {
 
     function renderActions(bundleData: BundleData) {
         return (<Box display="flex" justifyContent="flex-end" minWidth="100%">
-            <Button variant="text" color="secondary" onClick={() => dispatch(showBundle(bundleData))} >{t('action.details')}</Button>
+            <Button variant="text" color="secondary" onClick={() => {
+                ga_event("bundle_details", { category: 'navigation' });
+                dispatch(showBundle(bundleData));
+            }} >{t('action.details')}</Button>
         </Box>)
     }
 

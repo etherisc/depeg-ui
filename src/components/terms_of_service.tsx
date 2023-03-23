@@ -1,10 +1,10 @@
 import { Link } from "@mui/material";
 import { Trans, useTranslation } from "next-i18next";
 
-export default function TermsAndConditions(props: any) {
+export default function TermsOfService(props: any) {
     const { textKey, url } = props;
     const { t } = useTranslation('common');
-    const terms_and_conditions_url = props.url || process.env.NEXT_PUBLIC_TERMS_AND_CONDITONS_URL || "https://www.etherisc.com/depeg-terms-and-conditions";
+    const terms_and_conditions_url = props.url || process.env.NEXT_PUBLIC_TERMS_AND_CONDITONS_URL || "https://www.etherisc.com/terms-of-service";
     const i18nKey = textKey || 'terms_and_conditions';
 
     return (
