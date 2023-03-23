@@ -34,7 +34,7 @@ export default function PriceInfo(props: PriceInfoProps) {
     const priceHistory = useSelector((state: RootState) => state.price.history);
     const priceHistoryLoading = useSelector((state: RootState) => state.price.historyLoading);
 
-    const disablePriceHistory = process.env.NEXT_PUBLIC_DISABLE_PRICE_HISTORY === 'true' || false;
+    const enablePriceHistory = process.env.NEXT_PUBLIC_FEATURE_PRICE_HISTORY === 'true' || false;
 
     useEffect(() => {
         async function getPrices() {
@@ -46,7 +46,7 @@ export default function PriceInfo(props: PriceInfoProps) {
                     dispatch(setDepeggedAt(depeggedAt));
                 });    
 
-                if ( ! disablePriceHistory) {
+                if ( enablePriceHistory ) {
                     await priceFeedApi.getAllPricesAfter(moment().add(-2, "d").unix(), 
                         (price: PriceInfo) => dispatch(addPrice(price)),
                         () => dispatch(historyLoading()),
@@ -54,19 +54,17 @@ export default function PriceInfo(props: PriceInfoProps) {
                     );
                 }
 
-                // get price update every minute
                 setInterval(async () => {
                     await priceFeedApi.getLatestPrice((price: PriceInfo, triggeredAt: number, depeggedAt: number) => {
                         dispatch(addPrice(price));
                         dispatch(setTriggeredAt(triggeredAt));
                         dispatch(setDepeggedAt(depeggedAt));
                     })
-                }, 60000);    
-                
+                }, 60000);                
             }
         }
         getPrices();
-    }, [isConnected, dispatch, priceFeedApi, disablePriceHistory]);
+    }, [isConnected, dispatch, priceFeedApi, enablePriceHistory]);
 
     return (<>
         <LatestPrice 
