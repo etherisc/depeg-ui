@@ -22,7 +22,7 @@ import { INPUT_VARIANT } from '../../config/theme';
 import { clearPremium, setApplicableBundleIds, setPremium } from '../../redux/slices/application';
 import { RootState } from '../../redux/store';
 import { filterApplicableBundles } from '../../utils/bundles';
-import TermsAndConditions from '../terms_and_conditions';
+import TermsOfService from '../terms_of_service';
 import { AvailableBundleList } from './available_bundle_list';
 import PayoutExample from './payout_example';
 import Premium from './premium';
@@ -422,7 +422,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                         />
                                 } 
                                 disabled={props.formDisabled}
-                                label={<TermsAndConditions />}
+                                label={<TermsOfService />}
                                 />
                         } />
                 </Grid>

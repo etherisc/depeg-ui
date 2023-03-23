@@ -11,7 +11,7 @@ import { BundleData } from "../../backend/bundle_data";
 import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from "../../config/appConfig";
 import { INPUT_VARIANT } from "../../config/theme";
 import { RootState } from "../../redux/store";
-import TermsAndConditions from "../terms_and_conditions";
+import TermsOfService from "../terms_of_service";
 
 interface BundleFundFormProps {
     bundle: BundleData;
@@ -137,7 +137,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
                                     data-testid="t-and-c"
                                     />
                             } 
-                            label={<TermsAndConditions />} />}
+                            label={<TermsOfService />} />}
                         />
                 </Grid>
                 <Grid item xs={12}>
