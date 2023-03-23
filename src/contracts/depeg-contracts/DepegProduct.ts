@@ -131,7 +131,6 @@ export declare namespace ITreasury {
 export interface DepegProductInterface extends utils.Interface {
   functions: {
     "CLAIM_ID()": FunctionFragment;
-    "DEFAULT_DATA_STRUCTURE()": FunctionFragment;
     "GANACHE()": FunctionFragment;
     "MAINNET()": FunctionFragment;
     "NAME()": FunctionFragment;
@@ -175,6 +174,7 @@ export interface DepegProductInterface extends utils.Interface {
     "getPriceDataProvider()": FunctionFragment;
     "getProcessId(address,uint256)": FunctionFragment;
     "getProcessedBalance(address)": FunctionFragment;
+    "getProtectedBalance(bytes32)": FunctionFragment;
     "getProtectedToken()": FunctionFragment;
     "getProtectedWallet(bytes32)": FunctionFragment;
     "getRegistry()": FunctionFragment;
@@ -213,7 +213,6 @@ export interface DepegProductInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "CLAIM_ID"
-      | "DEFAULT_DATA_STRUCTURE"
       | "GANACHE"
       | "MAINNET"
       | "NAME"
@@ -257,6 +256,7 @@ export interface DepegProductInterface extends utils.Interface {
       | "getPriceDataProvider"
       | "getProcessId"
       | "getProcessedBalance"
+      | "getProtectedBalance"
       | "getProtectedToken"
       | "getProtectedWallet"
       | "getRegistry"
@@ -293,10 +293,6 @@ export interface DepegProductInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "CLAIM_ID", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "DEFAULT_DATA_STRUCTURE",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "GANACHE", values?: undefined): string;
   encodeFunctionData(functionFragment: "MAINNET", values?: undefined): string;
   encodeFunctionData(functionFragment: "NAME", values?: undefined): string;
@@ -462,6 +458,10 @@ export interface DepegProductInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getProtectedBalance",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getProtectedToken",
     values?: undefined
   ): string;
@@ -574,10 +574,6 @@ export interface DepegProductInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "CLAIM_ID", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "DEFAULT_DATA_STRUCTURE",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "GANACHE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "MAINNET", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "NAME", data: BytesLike): Result;
@@ -730,6 +726,10 @@ export interface DepegProductInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getProtectedBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getProtectedToken",
     data: BytesLike
   ): Result;
@@ -843,7 +843,7 @@ export interface DepegProductInterface extends utils.Interface {
     "LogComponentStateChanged(uint256,uint8,uint8)": EventFragment;
     "LogComponentSuspended(uint256)": EventFragment;
     "LogComponentUnpaused(uint256)": EventFragment;
-    "LogDepegApplicationCreated(bytes32,address,address,uint256,uint256,uint256)": EventFragment;
+    "LogDepegApplicationCreated(bytes32,address,address,uint256,uint256,uint256,uint256)": EventFragment;
     "LogDepegBlockNumberSet(uint256,string)": EventFragment;
     "LogDepegClaimConfirmed(bytes32,uint256,uint256,uint256,uint256)": EventFragment;
     "LogDepegClaimCreated(bytes32,uint256,uint256)": EventFragment;
@@ -1027,12 +1027,13 @@ export interface LogDepegApplicationCreatedEventObject {
   processId: string;
   policyHolder: string;
   protectedWallet: string;
+  protectedBalance: BigNumber;
   sumInsuredAmount: BigNumber;
   premiumAmount: BigNumber;
   netPremiumAmount: BigNumber;
 }
 export type LogDepegApplicationCreatedEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber, BigNumber],
+  [string, string, string, BigNumber, BigNumber, BigNumber, BigNumber],
   LogDepegApplicationCreatedEventObject
 >;
 
@@ -1329,8 +1330,6 @@ export interface DepegProduct extends BaseContract {
   functions: {
     CLAIM_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    DEFAULT_DATA_STRUCTURE(overrides?: CallOverrides): Promise<[string]>;
-
     GANACHE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     MAINNET(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -1352,7 +1351,7 @@ export interface DepegProduct extends BaseContract {
 
     applyForPolicyWithBundle(
       wallet: PromiseOrValue<string>,
-      sumInsured: PromiseOrValue<BigNumberish>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1562,6 +1561,11 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { claimedBalance: BigNumber }>;
 
+    getProtectedBalance(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { protectedBalance: BigNumber }>;
+
     getProtectedToken(
       overrides?: CallOverrides
     ): Promise<[string] & { protectedToken: string }>;
@@ -1696,8 +1700,6 @@ export interface DepegProduct extends BaseContract {
 
   CLAIM_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
-  DEFAULT_DATA_STRUCTURE(overrides?: CallOverrides): Promise<string>;
-
   GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
   MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1717,7 +1719,7 @@ export interface DepegProduct extends BaseContract {
 
   applyForPolicyWithBundle(
     wallet: PromiseOrValue<string>,
-    sumInsured: PromiseOrValue<BigNumberish>,
+    protectedBalance: PromiseOrValue<BigNumberish>,
     duration: PromiseOrValue<BigNumberish>,
     bundleId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1889,6 +1891,11 @@ export interface DepegProduct extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getProtectedBalance(
+    processId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getProtectedToken(overrides?: CallOverrides): Promise<string>;
 
   getProtectedWallet(
@@ -2013,8 +2020,6 @@ export interface DepegProduct extends BaseContract {
   callStatic: {
     CLAIM_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    DEFAULT_DATA_STRUCTURE(overrides?: CallOverrides): Promise<string>;
-
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2039,7 +2044,7 @@ export interface DepegProduct extends BaseContract {
 
     applyForPolicyWithBundle(
       wallet: PromiseOrValue<string>,
-      sumInsured: PromiseOrValue<BigNumberish>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2202,6 +2207,11 @@ export interface DepegProduct extends BaseContract {
 
     getProcessedBalance(
       protectedWallet: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getProtectedBalance(
+      processId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2374,10 +2384,11 @@ export interface DepegProduct extends BaseContract {
     "LogComponentUnpaused(uint256)"(id?: null): LogComponentUnpausedEventFilter;
     LogComponentUnpaused(id?: null): LogComponentUnpausedEventFilter;
 
-    "LogDepegApplicationCreated(bytes32,address,address,uint256,uint256,uint256)"(
+    "LogDepegApplicationCreated(bytes32,address,address,uint256,uint256,uint256,uint256)"(
       processId?: null,
       policyHolder?: null,
       protectedWallet?: null,
+      protectedBalance?: null,
       sumInsuredAmount?: null,
       premiumAmount?: null,
       netPremiumAmount?: null
@@ -2386,6 +2397,7 @@ export interface DepegProduct extends BaseContract {
       processId?: null,
       policyHolder?: null,
       protectedWallet?: null,
+      protectedBalance?: null,
       sumInsuredAmount?: null,
       premiumAmount?: null,
       netPremiumAmount?: null
@@ -2590,8 +2602,6 @@ export interface DepegProduct extends BaseContract {
   estimateGas: {
     CLAIM_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    DEFAULT_DATA_STRUCTURE(overrides?: CallOverrides): Promise<BigNumber>;
-
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2611,7 +2621,7 @@ export interface DepegProduct extends BaseContract {
 
     applyForPolicyWithBundle(
       wallet: PromiseOrValue<string>,
-      sumInsured: PromiseOrValue<BigNumberish>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2753,6 +2763,11 @@ export interface DepegProduct extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getProtectedBalance(
+      processId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getProtectedToken(overrides?: CallOverrides): Promise<BigNumber>;
 
     getProtectedWallet(
@@ -2870,10 +2885,6 @@ export interface DepegProduct extends BaseContract {
   populateTransaction: {
     CLAIM_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    DEFAULT_DATA_STRUCTURE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     GANACHE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     MAINNET(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2893,7 +2904,7 @@ export interface DepegProduct extends BaseContract {
 
     applyForPolicyWithBundle(
       wallet: PromiseOrValue<string>,
-      sumInsured: PromiseOrValue<BigNumberish>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3046,6 +3057,11 @@ export interface DepegProduct extends BaseContract {
 
     getProcessedBalance(
       protectedWallet: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getProtectedBalance(
+      processId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

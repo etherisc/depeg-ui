@@ -84,6 +84,75 @@ const _abi = [
         name: "instanceId",
         type: "bytes32",
       },
+    ],
+    name: "getInstanceNftId",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getNft",
+    outputs: [
+      {
+        internalType: "contract IChainNftFacade",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes5",
+        name: "chain",
+        type: "bytes5",
+      },
+      {
+        internalType: "uint8",
+        name: "objectType",
+        type: "uint8",
+      },
+    ],
+    name: "objects",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "numberOfObjects",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "instanceId",
+        type: "bytes32",
+      },
       {
         internalType: "uint256",
         name: "riskpoolId",
@@ -114,6 +183,25 @@ const _abi = [
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "chainId",
+        type: "uint256",
+      },
+    ],
+    name: "toChain",
+    outputs: [
+      {
+        internalType: "bytes5",
+        name: "chain",
+        type: "bytes5",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
 ] as const;
