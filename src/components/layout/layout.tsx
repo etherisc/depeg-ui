@@ -33,7 +33,7 @@ export default function Layout({ Component, pageProps }: AppProps) {
         const type = process.env.NEXT_PUBLIC_GLOBAL_NOTICE_TYPE;
         if (notice !== undefined && notice?.trim() !== "" ) {
             return (<>
-                <Container maxWidth={false} sx={{ backgroundColor: 'warning.main' }}>
+                <Container maxWidth={false} sx={{ backgroundColor: `${type}.main` }}>
                     <Container maxWidth="lg">
                         <Collapse in={!noticeDismissed}>
                             <Alert 
