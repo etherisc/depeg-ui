@@ -18,7 +18,7 @@ export default async function handler(
     const latestPrice = await priceRepository.search().sortBy('roundId', 'DESC').return.first();
     console.log("latestPrice", latestPrice);
 
-    const prices = await fetchPrices(aggregator, parseInt(latestPrice?.roundId || '0'));    
+    const prices = await fetchPrices(aggregator, latestPrice?.roundId || 0);    
 
     for (const price of prices) {
         priceRepository.createAndSave({ roundId: price.roundId, price: price.price, timestamp: new Date(price.timestamp * 1000)});
@@ -63,7 +63,7 @@ async function getAggregator(): Promise<AggregatorV3Interface> {
     return AggregatorV3Interface__factory.connect(address, signer);
 }
 
-async function getPriceRepository() {
+export async function getPriceRepository() {
     const priceRepository = (await redisOmClient).fetchRepository(PRICE_SCHEMA);
     priceRepository.createIndex();
     return priceRepository;

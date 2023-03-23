@@ -1,8 +1,8 @@
 import { Schema, Entity } from "redis-om";
 
 export interface Price {
-    roundId: string;
-    price: string;
+    roundId: number;
+    price: number;
     timestamp: Date;
 }
 
@@ -16,5 +16,3 @@ export const PRICE_SCHEMA = new Schema(Price, {
 }, {
     dataStructure: 'HASH'
 });
-
-    
