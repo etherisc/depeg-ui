@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getPriceRepository } from "./update";
+import { getPriceRepository } from "./fetch";
 
+/**
+ * Returns all prices from redis.
+ */
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Array<PriceData>>

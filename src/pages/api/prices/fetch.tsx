@@ -7,6 +7,9 @@ import { PRICE_SCHEMA } from "./redis_price_objects";
 
 const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
 
+/**
+ * Fetch new prices from chainlink and save them to redis. 
+ */
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<number>
