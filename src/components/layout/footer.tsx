@@ -10,7 +10,7 @@ import { useTranslation } from 'next-i18next';
 
 export default function Footer() {
     const { t } = useTranslation('common');
-    const stakingWebsiteUrl = process.env.NEXT_PUBLIC_STAKING_WEBSITE_URL || 'https://staking.etherisc.com';
+    const stakingWebsiteUrl = process.env.NEXT_PUBLIC_STAKING_WEBSITE_URL;
 
     return (
         <footer>
@@ -37,14 +37,16 @@ export default function Footer() {
                     <Box 
                         sx={{ display: { 'xs': 'none', 'md': 'flex' }, ml: 'auto', mr: 0 }} 
                         justifySelf="right" >
-                        <Button variant="text" sx={{ p: 0, ml: 1 }} href={stakingWebsiteUrl} target="_blank" rel="noreferrer">
-                            <Typography variant="body2" sx={{ fontSize: '10px' }} >
-                                {t('footer.staking_website_link_title')}
+                        {stakingWebsiteUrl !== undefined && <>
+                            <Button variant="text" sx={{ p: 0, ml: 1 }} href={stakingWebsiteUrl} target="_blank" rel="noreferrer">
+                                <Typography variant="body2" sx={{ fontSize: '10px' }} >
+                                    {t('footer.staking_website_link_title')}
+                                </Typography>
+                            </Button>
+                            <Typography variant="body2" sx={{ fontSize: '10px', ml: 1, mr: 1 }}>
+                                {DOT}
                             </Typography>
-                        </Button>
-                        <Typography variant="body2" sx={{ fontSize: '10px', ml: 1, mr: 1 }}>
-                            {DOT}
-                        </Typography>
+                        </>}
                         <Faucet />
                         <Typography variant="body2" sx={{ fontSize: '10px', ml: 1 }}>
                             {DOT}
