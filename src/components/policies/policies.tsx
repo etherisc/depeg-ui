@@ -261,7 +261,7 @@ export default function Policies(props: PoliciesProps) {
                     {props.backend.usd1} {formatCurrency(protectedAmount.toNumber(), props.backend.usd1Decimals)}
                     <Tooltip title={t('payoutcap_hint', { 'currency': props.backend.usd2, 'payoutcap': formatCurrency(payoutCap.toNumber(), props.backend.usd1Decimals)})}>
                         <Typography color={grey[400]} component="span">
-                            <FontAwesomeIcon icon={faCircleInfo} className="fa" />
+                            <FontAwesomeIcon icon={faCircleInfo} className="fa" data-testid="icon-payoutcap"/>
                         </Typography>
                     </Tooltip>
                 </>)},
