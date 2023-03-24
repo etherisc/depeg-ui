@@ -59,6 +59,10 @@ export class PriceFeed implements PriceFeedApi {
 
         const priceData = await priceDataRes.json() as PriceData;
 
+        if (priceData.price === undefined) {
+            return;
+        }
+
         const aggregator = await this.getPriceDataProvider();
         const { triggeredAt, depeggedAt } = await aggregator.getLatestPriceInfo();
         const priceInfo: PriceInfo = { 
