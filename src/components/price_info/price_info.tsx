@@ -33,6 +33,7 @@ export default function PriceInfo(props: PriceInfoProps) {
 
     const priceHistory = useSelector((state: RootState) => state.price.history);
     const priceHistoryLoading = useSelector((state: RootState) => state.price.historyLoading);
+    const priceHistoryAfter = useSelector((state: RootState) => state.price.historyAfter);
 
     const enablePriceHistory = process.env.NEXT_PUBLIC_FEATURE_PRICE_HISTORY === 'true' || false;
 
@@ -47,7 +48,7 @@ export default function PriceInfo(props: PriceInfoProps) {
                 });    
 
                 if ( enablePriceHistory ) {
-                    await priceFeedApi.getAllPricesAfter(moment().add(-2, "d").unix(), 
+                    await priceFeedApi.getAllPricesAfter(priceHistoryAfter, 
                         (price: PriceInfo) => dispatch(addPrice(price)),
                         () => dispatch(historyLoading()),
                         () => dispatch(historyLoadingFinished())
@@ -64,7 +65,7 @@ export default function PriceInfo(props: PriceInfoProps) {
             }
         }
         getPrices();
-    }, [isConnected, dispatch, priceFeedApi, enablePriceHistory]);
+    }, [isConnected, dispatch, priceFeedApi, enablePriceHistory, priceHistoryAfter]);
 
     return (<>
         <LatestPrice 

@@ -1,11 +1,14 @@
 import { formatUnits } from "ethers/lib/utils";
 import { Line } from "react-chartjs-2";
 import { CategoryScale, Chart, LinearScale, PointElement, LineElement, Colors, TimeScale, Tooltip } from 'chart.js'; 
-import { LinearProgress, useTheme } from "@mui/material";
+import { Box, Button, LinearProgress, Typography, useTheme } from "@mui/material";
 import FakeData from "./fake_data";
 import 'chartjs-adapter-moment';
 import { useTranslation } from "next-i18next";
 import Color from "color";
+import { useDispatch } from "react-redux";
+import { setHistoryAfter } from "../../redux/slices/price";
+import moment from "moment";
 
 
 interface PriceHistoryProps {
@@ -23,6 +26,7 @@ Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Colors, Ti
 export default function PriceHistory(props: PriceHistoryProps) {
     const { t } = useTranslation(['price', 'common']);
     const theme = useTheme();
+    const dispatch = useDispatch();
 
     const triggerThresholdStr = process.env.NEXT_PUBLIC_DEPEG_TRIGGER_THRESHOLD || '0.995';
     const triggerPrice = parseFloat(triggerThresholdStr);
@@ -84,6 +88,10 @@ export default function PriceHistory(props: PriceHistoryProps) {
             return theme.palette.warning.light;
         }
         return theme.palette.primary.light;
+    }
+
+    function setHistoryAfterRange(amount: number, unit: any) {
+        dispatch(setHistoryAfter(moment().add(amount, unit).unix()))
     }
 
     const data = {
@@ -164,6 +172,15 @@ export default function PriceHistory(props: PriceHistoryProps) {
         <Line 
             options={options}
             data={data} />
+        <Box sx={{ mt: 2 }}>
+            <Button onClick={() => setHistoryAfterRange(-1, 'd')}>{t('chart.time_range.1d')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-2, 'd')}>{t('chart.time_range.2d')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-1, 'w')}>{t('chart.time_range.1w')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-2, 'w')}>{t('chart.time_range.2w')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-1, 'm')}>{t('chart.time_range.1m')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-2, 'm')}>{t('chart.time_range.2m')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-1, 'y')}>{t('chart.time_range.1y')}</Button>
+        </Box>
         {process.env.NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA === 'true' && <FakeData />}
     </>);
 }

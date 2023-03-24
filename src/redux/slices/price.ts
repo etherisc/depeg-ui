@@ -3,6 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { parseUnits } from '@ethersproject/units';
 import { PriceFeedState } from '../../types/price_feed_state';
 import { ProductState } from '../../types/product_state';
+import moment from 'moment';
 
 export type PriceState = {
     symbol: string,
@@ -17,6 +18,8 @@ export type PriceState = {
     history: Array<PriceInfo>,
     // indicates if price history is loading
     historyLoading: boolean,
+    // show all prices after this timestamp
+    historyAfter: number,
     // used for testing only - disables dynamic updates from price feed
     noUpdates: boolean,
     // this is used to indicate if issuing of new policies is allowed
@@ -39,6 +42,7 @@ const initialState: PriceState = {
     depeggedAt: 0,
     history: [], // no initial history
     historyLoading: false,
+    historyAfter: moment().add(-2, "d").unix(),
     noUpdates: false,
     productState: ProductState.Active,
 }
@@ -81,6 +85,9 @@ export const priceSlice = createSlice({
             state.history = action.payload;
             state.latest = action.payload[action.payload.length - 1];
         },
+        setHistoryAfter: (state, action: PayloadAction<number>) => {
+            state.historyAfter = action.payload;
+        },
         setTriggeredAt: (state, action: PayloadAction<number>) => {
             if (state.noUpdates) return;
             state.triggeredAt = action.payload;
@@ -105,6 +112,7 @@ export const {
     addPrice,
     historyLoading,
     historyLoadingFinished,
+    setHistoryAfter,
     loadPriceFeedHistory,
     setTriggeredAt,
     setDepeggedAt,
