@@ -31,7 +31,7 @@ export declare namespace IChainRegistry {
   export type NftInfoStruct = {
     id: PromiseOrValue<BigNumberish>;
     chain: PromiseOrValue<BytesLike>;
-    t: PromiseOrValue<BigNumberish>;
+    objectType: PromiseOrValue<BigNumberish>;
     state: PromiseOrValue<BigNumberish>;
     uri: PromiseOrValue<string>;
     data: PromiseOrValue<BytesLike>;
@@ -53,7 +53,7 @@ export declare namespace IChainRegistry {
   ] & {
     id: BigNumber;
     chain: string;
-    t: number;
+    objectType: number;
     state: number;
     uri: string;
     data: string;
@@ -67,13 +67,13 @@ export interface IChainRegistryInterface extends utils.Interface {
   functions: {
     "blockNumber()": FunctionFragment;
     "chains()": FunctionFragment;
-    "decodeBundleData(uint256)": FunctionFragment;
-    "decodeComponentData(uint256)": FunctionFragment;
-    "decodeInstanceData(uint256)": FunctionFragment;
-    "decodeRegistryData(uint256)": FunctionFragment;
-    "decodeStakeData(uint256)": FunctionFragment;
-    "decodeTokenData(uint256)": FunctionFragment;
-    "exists(uint256)": FunctionFragment;
+    "decodeBundleData(uint96)": FunctionFragment;
+    "decodeComponentData(uint96)": FunctionFragment;
+    "decodeInstanceData(uint96)": FunctionFragment;
+    "decodeRegistryData(uint96)": FunctionFragment;
+    "decodeStakeData(uint96)": FunctionFragment;
+    "decodeTokenData(uint96)": FunctionFragment;
+    "exists(uint96)": FunctionFragment;
     "getBundleNftId(bytes32,uint256)": FunctionFragment;
     "getChainId(uint256)": FunctionFragment;
     "getChainNftId(bytes5)": FunctionFragment;
@@ -82,22 +82,22 @@ export interface IChainRegistryInterface extends utils.Interface {
     "getInstanceServiceFacade(bytes32)": FunctionFragment;
     "getNft()": FunctionFragment;
     "getNftId(bytes5,uint8,uint256)": FunctionFragment;
-    "getNftInfo(uint256)": FunctionFragment;
+    "getNftInfo(uint96)": FunctionFragment;
     "getRegistryNftId(bytes5)": FunctionFragment;
     "getStaking()": FunctionFragment;
     "getTokenNftId(bytes5,address)": FunctionFragment;
     "intToBytes(uint256,uint8)": FunctionFragment;
     "objects(bytes5,uint8)": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
+    "ownerOf(uint96)": FunctionFragment;
     "probeInstance(address)": FunctionFragment;
     "registerBundle(bytes32,uint256,uint256,string,uint256)": FunctionFragment;
     "registerChain(bytes5,string)": FunctionFragment;
     "registerComponent(bytes32,uint256,string)": FunctionFragment;
     "registerInstance(address,string,string)": FunctionFragment;
     "registerRegistry(bytes5,address,string)": FunctionFragment;
-    "registerStake(uint256,address)": FunctionFragment;
+    "registerStake(uint96,address)": FunctionFragment;
     "registerToken(bytes5,address,string)": FunctionFragment;
-    "setObjectState(uint256,uint8)": FunctionFragment;
+    "setObjectState(uint96,uint8)": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
     "toInt(bytes5)": FunctionFragment;
     "toInt(uint32)": FunctionFragment;
@@ -431,8 +431,8 @@ export interface IChainRegistryInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "LogChainRegistryObjectRegistered(uint256,bytes5,uint8,uint8,address)": EventFragment;
-    "LogChainRegistryObjectStateSet(uint256,uint8,uint8,address)": EventFragment;
+    "LogChainRegistryObjectRegistered(uint96,bytes5,uint8,uint8,address)": EventFragment;
+    "LogChainRegistryObjectStateSet(uint96,uint8,uint8,address)": EventFragment;
   };
 
   getEvent(
@@ -446,7 +446,7 @@ export interface IChainRegistryInterface extends utils.Interface {
 export interface LogChainRegistryObjectRegisteredEventObject {
   id: BigNumber;
   chain: string;
-  t: number;
+  objectType: number;
   state: number;
   to: string;
 }
@@ -1177,22 +1177,22 @@ export interface IChainRegistry extends BaseContract {
   };
 
   filters: {
-    "LogChainRegistryObjectRegistered(uint256,bytes5,uint8,uint8,address)"(
+    "LogChainRegistryObjectRegistered(uint96,bytes5,uint8,uint8,address)"(
       id?: null,
       chain?: null,
-      t?: null,
+      objectType?: null,
       state?: null,
       to?: null
     ): LogChainRegistryObjectRegisteredEventFilter;
     LogChainRegistryObjectRegistered(
       id?: null,
       chain?: null,
-      t?: null,
+      objectType?: null,
       state?: null,
       to?: null
     ): LogChainRegistryObjectRegisteredEventFilter;
 
-    "LogChainRegistryObjectStateSet(uint256,uint8,uint8,address)"(
+    "LogChainRegistryObjectStateSet(uint96,uint8,uint8,address)"(
       id?: null,
       stateNew?: null,
       stateOld?: null,

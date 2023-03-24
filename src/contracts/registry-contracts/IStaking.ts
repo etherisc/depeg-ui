@@ -62,20 +62,20 @@ export interface IStakingInterface extends utils.Interface {
     "calculateCapitalSupport(bytes5,address,uint256)": FunctionFragment;
     "calculateRequiredStaking(bytes5,address,uint256)": FunctionFragment;
     "calculateRewards(uint256,uint256)": FunctionFragment;
-    "calculateRewardsIncrement((uint256,uint256,uint256,uint256,uint40,uint40,uint48))": FunctionFragment;
-    "capitalSupport(uint256)": FunctionFragment;
-    "claimRewards(uint256)": FunctionFragment;
-    "createStake(uint256,uint256)": FunctionFragment;
-    "getBundleInfo(uint256)": FunctionFragment;
+    "calculateRewardsIncrement((uint96,uint96,uint256,uint256,uint40,uint40,uint48))": FunctionFragment;
+    "capitalSupport(uint96)": FunctionFragment;
+    "claimRewards(uint96)": FunctionFragment;
+    "createStake(uint96,uint256)": FunctionFragment;
+    "getBundleInfo(uint96)": FunctionFragment;
     "getDip()": FunctionFragment;
-    "getInfo(uint256)": FunctionFragment;
+    "getInfo(uint96)": FunctionFragment;
     "getRegistry()": FunctionFragment;
     "getStakingWallet()": FunctionFragment;
     "implementsIStaking()": FunctionFragment;
-    "isStakeOwner(uint256,address)": FunctionFragment;
-    "isStakingSupported(uint256)": FunctionFragment;
+    "isStakeOwner(uint96,address)": FunctionFragment;
+    "isStakingSupported(uint96)": FunctionFragment;
     "isStakingSupportedForType(uint8)": FunctionFragment;
-    "isUnstakingSupported(uint256)": FunctionFragment;
+    "isUnstakingSupported(uint96)": FunctionFragment;
     "rateDecimals()": FunctionFragment;
     "refillRewardReserves(uint256)": FunctionFragment;
     "rewardBalance()": FunctionFragment;
@@ -83,13 +83,13 @@ export interface IStakingInterface extends utils.Interface {
     "rewardReserves()": FunctionFragment;
     "setRewardRate(uint256)": FunctionFragment;
     "setStakingRate(bytes5,address,uint256)": FunctionFragment;
-    "stake(uint256,uint256)": FunctionFragment;
-    "stakes(uint256)": FunctionFragment;
+    "stake(uint96,uint256)": FunctionFragment;
+    "stakes(uint96)": FunctionFragment;
     "stakingRate(bytes5,address)": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
     "toRate(uint256,int8)": FunctionFragment;
-    "unstake(uint256,uint256)": FunctionFragment;
-    "unstakeAndClaimRewards(uint256)": FunctionFragment;
+    "unstake(uint96,uint256)": FunctionFragment;
+    "unstakeAndClaimRewards(uint96)": FunctionFragment;
     "withdrawRewardReserves(uint256)": FunctionFragment;
   };
 
@@ -373,15 +373,15 @@ export interface IStakingInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "LogStakingNewStakeCreated(uint256,address,uint256)": EventFragment;
+    "LogStakingNewStakeCreated(uint96,address,uint96)": EventFragment;
     "LogStakingRewardRateSet(address,uint256,uint256)": EventFragment;
     "LogStakingRewardReservesDecreased(address,uint256,uint256)": EventFragment;
     "LogStakingRewardReservesIncreased(address,uint256,uint256)": EventFragment;
-    "LogStakingRewardsClaimed(uint256,uint256,uint256)": EventFragment;
-    "LogStakingRewardsUpdated(uint256,uint256,uint256)": EventFragment;
-    "LogStakingStaked(uint256,address,uint256,uint256,uint256)": EventFragment;
+    "LogStakingRewardsClaimed(uint96,uint256,uint256)": EventFragment;
+    "LogStakingRewardsUpdated(uint96,uint256,uint256)": EventFragment;
+    "LogStakingStaked(uint96,address,uint96,uint256,uint256)": EventFragment;
     "LogStakingStakingRateSet(address,bytes5,address,uint256,uint256)": EventFragment;
-    "LogStakingUnstaked(uint256,address,uint256,uint256,uint256)": EventFragment;
+    "LogStakingUnstaked(uint96,address,uint96,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "LogStakingNewStakeCreated"): EventFragment;
@@ -1086,7 +1086,7 @@ export interface IStaking extends BaseContract {
   };
 
   filters: {
-    "LogStakingNewStakeCreated(uint256,address,uint256)"(
+    "LogStakingNewStakeCreated(uint96,address,uint96)"(
       target?: null,
       user?: null,
       id?: null
@@ -1130,7 +1130,7 @@ export interface IStaking extends BaseContract {
       newBalance?: null
     ): LogStakingRewardReservesIncreasedEventFilter;
 
-    "LogStakingRewardsClaimed(uint256,uint256,uint256)"(
+    "LogStakingRewardsClaimed(uint96,uint256,uint256)"(
       id?: null,
       amount?: null,
       newBalance?: null
@@ -1141,7 +1141,7 @@ export interface IStaking extends BaseContract {
       newBalance?: null
     ): LogStakingRewardsClaimedEventFilter;
 
-    "LogStakingRewardsUpdated(uint256,uint256,uint256)"(
+    "LogStakingRewardsUpdated(uint96,uint256,uint256)"(
       id?: null,
       amount?: null,
       newBalance?: null
@@ -1152,7 +1152,7 @@ export interface IStaking extends BaseContract {
       newBalance?: null
     ): LogStakingRewardsUpdatedEventFilter;
 
-    "LogStakingStaked(uint256,address,uint256,uint256,uint256)"(
+    "LogStakingStaked(uint96,address,uint96,uint256,uint256)"(
       target?: null,
       user?: null,
       id?: null,
@@ -1182,7 +1182,7 @@ export interface IStaking extends BaseContract {
       newStakingRate?: null
     ): LogStakingStakingRateSetEventFilter;
 
-    "LogStakingUnstaked(uint256,address,uint256,uint256,uint256)"(
+    "LogStakingUnstaked(uint96,address,uint96,uint256,uint256)"(
       target?: null,
       user?: null,
       id?: null,

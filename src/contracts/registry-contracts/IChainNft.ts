@@ -46,6 +46,7 @@ export interface IChainNftInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "tokenByIndex(uint256)": FunctionFragment;
     "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
+    "totalMinted()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
@@ -69,6 +70,7 @@ export interface IChainNftInterface extends utils.Interface {
       | "supportsInterface"
       | "tokenByIndex"
       | "tokenOfOwnerByIndex"
+      | "totalMinted"
       | "totalSupply"
       | "transferFrom"
   ): FunctionFragment;
@@ -151,6 +153,10 @@ export interface IChainNftInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "totalMinted",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
   ): string;
@@ -208,6 +214,10 @@ export interface IChainNftInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "tokenOfOwnerByIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalMinted",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -385,6 +395,8 @@ export interface IChainNft extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    totalMinted(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferFrom(
@@ -485,6 +497,8 @@ export interface IChainNft extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  totalMinted(overrides?: CallOverrides): Promise<BigNumber>;
+
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferFrom(
@@ -584,6 +598,8 @@ export interface IChainNft extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -721,6 +737,8 @@ export interface IChainNft extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    totalMinted(overrides?: CallOverrides): Promise<BigNumber>;
+
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferFrom(
@@ -823,6 +841,8 @@ export interface IChainNft extends BaseContract {
       index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalMinted(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

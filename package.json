@@ -57,8 +57,8 @@
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.6.1",
-    "@etherisc/depeg-contracts": "0.0.2-b1c3747",
-    "@etherisc/registry-contracts": "0.0.2-542802e",
+    "@etherisc/depeg-contracts": "0.0.2-88a2243",
+    "@etherisc/registry-contracts": "0.0.2-03eae5b",
     "@hookform/devtools": "^4.3.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",

@@ -100,17 +100,17 @@ export interface StakingV01Interface extends utils.Interface {
     "calculateCapitalSupport(bytes5,address,uint256)": FunctionFragment;
     "calculateRequiredStaking(bytes5,address,uint256)": FunctionFragment;
     "calculateRewards(uint256,uint256)": FunctionFragment;
-    "calculateRewardsIncrement((uint256,uint256,uint256,uint256,uint40,uint40,uint48))": FunctionFragment;
-    "capitalSupport(uint256)": FunctionFragment;
-    "claimRewards(uint256)": FunctionFragment;
-    "createStake(uint256,uint256)": FunctionFragment;
+    "calculateRewardsIncrement((uint96,uint96,uint256,uint256,uint40,uint40,uint48))": FunctionFragment;
+    "capitalSupport(uint96)": FunctionFragment;
+    "claimRewards(uint96)": FunctionFragment;
+    "createStake(uint96,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "ftoi(uint256,uint8)": FunctionFragment;
     "ftoi(uint256)": FunctionFragment;
-    "getBundleInfo(uint256)": FunctionFragment;
-    "getBundleState(uint256)": FunctionFragment;
+    "getBundleInfo(uint96)": FunctionFragment;
+    "getBundleState(uint96)": FunctionFragment;
     "getDip()": FunctionFragment;
-    "getInfo(uint256)": FunctionFragment;
+    "getInfo(uint96)": FunctionFragment;
     "getRegistry()": FunctionFragment;
     "getStakingWallet()": FunctionFragment;
     "getVersion(uint256)": FunctionFragment;
@@ -118,10 +118,10 @@ export interface StakingV01Interface extends utils.Interface {
     "implementsIStaking()": FunctionFragment;
     "intToBytes(uint256,uint8)": FunctionFragment;
     "isActivated(uint48)": FunctionFragment;
-    "isStakeOwner(uint256,address)": FunctionFragment;
-    "isStakingSupported(uint256)": FunctionFragment;
+    "isStakeOwner(uint96,address)": FunctionFragment;
+    "isStakingSupported(uint96)": FunctionFragment;
     "isStakingSupportedForType(uint8)": FunctionFragment;
-    "isUnstakingSupported(uint256)": FunctionFragment;
+    "isUnstakingSupported(uint96)": FunctionFragment;
     "itof(uint256)": FunctionFragment;
     "itof(uint256,int8)": FunctionFragment;
     "maxRewardRate()": FunctionFragment;
@@ -136,8 +136,8 @@ export interface StakingV01Interface extends utils.Interface {
     "setRegistry(address)": FunctionFragment;
     "setRewardRate(uint256)": FunctionFragment;
     "setStakingRate(bytes5,address,uint256)": FunctionFragment;
-    "stake(uint256,uint256)": FunctionFragment;
-    "stakes(uint256)": FunctionFragment;
+    "stake(uint96,uint256)": FunctionFragment;
+    "stakes(uint96)": FunctionFragment;
     "stakingRate(bytes5,address)": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
     "toInt(bytes5)": FunctionFragment;
@@ -145,8 +145,8 @@ export interface StakingV01Interface extends utils.Interface {
     "toInt(uint40)": FunctionFragment;
     "toRate(uint256,int8)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "unstake(uint256,uint256)": FunctionFragment;
-    "unstakeAndClaimRewards(uint256)": FunctionFragment;
+    "unstake(uint96,uint256)": FunctionFragment;
+    "unstakeAndClaimRewards(uint96)": FunctionFragment;
     "version()": FunctionFragment;
     "versionParts()": FunctionFragment;
     "versions()": FunctionFragment;
@@ -717,15 +717,15 @@ export interface StakingV01Interface extends utils.Interface {
 
   events: {
     "Initialized(uint8)": EventFragment;
-    "LogStakingNewStakeCreated(uint256,address,uint256)": EventFragment;
+    "LogStakingNewStakeCreated(uint96,address,uint96)": EventFragment;
     "LogStakingRewardRateSet(address,uint256,uint256)": EventFragment;
     "LogStakingRewardReservesDecreased(address,uint256,uint256)": EventFragment;
     "LogStakingRewardReservesIncreased(address,uint256,uint256)": EventFragment;
-    "LogStakingRewardsClaimed(uint256,uint256,uint256)": EventFragment;
-    "LogStakingRewardsUpdated(uint256,uint256,uint256)": EventFragment;
-    "LogStakingStaked(uint256,address,uint256,uint256,uint256)": EventFragment;
+    "LogStakingRewardsClaimed(uint96,uint256,uint256)": EventFragment;
+    "LogStakingRewardsUpdated(uint96,uint256,uint256)": EventFragment;
+    "LogStakingStaked(uint96,address,uint96,uint256,uint256)": EventFragment;
     "LogStakingStakingRateSet(address,bytes5,address,uint256,uint256)": EventFragment;
-    "LogStakingUnstaked(uint256,address,uint256,uint256,uint256)": EventFragment;
+    "LogStakingUnstaked(uint96,address,uint96,uint256,uint256)": EventFragment;
     "LogVersionableActivated(uint48,address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
@@ -1887,7 +1887,7 @@ export interface StakingV01 extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "LogStakingNewStakeCreated(uint256,address,uint256)"(
+    "LogStakingNewStakeCreated(uint96,address,uint96)"(
       target?: null,
       user?: null,
       id?: null
@@ -1931,7 +1931,7 @@ export interface StakingV01 extends BaseContract {
       newBalance?: null
     ): LogStakingRewardReservesIncreasedEventFilter;
 
-    "LogStakingRewardsClaimed(uint256,uint256,uint256)"(
+    "LogStakingRewardsClaimed(uint96,uint256,uint256)"(
       id?: null,
       amount?: null,
       newBalance?: null
@@ -1942,7 +1942,7 @@ export interface StakingV01 extends BaseContract {
       newBalance?: null
     ): LogStakingRewardsClaimedEventFilter;
 
-    "LogStakingRewardsUpdated(uint256,uint256,uint256)"(
+    "LogStakingRewardsUpdated(uint96,uint256,uint256)"(
       id?: null,
       amount?: null,
       newBalance?: null
@@ -1953,7 +1953,7 @@ export interface StakingV01 extends BaseContract {
       newBalance?: null
     ): LogStakingRewardsUpdatedEventFilter;
 
-    "LogStakingStaked(uint256,address,uint256,uint256,uint256)"(
+    "LogStakingStaked(uint96,address,uint96,uint256,uint256)"(
       target?: null,
       user?: null,
       id?: null,
@@ -1983,7 +1983,7 @@ export interface StakingV01 extends BaseContract {
       newStakingRate?: null
     ): LogStakingStakingRateSetEventFilter;
 
-    "LogStakingUnstaked(uint256,address,uint256,uint256,uint256)"(
+    "LogStakingUnstaked(uint96,address,uint96,uint256,uint256)"(
       target?: null,
       user?: null,
       id?: null,

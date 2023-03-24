@@ -17,7 +17,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -28,7 +28,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "ObjectType",
-        name: "t",
+        name: "objectType",
         type: "uint8",
       },
       {
@@ -54,7 +54,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -109,7 +109,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "decodeBundleData",
@@ -148,7 +148,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "decodeComponentData",
@@ -177,7 +177,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "decodeInstanceData",
@@ -206,7 +206,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "decodeRegistryData",
@@ -225,7 +225,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "decodeStakeData",
@@ -233,7 +233,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "ObjectType",
@@ -249,7 +249,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "decodeTokenData",
@@ -268,7 +268,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "exists",
@@ -300,7 +300,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "view",
@@ -338,7 +338,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "view",
@@ -362,7 +362,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "view",
@@ -381,7 +381,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "view",
@@ -442,7 +442,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "view",
@@ -453,7 +453,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "getNftInfo",
@@ -463,7 +463,7 @@ const _abi = [
           {
             internalType: "NftId",
             name: "id",
-            type: "uint256",
+            type: "uint96",
           },
           {
             internalType: "ChainId",
@@ -472,7 +472,7 @@ const _abi = [
           },
           {
             internalType: "ObjectType",
-            name: "t",
+            name: "objectType",
             type: "uint8",
           },
           {
@@ -527,7 +527,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "view",
@@ -564,7 +564,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "view",
@@ -623,7 +623,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "ownerOf",
@@ -714,7 +714,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "nonpayable",
@@ -738,7 +738,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "nonpayable",
@@ -767,7 +767,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "nonpayable",
@@ -796,7 +796,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "nonpayable",
@@ -825,7 +825,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "nonpayable",
@@ -836,7 +836,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "address",
@@ -849,7 +849,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "nonpayable",
@@ -878,7 +878,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "nonpayable",
@@ -889,7 +889,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "enum IChainRegistry.ObjectState",
