@@ -11,6 +11,7 @@ export interface PolicyData {
     duration: number;
     premium: string;
     suminsured: string;
+    payoutCap: string;
     isAllowedToClaim: boolean;
     claim: ClaimData | undefined;
 }

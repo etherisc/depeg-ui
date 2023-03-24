@@ -164,7 +164,6 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "MIN_POLICY_COVERAGE()": FunctionFragment;
     "MIN_POLICY_DURATION()": FunctionFragment;
     "ONE_YEAR_DURATION()": FunctionFragment;
-    "USD_CAPITAL_CAP()": FunctionFragment;
     "activeBundles()": FunctionFragment;
     "approvalCallback()": FunctionFragment;
     "archiveCallback()": FunctionFragment;
@@ -173,6 +172,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "bundles()": FunctionFragment;
     "burnBundle(uint256)": FunctionFragment;
     "calculatePremium(uint256,uint256,uint256)": FunctionFragment;
+    "calculateSumInsured(uint256)": FunctionFragment;
     "closeBundle(uint256)": FunctionFragment;
     "collateralizePolicy(bytes32,uint256)": FunctionFragment;
     "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
@@ -181,8 +181,9 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "decodeApplicationParameterFromData(bytes)": FunctionFragment;
     "decodeBundleParamsFromFilter(bytes)": FunctionFragment;
     "defundBundle(uint256,uint256)": FunctionFragment;
+    "depegPriceIsBelowProtectedDepegPrice(uint256,uint256)": FunctionFragment;
     "detailedBundleApplicationMatch(uint256,uint256,uint256,uint256,uint256,uint256,(uint8,uint256,uint256,bytes,uint256,uint256))": FunctionFragment;
-    "encodeApplicationParameterAsData(address,uint256,uint256,uint256)": FunctionFragment;
+    "encodeApplicationParameterAsData(address,uint256,uint256,uint256,uint256)": FunctionFragment;
     "encodeBundleParamsAsFilter(string,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "fundBundle(uint256,uint256)": FunctionFragment;
     "getActiveBundleId(uint256)": FunctionFragment;
@@ -190,12 +191,14 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "getActivePolicies(uint256)": FunctionFragment;
     "getApr100PercentLevel()": FunctionFragment;
     "getBalance()": FunctionFragment;
+    "getBundle(uint256)": FunctionFragment;
     "getBundleCapitalCap()": FunctionFragment;
     "getBundleFilter(uint256)": FunctionFragment;
     "getBundleId(uint256)": FunctionFragment;
     "getBundleInfo(uint256)": FunctionFragment;
     "getCapacity()": FunctionFragment;
     "getCapital()": FunctionFragment;
+    "getChainRegistry()": FunctionFragment;
     "getCollateralizationLevel()": FunctionFragment;
     "getErc20Token()": FunctionFragment;
     "getFilterDataStructure()": FunctionFragment;
@@ -206,10 +209,12 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     "getName()": FunctionFragment;
     "getOneYearDuration()": FunctionFragment;
     "getOwner()": FunctionFragment;
+    "getProtectedMinDepegPrice(uint256)": FunctionFragment;
     "getRegistry()": FunctionFragment;
     "getRiskpoolCapitalCap()": FunctionFragment;
     "getStaking()": FunctionFragment;
     "getState()": FunctionFragment;
+    "getSumInsuredPercentage()": FunctionFragment;
     "getSumOfSumInsuredCap()": FunctionFragment;
     "getSupportedCapitalAmount(uint256)": FunctionFragment;
     "getTotalValueLocked()": FunctionFragment;
@@ -256,7 +261,6 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "MIN_POLICY_COVERAGE"
       | "MIN_POLICY_DURATION"
       | "ONE_YEAR_DURATION"
-      | "USD_CAPITAL_CAP"
       | "activeBundles"
       | "approvalCallback"
       | "archiveCallback"
@@ -265,6 +269,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "bundles"
       | "burnBundle"
       | "calculatePremium"
+      | "calculateSumInsured"
       | "closeBundle"
       | "collateralizePolicy"
       | "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"
@@ -273,6 +278,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "decodeApplicationParameterFromData"
       | "decodeBundleParamsFromFilter"
       | "defundBundle"
+      | "depegPriceIsBelowProtectedDepegPrice"
       | "detailedBundleApplicationMatch"
       | "encodeApplicationParameterAsData"
       | "encodeBundleParamsAsFilter"
@@ -282,12 +288,14 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "getActivePolicies"
       | "getApr100PercentLevel"
       | "getBalance"
+      | "getBundle"
       | "getBundleCapitalCap"
       | "getBundleFilter"
       | "getBundleId"
       | "getBundleInfo"
       | "getCapacity"
       | "getCapital"
+      | "getChainRegistry"
       | "getCollateralizationLevel"
       | "getErc20Token"
       | "getFilterDataStructure"
@@ -298,10 +306,12 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       | "getName"
       | "getOneYearDuration"
       | "getOwner"
+      | "getProtectedMinDepegPrice"
       | "getRegistry"
       | "getRiskpoolCapitalCap"
       | "getStaking"
       | "getState"
+      | "getSumInsuredPercentage"
       | "getSumOfSumInsuredCap"
       | "getSupportedCapitalAmount"
       | "getTotalValueLocked"
@@ -380,10 +390,6 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "USD_CAPITAL_CAP",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "activeBundles",
     values?: undefined
   ): string;
@@ -415,6 +421,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "calculateSumInsured",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "closeBundle",
@@ -458,6 +468,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "depegPriceIsBelowProtectedDepegPrice",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "detailedBundleApplicationMatch",
     values: [
       PromiseOrValue<BigNumberish>,
@@ -473,6 +487,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     functionFragment: "encodeApplicationParameterAsData",
     values: [
       PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
@@ -515,6 +530,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getBundle",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getBundleCapitalCap",
     values?: undefined
   ): string;
@@ -536,6 +555,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCapital",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getChainRegistry",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -570,6 +593,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "getProtectedMinDepegPrice",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getRegistry",
     values?: undefined
   ): string;
@@ -582,6 +609,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getState", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getSumInsuredPercentage",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getSumOfSumInsuredCap",
     values?: undefined
@@ -734,10 +765,6 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "USD_CAPITAL_CAP",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "activeBundles",
     data: BytesLike
   ): Result;
@@ -761,6 +788,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "burnBundle", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "calculatePremium",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateSumInsured",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -796,6 +827,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "depegPriceIsBelowProtectedDepegPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "detailedBundleApplicationMatch",
     data: BytesLike
   ): Result;
@@ -825,6 +860,7 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getBundle", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getBundleCapitalCap",
     data: BytesLike
@@ -846,6 +882,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getCapital", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getChainRegistry",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getCollateralizationLevel",
     data: BytesLike
@@ -878,6 +918,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "getProtectedMinDepegPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getRegistry",
     data: BytesLike
   ): Result;
@@ -887,6 +931,10 @@ export interface DepegRiskpoolInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getStaking", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getState", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getSumInsuredPercentage",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getSumOfSumInsuredCap",
     data: BytesLike
@@ -1586,8 +1634,6 @@ export interface DepegRiskpool extends BaseContract {
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    USD_CAPITAL_CAP(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     activeBundles(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     approvalCallback(
@@ -1624,6 +1670,11 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { premiumAmount: BigNumber }>;
 
+    calculateSumInsured(
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { sumInsured: BigNumber }>;
+
     closeBundle(
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1638,8 +1689,8 @@ export interface DepegRiskpool extends BaseContract {
     "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
       name: PromiseOrValue<string>,
       lifetime: PromiseOrValue<BigNumberish>,
-      policyMinSumInsured: PromiseOrValue<BigNumberish>,
-      policyMaxSumInsured: PromiseOrValue<BigNumberish>,
+      policyMinProtectedBalance: PromiseOrValue<BigNumberish>,
+      policyMaxProtectedBalance: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
@@ -1661,8 +1712,9 @@ export interface DepegRiskpool extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber] & {
+      [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
         wallet: string;
+        protectedBalance: BigNumber;
         duration: BigNumber;
         bundleId: BigNumber;
         maxPremium: BigNumber;
@@ -1698,6 +1750,12 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    depegPriceIsBelowProtectedDepegPrice(
+      depegPrice: PromiseOrValue<BigNumberish>,
+      targetPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean] & { isBelowProtectedPrice: boolean }>;
+
     detailedBundleApplicationMatch(
       bundleId: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
@@ -1711,6 +1769,7 @@ export interface DepegRiskpool extends BaseContract {
 
     encodeApplicationParameterAsData(
       wallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
@@ -1754,6 +1813,11 @@ export interface DepegRiskpool extends BaseContract {
 
     getBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getBundle(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[IBundle.BundleStructOutput]>;
+
     getBundleCapitalCap(
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { bundleCapitalCap: BigNumber }>;
@@ -1780,6 +1844,8 @@ export interface DepegRiskpool extends BaseContract {
     getCapacity(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getCapital(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getChainRegistry(overrides?: CallOverrides): Promise<[string]>;
 
     getCollateralizationLevel(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1809,6 +1875,11 @@ export interface DepegRiskpool extends BaseContract {
 
     getOwner(overrides?: CallOverrides): Promise<[string]>;
 
+    getProtectedMinDepegPrice(
+      targetPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { protectedDepegPrice: BigNumber }>;
+
     getRegistry(overrides?: CallOverrides): Promise<[string]>;
 
     getRiskpoolCapitalCap(
@@ -1818,6 +1889,10 @@ export interface DepegRiskpool extends BaseContract {
     getStaking(overrides?: CallOverrides): Promise<[string]>;
 
     getState(overrides?: CallOverrides): Promise<[number]>;
+
+    getSumInsuredPercentage(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { sumInsuredPercentage: BigNumber }>;
 
     getSumOfSumInsuredCap(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1968,8 +2043,6 @@ export interface DepegRiskpool extends BaseContract {
 
   ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
-  USD_CAPITAL_CAP(overrides?: CallOverrides): Promise<BigNumber>;
-
   activeBundles(overrides?: CallOverrides): Promise<BigNumber>;
 
   approvalCallback(
@@ -2006,6 +2079,11 @@ export interface DepegRiskpool extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  calculateSumInsured(
+    protectedBalance: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   closeBundle(
     bundleId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2020,8 +2098,8 @@ export interface DepegRiskpool extends BaseContract {
   "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
     name: PromiseOrValue<string>,
     lifetime: PromiseOrValue<BigNumberish>,
-    policyMinSumInsured: PromiseOrValue<BigNumberish>,
-    policyMaxSumInsured: PromiseOrValue<BigNumberish>,
+    policyMinProtectedBalance: PromiseOrValue<BigNumberish>,
+    policyMaxProtectedBalance: PromiseOrValue<BigNumberish>,
     policyMinDuration: PromiseOrValue<BigNumberish>,
     policyMaxDuration: PromiseOrValue<BigNumberish>,
     annualPercentageReturn: PromiseOrValue<BigNumberish>,
@@ -2043,8 +2121,9 @@ export interface DepegRiskpool extends BaseContract {
     data: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, BigNumber, BigNumber] & {
+    [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
       wallet: string;
+      protectedBalance: BigNumber;
       duration: BigNumber;
       bundleId: BigNumber;
       maxPremium: BigNumber;
@@ -2080,6 +2159,12 @@ export interface DepegRiskpool extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  depegPriceIsBelowProtectedDepegPrice(
+    depegPrice: PromiseOrValue<BigNumberish>,
+    targetPrice: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   detailedBundleApplicationMatch(
     bundleId: PromiseOrValue<BigNumberish>,
     minSumInsured: PromiseOrValue<BigNumberish>,
@@ -2093,6 +2178,7 @@ export interface DepegRiskpool extends BaseContract {
 
   encodeApplicationParameterAsData(
     wallet: PromiseOrValue<string>,
+    protectedBalance: PromiseOrValue<BigNumberish>,
     duration: PromiseOrValue<BigNumberish>,
     bundleId: PromiseOrValue<BigNumberish>,
     maxPremium: PromiseOrValue<BigNumberish>,
@@ -2132,6 +2218,11 @@ export interface DepegRiskpool extends BaseContract {
 
   getBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getBundle(
+    idx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IBundle.BundleStructOutput>;
+
   getBundleCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
 
   getBundleFilter(
@@ -2152,6 +2243,8 @@ export interface DepegRiskpool extends BaseContract {
   getCapacity(overrides?: CallOverrides): Promise<BigNumber>;
 
   getCapital(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getChainRegistry(overrides?: CallOverrides): Promise<string>;
 
   getCollateralizationLevel(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2175,6 +2268,11 @@ export interface DepegRiskpool extends BaseContract {
 
   getOwner(overrides?: CallOverrides): Promise<string>;
 
+  getProtectedMinDepegPrice(
+    targetPrice: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getRegistry(overrides?: CallOverrides): Promise<string>;
 
   getRiskpoolCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2182,6 +2280,8 @@ export interface DepegRiskpool extends BaseContract {
   getStaking(overrides?: CallOverrides): Promise<string>;
 
   getState(overrides?: CallOverrides): Promise<number>;
+
+  getSumInsuredPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
   getSumOfSumInsuredCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2330,8 +2430,6 @@ export interface DepegRiskpool extends BaseContract {
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
-    USD_CAPITAL_CAP(overrides?: CallOverrides): Promise<BigNumber>;
-
     activeBundles(overrides?: CallOverrides): Promise<BigNumber>;
 
     approvalCallback(overrides?: CallOverrides): Promise<void>;
@@ -2364,6 +2462,11 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    calculateSumInsured(
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     closeBundle(
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2378,8 +2481,8 @@ export interface DepegRiskpool extends BaseContract {
     "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
       name: PromiseOrValue<string>,
       lifetime: PromiseOrValue<BigNumberish>,
-      policyMinSumInsured: PromiseOrValue<BigNumberish>,
-      policyMaxSumInsured: PromiseOrValue<BigNumberish>,
+      policyMinProtectedBalance: PromiseOrValue<BigNumberish>,
+      policyMaxProtectedBalance: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
@@ -2399,8 +2502,9 @@ export interface DepegRiskpool extends BaseContract {
       data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, BigNumber] & {
+      [string, BigNumber, BigNumber, BigNumber, BigNumber] & {
         wallet: string;
+        protectedBalance: BigNumber;
         duration: BigNumber;
         bundleId: BigNumber;
         maxPremium: BigNumber;
@@ -2436,6 +2540,12 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    depegPriceIsBelowProtectedDepegPrice(
+      depegPrice: PromiseOrValue<BigNumberish>,
+      targetPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     detailedBundleApplicationMatch(
       bundleId: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
@@ -2449,6 +2559,7 @@ export interface DepegRiskpool extends BaseContract {
 
     encodeApplicationParameterAsData(
       wallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
@@ -2488,6 +2599,11 @@ export interface DepegRiskpool extends BaseContract {
 
     getBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getBundle(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IBundle.BundleStructOutput>;
+
     getBundleCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBundleFilter(
@@ -2508,6 +2624,8 @@ export interface DepegRiskpool extends BaseContract {
     getCapacity(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCapital(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getChainRegistry(overrides?: CallOverrides): Promise<string>;
 
     getCollateralizationLevel(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2533,6 +2651,11 @@ export interface DepegRiskpool extends BaseContract {
 
     getOwner(overrides?: CallOverrides): Promise<string>;
 
+    getProtectedMinDepegPrice(
+      targetPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getRegistry(overrides?: CallOverrides): Promise<string>;
 
     getRiskpoolCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2540,6 +2663,8 @@ export interface DepegRiskpool extends BaseContract {
     getStaking(overrides?: CallOverrides): Promise<string>;
 
     getState(overrides?: CallOverrides): Promise<number>;
+
+    getSumInsuredPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     getSumOfSumInsuredCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2977,8 +3102,6 @@ export interface DepegRiskpool extends BaseContract {
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
 
-    USD_CAPITAL_CAP(overrides?: CallOverrides): Promise<BigNumber>;
-
     activeBundles(overrides?: CallOverrides): Promise<BigNumber>;
 
     approvalCallback(
@@ -3015,6 +3138,11 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    calculateSumInsured(
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     closeBundle(
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3029,8 +3157,8 @@ export interface DepegRiskpool extends BaseContract {
     "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
       name: PromiseOrValue<string>,
       lifetime: PromiseOrValue<BigNumberish>,
-      policyMinSumInsured: PromiseOrValue<BigNumberish>,
-      policyMaxSumInsured: PromiseOrValue<BigNumberish>,
+      policyMinProtectedBalance: PromiseOrValue<BigNumberish>,
+      policyMaxProtectedBalance: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
@@ -3064,6 +3192,12 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    depegPriceIsBelowProtectedDepegPrice(
+      depegPrice: PromiseOrValue<BigNumberish>,
+      targetPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     detailedBundleApplicationMatch(
       bundleId: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
@@ -3077,6 +3211,7 @@ export interface DepegRiskpool extends BaseContract {
 
     encodeApplicationParameterAsData(
       wallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
@@ -3116,6 +3251,11 @@ export interface DepegRiskpool extends BaseContract {
 
     getBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getBundle(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBundleCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBundleFilter(
@@ -3136,6 +3276,8 @@ export interface DepegRiskpool extends BaseContract {
     getCapacity(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCapital(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getChainRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
     getCollateralizationLevel(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -3161,6 +3303,11 @@ export interface DepegRiskpool extends BaseContract {
 
     getOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getProtectedMinDepegPrice(
+      targetPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRiskpoolCapitalCap(overrides?: CallOverrides): Promise<BigNumber>;
@@ -3168,6 +3315,8 @@ export interface DepegRiskpool extends BaseContract {
     getStaking(overrides?: CallOverrides): Promise<BigNumber>;
 
     getState(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getSumInsuredPercentage(overrides?: CallOverrides): Promise<BigNumber>;
 
     getSumOfSumInsuredCap(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -3335,8 +3484,6 @@ export interface DepegRiskpool extends BaseContract {
 
     ONE_YEAR_DURATION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    USD_CAPITAL_CAP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     activeBundles(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     approvalCallback(
@@ -3373,6 +3520,11 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    calculateSumInsured(
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     closeBundle(
       bundleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3387,8 +3539,8 @@ export interface DepegRiskpool extends BaseContract {
     "createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
       name: PromiseOrValue<string>,
       lifetime: PromiseOrValue<BigNumberish>,
-      policyMinSumInsured: PromiseOrValue<BigNumberish>,
-      policyMaxSumInsured: PromiseOrValue<BigNumberish>,
+      policyMinProtectedBalance: PromiseOrValue<BigNumberish>,
+      policyMaxProtectedBalance: PromiseOrValue<BigNumberish>,
       policyMinDuration: PromiseOrValue<BigNumberish>,
       policyMaxDuration: PromiseOrValue<BigNumberish>,
       annualPercentageReturn: PromiseOrValue<BigNumberish>,
@@ -3422,6 +3574,12 @@ export interface DepegRiskpool extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    depegPriceIsBelowProtectedDepegPrice(
+      depegPrice: PromiseOrValue<BigNumberish>,
+      targetPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     detailedBundleApplicationMatch(
       bundleId: PromiseOrValue<BigNumberish>,
       minSumInsured: PromiseOrValue<BigNumberish>,
@@ -3435,6 +3593,7 @@ export interface DepegRiskpool extends BaseContract {
 
     encodeApplicationParameterAsData(
       wallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
       maxPremium: PromiseOrValue<BigNumberish>,
@@ -3478,6 +3637,11 @@ export interface DepegRiskpool extends BaseContract {
 
     getBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getBundle(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getBundleCapitalCap(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -3500,6 +3664,8 @@ export interface DepegRiskpool extends BaseContract {
     getCapacity(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getCapital(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getChainRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getCollateralizationLevel(
       overrides?: CallOverrides
@@ -3533,6 +3699,11 @@ export interface DepegRiskpool extends BaseContract {
 
     getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getProtectedMinDepegPrice(
+      targetPrice: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getRiskpoolCapitalCap(
@@ -3542,6 +3713,10 @@ export interface DepegRiskpool extends BaseContract {
     getStaking(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getSumInsuredPercentage(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getSumOfSumInsuredCap(
       overrides?: CallOverrides

@@ -114,6 +114,7 @@ export interface BasicRiskpool2Interface extends utils.Interface {
     "getActiveBundleIds()": FunctionFragment;
     "getActivePolicies(uint256)": FunctionFragment;
     "getBalance()": FunctionFragment;
+    "getBundle(uint256)": FunctionFragment;
     "getBundleId(uint256)": FunctionFragment;
     "getCapacity()": FunctionFragment;
     "getCapital()": FunctionFragment;
@@ -173,6 +174,7 @@ export interface BasicRiskpool2Interface extends utils.Interface {
       | "getActiveBundleIds"
       | "getActivePolicies"
       | "getBalance"
+      | "getBundle"
       | "getBundleId"
       | "getCapacity"
       | "getCapital"
@@ -283,6 +285,10 @@ export interface BasicRiskpool2Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getBalance",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundle",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getBundleId",
@@ -466,6 +472,7 @@ export interface BasicRiskpool2Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getBundle", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getBundleId",
     data: BytesLike
@@ -1133,6 +1140,11 @@ export interface BasicRiskpool2 extends BaseContract {
 
     getBalance(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getBundle(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[IBundle.BundleStructOutput]>;
+
     getBundleId(
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1335,6 +1347,11 @@ export interface BasicRiskpool2 extends BaseContract {
 
   getBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getBundle(
+    idx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IBundle.BundleStructOutput>;
+
   getBundleId(
     idx: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -1528,6 +1545,11 @@ export interface BasicRiskpool2 extends BaseContract {
     ): Promise<BigNumber>;
 
     getBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBundle(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IBundle.BundleStructOutput>;
 
     getBundleId(
       idx: PromiseOrValue<BigNumberish>,
@@ -1953,6 +1975,11 @@ export interface BasicRiskpool2 extends BaseContract {
 
     getBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getBundle(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBundleId(
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2161,6 +2188,11 @@ export interface BasicRiskpool2 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getBundle(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getBundleId(
       idx: PromiseOrValue<BigNumberish>,

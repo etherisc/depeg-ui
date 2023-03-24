@@ -31,11 +31,37 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getDip",
+    outputs: [
+      {
+        internalType: "contract IERC20Metadata",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getRegistry",
     outputs: [
       {
         internalType: "contract IChainRegistryFacade",
         name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getStakingWallet",
+    outputs: [
+      {
+        internalType: "address",
+        name: "stakingWallet",
         type: "address",
       },
     ],
@@ -50,6 +76,161 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "rateDecimals",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "decimals",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "rewardBalance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "dipAmount",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "rewardRate",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "rate",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "rewardReserves",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "dipAmount",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes5",
+        name: "chain",
+        type: "bytes5",
+      },
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "rate",
+        type: "uint256",
+      },
+    ],
+    name: "setStakingRate",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes5",
+        name: "chain",
+        type: "bytes5",
+      },
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "stakingRate",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "rate",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "chainId",
+        type: "uint256",
+      },
+    ],
+    name: "toChain",
+    outputs: [
+      {
+        internalType: "bytes5",
+        name: "",
+        type: "bytes5",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+      {
+        internalType: "int8",
+        name: "exp",
+        type: "int8",
+      },
+    ],
+    name: "toRate",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "rate",
+        type: "uint256",
       },
     ],
     stateMutability: "pure",

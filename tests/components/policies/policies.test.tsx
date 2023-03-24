@@ -68,6 +68,15 @@ describe('When rendering the policies list', () => {
         expect(rows[1].querySelector('[data-icon="user"]')).toBeInTheDocument();
         expect(rows[1].querySelector('[data-icon="shield-halved"]')).toBeInTheDocument();
         
+        const pendings = await screen.findAllByTestId("icon-payoutcap");
+        expect(pendings).toHaveLength(3);
+
+        fireEvent.mouseOver(pendings[0]);
+
+        await waitFor(async () => {
+            expect(await screen.findByText("payoutcap_hint")).toBeInTheDocument();
+        }, { timeout: 3000 });
+
         expect(rows[2]).toHaveTextContent("0xA3C5…8814");
         expect(rows[2]).toHaveTextContent("application_state_5"); // active
         expect(rows[2].querySelector('[data-icon="user"]')).toBeInTheDocument();

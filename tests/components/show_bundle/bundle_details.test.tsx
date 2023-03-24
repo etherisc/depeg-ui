@@ -33,6 +33,7 @@ describe('When displaying the bundle detail component', () => {
             capacity: parseUnits("90000", 6).toString(),
             locked: parseUnits("12000", 6).toString(),
             capitalSupport: parseUnits("80000", 6).toString(),
+            capitalSupportRemaining: parseUnits("68000", 6).toString(),
             minSumInsured: parseUnits("1123", 6).toString(),
             maxSumInsured: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
@@ -49,6 +50,8 @@ describe('When displaying the bundle detail component', () => {
                     bundle={bundle}
                     currency="USDT"
                     decimals={6}
+                    currencyProtected="USDC"
+                    decimalsProtected={6}
                     />
             </SnackbarProvider>
         );
@@ -56,10 +59,10 @@ describe('When displaying the bundle detail component', () => {
         expect(screen.getByText('bundle_state_1')).toBeInTheDocument();
         expect(screen.getByText('USDT 100,123.00')).toBeInTheDocument(); // balance
         expect(screen.getByText('USDT 100,000.00')).toBeInTheDocument(); // capital
-        expect(screen.getByText('USDT 90,000.00')).toBeInTheDocument(); // capacity
         expect(screen.getByText('USDT 12,000.00')).toBeInTheDocument(); // locked
-        expect(screen.getByText('USDT 80,000.00')).toBeInTheDocument(); // capital support
-        expect(screen.getByText('USDT 68,000.00')).toBeInTheDocument(); // remaining capital support
+        expect(screen.getByText('USDC 90,000.00')).toBeInTheDocument(); // capacity
+        expect(screen.getByText('USDC 80,000.00')).toBeInTheDocument(); // capital support
+        expect(screen.getByText('USDC 68,000.00')).toBeInTheDocument(); // remaining capital support
         expect(screen.getByTestId("bundle-details")).toHaveTextContent('1,123.00'); // min sum insured
         expect(screen.getByTestId("bundle-details")).toHaveTextContent('10,456.00'); // max sum insured
         expect(screen.getByText('11 / 28 days')).toBeInTheDocument(); // min / max duration
@@ -83,6 +86,7 @@ describe('When displaying the bundle detail component', () => {
             capacity: parseUnits("90000", 6).toString(),
             locked: parseUnits("12000", 6).toString(),
             capitalSupport: parseUnits("10000", 6).toString(),
+            capitalSupportRemaining: parseUnits("0", 6).toString(),
             minSumInsured: parseUnits("1123", 6).toString(),
             maxSumInsured: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
@@ -99,10 +103,12 @@ describe('When displaying the bundle detail component', () => {
                     bundle={bundle}
                     currency="USDT"
                     decimals={6}
+                    currencyProtected="USDC"
+                    decimalsProtected={6}
                     />
             </SnackbarProvider>
         );
 
-        expect(screen.getByText('USDT 0.00')).toBeInTheDocument();
+        expect(screen.getByText('USDC 0.00')).toBeInTheDocument();
     })
 })

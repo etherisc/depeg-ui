@@ -4,6 +4,7 @@ import { BundleData } from '../../../src/backend/bundle_data';
 import { AvailableBundleList, AvailableBundleRow } from '../../../src/components/application/available_bundle_list';
 import { BigNumber } from 'ethers';
 import userEvent from '@testing-library/user-event';
+import { parseUnits } from 'ethers/lib/utils';
 
 jest.mock('react-i18next', () => ({
     ...jest.requireActual('react-i18next'),
@@ -153,6 +154,7 @@ describe('When rendering a bundle in the AvailableBundleRow', () => {
             maxDuration: 60 * 86400,
             capacity: BigNumber.from(20000 * Math.pow(10, 6)).toString(),
             capitalSupport: BigNumber.from(23000 * Math.pow(10, 6)).toString(),
+            capitalSupportRemaining: BigNumber.from(23000 * Math.pow(10, 6)).toString(),
             locked: BigNumber.from(0).toString(),
             name: "some bundle",
         } as BundleData;
@@ -177,7 +179,7 @@ describe('When rendering a bundle in the AvailableBundleRow', () => {
         expect(screen.getByTestId("bundle-apr")).toHaveTextContent("2.7%");
         expect(screen.getByTestId("bundle-suminsured")).toHaveTextContent("USDC 1,100.00 / 2,100.00");
         expect(screen.getByTestId("bundle-duration")).toHaveTextContent("30 / 60 days");
-        expect(screen.getByTestId("bundle-capacity")).toHaveTextContent("USDC 20,000.00");
+        expect(screen.getByTestId("bundle-remainingCapacity")).toHaveTextContent("USDC 20,000.00");
 
         await user.click(screen.getByTestId("bundle-name"));
         expect(clicked).toBe(true);
@@ -233,6 +235,7 @@ describe('When rendering a bundle in the AvailableBundleRow', () => {
             maxDuration: 60 * 86400,
             capacity: BigNumber.from(20000 * Math.pow(10, 6)).toString(),
             capitalSupport: BigNumber.from(12000 * Math.pow(10, 6)).toString(),
+            capitalSupportRemaining: BigNumber.from(8000 * Math.pow(10, 6)).toString(),
             locked: BigNumber.from(4000 * Math.pow(10, 6)).toString(),
         } as BundleData;
 
@@ -249,7 +252,7 @@ describe('When rendering a bundle in the AvailableBundleRow', () => {
             </tbody></table>
         );
 
-        expect(screen.getByTestId("bundle-capacity")).toHaveTextContent("USDC 8,000.00");
+        expect(screen.getByTestId("bundle-remainingCapacity")).toHaveTextContent("USDC 8,000.00");
         expect(screen.getByRole("row")).toHaveClass("Mui-selected");
     })
 

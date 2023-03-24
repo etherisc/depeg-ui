@@ -22,6 +22,8 @@ export class DepegRiskpoolApi {
     private bundleCap = BigNumber.from(100000000000).toString();
     // assume 1m usdc as default - will be overwritten by contract
     private riskpoolCap = BigNumber.from(1000000000000).toString();
+    // the factor to calculate the protected amount based on the sum insured 
+    private protectedAmountFactor = 1;
 
     constructor(
         riskpool: DepegRiskpool,
@@ -50,6 +52,7 @@ export class DepegRiskpoolApi {
         this.maxBundleLifetime = (await this.depegRiskpool.MAX_BUNDLE_LIFETIME()).toNumber();
         this.bundleCap = (await this.depegRiskpool.getBundleCapitalCap()).toString();
         this.riskpoolCap = (await this.depegRiskpool.getRiskpoolCapitalCap()).toString();
+        this.protectedAmountFactor = 100 / (await this.depegRiskpool.getSumInsuredPercentage()).toNumber();
     }
 
     async getCapital(): Promise<BigNumber> {
@@ -58,14 +61,16 @@ export class DepegRiskpoolApi {
 
     async getBundleData(
     ): Promise<Array<BundleData>> {
+        console.log("depegRiskpool.bundles");
         const numBundles = (await this.depegRiskpool.bundles()).toNumber();
         console.log("number of bundles: " + numBundles);
     
         let bundleData = new Array<BundleData>();
     
         for (let i = 0; i < numBundles; i++) {
+            console.log("depegRiskpool.getBundleId", i);
             const bundleId = (await this.depegRiskpool.getBundleId(i)).toNumber();
-            console.log('bundleId', bundleId);
+            // console.log('bundleId', bundleId);
             const bundle = await this.getBundleDataByBundleId(bundleId);
             bundleData.push(bundle);
         }
@@ -74,13 +79,17 @@ export class DepegRiskpoolApi {
     }
     
     async getBundleDataByBundleId(bundleId: number): Promise<BundleData> {
+        console.log("depegRiskpool.getBundleInfo", bundleId);
         const { name, state, tokenId, owner, lifetime, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn, capital, lockedCapital, createdAt, balance } = await this.depegRiskpool.getBundleInfo(bundleId);
         const apr = 100 * annualPercentageReturn.toNumber() / (await this.depegRiskpool.getApr100PercentLevel()).toNumber();
+        console.log("depegRiskpool.getActivePolicies", bundleId);
         const policies = await this.depegRiskpool.getActivePolicies(bundleId);
         let capitalSupport = undefined;
+        let capitalSupportRemaining = undefined;
     
         if (this.stakingApi !== undefined) {
             capitalSupport = await this.stakingApi.getSupportedCapital(bundleId);
+            capitalSupportRemaining = capitalSupport.sub(lockedCapital.mul(this.protectedAmountFactor));
         }
 
         return {
@@ -88,15 +97,16 @@ export class DepegRiskpoolApi {
             riskpoolId: this.riskpoolId,
             owner: owner,
             apr: apr,
-            minSumInsured: minSumInsured.toString(),
-            maxSumInsured: maxSumInsured.toString(),
+            minSumInsured: minSumInsured.mul(this.protectedAmountFactor).toString(),
+            maxSumInsured: maxSumInsured.mul(this.protectedAmountFactor).toString(),
             minDuration: minDuration.toNumber(),
             maxDuration: maxDuration.toNumber(),
             balance: balance.toString(),
             capital: capital.toString(),
             locked: lockedCapital.toString(),
             capitalSupport: capitalSupport?.toString(),
-            capacity: capital.sub(lockedCapital).toString(),
+            capitalSupportRemaining: capitalSupportRemaining?.toString(),
+            capacity: capital.sub(lockedCapital).mul(this.protectedAmountFactor).toString(),
             policies: policies.toNumber(),
             state: state,
             tokenId: tokenId.toNumber(),

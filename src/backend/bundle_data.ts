@@ -14,6 +14,7 @@ export type BundleData = {
     capital: string;
     locked: string;
     capitalSupport: string | undefined;
+    capitalSupportRemaining: string | undefined;
     capacity: string;
     policies: number;
     state: number;

@@ -1052,6 +1052,77 @@ const _abi = [
         type: "uint256",
       },
     ],
+    name: "getBundle",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "id",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "riskpoolId",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "tokenId",
+            type: "uint256",
+          },
+          {
+            internalType: "enum IBundle.BundleState",
+            name: "state",
+            type: "uint8",
+          },
+          {
+            internalType: "bytes",
+            name: "filter",
+            type: "bytes",
+          },
+          {
+            internalType: "uint256",
+            name: "capital",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "lockedCapital",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "balance",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "createdAt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "updatedAt",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct IBundle.Bundle",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "idx",
+        type: "uint256",
+      },
+    ],
     name: "getBundleId",
     outputs: [
       {

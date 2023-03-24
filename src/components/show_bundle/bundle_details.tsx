@@ -14,18 +14,21 @@ interface BundleDetailsProps {
     bundle: BundleData;
     currency: string;
     decimals: number;
+    currencyProtected: string;
+    decimalsProtected: number;
 }
 
 export default function BundleDetails(props: BundleDetailsProps) {
     const { t } = useTranslation('bundles');
 
     const symbol = props.currency;
+    const symbolProtected = props.currencyProtected;
     const capacity = BigNumber.from(props.bundle.capacity);
     const balance = BigNumber.from(props.bundle.balance);
     const capital = BigNumber.from(props.bundle.capital);
     const locked = BigNumber.from(props.bundle.locked);
     const capitalSupport = BigNumber.from(props.bundle.capitalSupport);
-    let capitalSupportRemaining = BigNumber.from(props.bundle.capitalSupport).sub(locked);
+    let capitalSupportRemaining = BigNumber.from(props.bundle.capitalSupportRemaining ?? 0);
     const minSumInsured = BigNumber.from(props.bundle.minSumInsured);
     const maxSumInsured = BigNumber.from(props.bundle.maxSumInsured);
     const minDuration = props.bundle.minDuration / 86400;
@@ -51,27 +54,27 @@ export default function BundleDetails(props: BundleDetailsProps) {
                     {symbol + " " + formatCurrencyBN(capital, props.decimals)} 
                     <WithTooltip tooltipText={t('capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
-            <NameValue name={t('capacity')} value={
-            <>
-                {symbol + " " + formatCurrencyBN(capacity, props.decimals)}
-                <WithTooltip tooltipText={t('capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
-            </>} />
             <NameValue name={t('locked')} value={
                 <>
                     {symbol + " " + formatCurrencyBN(locked, props.decimals)}
                     <WithTooltip tooltipText={t('locked_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>}  />
+            <NameValue name={t('capacity')} value={
+            <>
+                {symbolProtected + " " + formatCurrencyBN(capacity, props.decimalsProtected)}
+                <WithTooltip tooltipText={t('capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
+            </>} />
             <NameValue name={t('supported_capital')} value={
                 <>
-                    {symbol + " " + formatCurrencyBN(capitalSupport, props.decimals)}
+                    {symbolProtected + " " + formatCurrencyBN(capitalSupport, props.decimalsProtected)}
                     <WithTooltip tooltipText={t('supported_capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>}  />
             <NameValue name={t('supported_capital_remaining')} value={
                 <>
-                    {symbol + " " + formatCurrencyBN(capitalSupportRemaining, props.decimals)}
+                    {symbolProtected + " " + formatCurrencyBN(capitalSupportRemaining, props.decimalsProtected)}
                     <WithTooltip tooltipText={t('supported_capital_remaining_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
-            <NameValue name={t('min_max_sum_insured')} value={<>{symbol + " " + formatCurrencyBN(minSumInsured, props.decimals) + " / " + formatCurrencyBN(maxSumInsured, props.decimals)}</>}/>
+            <NameValue name={t('min_max_sum_insured')} value={<>{symbolProtected + " " + formatCurrencyBN(minSumInsured, props.decimalsProtected) + " / " + formatCurrencyBN(maxSumInsured, props.decimalsProtected)}</>}/>
             <NameValue name={t('min_max_duration')} value={<>{minDuration + " / " + " " + maxDuration + " " + t('days')}</>}/>
             <NameValue name={t('apr')} value={<>{props.bundle.apr + " %"}</>}/>
             <NameValue name={t('policies')} value={<>{props.bundle.policies.toString()}</>}/>

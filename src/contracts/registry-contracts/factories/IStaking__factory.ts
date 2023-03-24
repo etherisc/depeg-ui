@@ -14,7 +14,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -26,7 +26,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "LogStakingNewStakeCreated",
@@ -114,7 +114,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -139,7 +139,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -164,7 +164,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -176,7 +176,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -238,7 +238,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -250,7 +250,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -357,12 +357,12 @@ const _abi = [
           {
             internalType: "NftId",
             name: "id",
-            type: "uint256",
+            type: "uint96",
           },
           {
             internalType: "NftId",
             name: "target",
-            type: "uint256",
+            type: "uint96",
           },
           {
             internalType: "uint256",
@@ -411,7 +411,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "capitalSupport",
@@ -430,7 +430,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "claimRewards",
@@ -443,7 +443,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "uint256",
@@ -456,7 +456,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "nonpayable",
@@ -467,7 +467,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "bundle",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "getBundleInfo",
@@ -544,7 +544,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "getInfo",
@@ -554,12 +554,12 @@ const _abi = [
           {
             internalType: "NftId",
             name: "id",
-            type: "uint256",
+            type: "uint96",
           },
           {
             internalType: "NftId",
             name: "target",
-            type: "uint256",
+            type: "uint96",
           },
           {
             internalType: "uint256",
@@ -639,7 +639,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "address",
@@ -663,7 +663,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "isStakingSupported",
@@ -701,7 +701,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "isUnstakingSupported",
@@ -821,7 +821,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "uint256",
@@ -839,7 +839,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "stakes",
@@ -925,7 +925,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "uint256",
@@ -943,7 +943,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "unstakeAndClaimRewards",

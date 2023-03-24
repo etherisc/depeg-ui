@@ -32,6 +32,7 @@
     "claim_state": "Claim state",
     "claim_timestamp": "Claim timestamp",
     "claim_paid_amount": "Paid amount",
+    "payoutcap_hint": "The maximum payout will be {{currency}} {{payoutcap}}",
     "alert": {
         "claimable_policies": {
             "title": "{{currency}} has depegged",

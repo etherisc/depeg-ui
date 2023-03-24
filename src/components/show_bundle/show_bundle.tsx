@@ -261,7 +261,9 @@ export default function ShowBundle(props: ShowBundleProps) {
                         {t('confirmation.alert.text')}
                     </Alert>
                 }
-                <BundleDetails bundle={bundle!} currency={props.backend.usd2} decimals={props.backend.usd2Decimals} />
+                <BundleDetails bundle={bundle!} 
+                    currency={props.backend.usd2} decimals={props.backend.usd2Decimals} 
+                    currencyProtected={props.backend.usd1} decimalsProtected={props.backend.usd1Decimals} />
             </Grid>
             <Grid item xs={12} md={6}>
                 <BundleActions 

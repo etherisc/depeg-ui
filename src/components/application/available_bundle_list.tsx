@@ -115,8 +115,7 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
 
     function remainingCapacity(bundle: BundleData): string {
         const capacity = bundle.capacity;
-        const capitalSupport = BigNumber.from(bundle.capitalSupport);
-        const capitalRemaining = capitalSupport.sub(BigNumber.from(bundle.locked));
+        const capitalRemaining = BigNumber.from(bundle.capitalSupportRemaining || 0);
         return currency + " " + formatCurrencyBN(minBigNumber(BigNumber.from(capacity), capitalRemaining), currencyDecimals); 
     }
 
@@ -168,6 +167,6 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
             <TableCell align="right" data-testid="bundle-apr">{bundle.apr}%</TableCell>
             <TableCell align="right" data-testid="bundle-suminsured">{currency} {formatCurrencyBN(BigNumber.from(bundle.minSumInsured), currencyDecimals)} / {formatCurrencyBN(BigNumber.from(bundle.maxSumInsured), currencyDecimals)}</TableCell>
             <TableCell align="right" data-testid="bundle-duration">{bundle.minDuration / 86400 } / {bundle.maxDuration / 86400 } {t('days')}</TableCell>
-            <TableCell align="right" data-testid="bundle-capacity">{remainingCapacity(bundle)}</TableCell>
+            <TableCell align="right" data-testid="bundle-remainingCapacity">{remainingCapacity(bundle)}</TableCell>
         </StyledTableRow>);
 }

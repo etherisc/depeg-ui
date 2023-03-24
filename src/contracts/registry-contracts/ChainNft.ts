@@ -51,6 +51,7 @@ export interface ChainNftInterface extends utils.Interface {
     "tokenByIndex(uint256)": FunctionFragment;
     "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
+    "totalMinted()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
@@ -79,6 +80,7 @@ export interface ChainNftInterface extends utils.Interface {
       | "tokenByIndex"
       | "tokenOfOwnerByIndex"
       | "tokenURI"
+      | "totalMinted"
       | "totalSupply"
       | "transferFrom"
   ): FunctionFragment;
@@ -169,6 +171,10 @@ export interface ChainNftInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "totalMinted",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
   ): string;
@@ -233,6 +239,10 @@ export interface ChainNftInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "totalMinted",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -421,6 +431,8 @@ export interface ChainNft extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    totalMinted(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferFrom(
@@ -534,6 +546,8 @@ export interface ChainNft extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  totalMinted(overrides?: CallOverrides): Promise<BigNumber>;
+
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferFrom(
@@ -646,6 +660,8 @@ export interface ChainNft extends BaseContract {
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    totalMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -796,6 +812,8 @@ export interface ChainNft extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    totalMinted(overrides?: CallOverrides): Promise<BigNumber>;
+
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferFrom(
@@ -911,6 +929,8 @@ export interface ChainNft extends BaseContract {
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalMinted(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

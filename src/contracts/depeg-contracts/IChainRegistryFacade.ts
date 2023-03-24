@@ -28,7 +28,12 @@ export interface IChainRegistryFacadeInterface extends utils.Interface {
     "exists(uint256)": FunctionFragment;
     "getBundleNftId(bytes32,uint256)": FunctionFragment;
     "getComponentNftId(bytes32,uint256)": FunctionFragment;
+    "getInstanceNftId(bytes32)": FunctionFragment;
+    "getNft()": FunctionFragment;
+    "objects(bytes5,uint8)": FunctionFragment;
+    "owner()": FunctionFragment;
     "registerBundle(bytes32,uint256,uint256,string,uint256)": FunctionFragment;
+    "toChain(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -36,7 +41,12 @@ export interface IChainRegistryFacadeInterface extends utils.Interface {
       | "exists"
       | "getBundleNftId"
       | "getComponentNftId"
+      | "getInstanceNftId"
+      | "getNft"
+      | "objects"
+      | "owner"
       | "registerBundle"
+      | "toChain"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -52,6 +62,16 @@ export interface IChainRegistryFacadeInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getInstanceNftId",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(functionFragment: "getNft", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "objects",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
     functionFragment: "registerBundle",
     values: [
       PromiseOrValue<BytesLike>,
@@ -60,6 +80,10 @@ export interface IChainRegistryFacadeInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "toChain",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
@@ -72,9 +96,17 @@ export interface IChainRegistryFacadeInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getInstanceNftId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getNft", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "objects", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "registerBundle",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "toChain", data: BytesLike): Result;
 
   events: {};
 }
@@ -123,6 +155,21 @@ export interface IChainRegistryFacade extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { nftId: BigNumber }>;
 
+    getInstanceNftId(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { id: BigNumber }>;
+
+    getNft(overrides?: CallOverrides): Promise<[string]>;
+
+    objects(
+      chain: PromiseOrValue<BytesLike>,
+      objectType: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { numberOfObjects: BigNumber }>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
     registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
@@ -131,6 +178,11 @@ export interface IChainRegistryFacade extends BaseContract {
       expiryAt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    toChain(
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { chain: string }>;
   };
 
   exists(
@@ -150,6 +202,21 @@ export interface IChainRegistryFacade extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getInstanceNftId(
+    instanceId: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getNft(overrides?: CallOverrides): Promise<string>;
+
+  objects(
+    chain: PromiseOrValue<BytesLike>,
+    objectType: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
   registerBundle(
     instanceId: PromiseOrValue<BytesLike>,
     riskpoolId: PromiseOrValue<BigNumberish>,
@@ -158,6 +225,11 @@ export interface IChainRegistryFacade extends BaseContract {
     expiryAt: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  toChain(
+    chainId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   callStatic: {
     exists(
@@ -177,6 +249,21 @@ export interface IChainRegistryFacade extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getInstanceNftId(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getNft(overrides?: CallOverrides): Promise<string>;
+
+    objects(
+      chain: PromiseOrValue<BytesLike>,
+      objectType: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
     registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
@@ -185,6 +272,11 @@ export interface IChainRegistryFacade extends BaseContract {
       expiryAt: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    toChain(
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
   };
 
   filters: {};
@@ -207,6 +299,21 @@ export interface IChainRegistryFacade extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getInstanceNftId(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getNft(overrides?: CallOverrides): Promise<BigNumber>;
+
+    objects(
+      chain: PromiseOrValue<BytesLike>,
+      objectType: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
     registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
@@ -214,6 +321,11 @@ export interface IChainRegistryFacade extends BaseContract {
       displayName: PromiseOrValue<string>,
       expiryAt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    toChain(
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
@@ -235,6 +347,21 @@ export interface IChainRegistryFacade extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getInstanceNftId(
+      instanceId: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getNft(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    objects(
+      chain: PromiseOrValue<BytesLike>,
+      objectType: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     registerBundle(
       instanceId: PromiseOrValue<BytesLike>,
       riskpoolId: PromiseOrValue<BigNumberish>,
@@ -242,6 +369,11 @@ export interface IChainRegistryFacade extends BaseContract {
       displayName: PromiseOrValue<string>,
       expiryAt: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    toChain(
+      chainId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
