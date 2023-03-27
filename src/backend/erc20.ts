@@ -19,3 +19,12 @@ export async function transferAmount(walletAddress: string, amountToTransfer: Bi
     const rcpt = await tx.wait();
     return rcpt.status === 1;
 }
+
+/**
+ * Checks weather the given address pair has the expected allowance.
+ */
+export async function hasAllowance(sourceAddress: string, targetAddress: string, amount: BigNumber, tokenAddress: string, signer: Signer): Promise<Boolean> {
+    const token = getErc20Token(tokenAddress, signer);
+    const allowance = await token.allowance(sourceAddress, targetAddress);
+    return allowance.gte(amount);
+}
