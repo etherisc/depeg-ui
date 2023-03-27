@@ -63,7 +63,7 @@ export declare namespace IChainRegistry {
   };
 }
 
-export declare namespace Versionable {
+export declare namespace IVersionable {
   export type VersionInfoStruct = {
     version: PromiseOrValue<BigNumberish>;
     implementation: PromiseOrValue<string>;
@@ -127,6 +127,7 @@ export interface ChainRegistryV02Interface extends utils.Interface {
     "getTokenNftId(bytes5,address)": FunctionFragment;
     "getVersion(uint256)": FunctionFragment;
     "getVersionInfo(uint48)": FunctionFragment;
+    "implementsIChainRegistry()": FunctionFragment;
     "intToBytes(uint256,uint8)": FunctionFragment;
     "isActivated(uint48)": FunctionFragment;
     "objects(bytes5,uint8)": FunctionFragment;
@@ -143,7 +144,7 @@ export interface ChainRegistryV02Interface extends utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "setNftContract(address,address)": FunctionFragment;
     "setObjectState(uint96,uint8)": FunctionFragment;
-    "setStakingContract(address)": FunctionFragment;
+    "setStaking(address)": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
     "toInt(bytes5)": FunctionFragment;
     "toInt(uint32)": FunctionFragment;
@@ -199,6 +200,7 @@ export interface ChainRegistryV02Interface extends utils.Interface {
       | "getTokenNftId"
       | "getVersion"
       | "getVersionInfo"
+      | "implementsIChainRegistry"
       | "intToBytes"
       | "isActivated"
       | "objects"
@@ -215,7 +217,7 @@ export interface ChainRegistryV02Interface extends utils.Interface {
       | "renounceOwnership"
       | "setNftContract"
       | "setObjectState"
-      | "setStakingContract"
+      | "setStaking"
       | "toChain"
       | "toInt(bytes5)"
       | "toInt(uint32)"
@@ -347,6 +349,10 @@ export interface ChainRegistryV02Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "implementsIChainRegistry",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "intToBytes",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -430,7 +436,7 @@ export interface ChainRegistryV02Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setStakingContract",
+    functionFragment: "setStaking",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -566,6 +572,10 @@ export interface ChainRegistryV02Interface extends utils.Interface {
     functionFragment: "getVersionInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "implementsIChainRegistry",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "intToBytes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isActivated",
@@ -618,10 +628,7 @@ export interface ChainRegistryV02Interface extends utils.Interface {
     functionFragment: "setObjectState",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "setStakingContract",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "setStaking", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "toChain", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "toInt(bytes5)",
@@ -819,12 +826,13 @@ export interface ChainRegistryV02 extends BaseContract {
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, string, string] & {
+      [string, BigNumber, BigNumber, string, string, BigNumber] & {
         instanceId: string;
         riskpoolId: BigNumber;
         bundleId: BigNumber;
         token: string;
         displayName: string;
+        expiryAt: BigNumber;
       }
     >;
 
@@ -939,7 +947,9 @@ export interface ChainRegistryV02 extends BaseContract {
     getVersionInfo(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Versionable.VersionInfoStructOutput]>;
+    ): Promise<[IVersionable.VersionInfoStructOutput]>;
+
+    implementsIChainRegistry(overrides?: CallOverrides): Promise<[boolean]>;
 
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
@@ -1044,8 +1054,8 @@ export interface ChainRegistryV02 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setStakingContract(
-      staking: PromiseOrValue<string>,
+    setStaking(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1157,12 +1167,13 @@ export interface ChainRegistryV02 extends BaseContract {
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, BigNumber, string, string] & {
+    [string, BigNumber, BigNumber, string, string, BigNumber] & {
       instanceId: string;
       riskpoolId: BigNumber;
       bundleId: BigNumber;
       token: string;
       displayName: string;
+      expiryAt: BigNumber;
     }
   >;
 
@@ -1275,7 +1286,9 @@ export interface ChainRegistryV02 extends BaseContract {
   getVersionInfo(
     _version: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Versionable.VersionInfoStructOutput>;
+  ): Promise<IVersionable.VersionInfoStructOutput>;
+
+  implementsIChainRegistry(overrides?: CallOverrides): Promise<boolean>;
 
   intToBytes(
     x: PromiseOrValue<BigNumberish>,
@@ -1380,8 +1393,8 @@ export interface ChainRegistryV02 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setStakingContract(
-    staking: PromiseOrValue<string>,
+  setStaking(
+    stakingAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1493,12 +1506,13 @@ export interface ChainRegistryV02 extends BaseContract {
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, string, string] & {
+      [string, BigNumber, BigNumber, string, string, BigNumber] & {
         instanceId: string;
         riskpoolId: BigNumber;
         bundleId: BigNumber;
         token: string;
         displayName: string;
+        expiryAt: BigNumber;
       }
     >;
 
@@ -1611,7 +1625,9 @@ export interface ChainRegistryV02 extends BaseContract {
     getVersionInfo(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Versionable.VersionInfoStructOutput>;
+    ): Promise<IVersionable.VersionInfoStructOutput>;
+
+    implementsIChainRegistry(overrides?: CallOverrides): Promise<boolean>;
 
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
@@ -1714,8 +1730,8 @@ export interface ChainRegistryV02 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setStakingContract(
-      staking: PromiseOrValue<string>,
+    setStaking(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1981,6 +1997,8 @@ export interface ChainRegistryV02 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    implementsIChainRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
       shift: PromiseOrValue<BigNumberish>,
@@ -2075,8 +2093,8 @@ export interface ChainRegistryV02 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setStakingContract(
-      staking: PromiseOrValue<string>,
+    setStaking(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2285,6 +2303,10 @@ export interface ChainRegistryV02 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    implementsIChainRegistry(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
       shift: PromiseOrValue<BigNumberish>,
@@ -2379,8 +2401,8 @@ export interface ChainRegistryV02 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setStakingContract(
-      staking: PromiseOrValue<string>,
+    setStaking(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

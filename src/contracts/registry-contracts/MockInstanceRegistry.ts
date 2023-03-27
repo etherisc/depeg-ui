@@ -22,7 +22,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export interface MockRegistryInterface extends utils.Interface {
+export interface MockInstanceRegistryInterface extends utils.Interface {
   functions: {
     "getContract(bytes32)": FunctionFragment;
     "setInstanceServiceAddress(address)": FunctionFragment;
@@ -53,12 +53,12 @@ export interface MockRegistryInterface extends utils.Interface {
   events: {};
 }
 
-export interface MockRegistry extends BaseContract {
+export interface MockInstanceRegistry extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: MockRegistryInterface;
+  interface: MockInstanceRegistryInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

@@ -51,17 +51,12 @@ export declare namespace IVersionable {
   };
 }
 
-export interface VersionableInterface extends utils.Interface {
+export interface IVersionableInterface extends utils.Interface {
   functions: {
     "activate(address,address)": FunctionFragment;
-    "blockNumber()": FunctionFragment;
     "getVersion(uint256)": FunctionFragment;
     "getVersionInfo(uint48)": FunctionFragment;
-    "intToBytes(uint256,uint8)": FunctionFragment;
     "isActivated(uint48)": FunctionFragment;
-    "toInt(bytes5)": FunctionFragment;
-    "toInt(uint32)": FunctionFragment;
-    "toInt(uint40)": FunctionFragment;
     "version()": FunctionFragment;
     "versionParts()": FunctionFragment;
     "versions()": FunctionFragment;
@@ -70,14 +65,9 @@ export interface VersionableInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "activate"
-      | "blockNumber"
       | "getVersion"
       | "getVersionInfo"
-      | "intToBytes"
       | "isActivated"
-      | "toInt(bytes5)"
-      | "toInt(uint32)"
-      | "toInt(uint40)"
       | "version"
       | "versionParts"
       | "versions"
@@ -88,10 +78,6 @@ export interface VersionableInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "blockNumber",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getVersion",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -100,23 +86,7 @@ export interface VersionableInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "intToBytes",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "isActivated",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "toInt(bytes5)",
-    values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "toInt(uint32)",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "toInt(uint40)",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "version", values?: undefined): string;
@@ -127,30 +97,13 @@ export interface VersionableInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "versions", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "activate", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "blockNumber",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getVersion", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getVersionInfo",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "intToBytes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isActivated",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "toInt(bytes5)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "toInt(uint32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "toInt(uint40)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
@@ -180,12 +133,12 @@ export type LogVersionableActivatedEvent = TypedEvent<
 export type LogVersionableActivatedEventFilter =
   TypedEventFilter<LogVersionableActivatedEvent>;
 
-export interface Versionable extends BaseContract {
+export interface IVersionable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: VersionableInterface;
+  interface: IVersionableInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -213,8 +166,6 @@ export interface Versionable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    blockNumber(overrides?: CallOverrides): Promise<[number]>;
-
     getVersion(
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -225,31 +176,10 @@ export interface Versionable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[IVersionable.VersionInfoStructOutput]>;
 
-    intToBytes(
-      x: PromiseOrValue<BigNumberish>,
-      shift: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     isActivated(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    "toInt(bytes5)"(
-      x: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "toInt(uint32)"(
-      x: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "toInt(uint40)"(
-      x: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     version(overrides?: CallOverrides): Promise<[number]>;
 
@@ -268,8 +198,6 @@ export interface Versionable extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  blockNumber(overrides?: CallOverrides): Promise<number>;
-
   getVersion(
     idx: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -280,31 +208,10 @@ export interface Versionable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<IVersionable.VersionInfoStructOutput>;
 
-  intToBytes(
-    x: PromiseOrValue<BigNumberish>,
-    shift: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   isActivated(
     _version: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  "toInt(bytes5)"(
-    x: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "toInt(uint32)"(
-    x: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "toInt(uint40)"(
-    x: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   version(overrides?: CallOverrides): Promise<number>;
 
@@ -323,8 +230,6 @@ export interface Versionable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    blockNumber(overrides?: CallOverrides): Promise<number>;
-
     getVersion(
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -335,31 +240,10 @@ export interface Versionable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<IVersionable.VersionInfoStructOutput>;
 
-    intToBytes(
-      x: PromiseOrValue<BigNumberish>,
-      shift: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     isActivated(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    "toInt(bytes5)"(
-      x: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "toInt(uint32)"(
-      x: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "toInt(uint40)"(
-      x: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     version(overrides?: CallOverrides): Promise<number>;
 
@@ -392,8 +276,6 @@ export interface Versionable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    blockNumber(overrides?: CallOverrides): Promise<BigNumber>;
-
     getVersion(
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -404,29 +286,8 @@ export interface Versionable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    intToBytes(
-      x: PromiseOrValue<BigNumberish>,
-      shift: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     isActivated(
       _version: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "toInt(bytes5)"(
-      x: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "toInt(uint32)"(
-      x: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "toInt(uint40)"(
-      x: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -444,8 +305,6 @@ export interface Versionable extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    blockNumber(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getVersion(
       idx: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -456,29 +315,8 @@ export interface Versionable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    intToBytes(
-      x: PromiseOrValue<BigNumberish>,
-      shift: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     isActivated(
       _version: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "toInt(bytes5)"(
-      x: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "toInt(uint32)"(
-      x: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "toInt(uint40)"(
-      x: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -57,7 +57,7 @@ export declare namespace IStaking {
   };
 }
 
-export declare namespace Versionable {
+export declare namespace IVersionable {
   export type VersionInfoStruct = {
     version: PromiseOrValue<BigNumberish>;
     implementation: PromiseOrValue<string>;
@@ -83,7 +83,6 @@ export declare namespace Versionable {
 
 export interface StakingV01Interface extends utils.Interface {
   functions: {
-    "BUNDLE_LIFETIME_DEFAULT()": FunctionFragment;
     "DIP_CONTRACT_ADDRESS()": FunctionFragment;
     "DIP_DECIMALS()": FunctionFragment;
     "EXP()": FunctionFragment;
@@ -136,6 +135,7 @@ export interface StakingV01Interface extends utils.Interface {
     "setRegistry(address)": FunctionFragment;
     "setRewardRate(uint256)": FunctionFragment;
     "setStakingRate(bytes5,address,uint256)": FunctionFragment;
+    "setStakingWallet(address)": FunctionFragment;
     "stake(uint96,uint256)": FunctionFragment;
     "stakes(uint96)": FunctionFragment;
     "stakingRate(bytes5,address)": FunctionFragment;
@@ -155,7 +155,6 @@ export interface StakingV01Interface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "BUNDLE_LIFETIME_DEFAULT"
       | "DIP_CONTRACT_ADDRESS"
       | "DIP_DECIMALS"
       | "EXP"
@@ -208,6 +207,7 @@ export interface StakingV01Interface extends utils.Interface {
       | "setRegistry"
       | "setRewardRate"
       | "setStakingRate"
+      | "setStakingWallet"
       | "stake"
       | "stakes"
       | "stakingRate"
@@ -225,10 +225,6 @@ export interface StakingV01Interface extends utils.Interface {
       | "withdrawRewardReserves"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "BUNDLE_LIFETIME_DEFAULT",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "DIP_CONTRACT_ADDRESS",
     values?: undefined
@@ -442,6 +438,10 @@ export interface StakingV01Interface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "setStakingWallet",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "stake",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -496,10 +496,6 @@ export interface StakingV01Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "BUNDLE_LIFETIME_DEFAULT",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "DIP_CONTRACT_ADDRESS",
     data: BytesLike
@@ -675,6 +671,10 @@ export interface StakingV01Interface extends utils.Interface {
     functionFragment: "setStakingRate",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setStakingWallet",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stakes", data: BytesLike): Result;
   decodeFunctionResult(
@@ -726,6 +726,7 @@ export interface StakingV01Interface extends utils.Interface {
     "LogStakingStaked(uint96,address,uint96,uint256,uint256)": EventFragment;
     "LogStakingStakingRateSet(address,bytes5,address,uint256,uint256)": EventFragment;
     "LogStakingUnstaked(uint96,address,uint96,uint256,uint256)": EventFragment;
+    "LogStakingWalletChanged(address,address,address)": EventFragment;
     "LogVersionableActivated(uint48,address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
@@ -744,6 +745,7 @@ export interface StakingV01Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "LogStakingStaked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogStakingStakingRateSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogStakingUnstaked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogStakingWalletChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogVersionableActivated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
@@ -878,6 +880,19 @@ export type LogStakingUnstakedEvent = TypedEvent<
 export type LogStakingUnstakedEventFilter =
   TypedEventFilter<LogStakingUnstakedEvent>;
 
+export interface LogStakingWalletChangedEventObject {
+  user: string;
+  oldWallet: string;
+  newWallet: string;
+}
+export type LogStakingWalletChangedEvent = TypedEvent<
+  [string, string, string],
+  LogStakingWalletChangedEventObject
+>;
+
+export type LogStakingWalletChangedEventFilter =
+  TypedEventFilter<LogStakingWalletChangedEvent>;
+
 export interface LogVersionableActivatedEventObject {
   version: number;
   implementation: string;
@@ -930,8 +945,6 @@ export interface StakingV01 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    BUNDLE_LIFETIME_DEFAULT(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     DIP_CONTRACT_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
 
     DIP_DECIMALS(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -1086,7 +1099,7 @@ export interface StakingV01 extends BaseContract {
     getVersionInfo(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Versionable.VersionInfoStructOutput]>;
+    ): Promise<[IVersionable.VersionInfoStructOutput]>;
 
     implementsIStaking(overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -1164,7 +1177,7 @@ export interface StakingV01 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setRegistry(
-      registry: PromiseOrValue<string>,
+      registryAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1177,6 +1190,11 @@ export interface StakingV01 extends BaseContract {
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
       newStakingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setStakingWallet(
+      stakingWalletNew: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1254,8 +1272,6 @@ export interface StakingV01 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  BUNDLE_LIFETIME_DEFAULT(overrides?: CallOverrides): Promise<BigNumber>;
 
   DIP_CONTRACT_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
@@ -1405,7 +1421,7 @@ export interface StakingV01 extends BaseContract {
   getVersionInfo(
     _version: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Versionable.VersionInfoStructOutput>;
+  ): Promise<IVersionable.VersionInfoStructOutput>;
 
   implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
 
@@ -1479,7 +1495,7 @@ export interface StakingV01 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setRegistry(
-    registry: PromiseOrValue<string>,
+    registryAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1492,6 +1508,11 @@ export interface StakingV01 extends BaseContract {
     chain: PromiseOrValue<BytesLike>,
     token: PromiseOrValue<string>,
     newStakingRate: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setStakingWallet(
+    stakingWalletNew: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1570,8 +1591,6 @@ export interface StakingV01 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    BUNDLE_LIFETIME_DEFAULT(overrides?: CallOverrides): Promise<BigNumber>;
-
     DIP_CONTRACT_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
     DIP_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1720,7 +1739,7 @@ export interface StakingV01 extends BaseContract {
     getVersionInfo(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Versionable.VersionInfoStructOutput>;
+    ): Promise<IVersionable.VersionInfoStructOutput>;
 
     implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
 
@@ -1792,7 +1811,7 @@ export interface StakingV01 extends BaseContract {
     ): Promise<void>;
 
     setRegistry(
-      registry: PromiseOrValue<string>,
+      registryAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1805,6 +1824,11 @@ export interface StakingV01 extends BaseContract {
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
       newStakingRate: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setStakingWallet(
+      stakingWalletNew: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1998,6 +2022,17 @@ export interface StakingV01 extends BaseContract {
       newBalance?: null
     ): LogStakingUnstakedEventFilter;
 
+    "LogStakingWalletChanged(address,address,address)"(
+      user?: null,
+      oldWallet?: null,
+      newWallet?: null
+    ): LogStakingWalletChangedEventFilter;
+    LogStakingWalletChanged(
+      user?: null,
+      oldWallet?: null,
+      newWallet?: null
+    ): LogStakingWalletChangedEventFilter;
+
     "LogVersionableActivated(uint48,address,address)"(
       version?: null,
       implementation?: null,
@@ -2020,8 +2055,6 @@ export interface StakingV01 extends BaseContract {
   };
 
   estimateGas: {
-    BUNDLE_LIFETIME_DEFAULT(overrides?: CallOverrides): Promise<BigNumber>;
-
     DIP_CONTRACT_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
 
     DIP_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2214,7 +2247,7 @@ export interface StakingV01 extends BaseContract {
     ): Promise<BigNumber>;
 
     setRegistry(
-      registry: PromiseOrValue<string>,
+      registryAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2227,6 +2260,11 @@ export interface StakingV01 extends BaseContract {
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
       newStakingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setStakingWallet(
+      stakingWalletNew: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2302,10 +2340,6 @@ export interface StakingV01 extends BaseContract {
   };
 
   populateTransaction: {
-    BUNDLE_LIFETIME_DEFAULT(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     DIP_CONTRACT_ADDRESS(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2506,7 +2540,7 @@ export interface StakingV01 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setRegistry(
-      registry: PromiseOrValue<string>,
+      registryAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2519,6 +2553,11 @@ export interface StakingV01 extends BaseContract {
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
       newStakingRate: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setStakingWallet(
+      stakingWalletNew: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -44,8 +44,9 @@ export interface MockRegistryStakingInterface extends utils.Interface {
     "SYMBOL()": FunctionFragment;
     "TOKEN()": FunctionFragment;
     "UNDEFINED()": FunctionFragment;
-    "capitalSupport(uint256)": FunctionFragment;
+    "capitalSupport(uint96)": FunctionFragment;
     "exists(uint256)": FunctionFragment;
+    "exists(uint96)": FunctionFragment;
     "getBundleNftId(bytes32,uint256)": FunctionFragment;
     "getComponentNftId(bytes32,uint256)": FunctionFragment;
     "getDip()": FunctionFragment;
@@ -54,6 +55,7 @@ export interface MockRegistryStakingInterface extends utils.Interface {
     "getRegistry()": FunctionFragment;
     "getStakingWallet()": FunctionFragment;
     "implementsIStaking()": FunctionFragment;
+    "maxRewardRate()": FunctionFragment;
     "mint(address,string)": FunctionFragment;
     "mockRegisterRiskpool(bytes32,uint256)": FunctionFragment;
     "name()": FunctionFragment;
@@ -64,13 +66,15 @@ export interface MockRegistryStakingInterface extends utils.Interface {
     "rewardBalance()": FunctionFragment;
     "rewardRate()": FunctionFragment;
     "rewardReserves()": FunctionFragment;
-    "setStakedDip(uint256,uint256)": FunctionFragment;
+    "setStakedDip(uint96,uint256)": FunctionFragment;
     "setStakingRate(bytes5,address,uint256)": FunctionFragment;
     "stakingRate(bytes5,address)": FunctionFragment;
     "symbol()": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
     "toRate(uint256,int8)": FunctionFragment;
     "totalMinted()": FunctionFragment;
+    "version()": FunctionFragment;
+    "versionParts()": FunctionFragment;
   };
 
   getFunction(
@@ -91,7 +95,8 @@ export interface MockRegistryStakingInterface extends utils.Interface {
       | "TOKEN"
       | "UNDEFINED"
       | "capitalSupport"
-      | "exists"
+      | "exists(uint256)"
+      | "exists(uint96)"
       | "getBundleNftId"
       | "getComponentNftId"
       | "getDip"
@@ -100,6 +105,7 @@ export interface MockRegistryStakingInterface extends utils.Interface {
       | "getRegistry"
       | "getStakingWallet"
       | "implementsIStaking"
+      | "maxRewardRate"
       | "mint"
       | "mockRegisterRiskpool"
       | "name"
@@ -117,6 +123,8 @@ export interface MockRegistryStakingInterface extends utils.Interface {
       | "toChain"
       | "toRate"
       | "totalMinted"
+      | "version"
+      | "versionParts"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "BUNDLE", values?: undefined): string;
@@ -142,7 +150,11 @@ export interface MockRegistryStakingInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "exists",
+    functionFragment: "exists(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "exists(uint96)",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -169,6 +181,10 @@ export interface MockRegistryStakingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "implementsIStaking",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxRewardRate",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -240,6 +256,11 @@ export interface MockRegistryStakingInterface extends utils.Interface {
     functionFragment: "totalMinted",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "version", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "versionParts",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(functionFragment: "BUNDLE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "CHAIN", data: BytesLike): Result;
@@ -260,7 +281,14 @@ export interface MockRegistryStakingInterface extends utils.Interface {
     functionFragment: "capitalSupport",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "exists", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "exists(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "exists(uint96)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getBundleNftId",
     data: BytesLike
@@ -285,6 +313,10 @@ export interface MockRegistryStakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "implementsIStaking",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "maxRewardRate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
@@ -329,6 +361,11 @@ export interface MockRegistryStakingInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "toRate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalMinted",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "versionParts",
     data: BytesLike
   ): Result;
 
@@ -418,7 +455,12 @@ export interface MockRegistryStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { capitalAmount: BigNumber }>;
 
-    exists(
+    "exists(uint256)"(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    "exists(uint96)"(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -451,6 +493,10 @@ export interface MockRegistryStaking extends BaseContract {
     ): Promise<[string] & { stakingWallet: string }>;
 
     implementsIStaking(overrides?: CallOverrides): Promise<[boolean]>;
+
+    maxRewardRate(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { rate: BigNumber }>;
 
     mint(
       to: PromiseOrValue<string>,
@@ -532,6 +578,14 @@ export interface MockRegistryStaking extends BaseContract {
     ): Promise<[BigNumber] & { rate: BigNumber }>;
 
     totalMinted(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    version(overrides?: CallOverrides): Promise<[number]>;
+
+    versionParts(
+      overrides?: CallOverrides
+    ): Promise<
+      [number, number, number] & { major: number; minor: number; patch: number }
+    >;
   };
 
   BUNDLE(overrides?: CallOverrides): Promise<number>;
@@ -569,7 +623,12 @@ export interface MockRegistryStaking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  exists(
+  "exists(uint256)"(
+    tokenId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  "exists(uint96)"(
     tokenId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -600,6 +659,8 @@ export interface MockRegistryStaking extends BaseContract {
   getStakingWallet(overrides?: CallOverrides): Promise<string>;
 
   implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
+
+  maxRewardRate(overrides?: CallOverrides): Promise<BigNumber>;
 
   mint(
     to: PromiseOrValue<string>,
@@ -674,6 +735,14 @@ export interface MockRegistryStaking extends BaseContract {
 
   totalMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
+  version(overrides?: CallOverrides): Promise<number>;
+
+  versionParts(
+    overrides?: CallOverrides
+  ): Promise<
+    [number, number, number] & { major: number; minor: number; patch: number }
+  >;
+
   callStatic: {
     BUNDLE(overrides?: CallOverrides): Promise<number>;
 
@@ -710,7 +779,12 @@ export interface MockRegistryStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    exists(
+    "exists(uint256)"(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "exists(uint96)"(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -741,6 +815,8 @@ export interface MockRegistryStaking extends BaseContract {
     getStakingWallet(overrides?: CallOverrides): Promise<string>;
 
     implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
+
+    maxRewardRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     mint(
       to: PromiseOrValue<string>,
@@ -814,6 +890,14 @@ export interface MockRegistryStaking extends BaseContract {
     ): Promise<BigNumber>;
 
     totalMinted(overrides?: CallOverrides): Promise<BigNumber>;
+
+    version(overrides?: CallOverrides): Promise<number>;
+
+    versionParts(
+      overrides?: CallOverrides
+    ): Promise<
+      [number, number, number] & { major: number; minor: number; patch: number }
+    >;
   };
 
   filters: {
@@ -873,7 +957,12 @@ export interface MockRegistryStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    exists(
+    "exists(uint256)"(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "exists(uint96)"(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -904,6 +993,8 @@ export interface MockRegistryStaking extends BaseContract {
     getStakingWallet(overrides?: CallOverrides): Promise<BigNumber>;
 
     implementsIStaking(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxRewardRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     mint(
       to: PromiseOrValue<string>,
@@ -977,6 +1068,10 @@ export interface MockRegistryStaking extends BaseContract {
     ): Promise<BigNumber>;
 
     totalMinted(overrides?: CallOverrides): Promise<BigNumber>;
+
+    version(overrides?: CallOverrides): Promise<BigNumber>;
+
+    versionParts(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1015,7 +1110,12 @@ export interface MockRegistryStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    exists(
+    "exists(uint256)"(
+      tokenId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "exists(uint96)"(
       tokenId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1048,6 +1148,8 @@ export interface MockRegistryStaking extends BaseContract {
     implementsIStaking(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    maxRewardRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     mint(
       to: PromiseOrValue<string>,
@@ -1121,5 +1223,9 @@ export interface MockRegistryStaking extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     totalMinted(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    version(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    versionParts(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

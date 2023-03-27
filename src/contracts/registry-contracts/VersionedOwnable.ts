@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace Versionable {
+export declare namespace IVersionable {
   export type VersionInfoStruct = {
     version: PromiseOrValue<BigNumberish>;
     implementation: PromiseOrValue<string>;
@@ -291,7 +291,7 @@ export interface VersionedOwnable extends BaseContract {
     getVersionInfo(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Versionable.VersionInfoStructOutput]>;
+    ): Promise<[IVersionable.VersionInfoStructOutput]>;
 
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
@@ -364,7 +364,7 @@ export interface VersionedOwnable extends BaseContract {
   getVersionInfo(
     _version: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Versionable.VersionInfoStructOutput>;
+  ): Promise<IVersionable.VersionInfoStructOutput>;
 
   intToBytes(
     x: PromiseOrValue<BigNumberish>,
@@ -437,7 +437,7 @@ export interface VersionedOwnable extends BaseContract {
     getVersionInfo(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Versionable.VersionInfoStructOutput>;
+    ): Promise<IVersionable.VersionInfoStructOutput>;
 
     intToBytes(
       x: PromiseOrValue<BigNumberish>,

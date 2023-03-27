@@ -63,8 +63,33 @@ export declare namespace IChainRegistry {
   };
 }
 
+export declare namespace IVersionable {
+  export type VersionInfoStruct = {
+    version: PromiseOrValue<BigNumberish>;
+    implementation: PromiseOrValue<string>;
+    activatedBy: PromiseOrValue<string>;
+    activatedIn: PromiseOrValue<BigNumberish>;
+    activatedAt: PromiseOrValue<BigNumberish>;
+  };
+
+  export type VersionInfoStructOutput = [
+    number,
+    string,
+    string,
+    number,
+    number
+  ] & {
+    version: number;
+    implementation: string;
+    activatedBy: string;
+    activatedIn: number;
+    activatedAt: number;
+  };
+}
+
 export interface IChainRegistryInterface extends utils.Interface {
   functions: {
+    "activate(address,address)": FunctionFragment;
     "blockNumber()": FunctionFragment;
     "chains()": FunctionFragment;
     "decodeBundleData(uint96)": FunctionFragment;
@@ -86,7 +111,11 @@ export interface IChainRegistryInterface extends utils.Interface {
     "getRegistryNftId(bytes5)": FunctionFragment;
     "getStaking()": FunctionFragment;
     "getTokenNftId(bytes5,address)": FunctionFragment;
+    "getVersion(uint256)": FunctionFragment;
+    "getVersionInfo(uint48)": FunctionFragment;
+    "implementsIChainRegistry()": FunctionFragment;
     "intToBytes(uint256,uint8)": FunctionFragment;
+    "isActivated(uint48)": FunctionFragment;
     "objects(bytes5,uint8)": FunctionFragment;
     "ownerOf(uint96)": FunctionFragment;
     "probeInstance(address)": FunctionFragment;
@@ -102,10 +131,14 @@ export interface IChainRegistryInterface extends utils.Interface {
     "toInt(bytes5)": FunctionFragment;
     "toInt(uint32)": FunctionFragment;
     "toInt(uint40)": FunctionFragment;
+    "version()": FunctionFragment;
+    "versionParts()": FunctionFragment;
+    "versions()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "activate"
       | "blockNumber"
       | "chains"
       | "decodeBundleData"
@@ -127,7 +160,11 @@ export interface IChainRegistryInterface extends utils.Interface {
       | "getRegistryNftId"
       | "getStaking"
       | "getTokenNftId"
+      | "getVersion"
+      | "getVersionInfo"
+      | "implementsIChainRegistry"
       | "intToBytes"
+      | "isActivated"
       | "objects"
       | "ownerOf"
       | "probeInstance"
@@ -143,8 +180,15 @@ export interface IChainRegistryInterface extends utils.Interface {
       | "toInt(bytes5)"
       | "toInt(uint32)"
       | "toInt(uint40)"
+      | "version"
+      | "versionParts"
+      | "versions"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "activate",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "blockNumber",
     values?: undefined
@@ -228,8 +272,24 @@ export interface IChainRegistryInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getVersion",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getVersionInfo",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "implementsIChainRegistry",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "intToBytes",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isActivated",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "objects",
@@ -313,7 +373,14 @@ export interface IChainRegistryInterface extends utils.Interface {
     functionFragment: "toInt(uint40)",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "version", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "versionParts",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "versions", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "activate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "blockNumber",
     data: BytesLike
@@ -377,7 +444,20 @@ export interface IChainRegistryInterface extends utils.Interface {
     functionFragment: "getTokenNftId",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getVersion", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getVersionInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "implementsIChainRegistry",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "intToBytes", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isActivated",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "objects", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -429,10 +509,17 @@ export interface IChainRegistryInterface extends utils.Interface {
     functionFragment: "toInt(uint40)",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "versionParts",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "versions", data: BytesLike): Result;
 
   events: {
     "LogChainRegistryObjectRegistered(uint96,bytes5,uint8,uint8,address)": EventFragment;
     "LogChainRegistryObjectStateSet(uint96,uint8,uint8,address)": EventFragment;
+    "LogVersionableActivated(uint48,address,address)": EventFragment;
   };
 
   getEvent(
@@ -441,6 +528,7 @@ export interface IChainRegistryInterface extends utils.Interface {
   getEvent(
     nameOrSignatureOrTopic: "LogChainRegistryObjectStateSet"
   ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LogVersionableActivated"): EventFragment;
 }
 
 export interface LogChainRegistryObjectRegisteredEventObject {
@@ -472,6 +560,19 @@ export type LogChainRegistryObjectStateSetEvent = TypedEvent<
 export type LogChainRegistryObjectStateSetEventFilter =
   TypedEventFilter<LogChainRegistryObjectStateSetEvent>;
 
+export interface LogVersionableActivatedEventObject {
+  version: number;
+  implementation: string;
+  activatedBy: string;
+}
+export type LogVersionableActivatedEvent = TypedEvent<
+  [number, string, string],
+  LogVersionableActivatedEventObject
+>;
+
+export type LogVersionableActivatedEventFilter =
+  TypedEventFilter<LogVersionableActivatedEvent>;
+
 export interface IChainRegistry extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -499,6 +600,12 @@ export interface IChainRegistry extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    activate(
+      implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     blockNumber(overrides?: CallOverrides): Promise<[number]>;
 
     chains(
@@ -509,12 +616,13 @@ export interface IChainRegistry extends BaseContract {
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, string, string] & {
+      [string, BigNumber, BigNumber, string, string, BigNumber] & {
         instanceId: string;
         riskpoolId: BigNumber;
         bundleId: BigNumber;
         token: string;
         displayName: string;
+        expiryAt: BigNumber;
       }
     >;
 
@@ -619,11 +727,28 @@ export interface IChainRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { id: BigNumber }>;
 
+    getVersion(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
+    getVersionInfo(
+      _version: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[IVersionable.VersionInfoStructOutput]>;
+
+    implementsIChainRegistry(overrides?: CallOverrides): Promise<[boolean]>;
+
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
       shift: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    isActivated(
+      _version: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     objects(
       chain: PromiseOrValue<BytesLike>,
@@ -724,7 +849,23 @@ export interface IChainRegistry extends BaseContract {
       x: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    version(overrides?: CallOverrides): Promise<[number]>;
+
+    versionParts(
+      overrides?: CallOverrides
+    ): Promise<
+      [number, number, number] & { major: number; minor: number; patch: number }
+    >;
+
+    versions(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
+
+  activate(
+    implementation: PromiseOrValue<string>,
+    activatedBy: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   blockNumber(overrides?: CallOverrides): Promise<number>;
 
@@ -734,12 +875,13 @@ export interface IChainRegistry extends BaseContract {
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, BigNumber, string, string] & {
+    [string, BigNumber, BigNumber, string, string, BigNumber] & {
       instanceId: string;
       riskpoolId: BigNumber;
       bundleId: BigNumber;
       token: string;
       displayName: string;
+      expiryAt: BigNumber;
     }
   >;
 
@@ -844,11 +986,28 @@ export interface IChainRegistry extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getVersion(
+    idx: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
+  getVersionInfo(
+    _version: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<IVersionable.VersionInfoStructOutput>;
+
+  implementsIChainRegistry(overrides?: CallOverrides): Promise<boolean>;
+
   intToBytes(
     x: PromiseOrValue<BigNumberish>,
     shift: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  isActivated(
+    _version: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   objects(
     chain: PromiseOrValue<BytesLike>,
@@ -950,7 +1109,23 @@ export interface IChainRegistry extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  version(overrides?: CallOverrides): Promise<number>;
+
+  versionParts(
+    overrides?: CallOverrides
+  ): Promise<
+    [number, number, number] & { major: number; minor: number; patch: number }
+  >;
+
+  versions(overrides?: CallOverrides): Promise<BigNumber>;
+
   callStatic: {
+    activate(
+      implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     blockNumber(overrides?: CallOverrides): Promise<number>;
 
     chains(overrides?: CallOverrides): Promise<BigNumber>;
@@ -959,12 +1134,13 @@ export interface IChainRegistry extends BaseContract {
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, string, string] & {
+      [string, BigNumber, BigNumber, string, string, BigNumber] & {
         instanceId: string;
         riskpoolId: BigNumber;
         bundleId: BigNumber;
         token: string;
         displayName: string;
+        expiryAt: BigNumber;
       }
     >;
 
@@ -1069,11 +1245,28 @@ export interface IChainRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getVersion(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
+    getVersionInfo(
+      _version: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<IVersionable.VersionInfoStructOutput>;
+
+    implementsIChainRegistry(overrides?: CallOverrides): Promise<boolean>;
+
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
       shift: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    isActivated(
+      _version: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     objects(
       chain: PromiseOrValue<BytesLike>,
@@ -1174,6 +1367,16 @@ export interface IChainRegistry extends BaseContract {
       x: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    version(overrides?: CallOverrides): Promise<number>;
+
+    versionParts(
+      overrides?: CallOverrides
+    ): Promise<
+      [number, number, number] & { major: number; minor: number; patch: number }
+    >;
+
+    versions(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {
@@ -1204,9 +1407,26 @@ export interface IChainRegistry extends BaseContract {
       stateOld?: null,
       setBy?: null
     ): LogChainRegistryObjectStateSetEventFilter;
+
+    "LogVersionableActivated(uint48,address,address)"(
+      version?: null,
+      implementation?: null,
+      activatedBy?: null
+    ): LogVersionableActivatedEventFilter;
+    LogVersionableActivated(
+      version?: null,
+      implementation?: null,
+      activatedBy?: null
+    ): LogVersionableActivatedEventFilter;
   };
 
   estimateGas: {
+    activate(
+      implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     blockNumber(overrides?: CallOverrides): Promise<BigNumber>;
 
     chains(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1305,9 +1525,26 @@ export interface IChainRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getVersion(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getVersionInfo(
+      _version: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    implementsIChainRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
       shift: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isActivated(
+      _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1401,9 +1638,21 @@ export interface IChainRegistry extends BaseContract {
       x: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    version(overrides?: CallOverrides): Promise<BigNumber>;
+
+    versionParts(overrides?: CallOverrides): Promise<BigNumber>;
+
+    versions(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    activate(
+      implementation: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     blockNumber(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     chains(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1502,9 +1751,28 @@ export interface IChainRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getVersion(
+      idx: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getVersionInfo(
+      _version: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    implementsIChainRegistry(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
       shift: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isActivated(
+      _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1598,5 +1866,11 @@ export interface IChainRegistry extends BaseContract {
       x: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    version(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    versionParts(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    versions(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }
