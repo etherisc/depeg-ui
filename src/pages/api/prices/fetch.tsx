@@ -63,6 +63,8 @@ async function getAggregator(): Promise<AggregatorV3Interface> {
         address = await priceDataProvider.getChainlinkAggregatorAddress();
     }
 
+    console.log("aggregator address", address);
+
     return AggregatorV3Interface__factory.connect(address, signer);
 }
 
