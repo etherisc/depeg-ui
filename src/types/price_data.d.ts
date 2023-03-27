@@ -1,5 +1,7 @@
 type PriceData = {
-    roundId: number,
+    roundId: string,
+    aggregatorRoundId: number,
+    phaseId: number,
     price: number,
     timestamp: number,
 }

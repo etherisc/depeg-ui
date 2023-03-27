@@ -42,7 +42,7 @@ const initialState: PriceState = {
     depeggedAt: 0,
     history: [], // no initial history
     historyLoading: false,
-    historyAfter: moment().add(-2, "d").unix(),
+    historyAfter: moment().add(-1, "week").unix(),
     noUpdates: false,
     productState: ProductState.Active,
 }
@@ -74,6 +74,9 @@ export const priceSlice = createSlice({
                     state.history.splice(nextRoundIndex, 0, action.payload);
                 }
             }
+        },
+        clearHistory: (state) => {
+            state.history = [];
         },
         historyLoading: (state) => {
             state.historyLoading = true;
@@ -110,6 +113,7 @@ export const priceSlice = createSlice({
 export const { 
     setCoin,
     addPrice,
+    clearHistory,
     historyLoading,
     historyLoadingFinished,
     setHistoryAfter,

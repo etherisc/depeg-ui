@@ -5,7 +5,7 @@ import { useTranslation } from "next-i18next";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
-import { addPrice, historyLoading, historyLoadingFinished, setDepeggedAt, setTriggeredAt } from "../../redux/slices/price";
+import { addPrice, clearHistory, historyLoading, historyLoadingFinished, setDepeggedAt, setTriggeredAt } from "../../redux/slices/price";
 import { RootState } from "../../redux/store";
 import LatestPrice from "./latest_price";
 import PriceHistory from "./price_history";
@@ -48,6 +48,7 @@ export default function PriceInfo(props: PriceInfoProps) {
                 });    
 
                 if ( enablePriceHistory ) {
+                    dispatch(clearHistory());
                     await priceFeedApi.getAllPricesAfter(priceHistoryAfter, 
                         (price: PriceInfo) => dispatch(addPrice(price)),
                         () => dispatch(historyLoading()),

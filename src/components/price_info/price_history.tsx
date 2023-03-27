@@ -173,13 +173,13 @@ export default function PriceHistory(props: PriceHistoryProps) {
             options={options}
             data={data} />
         <Box sx={{ mt: 2 }}>
-            <Button onClick={() => setHistoryAfterRange(-1, 'd')}>{t('chart.time_range.1d')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-2, 'd')}>{t('chart.time_range.2d')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-1, 'w')}>{t('chart.time_range.1w')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-2, 'w')}>{t('chart.time_range.2w')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-1, 'm')}>{t('chart.time_range.1m')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-2, 'm')}>{t('chart.time_range.2m')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-1, 'y')}>{t('chart.time_range.1y')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-1, 'day')}>{t('chart.time_range.1d')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-2, 'days')}>{t('chart.time_range.2d')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-1, 'week')}>{t('chart.time_range.1w')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-2, 'weeks')}>{t('chart.time_range.2w')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-1, 'month')}>{t('chart.time_range.1m')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-2, 'months')}>{t('chart.time_range.2m')}</Button>
+            <Button onClick={() => setHistoryAfterRange(-1, 'year')}>{t('chart.time_range.1y')}</Button>
         </Box>
         {process.env.NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA === 'true' && <FakeData />}
     </>);
