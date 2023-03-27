@@ -12,7 +12,7 @@ export async function createApprovalForTreasury(
         signer: Signer, 
         amount: BigNumber, 
         registryAddress: string, 
-        ): Promise<[ContractTransaction, ContractReceipt]> {
+        ): Promise<{ tx: ContractTransaction|undefined, receipt: ContractReceipt|undefined, exists: Boolean }> {
     console.log(`creating treasury approval for ${amount} token ${tokenAddress}`);
     const usd1 = getErc20Token(tokenAddress, signer);
     const symbol = await usd1.symbol();
@@ -23,12 +23,16 @@ export async function createApprovalForTreasury(
     store.dispatch(start({ type: TrxType.TOKEN_ALLOWANCE }));
     store.dispatch(waitingForUser({ active: true, params: { address: treasury, currency: symbol, amount: formatCurrencyBN(amount, decimals) }}));
     try {
+        const allowanceExists = await usd1.allowance(await signer.getAddress(), treasury);
+        if (allowanceExists.gte(amount)) {
+            return { exists: true, tx: undefined, receipt: undefined };
+        }
         const tx = await usd1.approve(treasury, amount, { gasLimit: 100000 });
         console.log("tx done", tx)
             store.dispatch(waitingForTransaction({ active: true, params: { address: treasury }}));
         const receipt = await tx.wait();
         console.log("wait done", receipt, tx)
-        return [tx, receipt];
+        return { tx, receipt, exists: false };
     } catch (e) {
         console.log("caught error during approval: ", e);
         // @ts-ignore e.code
