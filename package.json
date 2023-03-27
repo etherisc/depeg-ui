@@ -1,6 +1,6 @@
 {
   "name": "depeg-interface",
-  "version": "0.17.2",
+  "version": "0.18.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -57,8 +57,8 @@
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.6.1",
-    "@etherisc/depeg-contracts": "0.0.2-5e0be55",
-    "@etherisc/registry-contracts": "0.0.2-542802e",
+    "@etherisc/depeg-contracts": "0.0.2-950157d",
+    "@etherisc/registry-contracts": "0.0.2-7493c17",
     "@hookform/devtools": "^4.3.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",

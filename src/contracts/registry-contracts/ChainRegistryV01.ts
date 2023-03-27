@@ -31,7 +31,7 @@ export declare namespace IChainRegistry {
   export type NftInfoStruct = {
     id: PromiseOrValue<BigNumberish>;
     chain: PromiseOrValue<BytesLike>;
-    t: PromiseOrValue<BigNumberish>;
+    objectType: PromiseOrValue<BigNumberish>;
     state: PromiseOrValue<BigNumberish>;
     uri: PromiseOrValue<string>;
     data: PromiseOrValue<BytesLike>;
@@ -53,7 +53,7 @@ export declare namespace IChainRegistry {
   ] & {
     id: BigNumber;
     chain: string;
-    t: number;
+    objectType: number;
     state: number;
     uri: string;
     data: string;
@@ -63,7 +63,7 @@ export declare namespace IChainRegistry {
   };
 }
 
-export declare namespace Versionable {
+export declare namespace IVersionable {
   export type VersionInfoStruct = {
     version: PromiseOrValue<BigNumberish>;
     implementation: PromiseOrValue<string>;
@@ -106,13 +106,13 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     "activateAndSetOwner(address,address,address)": FunctionFragment;
     "blockNumber()": FunctionFragment;
     "chains()": FunctionFragment;
-    "decodeBundleData(uint256)": FunctionFragment;
-    "decodeComponentData(uint256)": FunctionFragment;
-    "decodeInstanceData(uint256)": FunctionFragment;
-    "decodeRegistryData(uint256)": FunctionFragment;
-    "decodeStakeData(uint256)": FunctionFragment;
-    "decodeTokenData(uint256)": FunctionFragment;
-    "exists(uint256)": FunctionFragment;
+    "decodeBundleData(uint96)": FunctionFragment;
+    "decodeComponentData(uint96)": FunctionFragment;
+    "decodeInstanceData(uint96)": FunctionFragment;
+    "decodeRegistryData(uint96)": FunctionFragment;
+    "decodeStakeData(uint96)": FunctionFragment;
+    "decodeTokenData(uint96)": FunctionFragment;
+    "exists(uint96)": FunctionFragment;
     "getBundleNftId(bytes32,uint256)": FunctionFragment;
     "getChainId(uint256)": FunctionFragment;
     "getChainNftId(bytes5)": FunctionFragment;
@@ -121,29 +121,30 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     "getInstanceServiceFacade(bytes32)": FunctionFragment;
     "getNft()": FunctionFragment;
     "getNftId(bytes5,uint8,uint256)": FunctionFragment;
-    "getNftInfo(uint256)": FunctionFragment;
+    "getNftInfo(uint96)": FunctionFragment;
     "getRegistryNftId(bytes5)": FunctionFragment;
     "getStaking()": FunctionFragment;
     "getTokenNftId(bytes5,address)": FunctionFragment;
     "getVersion(uint256)": FunctionFragment;
     "getVersionInfo(uint48)": FunctionFragment;
+    "implementsIChainRegistry()": FunctionFragment;
     "intToBytes(uint256,uint8)": FunctionFragment;
     "isActivated(uint48)": FunctionFragment;
     "objects(bytes5,uint8)": FunctionFragment;
     "owner()": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
+    "ownerOf(uint96)": FunctionFragment;
     "probeInstance(address)": FunctionFragment;
     "registerBundle(bytes32,uint256,uint256,string,uint256)": FunctionFragment;
     "registerChain(bytes5,string)": FunctionFragment;
     "registerComponent(bytes32,uint256,string)": FunctionFragment;
     "registerInstance(address,string,string)": FunctionFragment;
     "registerRegistry(bytes5,address,string)": FunctionFragment;
-    "registerStake(uint256,address)": FunctionFragment;
+    "registerStake(uint96,address)": FunctionFragment;
     "registerToken(bytes5,address,string)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "setNftContract(address,address)": FunctionFragment;
-    "setObjectState(uint256,uint8)": FunctionFragment;
-    "setStakingContract(address)": FunctionFragment;
+    "setObjectState(uint96,uint8)": FunctionFragment;
+    "setStaking(address)": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
     "toInt(bytes5)": FunctionFragment;
     "toInt(uint32)": FunctionFragment;
@@ -199,6 +200,7 @@ export interface ChainRegistryV01Interface extends utils.Interface {
       | "getTokenNftId"
       | "getVersion"
       | "getVersionInfo"
+      | "implementsIChainRegistry"
       | "intToBytes"
       | "isActivated"
       | "objects"
@@ -215,7 +217,7 @@ export interface ChainRegistryV01Interface extends utils.Interface {
       | "renounceOwnership"
       | "setNftContract"
       | "setObjectState"
-      | "setStakingContract"
+      | "setStaking"
       | "toChain"
       | "toInt(bytes5)"
       | "toInt(uint32)"
@@ -347,6 +349,10 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "implementsIChainRegistry",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "intToBytes",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -430,7 +436,7 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setStakingContract",
+    functionFragment: "setStaking",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -566,6 +572,10 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     functionFragment: "getVersionInfo",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "implementsIChainRegistry",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "intToBytes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isActivated",
@@ -618,10 +628,7 @@ export interface ChainRegistryV01Interface extends utils.Interface {
     functionFragment: "setObjectState",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "setStakingContract",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "setStaking", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "toChain", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "toInt(bytes5)",
@@ -665,8 +672,8 @@ export interface ChainRegistryV01Interface extends utils.Interface {
 
   events: {
     "Initialized(uint8)": EventFragment;
-    "LogChainRegistryObjectRegistered(uint256,bytes5,uint8,uint8,address)": EventFragment;
-    "LogChainRegistryObjectStateSet(uint256,uint8,uint8,address)": EventFragment;
+    "LogChainRegistryObjectRegistered(uint96,bytes5,uint8,uint8,address)": EventFragment;
+    "LogChainRegistryObjectStateSet(uint96,uint8,uint8,address)": EventFragment;
     "LogVersionableActivated(uint48,address,address)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
@@ -692,7 +699,7 @@ export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 export interface LogChainRegistryObjectRegisteredEventObject {
   id: BigNumber;
   chain: string;
-  t: number;
+  objectType: number;
   state: number;
   to: string;
 }
@@ -819,12 +826,13 @@ export interface ChainRegistryV01 extends BaseContract {
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, string, string] & {
+      [string, BigNumber, BigNumber, string, string, BigNumber] & {
         instanceId: string;
         riskpoolId: BigNumber;
         bundleId: BigNumber;
         token: string;
         displayName: string;
+        expiryAt: BigNumber;
       }
     >;
 
@@ -939,7 +947,9 @@ export interface ChainRegistryV01 extends BaseContract {
     getVersionInfo(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[Versionable.VersionInfoStructOutput]>;
+    ): Promise<[IVersionable.VersionInfoStructOutput]>;
+
+    implementsIChainRegistry(overrides?: CallOverrides): Promise<[boolean]>;
 
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
@@ -1044,8 +1054,8 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setStakingContract(
-      staking: PromiseOrValue<string>,
+    setStaking(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1157,12 +1167,13 @@ export interface ChainRegistryV01 extends BaseContract {
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, BigNumber, string, string] & {
+    [string, BigNumber, BigNumber, string, string, BigNumber] & {
       instanceId: string;
       riskpoolId: BigNumber;
       bundleId: BigNumber;
       token: string;
       displayName: string;
+      expiryAt: BigNumber;
     }
   >;
 
@@ -1275,7 +1286,9 @@ export interface ChainRegistryV01 extends BaseContract {
   getVersionInfo(
     _version: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<Versionable.VersionInfoStructOutput>;
+  ): Promise<IVersionable.VersionInfoStructOutput>;
+
+  implementsIChainRegistry(overrides?: CallOverrides): Promise<boolean>;
 
   intToBytes(
     x: PromiseOrValue<BigNumberish>,
@@ -1380,8 +1393,8 @@ export interface ChainRegistryV01 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setStakingContract(
-    staking: PromiseOrValue<string>,
+  setStaking(
+    stakingAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1493,12 +1506,13 @@ export interface ChainRegistryV01 extends BaseContract {
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, BigNumber, string, string] & {
+      [string, BigNumber, BigNumber, string, string, BigNumber] & {
         instanceId: string;
         riskpoolId: BigNumber;
         bundleId: BigNumber;
         token: string;
         displayName: string;
+        expiryAt: BigNumber;
       }
     >;
 
@@ -1611,7 +1625,9 @@ export interface ChainRegistryV01 extends BaseContract {
     getVersionInfo(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<Versionable.VersionInfoStructOutput>;
+    ): Promise<IVersionable.VersionInfoStructOutput>;
+
+    implementsIChainRegistry(overrides?: CallOverrides): Promise<boolean>;
 
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
@@ -1714,8 +1730,8 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setStakingContract(
-      staking: PromiseOrValue<string>,
+    setStaking(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1784,22 +1800,22 @@ export interface ChainRegistryV01 extends BaseContract {
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
-    "LogChainRegistryObjectRegistered(uint256,bytes5,uint8,uint8,address)"(
+    "LogChainRegistryObjectRegistered(uint96,bytes5,uint8,uint8,address)"(
       id?: null,
       chain?: null,
-      t?: null,
+      objectType?: null,
       state?: null,
       to?: null
     ): LogChainRegistryObjectRegisteredEventFilter;
     LogChainRegistryObjectRegistered(
       id?: null,
       chain?: null,
-      t?: null,
+      objectType?: null,
       state?: null,
       to?: null
     ): LogChainRegistryObjectRegisteredEventFilter;
 
-    "LogChainRegistryObjectStateSet(uint256,uint8,uint8,address)"(
+    "LogChainRegistryObjectStateSet(uint96,uint8,uint8,address)"(
       id?: null,
       stateNew?: null,
       stateOld?: null,
@@ -1981,6 +1997,8 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    implementsIChainRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
       shift: PromiseOrValue<BigNumberish>,
@@ -2075,8 +2093,8 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setStakingContract(
-      staking: PromiseOrValue<string>,
+    setStaking(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2285,6 +2303,10 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    implementsIChainRegistry(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     intToBytes(
       x: PromiseOrValue<BigNumberish>,
       shift: PromiseOrValue<BigNumberish>,
@@ -2379,8 +2401,8 @@ export interface ChainRegistryV01 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setStakingContract(
-      staking: PromiseOrValue<string>,
+    setStaking(
+      stakingAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

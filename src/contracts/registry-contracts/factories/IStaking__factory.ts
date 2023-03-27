@@ -14,7 +14,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -26,7 +26,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "LogStakingNewStakeCreated",
@@ -114,7 +114,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -139,7 +139,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -164,7 +164,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -176,7 +176,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -238,7 +238,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -250,7 +250,7 @@ const _abi = [
         indexed: false,
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         indexed: false,
@@ -267,6 +267,74 @@ const _abi = [
     ],
     name: "LogStakingUnstaked",
     type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "oldWallet",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newWallet",
+        type: "address",
+      },
+    ],
+    name: "LogStakingWalletChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "Version",
+        name: "version",
+        type: "uint48",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "implementation",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "activatedBy",
+        type: "address",
+      },
+    ],
+    name: "LogVersionableActivated",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "implementation",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "activatedBy",
+        type: "address",
+      },
+    ],
+    name: "activate",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
@@ -357,12 +425,12 @@ const _abi = [
           {
             internalType: "NftId",
             name: "id",
-            type: "uint256",
+            type: "uint96",
           },
           {
             internalType: "NftId",
             name: "target",
-            type: "uint256",
+            type: "uint96",
           },
           {
             internalType: "uint256",
@@ -411,7 +479,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "capitalSupport",
@@ -430,7 +498,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "claimRewards",
@@ -443,7 +511,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "uint256",
@@ -456,7 +524,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     stateMutability: "nonpayable",
@@ -467,7 +535,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "bundle",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "getBundleInfo",
@@ -544,7 +612,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "getInfo",
@@ -554,12 +622,12 @@ const _abi = [
           {
             internalType: "NftId",
             name: "id",
-            type: "uint256",
+            type: "uint96",
           },
           {
             internalType: "NftId",
             name: "target",
-            type: "uint256",
+            type: "uint96",
           },
           {
             internalType: "uint256",
@@ -622,6 +690,71 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "idx",
+        type: "uint256",
+      },
+    ],
+    name: "getVersion",
+    outputs: [
+      {
+        internalType: "Version",
+        name: "",
+        type: "uint48",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "Version",
+        name: "_version",
+        type: "uint48",
+      },
+    ],
+    name: "getVersionInfo",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "Version",
+            name: "version",
+            type: "uint48",
+          },
+          {
+            internalType: "address",
+            name: "implementation",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "activatedBy",
+            type: "address",
+          },
+          {
+            internalType: "Blocknumber",
+            name: "activatedIn",
+            type: "uint32",
+          },
+          {
+            internalType: "Timestamp",
+            name: "activatedAt",
+            type: "uint40",
+          },
+        ],
+        internalType: "struct IVersionable.VersionInfo",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "implementsIStaking",
     outputs: [
@@ -637,9 +770,28 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "Version",
+        name: "_version",
+        type: "uint48",
+      },
+    ],
+    name: "isActivated",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "address",
@@ -663,7 +815,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "isStakingSupported",
@@ -701,7 +853,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "isUnstakingSupported",
@@ -710,6 +862,19 @@ const _abi = [
         internalType: "bool",
         name: "isSupported",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "maxRewardRate",
+    outputs: [
+      {
+        internalType: "UFixed",
+        name: "rate",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -760,7 +925,7 @@ const _abi = [
     outputs: [
       {
         internalType: "UFixed",
-        name: "rewardRate",
+        name: "rate",
         type: "uint256",
       },
     ],
@@ -819,9 +984,22 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "stakingWalletNew",
+        type: "address",
+      },
+    ],
+    name: "setStakingWallet",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "uint256",
@@ -839,7 +1017,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "target",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "stakes",
@@ -925,7 +1103,7 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
       {
         internalType: "uint256",
@@ -943,12 +1121,61 @@ const _abi = [
       {
         internalType: "NftId",
         name: "id",
-        type: "uint256",
+        type: "uint96",
       },
     ],
     name: "unstakeAndClaimRewards",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "version",
+    outputs: [
+      {
+        internalType: "Version",
+        name: "",
+        type: "uint48",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "versionParts",
+    outputs: [
+      {
+        internalType: "VersionPart",
+        name: "major",
+        type: "uint16",
+      },
+      {
+        internalType: "VersionPart",
+        name: "minor",
+        type: "uint16",
+      },
+      {
+        internalType: "VersionPart",
+        name: "patch",
+        type: "uint16",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "versions",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

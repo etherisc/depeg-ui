@@ -1,6 +1,6 @@
-import { faFileInvoiceDollar, faHandHoldingDollar, faInfoCircle, faShieldHalved, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo, faFileInvoiceDollar, faHandHoldingDollar, faInfoCircle, faShieldHalved, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { grey } from "@mui/material/colors";
@@ -253,8 +253,18 @@ export default function Policies(props: PoliciesProps) {
             field: 'suminsured', 
             headerName: t('table.header.insuredAmount'), 
             flex: 0.8,
-            valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
-            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => `${props.backend.usd1} ${formatCurrency(params.value.toNumber(), props.backend.usd1Decimals)}`,
+            valueGetter: (params: GridValueGetterParams) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                const protectedAmount = BigNumber.from(params.value!.suminsured);
+                const payoutCap = BigNumber.from(params.value!.payoutCap || 0);
+                return (<>
+                    {props.backend.usd1} {formatCurrency(protectedAmount.toNumber(), props.backend.usd1Decimals)}
+                    <Tooltip title={t('payoutcap_hint', { 'currency': props.backend.usd2, 'payoutcap': formatCurrency(payoutCap.toNumber(), props.backend.usd1Decimals)})}>
+                        <Typography color={grey[400]} component="span">
+                            <FontAwesomeIcon icon={faCircleInfo} className="fa" data-testid="icon-payoutcap"/>
+                        </Typography>
+                    </Tooltip>
+                </>)},
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2),
         },
         { 

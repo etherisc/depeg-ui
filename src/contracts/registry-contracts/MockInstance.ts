@@ -70,6 +70,7 @@ export interface MockInstanceInterface extends utils.Interface {
   functions: {
     "getBundle(uint256)": FunctionFragment;
     "getChainId()": FunctionFragment;
+    "getComponent(uint256)": FunctionFragment;
     "getComponentState(uint256)": FunctionFragment;
     "getComponentToken(uint256)": FunctionFragment;
     "getComponentType(uint256)": FunctionFragment;
@@ -87,6 +88,7 @@ export interface MockInstanceInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "getBundle"
       | "getChainId"
+      | "getComponent"
       | "getComponentState"
       | "getComponentToken"
       | "getComponentType"
@@ -107,6 +109,10 @@ export interface MockInstanceInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getChainId",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComponent",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getComponentState",
@@ -162,6 +168,10 @@ export interface MockInstanceInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "getBundle", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getChainId", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getComponent",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getComponentState",
     data: BytesLike
@@ -263,6 +273,11 @@ export interface MockInstance extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { chainId: BigNumber }>;
 
+    getComponent(
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { component: string }>;
+
     getComponentState(
       componentId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -325,6 +340,11 @@ export interface MockInstance extends BaseContract {
 
   getChainId(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getComponent(
+    componentId: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getComponentState(
     componentId: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -380,6 +400,11 @@ export interface MockInstance extends BaseContract {
     ): Promise<IInstanceServiceFacade.BundleStructOutput>;
 
     getChainId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getComponent(
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getComponentState(
       componentId: PromiseOrValue<BigNumberish>,
@@ -447,6 +472,11 @@ export interface MockInstance extends BaseContract {
 
     getChainId(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getComponent(
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getComponentState(
       componentId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -503,6 +533,11 @@ export interface MockInstance extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getChainId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getComponent(
+      componentId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getComponentState(
       componentId: PromiseOrValue<BigNumberish>,

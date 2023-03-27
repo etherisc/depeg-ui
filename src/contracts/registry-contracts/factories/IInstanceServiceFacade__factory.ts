@@ -102,6 +102,25 @@ const _abi = [
         type: "uint256",
       },
     ],
+    name: "getComponent",
+    outputs: [
+      {
+        internalType: "contract IComponent",
+        name: "component",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "componentId",
+        type: "uint256",
+      },
+    ],
     name: "getComponentState",
     outputs: [
       {
