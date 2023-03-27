@@ -48,10 +48,9 @@ export default async function handler(
         const capitalSupport = bundle.capitalSupport;
         if (capitalSupport !== undefined) {
             // if supported capital is defined, then only bundles with locked capital less than the capital support are used
-            const capitalSupportBN = BigNumber.from(capitalSupport);
-            const lockedBN = BigNumber.from(bundle.locked);
+            const capitalSupportRemainingBN = BigNumber.from(bundle.capitalSupportRemaining);
             // stake adjusted capacity
-            const remainingCapacity = minBigNumber(capacity, capitalSupportBN.sub(lockedBN));
+            const remainingCapacity = minBigNumber(capacity, capitalSupportRemainingBN);
             console.log("bundleid", bundle.id, "remainingCapacity", remainingCapacity.toString(), "locked", bundle.locked, "capitalSupport", capitalSupport);
             if (remainingCapacity.lte(BigNumber.from(0))) {
                 console.log("remaining capacity less than 0", bundle.id);
