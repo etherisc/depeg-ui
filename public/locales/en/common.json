@@ -22,7 +22,8 @@
         "close": "Close",
         "hide": "Hide",
         "address_copied": "Value copied to clipboard",
-        "dismiss" : "Dismiss"
+        "dismiss" : "Dismiss",
+        "copy_details": "Copy details"
     },
     "login_select": "Please choose a wallet",
     "warning": {
