@@ -24,6 +24,7 @@ export default function BundleDetails(props: BundleDetailsProps) {
     const symbol = props.currency;
     const symbolProtected = props.currencyProtected;
     const capacity = BigNumber.from(props.bundle.capacity);
+    const supportedCapital = BigNumber.from(props.bundle.capitalSupport);
     const balance = BigNumber.from(props.bundle.balance);
     const capital = BigNumber.from(props.bundle.capital);
     const locked = BigNumber.from(props.bundle.locked);
@@ -53,6 +54,11 @@ export default function BundleDetails(props: BundleDetailsProps) {
                 <>
                     {symbol + " " + formatCurrencyBN(capital, props.decimals)} 
                     <WithTooltip tooltipText={t('capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
+                </>} />
+            <NameValue name={t('supported_capital')} value={
+                <>
+                    {symbol + " " + formatCurrencyBN(supportedCapital, props.decimals)} 
+                    <WithTooltip tooltipText={t('supported_capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
             <NameValue name={t('locked')} value={
                 <>
