@@ -18,7 +18,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<number>
 ) {
-    console.log("called /api/prices/update");
+    console.log("called /api/prices/fetch");
     const aggregator = await getAggregator();
     const priceRepository = await getPriceRepository();
 

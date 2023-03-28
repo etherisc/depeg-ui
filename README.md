@@ -210,8 +210,18 @@ dokku proxy:ports-add goerli-depeg https:443:3000
 dokku proxy:ports-add goerli-depeg http:80:3000
 dokku proxy:ports-remove goerli-depeg http:80:5000
 
-# create and link redis instance
+# create redis service
 dokku redis:create depeg-test-goerli-redis
+
+# now you need to manually enable redissearch and redisjson modules in the redis config (replace 'depeg-mumbai-redis' below with correct service name)
+vi /var/lib/dokku/services/redis/depeg-mumbai-redis/config/redis.conf
+# scroll down to the section 'MODULES' and paste the following two lines (remove the # in front of the lines)
+# loadmodule /opt/redis-stack/lib/redisearch.so
+# loadmodule /opt/redis-stack/lib/rejson.so
+
+# restart redis service
+dokku redis:restart depeg-mumbai-redis
+# link the redis service to the app
 dokku redis:link depeg-test-goerli-redis goerli-depeg
 
 # now push deployment via git 
@@ -226,6 +236,8 @@ dokku config:set goerli-depeg BACKEND_CHAIN_RPC_URL=<chain rpc url>
 
 # initial update of the bundle cache (probably empty)
 curl https://<application-url>/api/bundles/update
+# initial fetch of the price data (must be done twice the first time - if index is not initialized yet)
+curl https://<application-url>/api/prices/fetch
 
 # app should be ready now - open in browser
 
