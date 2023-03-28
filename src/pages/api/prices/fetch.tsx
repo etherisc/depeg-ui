@@ -34,7 +34,7 @@ export default async function handler(
 /**
  * Fetches all prices (or only prices never than the last fetched price) from chainlink price feed aggregator and stores them in redis.
  */
-async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLastFetch: Price|null, priceRepository: Repository<Price>): Promise<number> {
+export async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLastFetch: Price|null, priceRepository: Repository<Price>): Promise<number> {
     const prices: PriceData[] = [];
     console.log("fetching latest round data");
     let roundData = await aggregator.latestRoundData();
@@ -49,13 +49,15 @@ async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLastFetch
     let roundIdToFetch = roundData.roundId;
     
     while(true) {
-        roundIdToFetch = roundIdToFetch.sub(1);
         let { phaseId, aggregatorRoundId } = splitRoundId(roundIdToFetch);
 
-        // abort if aggregatorRoundId is 0 or lower than the last fetched price
-        if ( aggregatorRoundId === 0 
-            || (priceFromLastFetch !== null && aggregatorRoundId <= priceFromLastFetch?.aggregatorRoundId)) {
+        if ( aggregatorRoundId === 0 ) {
             console.log("aggregatorRoundId is 0, stopping");
+            break;
+        }
+
+        if ( priceFromLastFetch !== null && aggregatorRoundId <= priceFromLastFetch?.aggregatorRoundId) {
+            console.log("aggregatorRoundId is lower than last fetched price, stopping");
             break;
         }
 
@@ -68,8 +70,9 @@ async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLastFetch
             break;
         }
 
+        ++numPricesFetched;
         // store price to redis
-        console.log("latestRoundData", formatUnits(roundData.roundId, 0), "(", phaseId, aggregatorRoundId, ")", roundData.updatedAt.toNumber(), roundData.answer.toNumber());
+        console.log("roundData", formatUnits(roundData.roundId, 0), "(", phaseId, aggregatorRoundId, ")", roundData.updatedAt.toNumber(), roundData.answer.toNumber());
         priceRepository.createAndSave({ 
             roundId: roundData.roundId.toString(), 
             price: roundData.answer.toNumber(), 
@@ -77,14 +80,14 @@ async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLastFetch
             phaseId, 
             aggregatorRoundId
         });
-        numPricesFetched++;
+        roundIdToFetch = roundIdToFetch.sub(1);
     } 
     
     console.log("price fetch finished. fetched", prices.length, "prices");
     return numPricesFetched;
 }
 
-function splitRoundId(roundId: BigNumber): { phaseId: number, aggregatorRoundId: number } {
+export function splitRoundId(roundId: BigNumber): { phaseId: number, aggregatorRoundId: number } {
     const phaseId = roundId.shr(64).toNumber();
     // Note: this found be '0xFFFFFFFFFFFFFFFF' but since javascript (es5) can't handle 64 bit numbers, we have to use 52 bits (which should be enough to handle the chainlink feed for a while)
     const aggregatorRoundId = roundId.and(0xFFFFFFFFFFFFF).toNumber();
