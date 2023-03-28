@@ -211,7 +211,7 @@ dokku proxy:ports-add goerli-depeg http:80:3000
 dokku proxy:ports-remove goerli-depeg http:80:5000
 
 # create redis service
-dokku redis:create depeg-test-goerli-redis
+dokku redis:create depeg-test-goerli-redis -i redis/redis-stack-server -I 7.0.6-RC8
 
 # now you need to manually enable redissearch and redisjson modules in the redis config (replace 'depeg-mumbai-redis' below with correct service name)
 vi /var/lib/dokku/services/redis/depeg-mumbai-redis/config/redis.conf
