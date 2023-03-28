@@ -1,7 +1,6 @@
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { Repository } from 'redis-om';
-import { BundleData } from '../../../src/backend/bundle_data';
 import { AggregatorV3Interface } from '../../../src/contracts/chainlink-contracts';
 import { fetchPrices, splitRoundId } from '../../../src/pages/api/prices/fetch';
 import { Price } from '../../../src/pages/api/prices/redis_price_objects';
