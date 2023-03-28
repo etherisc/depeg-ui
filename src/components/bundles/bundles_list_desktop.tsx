@@ -176,6 +176,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
                 const stakeUsage = params.value![0];
                 const supportingAmount = params.value![1];
                 const lockedAmount = params.value![2] !== undefined ? params.value![2] : BigNumber.from(0);
+                // FIXME: supportedCapital should be value in USDT and not USDC
                 return (<StakeUsageIndicator
                             stakeUsage={stakeUsage}
                             lockedCapital={lockedAmount}

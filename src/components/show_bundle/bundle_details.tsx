@@ -27,8 +27,8 @@ export default function BundleDetails(props: BundleDetailsProps) {
     const balance = BigNumber.from(props.bundle.balance);
     const capital = BigNumber.from(props.bundle.capital);
     const locked = BigNumber.from(props.bundle.locked);
-    const capitalSupport = BigNumber.from(props.bundle.capitalSupport);
-    let capitalSupportRemaining = BigNumber.from(props.bundle.capitalSupportRemaining ?? 0);
+    const supportedCapacity = BigNumber.from(props.bundle.supportedCapacity);
+    let supportedCapacityRemaining = BigNumber.from(props.bundle.supportedCapacityRemaining ?? 0);
     const minSumInsured = BigNumber.from(props.bundle.minSumInsured);
     const maxSumInsured = BigNumber.from(props.bundle.maxSumInsured);
     const minDuration = props.bundle.minDuration / 86400;
@@ -37,8 +37,8 @@ export default function BundleDetails(props: BundleDetailsProps) {
     const createdAtTS = props.bundle.createdAt;
     const endTS = props.bundle.createdAt + BigNumber.from(props.bundle.lifetime).toNumber();
 
-    if (capitalSupportRemaining.lt(0)) {
-        capitalSupportRemaining = BigNumber.from(0);
+    if (supportedCapacityRemaining.lt(0)) {
+        supportedCapacityRemaining = BigNumber.from(0);
     }
 
     return (<>
@@ -64,15 +64,15 @@ export default function BundleDetails(props: BundleDetailsProps) {
                 {symbolProtected + " " + formatCurrencyBN(capacity, props.decimalsProtected)}
                 <WithTooltip tooltipText={t('capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
             </>} />
-            <NameValue name={t('supported_capital')} value={
+            <NameValue name={t('supported_capacity')} value={
                 <>
-                    {symbolProtected + " " + formatCurrencyBN(capitalSupport, props.decimalsProtected)}
-                    <WithTooltip tooltipText={t('supported_capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
+                    {symbolProtected + " " + formatCurrencyBN(supportedCapacity, props.decimalsProtected)}
+                    <WithTooltip tooltipText={t('supported_capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>}  />
-            <NameValue name={t('supported_capital_remaining')} value={
+            <NameValue name={t('supported_capacity_remaining')} value={
                 <>
-                    {symbolProtected + " " + formatCurrencyBN(capitalSupportRemaining, props.decimalsProtected)}
-                    <WithTooltip tooltipText={t('supported_capital_remaining_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
+                    {symbolProtected + " " + formatCurrencyBN(supportedCapacityRemaining, props.decimalsProtected)}
+                    <WithTooltip tooltipText={t('supported_capacity_remaining_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
             <NameValue name={t('min_max_sum_insured')} value={<>{symbolProtected + " " + formatCurrencyBN(minSumInsured, props.decimalsProtected) + " / " + formatCurrencyBN(maxSumInsured, props.decimalsProtected)}</>}/>
             <NameValue name={t('min_max_duration')} value={<>{minDuration + " / " + " " + maxDuration + " " + t('days')}</>}/>
