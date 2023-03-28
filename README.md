@@ -11,18 +11,32 @@ Additionally to the frontend, the application also exposes an API on path `/api`
 
 ## API services
 
-The nextjs backend exposes three services:
+The nextjs backend these services:
 
+### Bundles
 - `GET /api/bundles/update` - retrieves all bundles and stores them in redis store 
+- `GET /api/bundles/clear` - purge all bundles from redis store
 - `GET /api/bundles/all` - retrieves all bundles from redis store
 - `GET /api/bundles/active` - retrieves all active bundles (which can be used to issue policies) from redis store 
+
+### Prices
+- `GET /api/prices/fetch` - retrieves all prices from the blockchain (up to the latest price already stored) and stores them in redis store
+- `GET /api/prices/clear` - purge all prices from redis store
+- `GET /api/prices/all` - retrieves all prices from redis store. Parameters
+    - `after` - only return prices after this timestamp
+    - `count` - only return this number of prices
+    - `page` - only return prices for this page (page size is `count`)
+- `GET /api/prices/latest` - retrieves the latest price from redis store
 
 
 ## Dependencies
 
 ### Redis
 
-The application uses redis to store information. The application expects a environment variables called `REDIS_URL` to be set. The application will use the url`'redis://redis:6379'` if no connection is specified in the `REDIS_URL`.
+The application uses redis to store information. The redis modules search and JSON need to enabled. 
+The application expects a environment variables called `REDIS_URL` to be set. The application will use the url`'redis://redis:6379'` if no connection is specified in the `REDIS_URL`.
+
+The docker image `redis/redis-stack` can be used to run a redis instance with the required modules enabled.
 
 ### Deployed contracts
 
@@ -96,16 +110,23 @@ Show a page that displays the latest price of the protected coin and (if enabled
 
 - `NEXT_PUBLIC_FEATURE_PRICE=true` - show latest price of the protected coin
 - `NEXT_PUBLIC_FEATURE_PRICE_HISTORY=true` - show price history of the protected coin
-- `NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA=true` - enable loading of fake data for price history
+- `NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA=true` - enable loading of fake data for price history (for testing)
 
 
 
-### Backend bundle update
+### Backend bundle cache
 
-The backend caches the current bundle from the blockchain in a local redis store. 
+The backend caches the current bundles from the blockchain in a local redis store. 
 This information will be updated when a new bundle is created or a policy has been issued. 
 
 The detect outside changes (e.g. when a change to a bundle has been made from the blockchain explorer or a brownie shell) the backend api `/api/bundles/update` should be called on a regular basis (e.g. via a cron job that runs every 10 minutes) to ensure those updates are reflected in the redis store and the ui.
+
+
+### Backend price cache
+
+The backend caches the prices from the blockchain in a local redis store. 
+
+The detect changes the backend api `/api/prices/fetch` should be called on a regular basis (e.g. via a cron job that runs every minute) to ensure availability of the latest prices in the ui.
 
 
 ### Faucet 
@@ -210,6 +231,7 @@ curl https://<application-url>/api/bundles/update
 
 # do not forget to configure a cronjob to regularly update the bundles. e.g.
 # '*/5 * * * * curl https://depeg.goerli.etherisc.com/api/bundles/update'
+# '* * * * * curl https://depeg.goerli.etherisc.com/api/prices/fetch'
 ```
 
 #### Dokku documentaton links: 
@@ -218,4 +240,5 @@ curl https://<application-url>/api/bundles/update
 - https://dokku.com/docs/advanced-usage/docker-options/
 - https://dokku.com/docs/configuration/domains/
 - https://github.com/dokku/dokku-redis
+- https://hub.docker.com/r/redis/redis-stack
 

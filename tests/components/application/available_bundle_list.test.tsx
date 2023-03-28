@@ -154,7 +154,7 @@ describe('When rendering a bundle in the AvailableBundleRow', () => {
             maxDuration: 60 * 86400,
             capacity: BigNumber.from(20000 * Math.pow(10, 6)).toString(),
             capitalSupport: BigNumber.from(23000 * Math.pow(10, 6)).toString(),
-            capitalSupportRemaining: BigNumber.from(23000 * Math.pow(10, 6)).toString(),
+            supportedCapacityRemaining: BigNumber.from(23000 * Math.pow(10, 6)).toString(),
             locked: BigNumber.from(0).toString(),
             name: "some bundle",
         } as BundleData;
@@ -235,7 +235,7 @@ describe('When rendering a bundle in the AvailableBundleRow', () => {
             maxDuration: 60 * 86400,
             capacity: BigNumber.from(20000 * Math.pow(10, 6)).toString(),
             capitalSupport: BigNumber.from(12000 * Math.pow(10, 6)).toString(),
-            capitalSupportRemaining: BigNumber.from(8000 * Math.pow(10, 6)).toString(),
+            supportedCapacityRemaining: BigNumber.from(8000 * Math.pow(10, 6)).toString(),
             locked: BigNumber.from(4000 * Math.pow(10, 6)).toString(),
         } as BundleData;
 

@@ -74,7 +74,7 @@
     "coins_sent": "Some coins have been sent to your wallet for testing purposes",
     "stake_usage": "Stake Usage",
     "locked_capital": "Locked Capital",
-    "supported_capital": "Total Supported Capital",
+    "supported_capital": "Supported Capital",
     "no_stakes": "No stakes",
     "wait_for_coins": "Please wait for the coints to be sent to your wallet. This might take some seconds. Do not leave the page of close the browser window",
     "notification": {

@@ -51,19 +51,24 @@ export class PriceFeed implements PriceFeedApi {
     }
 
     async getLatestPrice(priceRetrieved: (price: PriceInfo, triggeredAt: number, depeggedAt: number) => void): Promise<void> {
+        const priceDataRes = await fetch('/api/prices/latest');
+
+        if (priceDataRes.status !== 200) {
+            throw new Error("Failed to fetch latest price");
+        }
+
+        const priceData = await priceDataRes.json() as PriceData;
+
+        if (priceData.price === undefined) {
+            return;
+        }
+
         const aggregator = await this.getPriceDataProvider();
-        const [ roundId,
-            price,
-            compliance,
-            stability,
-            eventType,
-            triggeredAt,
-            depeggedAt,
-            updatedAt ] = await aggregator.getLatestPriceInfo();
-        const priceInfo: PriceInfo = {
-            roundId: roundId.toString(),
-            price: price.toString(),
-            timestamp: updatedAt.toNumber(),
+        const { triggeredAt, depeggedAt } = await aggregator.getLatestPriceInfo();
+        const priceInfo: PriceInfo = { 
+            roundId: BigNumber.from(priceData.roundId).toString(),
+            price: BigNumber.from(priceData.price).toString(),
+            timestamp: priceData.timestamp / 1000,
         };
         // console.log(priceInfo, triggeredAt.toNumber(), depeggedAt.toNumber());
         priceRetrieved(priceInfo, triggeredAt.toNumber(), depeggedAt.toNumber());
@@ -86,31 +91,23 @@ export class PriceFeed implements PriceFeedApi {
         loadingStarted: () => void,
         loadingFinished: () => void,
     ): Promise<void> {
-        console.log("starting to get historical prices after " + after);
+        console.log("fetching historical prices after " + after);
         loadingStarted();
-        const aggregator = await this.getChainlinkAggregator();
-        let roundData = await aggregator.latestRoundData();
-        let timestamp = moment.unix(roundData.updatedAt.toNumber());
-        let afterTs = moment.unix(after);
-        let i = 0;
+        const pricesResult = await fetch('/api/prices/all?after=' + (after * 1000));
 
-        while (timestamp.isAfter(afterTs) && i++ < MAX_DATAPOINTS) {
-            priceRetrieved({
-                roundId: roundData.roundId.toString(),
-                price: roundData.answer.toString(),
-                timestamp: roundData.updatedAt.toNumber(),
-            });
-
-            const nextRoundId = roundData.roundId.sub(1);
-            
-            if (nextRoundId.eq(0)) {
-                break;
-            }
-
-            roundData = await aggregator.getRoundData(nextRoundId);
-            timestamp = moment.unix(roundData.updatedAt.toNumber());
-            console.log("got historical price for round " + roundData.roundId.toString() + " at " + timestamp);
+        if (pricesResult.status !== 200) {
+            throw new Error("Failed to fetch historical prices");
         }
+
+        const prices = await pricesResult.json() as PriceData[];
+        prices.map(price => {
+            const priceInfo: PriceInfo = {
+                roundId: BigNumber.from(price.roundId).toString(),
+                price: BigNumber.from(price.price).toString(),
+                timestamp: price.timestamp / 1000,
+            };
+            priceRetrieved(priceInfo);
+        });
 
         loadingFinished();
         console.log("finished getting historical prices");

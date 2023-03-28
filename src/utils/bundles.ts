@@ -24,7 +24,7 @@ export function filterApplicableBundles(bundles: Array<BundleData>, sumInsured: 
         }
         let capacity = BigNumber.from(bundle.capacity);
         // stake adjusted capacity
-        const capitalSupportRemaining = BigNumber.from(bundle.capitalSupportRemaining);
+        const capitalSupportRemaining = BigNumber.from(bundle.supportedCapacityRemaining);
         capacity = minBigNumber(capacity, capitalSupportRemaining);
         if (capacity.lt(sumInsured)) {
             console.log("capacity less that sum insured", capacity.toNumber(), sumInsured.toNumber(), bundle);

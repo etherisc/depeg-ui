@@ -115,7 +115,7 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
 
     function remainingCapacity(bundle: BundleData): string {
         const capacity = bundle.capacity;
-        const capitalRemaining = BigNumber.from(bundle.capitalSupportRemaining || 0);
+        const capitalRemaining = BigNumber.from(bundle.supportedCapacityRemaining || 0);
         return currency + " " + formatCurrencyBN(minBigNumber(BigNumber.from(capacity), capitalRemaining), currencyDecimals); 
     }
 

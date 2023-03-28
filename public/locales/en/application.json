@@ -29,7 +29,7 @@
         "suminsured": "Min / max amount",
         "duration": "Min / max duration",
         "apr": "APR",
-        "capacity": "Capacity",
+        "capacity": "Available",
         "stake_usage": "Stakes"
     },
     "confirmation": {
