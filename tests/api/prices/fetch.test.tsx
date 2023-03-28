@@ -1,9 +1,20 @@
 import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { Repository } from 'redis-om';
+import { BundleData } from '../../../src/backend/bundle_data';
 import { AggregatorV3Interface } from '../../../src/contracts/chainlink-contracts';
 import { fetchPrices, splitRoundId } from '../../../src/pages/api/prices/fetch';
 import { Price } from '../../../src/pages/api/prices/redis_price_objects';
+
+// fake redis client
+jest.mock('redis', () => ({
+    createClient: jest.fn().mockImplementation(() => {
+        return {
+            on: jest.fn(),
+            connect: jest.fn(),
+        };
+    }),
+}));
 
 function calculateRoundIdWithPhaseId(phaseId: BigNumber, roundId: BigNumber): BigNumber {
     return phaseId.shl(64).add(roundId);
