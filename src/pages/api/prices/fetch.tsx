@@ -51,20 +51,15 @@ export async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLa
     while(true) {
         let { phaseId, aggregatorRoundId } = splitRoundId(roundIdToFetch);
 
-        if ( aggregatorRoundId === 0 ) {
-            console.log("aggregatorRoundId is 0, stopping");
-            break;
-        }
-
-        if ( priceFromLastFetch !== null && aggregatorRoundId <= priceFromLastFetch?.aggregatorRoundId) {
-            console.log("aggregatorRoundId is lower than last fetched price, stopping");
+        if (stopFetching(aggregatorRoundId, priceFromLastFetch?.aggregatorRoundId ?? null)) {
             break;
         }
 
         console.log("fetching round data", formatUnits(roundIdToFetch, 0));
         roundData = await aggregator.getRoundData(roundIdToFetch);
+        console.log("roundData", formatUnits(roundData.roundId, 0), "(", phaseId, aggregatorRoundId, ")", roundData.updatedAt.toNumber(), roundData.answer.toNumber());
 
-        // abort if round not found
+        // abort loop if round not found
         if (roundData.roundId.eq(0)) {
             console.log("roundId is 0, stopping");
             break;
@@ -72,7 +67,6 @@ export async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLa
 
         ++numPricesFetched;
         // store price to redis
-        console.log("roundData", formatUnits(roundData.roundId, 0), "(", phaseId, aggregatorRoundId, ")", roundData.updatedAt.toNumber(), roundData.answer.toNumber());
         priceRepository.createAndSave({ 
             roundId: roundData.roundId.toString(), 
             price: roundData.answer.toNumber(), 
@@ -85,6 +79,20 @@ export async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLa
     
     console.log("price fetch finished. fetched", prices.length, "prices");
     return numPricesFetched;
+}
+
+function stopFetching(aggregatorRoundId: number, lastFetchAggregatorRoundId: number | null): Boolean {
+    if ( aggregatorRoundId === 0 ) {
+        console.log("aggregatorRoundId is 0, stopping");
+        return true;
+    }
+
+    if ( lastFetchAggregatorRoundId !== null && aggregatorRoundId <= lastFetchAggregatorRoundId) {
+        console.log("aggregatorRoundId is lower than last fetched price, stopping");
+        return true;
+    }
+
+    return false
 }
 
 export function splitRoundId(roundId: BigNumber): { phaseId: number, aggregatorRoundId: number } {
