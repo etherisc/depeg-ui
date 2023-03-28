@@ -3,6 +3,15 @@
     "chart": {
         "y": {
             "title": "{{symbol}} price"
+        },
+        "time_range": {
+            "1d": "1 day",
+            "2d": "2 days",
+            "1w": "1 week",
+            "2w": "2 weeks",
+            "1m": "1 month",
+            "2m": "2 months",
+            "1y": "1 year"
         }
     },
     "rate": "Price",

@@ -5,7 +5,7 @@ import { useTranslation } from "next-i18next";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
-import { addPrice, historyLoading, historyLoadingFinished, setDepeggedAt, setTriggeredAt } from "../../redux/slices/price";
+import { addPrice, clearHistory, historyLoading, historyLoadingFinished, setDepeggedAt, setTriggeredAt } from "../../redux/slices/price";
 import { RootState } from "../../redux/store";
 import LatestPrice from "./latest_price";
 import PriceHistory from "./price_history";
@@ -33,8 +33,9 @@ export default function PriceInfo(props: PriceInfoProps) {
 
     const priceHistory = useSelector((state: RootState) => state.price.history);
     const priceHistoryLoading = useSelector((state: RootState) => state.price.historyLoading);
+    const priceHistoryAfter = useSelector((state: RootState) => state.price.historyAfter);
 
-    const disablePriceHistory = process.env.NEXT_PUBLIC_DISABLE_PRICE_HISTORY === 'true' || false;
+    const enablePriceHistory = process.env.NEXT_PUBLIC_FEATURE_PRICE_HISTORY === 'true' || false;
 
     useEffect(() => {
         async function getPrices() {
@@ -46,27 +47,26 @@ export default function PriceInfo(props: PriceInfoProps) {
                     dispatch(setDepeggedAt(depeggedAt));
                 });    
 
-                if ( ! disablePriceHistory) {
-                    await priceFeedApi.getAllPricesAfter(moment().add(-2, "d").unix(), 
+                if ( enablePriceHistory ) {
+                    dispatch(clearHistory());
+                    await priceFeedApi.getAllPricesAfter(priceHistoryAfter, 
                         (price: PriceInfo) => dispatch(addPrice(price)),
                         () => dispatch(historyLoading()),
                         () => dispatch(historyLoadingFinished())
                     );
                 }
 
-                // get price update every minute
                 setInterval(async () => {
                     await priceFeedApi.getLatestPrice((price: PriceInfo, triggeredAt: number, depeggedAt: number) => {
                         dispatch(addPrice(price));
                         dispatch(setTriggeredAt(triggeredAt));
                         dispatch(setDepeggedAt(depeggedAt));
                     })
-                }, 60000);    
-                
+                }, 60000);                
             }
         }
         getPrices();
-    }, [isConnected, dispatch, priceFeedApi, disablePriceHistory]);
+    }, [isConnected, dispatch, priceFeedApi, enablePriceHistory, priceHistoryAfter]);
 
     return (<>
         <LatestPrice 
