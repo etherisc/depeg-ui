@@ -67,7 +67,7 @@ describe('/api/bundles/active', () => {
                 capacity: parseUnits("1000", 6).toString(),
                 minSumInsured: parseUnits("10000", 6).toString(),
             } as BundleData,
-            { // capital support remaining equals 0
+            { // supported capacity remaining equals 0
                 id: 5,
                 state: 0,
                 createdAt: 200,
@@ -75,10 +75,11 @@ describe('/api/bundles/active', () => {
                 capacity: parseUnits("10000", 6).toString(),
                 minSumInsured: parseUnits("1000", 6).toString(),
                 capitalSupport: parseUnits("2000", 6).toString(),
-                capitalSupportRemaining: parseUnits('0', 6).toString(),
+                supportedCapacity: parseUnits("20000", 6).toString(),
+                supportedCapacityRemaining: parseUnits('0', 6).toString(),
                 locked: parseUnits("2200", 6).toString(),
             } as BundleData,
-            { // capital support remaining less than 0
+            { // supported capacity remaining less than 0
                 id: 8,
                 state: 0,
                 createdAt: 200,
@@ -86,7 +87,8 @@ describe('/api/bundles/active', () => {
                 capacity: parseUnits("10000", 6).toString(),
                 minSumInsured: parseUnits("1000", 6).toString(),
                 capitalSupport: parseUnits("2000", 6).toString(),
-                capitalSupportRemaining: parseUnits('-1000', 6).toString(),
+                supportedCapacity: parseUnits("20000", 6).toString(),
+                supportedCapacityRemaining: parseUnits('-1000', 6).toString(),
                 locked: parseUnits("2200", 6).toString(),
             } as BundleData,
             { // remaining capacity less than minSumInsured
@@ -96,8 +98,9 @@ describe('/api/bundles/active', () => {
                 lifetime: "100",
                 capacity: parseUnits("10000", 6).toString(),
                 minSumInsured: parseUnits("1000", 6).toString(),
-                capitalSupport: parseUnits("10000", 6).toString(),
-                capitalSupportRemaining: parseUnits('900', 6).toString(),
+                capitalSupport: parseUnits("1000", 6).toString(),
+                supportedCapacity: parseUnits("10000", 6).toString(),
+                supportedCapacityRemaining: parseUnits('900', 6).toString(),
                 locked: parseUnits('9100', 6).toString(),
             } as BundleData,
             { // state locked
@@ -144,8 +147,9 @@ describe('/api/bundles/active', () => {
                 balance: BigNumber.from('10004109000').toString(),
                 capital: BigNumber.from('10000000000').toString(),
                 locked: BigNumber.from('1000000000').toString(),
-                capitalSupport: BigNumber.from('2000000000').toString(),
-                capitalSupportRemaining: BigNumber.from('1000000000').toString(),
+                capitalSupport: BigNumber.from('200000000').toString(),
+                supportedCapacity: BigNumber.from('2000000000').toString(),
+                supportedCapacityRemaining: BigNumber.from('1000000000').toString(),
                 capacity: BigNumber.from('9000000000').toString(),
                 policies: 1,
                 state: 0,

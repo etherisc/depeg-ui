@@ -5,6 +5,7 @@ import { DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
 import { finish, start, waitingForTransaction, waitingForUser } from "../redux/slices/transaction";
 import { store } from "../redux/store";
 import { TrxType } from "../types/trxtype";
+import { minBigNumber } from '../utils/bignumber';
 import { TransactionFailedError } from "../utils/error";
 import { isStakingSupported } from "../utils/staking";
 import { BundleData, MAX_BUNDLE } from "./bundle_data";
@@ -84,12 +85,15 @@ export class DepegRiskpoolApi {
         const apr = 100 * annualPercentageReturn.toNumber() / (await this.depegRiskpool.getApr100PercentLevel()).toNumber();
         console.log("depegRiskpool.getActivePolicies", bundleId);
         const policies = await this.depegRiskpool.getActivePolicies(bundleId);
+        const capacity = capital.sub(lockedCapital).mul(this.protectedAmountFactor);
         let capitalSupport = undefined;
-        let capitalSupportRemaining = undefined;
+        let supportedCapacity = undefined;
+        let supportedCapacityRemaining = undefined;
     
         if (this.stakingApi !== undefined) {
             capitalSupport = await this.stakingApi.getSupportedCapital(bundleId);
-            capitalSupportRemaining = capitalSupport.sub(lockedCapital.mul(this.protectedAmountFactor));
+            supportedCapacity = capitalSupport?.mul(this.protectedAmountFactor);
+            supportedCapacityRemaining = minBigNumber(capacity, supportedCapacity);
         }
 
         return {
@@ -105,8 +109,9 @@ export class DepegRiskpoolApi {
             capital: capital.toString(),
             locked: lockedCapital.toString(),
             capitalSupport: capitalSupport?.toString(),
-            capitalSupportRemaining: capitalSupportRemaining?.toString(),
-            capacity: capital.sub(lockedCapital).mul(this.protectedAmountFactor).toString(),
+            supportedCapacity: supportedCapacity?.toString(),
+            supportedCapacityRemaining: supportedCapacityRemaining?.toString(),
+            capacity: capacity.toString(),
             policies: policies.toNumber(),
             state: state,
             tokenId: tokenId.toNumber(),
