@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
+import useNotifications from "../../hooks/notifications";
 import useTransactionNotifications from "../../hooks/trx_notifications";
 import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/application";
 import { setProductState } from "../../redux/slices/price";
@@ -29,6 +30,7 @@ export default function Application(props: ApplicationProps) {
     const { t } = useTranslation(['application', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     useTransactionNotifications();
+    const { showPersistentErrorSnackbarWithCopyDetails } = useNotifications();
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
@@ -116,17 +118,9 @@ export default function Application(props: ApplicationProps) {
         } catch(e) { 
             if ( e instanceof ApprovalFailedError) {
                 console.log("approval failed", e);
-                enqueueSnackbar(
+                showPersistentErrorSnackbarWithCopyDetails(
                     t('error.approval_failed', { ns: 'common', error: e.code }),
-                    { 
-                        variant: "error", 
-                        persist: true,
-                        action: (key) => {
-                            return (
-                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                            );
-                        }
-                    }
+                    e.reason
                 );
                 return Promise.resolve(false);
             } else {
@@ -165,17 +159,9 @@ export default function Application(props: ApplicationProps) {
                     closeSnackbar(snackbar);
                 }
 
-                enqueueSnackbar(
+                showPersistentErrorSnackbarWithCopyDetails(
                     t('error.transaction_failed', { ns: 'common', error: e.code }),
-                    { 
-                        variant: "error", 
-                        persist: true,
-                        action: (key) => {
-                            return (
-                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                            );
-                        }
-                    }
+                    e.reason
                 );
                 return Promise.resolve({ status: false, processId: undefined });
             } else {

@@ -6,6 +6,7 @@ import { SnackbarKey, useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
+import useNotifications from "../../hooks/notifications";
 import useTransactionNotifications from "../../hooks/trx_notifications";
 import { RootState } from "../../redux/store";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
@@ -25,6 +26,7 @@ export default function Invest(props: InvestProps) {
     const router = useRouter();
     const dispatch = useDispatch();
     useTransactionNotifications();
+    const { showPersistentErrorSnackbarWithCopyDetails } = useNotifications();
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
@@ -114,17 +116,9 @@ export default function Invest(props: InvestProps) {
             if ( e instanceof ApprovalFailedError) {
                 console.log("approval failed", e);
         
-                enqueueSnackbar(
+                showPersistentErrorSnackbarWithCopyDetails(
                     t('error.approval_failed', { ns: 'common', error: e.code }),
-                    { 
-                        variant: "error", 
-                        persist: true,
-                        action: (key) => {
-                            return (
-                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                            );
-                        }
-                    }
+                    e.reason
                 );
                 return Promise.resolve(false);
             } else {
@@ -173,17 +167,9 @@ export default function Invest(props: InvestProps) {
                     closeSnackbar(snackbar);
                 }
 
-                enqueueSnackbar(
+                showPersistentErrorSnackbarWithCopyDetails(
                     t('error.transaction_failed', { ns: 'common', error: e.code }),
-                    { 
-                        variant: "error", 
-                        persist: true,
-                        action: (key) => {
-                            return (
-                                <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                            );
-                        }
-                    }
+                    e.reason
                 );
                 return { status: false, bundleId: undefined};
             } else {

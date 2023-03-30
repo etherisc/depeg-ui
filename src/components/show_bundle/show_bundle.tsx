@@ -8,6 +8,7 @@ import { useSnackbar } from "notistack";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
+import useNotifications from "../../hooks/notifications";
 import useTransactionNotifications from "../../hooks/trx_notifications";
 import { showBundle, showBundleFund, showBundleWithdraw } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
@@ -25,6 +26,7 @@ interface ShowBundleProps {
 export default function ShowBundle(props: ShowBundleProps) {
     const { t } = useTranslation('bundles');
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const { showPersistentErrorSnackbarWithCopyDetails } = useNotifications();
     const dispatch = useDispatch();
 
     const bundles = useSelector((state: RootState) => state.bundles.bundles);
@@ -197,17 +199,9 @@ export default function ShowBundle(props: ShowBundleProps) {
     }
 
     function showTrxFailedNotification(e: TransactionFailedError) {
-        enqueueSnackbar(
+        showPersistentErrorSnackbarWithCopyDetails(
             t('error.transaction_failed', { ns: 'common', error: e.code }),
-            { 
-                variant: "error", 
-                persist: true,
-                action: (key) => {
-                    return (
-                        <Button onClick={() => {closeSnackbar(key)}}>{t('action.close', { ns: 'common' })}</Button>
-                    );
-                }
-            }
+            e.reason
         );
     }
 
