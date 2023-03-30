@@ -237,4 +237,8 @@ export class InvestApiSmartContract implements InvestApi {
         return (await this.riskpoolApi()).getBundleLifetimeMax();
     }
 
+    async getProtectedAmountFactor(): Promise<number> {
+        return (await this.riskpoolApi()).getProtectedAmountFactor();
+    }
+
 }

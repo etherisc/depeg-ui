@@ -158,8 +158,18 @@ export default function InvestForm(props: InvestFormProperties) {
                 setValue("investedAmount", investedAmountMax.toString());
             }
         }
+        async function checkMaxInsuredAmount() {
+            const bundleCapitalCapBN = await props.backend.invest.getBundleCapitalCap();
+            const protectedAmountFactor = await props.backend.invest.getProtectedAmountFactor();
+            const bundleCapitalCap = parseInt(formatUnits(bundleCapitalCapBN.mul(protectedAmountFactor), props.usd2Decimals));
+            if (bundleCapitalCap < maxSumInsured) {
+                console.log("updating insuredAmountMax", bundleCapitalCap);
+                setValue("insuredAmountMax", bundleCapitalCap.toString());
+            }
+        }
         if (isConnected) {
             checkMaxInvestedAmount();
+            checkMaxInsuredAmount();
         }
     }, [isConnected, props.backend.invest, investProps.maxInvestedAmount, props.usd2Decimals, maxInvestedAmount, setValue]);
 

@@ -131,6 +131,7 @@ export interface InvestApi {
     getBundleCapitalCap(): Promise<BigNumber>;
     getBundleLifetimeMin(): Promise<number>;
     getBundleLifetimeMax(): Promise<number>;
+    getProtectedAmountFactor(): Promise<number>;
 }
 
 export function getBackendApi(

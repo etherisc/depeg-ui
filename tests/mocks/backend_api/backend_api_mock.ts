@@ -219,6 +219,9 @@ function investMock() {
         },
         getBundleLifetimeMax(): Promise<number> {
             return Promise.resolve(180 * 24 * 60 * 60);
-        }
+        },
+        async getProtectedAmountFactor(): Promise<number> {
+            return Promise.resolve(5);
+        },
     } as InvestApi;
 };
