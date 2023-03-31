@@ -104,6 +104,9 @@ export default function PriceHistory(props: PriceHistoryProps) {
                 segment: {
                     borderColor: getSegmentColor,
                 },
+                radius: 0,
+                hoverRadius: 5,
+                hitRadius: 5,
             },
             {
                 label: "Trigger",
