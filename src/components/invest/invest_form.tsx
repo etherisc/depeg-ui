@@ -134,20 +134,23 @@ export default function InvestForm(props: InvestFormProperties) {
     }
 
     useEffect(() => {
-        async function checkMaxInvestedAmount() {
+        async function checkAmountLimits() {
             // check if bundle cap is small than maxInvestedAmount
             let investedAmountMax = maxInvestedAmount;
             const bundleCapitalCapBN = await props.backend.invest.getBundleCapitalCap();
             const bundleCapitalCap = parseInt(formatUnits(bundleCapitalCapBN, props.usd2Decimals));
             console.log("bundleCapitalCap", bundleCapitalCap);
             
+            // the bundle cap is the maximum amount that can be invested in the bundle
             if (bundleCapitalCap < investedAmountMax) {
                 investedAmountMax = bundleCapitalCap;
             }
 
             const riskpoolRemainingCapacityBN = await props.backend.invest.riskpoolRemainingCapacity();
             const riskpoolRemainingCapacity = parseInt(formatUnits(riskpoolRemainingCapacityBN, props.usd2Decimals));
-            console.log("riskpoolRemainingCapacity", riskpoolRemainingCapacity.toString());
+            console.log("riskpoolRemainingCapacity", riskpoolRemainingCapacity);
+            
+            // the bundle cannot be larger than the remaining capacity of the riskpool
             if (riskpoolRemainingCapacity < investedAmountMax) {
                 investedAmountMax = riskpoolRemainingCapacity;
             }
@@ -157,9 +160,17 @@ export default function InvestForm(props: InvestFormProperties) {
                 setMaxInvestedAmount(investedAmountMax);
                 setValue("investedAmount", investedAmountMax.toString());
             }
+
+            // limit the maximum protected amount to the bundle cap (multiplied by the protected amount factor)
+            const protectedAmountFactor = await props.backend.invest.getProtectedAmountFactor();
+            const bundleCapitalCapProtectedAmount = parseInt(formatUnits(bundleCapitalCapBN.mul(protectedAmountFactor), props.usd2Decimals));
+            if (bundleCapitalCapProtectedAmount < maxSumInsured) {
+                console.log("updating insuredAmountMax", bundleCapitalCapProtectedAmount);
+                setValue("insuredAmountMax", bundleCapitalCapProtectedAmount.toString());
+            }
         }
         if (isConnected) {
-            checkMaxInvestedAmount();
+            checkAmountLimits();
         }
     }, [isConnected, props.backend.invest, investProps.maxInvestedAmount, props.usd2Decimals, maxInvestedAmount, setValue]);
 
@@ -295,6 +306,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.investedAmount.type}`, { "ns": "common", "minValue": `${props.usd2} ${minInvestedAmount}`, "maxValue": `${props.usd2} ${maxInvestedAmount}` }) 
                                     ) : ""}
+                                data-testid="invested-amount"
                                 />}
                         />
                 </Grid>
@@ -327,6 +339,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.insuredAmountMin.type}`, { "ns": "common", "minValue": `${props.usd2} ${minSumInsured}`, "maxValue": `${props.usd2} ${maxSumInsured}` }) 
                                     ) : ""}
+                                data-testid="min-sum-insured"
                                 />}
                         />
                 </Grid>
@@ -359,7 +372,9 @@ export default function InvestForm(props: InvestFormProperties) {
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.insuredAmountMax.type}`, { "ns": "common", "minValue": `${props.usd2} ${minSumInsured}`, "maxValue": `${props.usd2} ${maxSumInsured}` }) 
                                     ) : ""}
+                                data-testid="max-sum-insured"
                                 />}
+                                
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>

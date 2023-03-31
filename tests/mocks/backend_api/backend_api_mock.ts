@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { BigNumber } from "ethers/lib/ethers";
+import { parseUnits } from "ethers/lib/utils";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
 import { BackendApi, ApplicationApi, InvestApi } from "../../../src/backend/backend_api";
 import { BundleData } from "../../../src/backend/bundle_data";
@@ -38,6 +39,58 @@ export function mockSimple() {
         },
         application: applicationMock(),
         invest: investMock(),
+        triggerBundleUpdate(bundleId: number) {
+            return Promise.resolve({} as BundleData);
+        },
+        priceFeed: {
+            getLatestPrice(priceRetrieved: (price: PriceInfo, triggeredAt: number, depeggedAt: number) => void): Promise<void> { 
+                return Promise.resolve();
+            },
+            getPrice(roundId: BigNumber, priceRetrieved: (price: PriceInfo) => void): Promise<void> {
+                return Promise.resolve();
+            },
+            getAllPricesAfter(
+                after: number, 
+                priceRetrieved: (price: PriceInfo) => void,
+                loadingStarted: () => void,
+                loadingFinished: () => void,
+            ): Promise<void> {
+                return Promise.resolve();
+            }
+        } as PriceFeedApi,
+    };
+}
+
+export function mockSimpleRemainingRiskpoolCapSmallerThanBundleCap() {
+    return {
+        usd1: 'USDC',
+        usd1Decimals: 6,
+        usd2: 'USDT',
+        usd2Decimals: 6,
+        getWalletAddress(): Promise<string> {
+            return Promise.resolve("0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729");
+        },
+        async hasUsd2Balance(walletAddress: string, amount: BigNumber): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        async createTreasuryApproval(walletAddress: string, premium: BigNumber) {
+            await delay(2000);
+            return Promise.resolve(true);
+        },
+        async policy(walletAddress: string, idx: number, checkClaim: boolean): Promise<PolicyData> {
+            return Promise.resolve(mockPolicies[idx]);
+        },
+        async policies(walletAddress: string): Promise<Array<PolicyData>> {
+            return Promise.resolve(mockPolicies);
+        },
+        async policiesCount(walletAddress: string): Promise<number> {
+            return Promise.resolve(mockPolicies.length);
+        },
+        async getProductState() {
+            return Promise.resolve(ProductState.Active);
+        },
+        application: applicationMock(),
+        invest: investMock(parseUnits("1000", 6)),
         triggerBundleUpdate(bundleId: number) {
             return Promise.resolve({} as BundleData);
         },
@@ -132,24 +185,27 @@ function applicationMock() {
     } as ApplicationApi
 }
 
-function investMock() {
+function investMock(
+    remainingRiskpoolCapacity: BigNumber = parseUnits("25000", 6), 
+    bundleCapitalCap: BigNumber = parseUnits("2500", 6),
+) {
     return {
         usd1: 'USDC',
         minLifetime: 14,
         maxLifetime: 180,
-        minInvestedAmount: BigNumber.from(25000000000),
-        maxInvestedAmount: BigNumber.from(100000000000),
-        minSumInsured: BigNumber.from(1000000000),
-        maxSumInsured: BigNumber.from(25000000000),
+        minInvestedAmount: BigNumber.from(400),
+        maxInvestedAmount: BigNumber.from(10000),
+        minSumInsured: BigNumber.from(2000),
+        maxSumInsured: BigNumber.from(100000),
         minCoverageDuration: 14,
-        maxCoverageDuration: 90,
+        maxCoverageDuration: 120,
         annualPctReturn: 5,
         maxAnnualPctReturn: 15,
         isRiskpoolCapacityAvailable() {
             return Promise.resolve(true);
         },
         riskpoolRemainingCapacity() {
-            return Promise.resolve(BigNumber.from(10000000000000));
+            return Promise.resolve(remainingRiskpoolCapacity);
         },
         async isAllowAllAccountsEnabled(): Promise<boolean> {
             return Promise.resolve(true);
@@ -212,13 +268,16 @@ function investMock() {
             return Promise.resolve(true);
         },
         getBundleCapitalCap(): Promise<BigNumber> {
-            return Promise.resolve(BigNumber.from(100000000000));
+            return Promise.resolve(bundleCapitalCap);
         },
         getBundleLifetimeMin(): Promise<number> {
             return Promise.resolve(14 * 24 * 60 * 60);
         },
         getBundleLifetimeMax(): Promise<number> {
             return Promise.resolve(180 * 24 * 60 * 60);
-        }
+        },
+        async getProtectedAmountFactor(): Promise<number> {
+            return Promise.resolve(5);
+        },
     } as InvestApi;
 };

@@ -436,5 +436,9 @@ export class DepegRiskpoolApi {
         return this.depegRiskpool.isAllowed(account);
     }
 
+    getProtectedAmountFactor(): number {
+        return this.protectedAmountFactor;
+    }
+
 }
 
