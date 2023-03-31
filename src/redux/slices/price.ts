@@ -18,8 +18,8 @@ export type PriceState = {
     history: Array<PriceInfo>,
     // indicates if price history is loading
     historyLoading: boolean,
-    // show all prices after this timestamp
-    historyAfter: number,
+    // show all prices in this range (1d, 2d, ...)
+    historyDisplayRange: string,
     // used for testing only - disables dynamic updates from price feed
     noUpdates: boolean,
     // this is used to indicate if issuing of new policies is allowed
@@ -42,7 +42,7 @@ const initialState: PriceState = {
     depeggedAt: 0,
     history: [], // no initial history
     historyLoading: false,
-    historyAfter: moment().add(-1, "week").unix(),
+    historyDisplayRange: '1w',
     noUpdates: false,
     productState: ProductState.Active,
 }
@@ -88,8 +88,8 @@ export const priceSlice = createSlice({
             state.history = action.payload;
             state.latest = action.payload[action.payload.length - 1];
         },
-        setHistoryAfter: (state, action: PayloadAction<number>) => {
-            state.historyAfter = action.payload;
+        setHistoryAfter: (state, action: PayloadAction<string>) => {
+            state.historyDisplayRange = action.payload;
         },
         setTriggeredAt: (state, action: PayloadAction<number>) => {
             if (state.noUpdates) return;

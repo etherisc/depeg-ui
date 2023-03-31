@@ -9,8 +9,8 @@
             "2d": "2 days",
             "1w": "1 week",
             "2w": "2 weeks",
-            "1m": "1 month",
-            "2m": "2 months",
+            "1M": "1 month",
+            "2M": "2 months",
             "1y": "1 year"
         }
     },

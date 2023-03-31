@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { timeStamp } from "console";
-import moment from "moment";
+import moment, { unitOfTime } from "moment";
 import { useTranslation } from "next-i18next";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,7 +33,7 @@ export default function PriceInfo(props: PriceInfoProps) {
 
     const priceHistory = useSelector((state: RootState) => state.price.history);
     const priceHistoryLoading = useSelector((state: RootState) => state.price.historyLoading);
-    const priceHistoryAfter = useSelector((state: RootState) => state.price.historyAfter);
+    const historyDisplayRange = useSelector((state: RootState) => state.price.historyDisplayRange);
 
     const enablePriceHistory = process.env.NEXT_PUBLIC_FEATURE_PRICE_HISTORY === 'true' || false;
 
@@ -49,7 +49,10 @@ export default function PriceInfo(props: PriceInfoProps) {
 
                 if ( enablePriceHistory ) {
                     dispatch(clearHistory());
-                    await priceFeedApi.getAllPricesAfter(priceHistoryAfter, 
+                    const amount =parseInt(historyDisplayRange.at(0) ?? '1');
+                    const unit = historyDisplayRange.at(1) ?? 'w';
+                    const after = moment().add(-amount, unit as unitOfTime.Base).unix();
+                    await priceFeedApi.getAllPricesAfter(after, 
                         (price: PriceInfo) => dispatch(addPrice(price)),
                         () => dispatch(historyLoading()),
                         () => dispatch(historyLoadingFinished())
@@ -66,7 +69,7 @@ export default function PriceInfo(props: PriceInfoProps) {
             }
         }
         getPrices();
-    }, [isConnected, dispatch, priceFeedApi, enablePriceHistory, priceHistoryAfter]);
+    }, [isConnected, dispatch, priceFeedApi, enablePriceHistory, historyDisplayRange]);
 
     return (<>
         <LatestPrice 

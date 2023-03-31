@@ -6,9 +6,10 @@ import FakeData from "./fake_data";
 import 'chartjs-adapter-moment';
 import { useTranslation } from "next-i18next";
 import Color from "color";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setHistoryAfter } from "../../redux/slices/price";
 import moment from "moment";
+import { RootState } from "../../redux/store";
 
 
 interface PriceHistoryProps {
@@ -33,6 +34,8 @@ export default function PriceHistory(props: PriceHistoryProps) {
     const recoveryThresholdStr = process.env.NEXT_PUBLIC_DEPEG_RECOVERY_THRESHOLD || '0.999';
     const recoveryPrice = parseFloat(recoveryThresholdStr);
     
+    const historyDisplayRange = useSelector((state: RootState) => state.price.historyDisplayRange);
+
     let labels = [] as string[];
     let dataset = [] as any;
 
@@ -90,8 +93,8 @@ export default function PriceHistory(props: PriceHistoryProps) {
         return theme.palette.primary.light;
     }
 
-    function setHistoryAfterRange(amount: number, unit: any) {
-        dispatch(setHistoryAfter(moment().add(amount, unit).unix()))
+    function setHistoryAfterRange(value: string) {
+        dispatch(setHistoryAfter(value));
     }
 
     const data = {
@@ -170,19 +173,18 @@ export default function PriceHistory(props: PriceHistoryProps) {
         }
     }
 
+    // the implementation is very naive, is the number ever changes to 2 or more digits, the retrieval logic (in 'PriceInfo' component) will break
+    const chartRanges = ['1d', '2d', '1w', '2w', '1M', '2M', '1y'];
+
     return (<>
         {props.isLoading && <LinearProgress />}
         <Line 
             options={options}
             data={data} />
         <Box sx={{ mt: 2 }}>
-            <Button onClick={() => setHistoryAfterRange(-1, 'day')}>{t('chart.time_range.1d')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-2, 'days')}>{t('chart.time_range.2d')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-1, 'week')}>{t('chart.time_range.1w')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-2, 'weeks')}>{t('chart.time_range.2w')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-1, 'month')}>{t('chart.time_range.1m')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-2, 'months')}>{t('chart.time_range.2m')}</Button>
-            <Button onClick={() => setHistoryAfterRange(-1, 'year')}>{t('chart.time_range.1y')}</Button>
+            {chartRanges.map((range: string) => (
+                <Button key={range} onClick={() => setHistoryAfterRange(range)} disabled={historyDisplayRange === range}>{t('chart.time_range.' + range)}</Button>
+            ))}
         </Box>
         {process.env.NEXT_PUBLIC_FEATURE_PRICE_HISTORY_FAKE_DATA === 'true' && <FakeData />}
     </>);
