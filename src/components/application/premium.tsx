@@ -56,6 +56,7 @@ export default function Premium(props: PremiumProps) {
             }}
             error={props.helperTextIsError}
             helperText={matchedBundleText || props.helperText}
+            data-testid="premium-amount"
             />
         {wait}
     </>);

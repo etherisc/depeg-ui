@@ -251,7 +251,7 @@ export default function Application(props: ApplicationProps) {
                 usd1Decimals={props.insurance.usd1Decimals}
                 usd2={props.insurance.usd2}
                 usd2Decimals={props.insurance.usd2Decimals}
-                insuranceApi={props.insurance}
+                hasBalance={(walletAddress, amount) => props.insurance.hasUsd2Balance(walletAddress, amount)}
                 applicationApi={props.insurance.application}
                 readyToSubmit={readyToSubmit}
                 applyForPolicy={applyForPolicy}

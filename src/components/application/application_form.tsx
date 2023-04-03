@@ -35,8 +35,8 @@ export interface ApplicationFormProperties {
     usd2: string;
     usd2Decimals: number;
     applicationApi: ApplicationApi;
-    insuranceApi: BackendApi;
     premiumTrxTextKey: string|undefined;
+    hasBalance: (walletAddress: string, amount: BigNumber) => Promise<boolean>;
     readyToSubmit: (isFormReady: boolean) => void;
     applyForPolicy: (walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number) => void;
 }
@@ -92,6 +92,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const errors = useMemo(() => formState.errors, [formState]);
 
     const validateFormState = useCallback(() => {
+        // console.log("validateFormState");
         if (formState.touchedFields.insuredAmount === undefined) {
             console.log("amount not touched, not calculating premium...");
             return false;
@@ -110,6 +111,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }, [errors, formState.touchedFields.insuredAmount, bundles.length]);
 
     const getPremiumParameters = useCallback(() => {
+        // console.log("getPremiumParameters");
         const values = getValues();
         const insuredWallet = values.insuredWallet;
         const insuredAmount = parseUnits(values.insuredAmount ?? "0", props.usd1Decimals);
@@ -118,7 +120,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }, [getValues, props.usd1Decimals]);
 
     const calculatePremium = useCallback(async () => {
+        // console.log("calculatePremium");
         if ( ! validateFormState()) {
+            console.log("form not valid, not calculating premium");
             dispatch(setApplicableBundleIds(undefined));
             dispatch(clearPremium());
             return;
@@ -218,12 +222,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }
 
     async function checkBalanceForPremium() {
-        console.log("checkBalanceForPremium");
+        // console.log("checkBalanceForPremium", premium);
         if (premium === undefined || premium === "") {
             dispatch(setPremiumErrorKey(undefined));
             return;
         }
-        const hasBalance = await props.insuranceApi.hasUsd2Balance(props.connectedWalletAddress, BigNumber.from(premium));
+        const hasBalance = await props.hasBalance(props.connectedWalletAddress, BigNumber.from(premium));
         console.log("hasBalance", premium, hasBalance);
         if (! hasBalance) {
             dispatch(setPremiumErrorKey("error_wallet_balance_too_low"));
@@ -311,7 +315,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.insuredAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${insuredAmountMin}`, "maxValue": `${props.usd1} ${insuredAmountMax}` })
                                     ) : ""}
-                                data-testid="insuredAmount"
+                                data-testid="insured-amount"
                                 />}
                         />
                 </Grid>

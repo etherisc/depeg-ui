@@ -172,8 +172,7 @@ function applicationMock() {
         fetchStakeableRiskBundles(handleBundle) {
         },
         calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
-            const premium = insuredAmount.toNumber() * 0.017 * coverageDurationSeconds / 365;
-            return Promise.resolve(BigNumber.from(premium));
+            return Promise.resolve(insuredAmount.div(10));
         },
         async applyForPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId) {
             await delay(2000);
