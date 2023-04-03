@@ -20,7 +20,7 @@ import { BackendApi } from "../../backend/backend_api";
 import { ClaimData, PolicyData, PolicyState } from "../../backend/policy_data";
 import { addPolicy, finishLoading, reset, setClaimedPolicy, setDepegged, startLoading } from "../../redux/slices/policies";
 import { RootState } from "../../redux/store";
-import { ProductState } from "../../types/product_state";
+import { DepegState } from "../../types/depeg_state";
 import { bigNumberComparator } from "../../utils/bignumber";
 import { formatDateUtc } from "../../utils/date";
 import { TransactionFailedError } from "../../utils/error";
@@ -73,7 +73,7 @@ export default function Policies(props: PoliciesProps) {
         if (walletAddress !== undefined) {
             dispatch(startLoading());
             dispatch(reset());
-            const isProductDepegged = (await props.backend.getProductState()) === ProductState.Depegged;
+            const isProductDepegged = (await props.backend.getDepegState()) === DepegState.Depegged;
             if(isProductDepegged) {
                 dispatch(setDepegged());
             }

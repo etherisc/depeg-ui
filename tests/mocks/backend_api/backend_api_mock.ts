@@ -6,7 +6,7 @@ import { BackendApi, ApplicationApi, InvestApi } from "../../../src/backend/back
 import { BundleData } from "../../../src/backend/bundle_data";
 import { PolicyData } from "../../../src/backend/policy_data";
 import { PriceFeedApi } from "../../../src/backend/price_feed/api";
-import { ProductState } from "../../../src/types/product_state";
+import { DepegState } from "../../../src/types/depeg_state";
 import { delay } from "../../../src/utils/delay";
 
 export function mockSimple() {
@@ -34,8 +34,8 @@ export function mockSimple() {
         async policiesCount(walletAddress: string): Promise<number> {
             return Promise.resolve(mockPolicies.length);
         },
-        async getProductState() {
-            return Promise.resolve(ProductState.Active);
+        async getDepegState() {
+            return Promise.resolve(DepegState.Active);
         },
         application: applicationMock(),
         invest: investMock(),
@@ -86,8 +86,8 @@ export function mockSimpleRemainingRiskpoolCapSmallerThanBundleCap() {
         async policiesCount(walletAddress: string): Promise<number> {
             return Promise.resolve(mockPolicies.length);
         },
-        async getProductState() {
-            return Promise.resolve(ProductState.Active);
+        async getDepegState() {
+            return Promise.resolve(DepegState.Active);
         },
         application: applicationMock(),
         invest: investMock(parseUnits("1000", 6)),

@@ -1,9 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
 import { parseUnits } from '@ethersproject/units';
-import { PriceFeedState } from '../../types/price_feed_state';
-import { ProductState } from '../../types/product_state';
-import moment from 'moment';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import { DepegState } from '../../types/depeg_state';
 
 export type PriceState = {
     symbol: string,
@@ -23,7 +21,7 @@ export type PriceState = {
     // used for testing only - disables dynamic updates from price feed
     noUpdates: boolean,
     // this is used to indicate if issuing of new policies is allowed
-    productState: ProductState,
+    productState: DepegState,
 }
 
 const initialPrice = {
@@ -44,7 +42,7 @@ const initialState: PriceState = {
     historyLoading: false,
     historyDisplayRange: '1w',
     noUpdates: false,
-    productState: ProductState.Active,
+    productState: DepegState.Active,
 }
 
 export const priceSlice = createSlice({
@@ -102,7 +100,7 @@ export const priceSlice = createSlice({
         setNoUpdates: (state, action: PayloadAction<boolean>) => {
             state.noUpdates = action.payload;
         },
-        setProductState: (state, action: PayloadAction<ProductState>) => {
+        setProductState: (state, action: PayloadAction<DepegState>) => {
             if (state.noUpdates) return;
             state.productState = action.payload;
         },

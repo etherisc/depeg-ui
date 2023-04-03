@@ -12,7 +12,7 @@ import useTransactionNotifications from "../../hooks/trx_notifications";
 import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/application";
 import { setProductState } from "../../redux/slices/price";
 import { RootState } from "../../redux/store";
-import { ProductState } from "../../types/product_state";
+import { DepegState } from "../../types/depeg_state";
 import { updateAccountBalance } from "../../utils/chain";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { ga_event } from "../../utils/google_analytics";
@@ -52,7 +52,7 @@ export default function Application(props: ApplicationProps) {
     // get bundle data once the wallet is connected
     useEffect(() => {
         async function asyncGetProductStateAndBundles() {
-            let productState = await props.insurance.getProductState();
+            let productState = await props.insurance.getDepegState();
             dispatch(setProductState(productState));
             await props.insurance.application.fetchStakeableRiskBundles((bundle: BundleData) => dispatch(addBundle(bundle)));
             dispatch(finishLoading());
@@ -245,7 +245,7 @@ export default function Application(props: ApplicationProps) {
     if (activeStep < 5) {
         content = (
             <ApplicationForm 
-                formDisabled={formDisabled || productState !== ProductState.Active}
+                formDisabled={formDisabled || productState !== DepegState.Active}
                 connectedWalletAddress={walletAddress}
                 usd1={props.insurance.usd1}
                 usd1Decimals={props.insurance.usd1Decimals}
@@ -289,7 +289,7 @@ export default function Application(props: ApplicationProps) {
                     })}
                 </Stepper>
 
-                { productState !== ProductState.Active && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.product_not_active')}</Alert>)}
+                { productState !== DepegState.Active && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.product_not_active')}</Alert>)}
                 
                 {content}
             </div>

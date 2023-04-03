@@ -1,11 +1,11 @@
-import { Coder } from "abi-coder";
 import DepegProductBuild from '@etherisc/depeg-contracts/build/contracts/DepegProduct.json';
+import { Coder } from "abi-coder";
 import { BigNumber, ContractReceipt, ContractTransaction, Signer, VoidSigner } from "ethers";
 import { DepegProduct, DepegProduct__factory, DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
+import { DepegState } from "../types/depeg_state";
+import { TransactionFailedError } from "../utils/error";
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { APPLICATION_STATE_UNDERWRITTEN, PAYOUT_STATE_EXPECTED, PAYOUT_STATE_PAIDOUT, PolicyData } from "./policy_data";
-import { TransactionFailedError } from "../utils/error";
-import { ProductState } from "../types/product_state";
 
 export class DepegProductApi {
 
@@ -210,16 +210,16 @@ export class DepegProductApi {
         } as PolicyData;
     }
 
-    async getProductState(): Promise<ProductState> {
+    async getDepegState(): Promise<DepegState> {
         const state = await this.depegProduct!.getDepegState();
         switch (state) {
             case 0:
             case 1:
-                return ProductState.Active;
+                return DepegState.Active;
             case 2:
-                return ProductState.Paused;
+                return DepegState.Paused;
             case 3:
-                return ProductState.Depegged;
+                return DepegState.Depegged;
             default:
                 throw new Error("Unknown product state: " + state);
         }

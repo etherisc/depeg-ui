@@ -5,7 +5,7 @@ import { delay } from "../utils/delay";
 import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
 import dayjs from "dayjs";
-import { ProductState } from "../types/product_state";
+import { DepegState } from "../types/depeg_state";
 
 export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
@@ -33,8 +33,8 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
         async policiesCount(walletAddress: string): Promise<number> {
             return Promise.resolve(mockPolicies.length);
         },
-        async getProductState() {
-            return Promise.resolve(ProductState.Active);
+        async getDepegState() {
+            return Promise.resolve(DepegState.Active);
         },
         application: applicationMock(enqueueSnackbar),
         invest: investMock(enqueueSnackbar),

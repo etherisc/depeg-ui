@@ -1,7 +1,7 @@
 import { Box, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { loadPriceFeedHistory, setDepeggedAt, setNoUpdates, setProductState, setTriggeredAt } from "../../redux/slices/price";
-import { ProductState } from "../../types/product_state";
+import { DepegState } from "../../types/depeg_state";
 
 export default function FakeData() {
 
@@ -53,7 +53,7 @@ export default function FakeData() {
         dispatch(loadPriceFeedHistory(fakeData));
         dispatch(setTriggeredAt(0));
         dispatch(setDepeggedAt(0));
-        dispatch(setProductState(ProductState.Active));
+        dispatch(setProductState(DepegState.Active));
         dispatch(setNoUpdates(true));
     }
 
@@ -86,7 +86,7 @@ export default function FakeData() {
         dispatch(loadPriceFeedHistory(fakeData));
         dispatch(setTriggeredAt(1668040379));
         dispatch(setDepeggedAt(0));
-        dispatch(setProductState(ProductState.Paused));
+        dispatch(setProductState(DepegState.Paused));
         dispatch(setNoUpdates(true));
     }
 
@@ -136,7 +136,7 @@ export default function FakeData() {
         dispatch(loadPriceFeedHistory(fakeData));
         dispatch(setTriggeredAt(0));
         dispatch(setDepeggedAt(0));
-        dispatch(setProductState(ProductState.Active));
+        dispatch(setProductState(DepegState.Active));
         dispatch(setNoUpdates(true));
     }
 
@@ -186,7 +186,7 @@ export default function FakeData() {
         dispatch(loadPriceFeedHistory(fakeData));
         dispatch(setTriggeredAt(1668040379));
         dispatch(setDepeggedAt(1668143087));
-        dispatch(setProductState(ProductState.Depegged));
+        dispatch(setProductState(DepegState.Depegged));
         dispatch(setNoUpdates(true));
     }
 

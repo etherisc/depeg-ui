@@ -1,4 +1,4 @@
-export enum ProductState {
+export enum DepegState {
     Active,
     Paused,
     Depegged

@@ -1,12 +1,12 @@
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
-import { BigNumber, ethers, Signer } from "ethers";
-import { SnackbarMessage, OptionsObject, SnackbarKey } from "notistack";
-import { BundleData } from "./bundle_data";
+import { BigNumber, Signer, ethers } from "ethers";
+import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
+import { DepegState } from "../types/depeg_state";
 import { BackendApiMock } from "./backend_api_mock";
 import { BackendApiSmartContract } from "./backend_api_smart_contract";
+import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
 import { PriceFeedApi } from "./price_feed/api";
-import { ProductState } from "../types/product_state";
 
 export interface BackendApi {
     usd1: string;
@@ -34,7 +34,7 @@ export interface BackendApi {
         (
             walletAddress: string,
         ): Promise<number>;
-    getProductState(): Promise<ProductState>;
+    getDepegState(): Promise<DepegState>;
     application: ApplicationApi;
     invest: InvestApi;
     priceFeed: PriceFeedApi;
