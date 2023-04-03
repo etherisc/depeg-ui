@@ -6,6 +6,7 @@ import { ApprovalFailedError } from "../utils/error";
 import { formatCurrencyBN } from "../utils/numbers";
 import { getErc20Token } from "./erc20";
 import { getInstanceService } from "./gif_registry";
+import { formatUnits } from "ethers/lib/utils";
 
 export async function createApprovalForTreasury(
         tokenAddress: string, 
@@ -32,6 +33,13 @@ export async function createApprovalForTreasury(
             store.dispatch(waitingForTransaction({ active: true, params: { address: treasury }}));
         const receipt = await tx.wait();
         console.log("wait done", receipt, tx)
+
+        // now check if allowance is set and large enough
+        const allowanceAfterApproval = await usd1.allowance(await signer.getAddress(), treasury);
+        if (allowanceAfterApproval.lt(amount)) {
+            throw new ApprovalFailedError("ERROR:UIT-001:ALLOWANCE_TOO_SMALL", `user created allowance too small: ${formatUnits(allowanceAfterApproval, decimals)}`);
+        }
+
         return { tx, receipt, exists: false };
     } catch (e) {
         console.log("caught error during approval: ", e);
