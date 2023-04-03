@@ -9,6 +9,8 @@ export interface ApplicationState {
     applicableBundleIds: number[] | undefined;
     selectedBundleId: number | undefined;
     premium: string | undefined;
+    premiumErrorKey: string | undefined;
+    premiumCalculationInProgress: boolean;
 }
 
 const initialState: ApplicationState = {
@@ -18,6 +20,8 @@ const initialState: ApplicationState = {
     applicableBundleIds: undefined,
     selectedBundleId: undefined,
     premium: undefined,
+    premiumErrorKey: undefined,
+    premiumCalculationInProgress: false,
 }
 
 export const applicationSlice = createSlice({
@@ -54,6 +58,12 @@ export const applicationSlice = createSlice({
             state.selectedBundleId = undefined;
             state.premium = undefined;
         },
+        setPremiumErrorKey(state, action: PayloadAction<string|undefined>) {
+            state.premiumErrorKey = action.payload;
+        },
+        setPremiumCalculationInProgress(state, action: PayloadAction<boolean>) {
+            state.premiumCalculationInProgress = action.payload;
+        },
     },
 });
 
@@ -63,6 +73,8 @@ export const {
     startLoading, finishLoading,
     setApplicableBundleIds,
     setPremium, clearPremium,
+    setPremiumErrorKey,
+    setPremiumCalculationInProgress,
 } = applicationSlice.actions;
 
 export default applicationSlice.reducer;

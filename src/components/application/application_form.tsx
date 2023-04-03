@@ -19,7 +19,7 @@ import { ApplicationApi, BackendApi } from '../../backend/backend_api';
 import { BundleData, MAX_BUNDLE } from '../../backend/bundle_data';
 import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from '../../config/appConfig';
 import { INPUT_VARIANT } from '../../config/theme';
-import { clearPremium, setApplicableBundleIds, setPremium } from '../../redux/slices/application';
+import { clearPremium, setApplicableBundleIds, setPremium, setPremiumCalculationInProgress, setPremiumErrorKey } from '../../redux/slices/application';
 import { RootState } from '../../redux/store';
 import { filterApplicableBundles } from '../../utils/bundles';
 import TermsOfService from '../terms_of_service';
@@ -58,6 +58,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const applicableBundleIds = useSelector((state: RootState) => state.application.applicableBundleIds);
     const selectedBundleId = useSelector((state: RootState) => state.application.selectedBundleId);
     const premium = useSelector((state: RootState) => state.application.premium);
+    const premiumErrorKey = useSelector((state: RootState) => state.application.premiumErrorKey);
+    const premiumCalculationInProgress = useSelector((state: RootState) => state.application.premiumCalculationInProgress);
 
     const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin.toNumber());
     const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax.toNumber());
@@ -87,10 +89,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         setValue("insuredWallet", props.connectedWalletAddress);
     }, [props.connectedWalletAddress, setValue]);
 
-    // premium
-    const [ premiumErrorKey, setPremiumErrorKey ] = useState("");
-    const [ premiumCalculationInProgress, setPremiumCalculationInProgress ] = useState(false);
-
     const errors = useMemo(() => formState.errors, [formState]);
 
     const validateFormState = useCallback(() => {
@@ -119,26 +117,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         return { insuredWallet, insuredAmount, coverageSeconds };
     }, [getValues, props.usd1Decimals]);
 
-    const calculatePremiumForBundle = useCallback(async (walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData,) => {
-        const premium = await props.applicationApi.calculatePremium(walletAddress, insuredAmount, coverageDurationSeconds, bundle);
-        console.log("premium", premium.toString());
-        dispatch(setPremium([bundle.id, premium.toString()]));
-    }, [dispatch, props.applicationApi]);
-
-    const checkBalanceForPremium = useCallback(async () => {
-        if (premium === undefined || premium === "") {
-            setPremiumErrorKey("");
-            return;
-        }
-        const hasBalance = await props.insuranceApi.hasUsd2Balance(props.connectedWalletAddress, BigNumber.from(premium));
-        console.log("hasBalance", premium, hasBalance);
-        if (! hasBalance) {
-            setPremiumErrorKey("error_wallet_balance_too_low");
-        } else {
-            setPremiumErrorKey("");
-        }
-    }, [premium, props.connectedWalletAddress, props.insuranceApi]);
-
     const calculatePremium = useCallback(async () => {
         if ( ! validateFormState()) {
             dispatch(setApplicableBundleIds(undefined));
@@ -146,7 +124,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             return;
         }
         
-        setPremiumCalculationInProgress(true);
+        dispatch(setPremiumCalculationInProgress(true));
         try {
             const { insuredWallet, insuredAmount, coverageSeconds } = getPremiumParameters();
             // filter bundles matching application
@@ -167,13 +145,13 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             console.log("bestBundle", bestBundle);
 
             // calculate premium
-            await calculatePremiumForBundle(insuredWallet, insuredAmount, coverageSeconds, bestBundle);
-
-            checkBalanceForPremium();
+            const premium = await props.applicationApi.calculatePremium(insuredWallet, insuredAmount, coverageSeconds, bestBundle);
+            console.log("premium", premium.toString());
+            dispatch(setPremium([bestBundle.id, premium.toString()]));
         } finally {
-            setPremiumCalculationInProgress(false);
+            dispatch(setPremiumCalculationInProgress(false));
         }
-    }, [bundles, dispatch, getPremiumParameters, validateFormState, calculatePremiumForBundle, checkBalanceForPremium]);
+    }, [bundles, dispatch, getPremiumParameters, validateFormState, props.applicationApi]);
 
     //-------------------------------------------------------------------------
     // update min/max sum insured and coverage period when bundles are available
@@ -217,9 +195,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     const switchBundle = useCallback(async (bundle: BundleData) => {
         const { insuredWallet, insuredAmount, coverageSeconds } = getPremiumParameters();
-        await calculatePremiumForBundle(insuredWallet, insuredAmount, coverageSeconds, bundle);
-        checkBalanceForPremium();
-    }, [getPremiumParameters, calculatePremiumForBundle, checkBalanceForPremium]);
+        const premium = await props.applicationApi.calculatePremium(insuredWallet, insuredAmount, coverageSeconds, bundle);
+        console.log("premium", premium.toString());
+        dispatch(setPremium([bundle.id, premium.toString()]));    
+    }, [getPremiumParameters, props.applicationApi, dispatch]);
 
     const [ applicationInProgress, setApplicationInProgress ] = useState(false);
 
@@ -232,11 +211,29 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             const walletAddress = values.insuredWallet;
             const insuredAmountWei = parseUnits(values.insuredAmount, props.usd1Decimals);
             const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
-            await props.applyForPolicy(walletAddress, insuredAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!);
+            props.applyForPolicy(walletAddress, insuredAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!);
         } finally {
             setApplicationInProgress(false);
         }
     }
+
+    async function checkBalanceForPremium() {
+        console.log("checkBalanceForPremium");
+        if (premium === undefined || premium === "") {
+            dispatch(setPremiumErrorKey(undefined));
+            return;
+        }
+        const hasBalance = await props.insuranceApi.hasUsd2Balance(props.connectedWalletAddress, BigNumber.from(premium));
+        console.log("hasBalance", premium, hasBalance);
+        if (! hasBalance) {
+            dispatch(setPremiumErrorKey("error_wallet_balance_too_low"));
+        } else {
+            dispatch(setPremiumErrorKey(undefined));
+        }
+    }
+
+    // always check balance when premium changes
+    checkBalanceForPremium();
 
     const readyToSubmit = formState.isValid && ! premiumCalculationInProgress && ! props.formDisabled && selectedBundleId !== undefined && premiumErrorKey === "";
     props.readyToSubmit(readyToSubmit);
@@ -402,8 +399,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         premiumAmount={premium}
                         premiumCurrency={props.usd2}
                         premiumCurrencyDecimals={props.usd2Decimals}
-                        helperText={t(premiumErrorKey, { currency: props.usd2 })}
-                        helperTextIsError={premiumErrorKey != ""}
+                        helperText={t(premiumErrorKey ?? "", { currency: props.usd2 })}
+                        helperTextIsError={premiumErrorKey !== undefined}
                         transactionInProgress={premiumCalculationInProgress}
                         trxTextKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
                         />
