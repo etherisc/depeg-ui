@@ -49,6 +49,7 @@
         "continue_link": "Continue to risk bundle overview"
     },
     "alert": {
+        "riskpool_deactivated": "Creation of risk bundles is currently not available. Please check back later.",
         "max_bundles": "The maximum number of supported risk bundles has been reached. Please contact the Etherisc team for further information.",
         "no_riskpool_capacity": "The riskpool is at capacity. Please contact Etherisc if you would like to stake a risk bundle.",
         "investor_not_whitelisted": "You are not registered as an investor. Please contact Etherisc if you would like to stake a risk bundle."

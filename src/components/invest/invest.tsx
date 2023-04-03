@@ -13,6 +13,7 @@ import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { ga_event } from "../../utils/google_analytics";
 import { REVOKE_INFO_URL } from "../application/application";
 import InvestForm from "./invest_form";
+import { ComponentState } from "../../types/component_state";
 
 export interface InvestProps {
     backend: BackendApi;
@@ -31,6 +32,7 @@ export default function Invest(props: InvestProps) {
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const investorAddress = useSelector((state: RootState) => state.account.address);
+    const [ riskpookComponentActive, setRiskpoolComponentActive ] = useState(true);
     const [ isInvestorWhitelisted, setIsInvestorWhitelisted ] = useState(true);
     const [ riskpoolCapacityAvailable, setNoRiskpoolCapacityAvailable ] = useState(true);
     const [ maxBundlesUsed, setMaxBundlesUsed ] = useState(false);
@@ -41,6 +43,11 @@ export default function Invest(props: InvestProps) {
     useEffect(() => {
         async function checkStakingAllowed() {
             if (isConnected && investorAddress !== undefined) {
+                const riskpoolComponentState = await props.backend.invest.getRiskpoolComponentState();
+                if (riskpoolComponentState !== ComponentState.Active) {
+                    setRiskpoolComponentActive(false);
+                    return;
+                }
                 if (! await props.backend.invest.isAllowAllAccountsEnabled()) {
                     const isInvestorWhitelisted = await props.backend.invest.isInvestorWhitelisted(investorAddress!);
                     console.log("whitelist check result", isInvestorWhitelisted);
@@ -270,12 +277,13 @@ export default function Invest(props: InvestProps) {
                     })}
                 </Stepper>
 
+                { ! riskpookComponentActive && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.riskpool_deactivated')}</Alert>)}
                 { ! isInvestorWhitelisted && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.investor_not_whitelisted')}</Alert>)}
                 { ! riskpoolCapacityAvailable && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.no_riskpool_capacity')}</Alert>)}
                 { maxBundlesUsed && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.max_bundles')}</Alert>)}
 
                 <InvestForm 
-                        formDisabled={formDisabled || maxBundlesUsed || ! isInvestorWhitelisted || ! riskpoolCapacityAvailable}
+                        formDisabled={formDisabled || maxBundlesUsed || ! isInvestorWhitelisted || ! riskpoolCapacityAvailable || ! riskpookComponentActive}
                         usd2={props.backend.usd2}
                         usd2Decimals={props.backend.usd2Decimals}
                         backend={props.backend}
