@@ -89,6 +89,8 @@ export class ApplicationApiSmartContract implements ApplicationApi {
 
     async calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
         console.log("calculatePremium", walletAddress, insuredAmount.toNumber(), coverageDurationSeconds);
+
+        // FIXME: protected amount -> suminsured
         
         const depegProduct = (await this.getDepegProductApi())!.getDepegProduct();
         const netPremium = (await depegProduct.calculateNetPremium(insuredAmount, coverageDurationSeconds, bundle.id));
