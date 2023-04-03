@@ -239,7 +239,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     // always check balance when premium changes
     checkBalanceForPremium();
 
-    const readyToSubmit = formState.isValid && ! premiumCalculationInProgress && ! props.formDisabled && selectedBundleId !== undefined && premiumErrorKey === "";
+    const readyToSubmit = formState.isValid && ! premiumCalculationInProgress && ! props.formDisabled && selectedBundleId !== undefined && premiumErrorKey === undefined;
     props.readyToSubmit(readyToSubmit);
     
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
