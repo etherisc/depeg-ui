@@ -8,6 +8,7 @@ import { PolicyData } from "../../../src/backend/policy_data";
 import { PriceFeedApi } from "../../../src/backend/price_feed/api";
 import { DepegState } from "../../../src/types/depeg_state";
 import { delay } from "../../../src/utils/delay";
+import { ComponentState } from "../../../src/types/component_state";
 
 export function mockSimple() {
     return {
@@ -180,7 +181,10 @@ function applicationMock() {
         },
         lastBlockTimestamp(): Promise<number> {
             return Promise.resolve(dayjs().unix());
-        }
+        },
+        getProductComponentState() {
+            return Promise.resolve(ComponentState.Active);
+        },
     } as ApplicationApi
 }
 
@@ -277,6 +281,9 @@ function investMock(
         },
         async getProtectedAmountFactor(): Promise<number> {
             return Promise.resolve(5);
+        },
+        getRiskpoolComponentState() {
+            return Promise.resolve(ComponentState.Active);
         },
     } as InvestApi;
 };

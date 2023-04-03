@@ -5,6 +5,7 @@ import ApplicationForm from '../../../src/components/application/application_for
 import PayoutExample from '../../../src/components/application/payout_example';
 import { mockSimple } from '../../mocks/backend_api/backend_api_mock';
 import { renderWithProviders } from '../../util/render_with_provider';
+import { ComponentState } from '../../../src/types/component_state';
 
 jest.mock('react-i18next', () => ({
     ...jest.requireActual('react-i18next'),
@@ -32,6 +33,7 @@ describe('When rendering the PayoutExample', () => {
             {
                 preloadedState: {
                     application: {
+                        productComponentState: ComponentState.Active,
                         bundles: [],
                         isLoadingBundles: false,
                         exampleRate: "0.9",
@@ -67,6 +69,7 @@ describe('When rendering the PayoutExample', () => {
             {
                 preloadedState: {
                     application: {
+                        productComponentState: ComponentState.Active,
                         bundles: [],
                         isLoadingBundles: false,
                         exampleRate: "0.6",

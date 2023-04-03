@@ -5,6 +5,7 @@ import { InvestApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
+import { ComponentState } from "../types/component_state";
 
 export class InvestApiSmartContract implements InvestApi {
     private doNoUseDirectlydepegRiskpoolApi?: DepegRiskpoolApi;
@@ -239,6 +240,10 @@ export class InvestApiSmartContract implements InvestApi {
 
     async getProtectedAmountFactor(): Promise<number> {
         return (await this.riskpoolApi()).getProtectedAmountFactor();
+    }
+
+    async getRiskpoolComponentState(): Promise<ComponentState> {
+        return (await this.riskpoolApi()).getComponentState();
     }
 
 }

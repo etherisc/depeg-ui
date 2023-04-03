@@ -6,6 +6,8 @@ import { DepegState } from "../types/depeg_state";
 import { TransactionFailedError } from "../utils/error";
 import { getDepegRiskpool, getInstanceService } from "./gif_registry";
 import { APPLICATION_STATE_UNDERWRITTEN, PAYOUT_STATE_EXPECTED, PAYOUT_STATE_PAIDOUT, PolicyData } from "./policy_data";
+import { ComponentState } from '../types/component_state';
+import { mapComponentState } from '../utils/component';
 
 export class DepegProductApi {
 
@@ -267,6 +269,11 @@ export class DepegProductApi {
         });
     
         return claimId;
+    }
+
+    async getComponentState(): Promise<ComponentState> {
+        const state = await this.instanceService?.getComponentState(await this.depegProduct!.getId());
+        return mapComponentState(state!);
     }
 
 }

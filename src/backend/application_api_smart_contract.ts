@@ -1,4 +1,5 @@
 import { BigNumber } from "ethers";
+import { ComponentState } from "../types/component_state";
 import { ApplicationApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
@@ -138,6 +139,10 @@ export class ApplicationApiSmartContract implements ApplicationApi {
             status: receipt.status === 1, 
             claimId
         };
+    }
+
+    async getProductComponentState(): Promise<ComponentState> {
+        return (await this.getDepegProductApi())!.getComponentState();
     }
 
 }

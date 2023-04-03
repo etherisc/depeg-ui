@@ -1,8 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { BundleData } from '../../backend/bundle_data';
+import { ComponentState } from '../../types/component_state';
 
 export interface ApplicationState {
+    productComponentState: ComponentState,
     isLoadingBundles: boolean;
     bundles: BundleData[];
     exampleRate: string;
@@ -14,6 +16,7 @@ export interface ApplicationState {
 }
 
 const initialState: ApplicationState = {
+    productComponentState: ComponentState.Active,
     bundles: [],
     isLoadingBundles: false,
     exampleRate: "0.9",
@@ -66,11 +69,15 @@ export const applicationSlice = createSlice({
         setPremiumCalculationInProgress(state, action: PayloadAction<boolean>) {
             state.premiumCalculationInProgress = action.payload;
         },
+        setProductComponentState(state, action: PayloadAction<ComponentState>) {
+            state.productComponentState = action.payload;
+        },
     },
 });
 
 // Action creators are generated for each case reducer function
 export const { 
+    setProductComponentState,
     addBundle, reset, 
     startLoading, finishLoading,
     setApplicableBundleIds,

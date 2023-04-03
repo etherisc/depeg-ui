@@ -5,6 +5,7 @@ import ApplicationForm from '../../../src/components/application/application_for
 import { mockSimple } from '../../mocks/backend_api/backend_api_mock';
 import { renderWithProviders } from '../../util/render_with_provider';
 import { BundleData } from '../../../src/backend/bundle_data';
+import { ComponentState } from '../../../src/types/component_state';
 
 jest.mock('react-i18next', () => ({
     ...jest.requireActual('react-i18next'),
@@ -256,6 +257,7 @@ describe('ApplicationForm', () => {
             {
                 preloadedState: {
                     application: {
+                        productComponentState: ComponentState.Active,
                         isLoadingBundles: false,
                         bundles: [ bundle1 ],
                         exampleRate: "0.9",

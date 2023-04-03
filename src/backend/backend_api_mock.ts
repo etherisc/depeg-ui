@@ -6,6 +6,7 @@ import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
 import dayjs from "dayjs";
 import { DepegState } from "../types/depeg_state";
+import { ComponentState } from "../types/component_state";
 
 export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
@@ -51,7 +52,7 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
             getAllPricesAfter(after, priceRetrieved, loadingStarted, loadingFinished) {
                 return Promise.resolve();
             },
-        }
+        },
     } as BackendApi;
 }
 
@@ -174,7 +175,10 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         },
         claim(policyId: string) {
             return Promise.resolve({ status: true, claimId: "0x1"});
-        }
+        },
+        getProductComponentState() {
+            return Promise.resolve(ComponentState.Active);
+        },
     } as ApplicationApi
 }
 
@@ -272,6 +276,9 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         },
         async getProtectedAmountFactor(): Promise<number> {
             return Promise.resolve(5);
-        }
+        },
+        getRiskpoolComponentState() {
+            return Promise.resolve(ComponentState.Active);
+        },
     } as InvestApi;
 };

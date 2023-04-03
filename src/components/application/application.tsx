@@ -9,8 +9,8 @@ import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
 import useNotifications from "../../hooks/notifications";
 import useTransactionNotifications from "../../hooks/trx_notifications";
-import { addBundle, finishLoading, reset, startLoading } from "../../redux/slices/application";
-import { setProductState } from "../../redux/slices/price";
+import { addBundle, finishLoading, reset, setProductComponentState, startLoading } from "../../redux/slices/application";
+import { setProductDepegState } from "../../redux/slices/price";
 import { RootState } from "../../redux/store";
 import { DepegState } from "../../types/depeg_state";
 import { updateAccountBalance } from "../../utils/chain";
@@ -18,6 +18,7 @@ import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { ga_event } from "../../utils/google_analytics";
 import ApplicationForm from "./application_form";
 import PolicyConfirmation from "./policy_confirmation";
+import { ComponentState } from "../../types/component_state";
 
 export interface ApplicationProps {
     insurance: BackendApi;
@@ -34,7 +35,8 @@ export default function Application(props: ApplicationProps) {
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
-    const productState = useSelector((state: RootState) => state.price.productState);
+    const productComponentState = useSelector((state: RootState) => state.application.productComponentState);
+    const productDepegState = useSelector((state: RootState) => state.price.productDepegState);
     const dispatch = useDispatch();
 
     const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
@@ -52,8 +54,10 @@ export default function Application(props: ApplicationProps) {
     // get bundle data once the wallet is connected
     useEffect(() => {
         async function asyncGetProductStateAndBundles() {
-            let productState = await props.insurance.getDepegState();
-            dispatch(setProductState(productState));
+            const productComponentState = await props.insurance.application.getProductComponentState();
+            dispatch(setProductComponentState(productComponentState));
+            const depegState = await props.insurance.getDepegState();
+            dispatch(setProductDepegState(depegState));
             await props.insurance.application.fetchStakeableRiskBundles((bundle: BundleData) => dispatch(addBundle(bundle)));
             dispatch(finishLoading());
             setPremiumTrxTextKey("");
@@ -245,7 +249,7 @@ export default function Application(props: ApplicationProps) {
     if (activeStep < 5) {
         content = (
             <ApplicationForm 
-                formDisabled={formDisabled || productState !== DepegState.Active}
+                formDisabled={formDisabled || productDepegState !== DepegState.Active || productComponentState !== ComponentState.Active}
                 connectedWalletAddress={walletAddress}
                 usd1={props.insurance.usd1}
                 usd1Decimals={props.insurance.usd1Decimals}
@@ -289,7 +293,9 @@ export default function Application(props: ApplicationProps) {
                     })}
                 </Stepper>
 
-                { productState !== DepegState.Active && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.product_not_active')}</Alert>)}
+                { (productComponentState !== ComponentState.Active || productDepegState !== DepegState.Active) && 
+                    <Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.product_not_active')}</Alert>
+                }
                 
                 {content}
             </div>

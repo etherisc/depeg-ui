@@ -10,6 +10,8 @@ import { TransactionFailedError } from "../utils/error";
 import { isStakingSupported } from "../utils/staking";
 import { BundleData, MAX_BUNDLE } from "./bundle_data";
 import StakingApi from "./staking_api";
+import { ComponentState } from '../types/component_state';
+import { mapComponentState } from '../utils/component';
 
 export class DepegRiskpoolApi {
 
@@ -438,6 +440,11 @@ export class DepegRiskpoolApi {
 
     getProtectedAmountFactor(): number {
         return this.protectedAmountFactor;
+    }
+
+    async getComponentState(): Promise<ComponentState> {
+        const state = await this.instanceService?.getComponentState(await this.depegRiskpool!.getId());
+        return mapComponentState(state!);
     }
 
 }

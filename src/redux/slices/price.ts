@@ -21,7 +21,7 @@ export type PriceState = {
     // used for testing only - disables dynamic updates from price feed
     noUpdates: boolean,
     // this is used to indicate if issuing of new policies is allowed
-    productState: DepegState,
+    productDepegState: DepegState,
 }
 
 const initialPrice = {
@@ -42,7 +42,7 @@ const initialState: PriceState = {
     historyLoading: false,
     historyDisplayRange: '1w',
     noUpdates: false,
-    productState: DepegState.Active,
+    productDepegState: DepegState.Active,
 }
 
 export const priceSlice = createSlice({
@@ -100,9 +100,9 @@ export const priceSlice = createSlice({
         setNoUpdates: (state, action: PayloadAction<boolean>) => {
             state.noUpdates = action.payload;
         },
-        setProductState: (state, action: PayloadAction<DepegState>) => {
+        setProductDepegState: (state, action: PayloadAction<DepegState>) => {
             if (state.noUpdates) return;
-            state.productState = action.payload;
+            state.productDepegState = action.payload;
         },
     },
 });
@@ -119,7 +119,7 @@ export const {
     setTriggeredAt,
     setDepeggedAt,
     setNoUpdates,
-    setProductState,
+    setProductDepegState,
 } = priceSlice.actions;
 
 export default priceSlice.reducer;

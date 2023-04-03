@@ -7,6 +7,7 @@ import { BackendApiSmartContract } from "./backend_api_smart_contract";
 import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
 import { PriceFeedApi } from "./price_feed/api";
+import { ComponentState } from "react";
 
 export interface BackendApi {
     usd1: string;
@@ -46,6 +47,7 @@ export interface ApplicationApi {
     insuredAmountMax: BigNumber;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
+    getProductComponentState(): Promise<ComponentState>;
     /** Get all riskbundles for application from the blockchain */
     getRiskBundles: (
         handleBundle: (bundle: BundleData) => void
@@ -89,6 +91,7 @@ export interface InvestApi {
     maxCoverageDuration: number;
     annualPctReturn: number;
     maxAnnualPctReturn: number;
+    getRiskpoolComponentState(): Promise<ComponentState>;
     isRiskpoolCapacityAvailable(): Promise<boolean>;
     riskpoolRemainingCapacity(): Promise<BigNumber>;
     isAllowAllAccountsEnabled(): Promise<boolean>;
