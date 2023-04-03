@@ -87,13 +87,15 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         }
     }   
 
-    async calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
-        console.log("calculatePremium", walletAddress, insuredAmount.toNumber(), coverageDurationSeconds);
-
-        // FIXME: protected amount -> suminsured
-        
+    async calculatePremium(walletAddress: string, protectedAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
+        console.log("calculatePremium", walletAddress, protectedAmount.toNumber(), coverageDurationSeconds);
         const depegProduct = (await this.getDepegProductApi())!.getDepegProduct();
-        const netPremium = (await depegProduct.calculateNetPremium(insuredAmount, coverageDurationSeconds, bundle.id));
+        
+        const protectedAmountFactor = (await this.riskpoolApi()).getProtectedAmountFactor();
+        const sumInsured = protectedAmount.div(protectedAmountFactor);
+        
+        // the premium is calculated in the smart contract based on the sum insured (and not the protected amount)
+        const netPremium = (await depegProduct.calculateNetPremium(sumInsured, coverageDurationSeconds, bundle.id));
         console.log("netPremium", netPremium);
         const premium = (await depegProduct.calculatePremium(netPremium));
         console.log("premium", premium.toNumber());
@@ -102,14 +104,14 @@ export class ApplicationApiSmartContract implements ApplicationApi {
 
     async applyForPolicy(
             walletAddress: string, 
-            insuredAmount: BigNumber, 
+            protectedAmount: BigNumber, 
             coverageDurationSeconds: number,
             bundleId: number,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void,
         ): Promise<{ status: boolean, processId: string|undefined}> {
-        console.log("applyForPolicy", walletAddress, insuredAmount, coverageDurationSeconds, bundleId);
-        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
+        console.log("applyForPolicy", walletAddress, protectedAmount, coverageDurationSeconds, bundleId);
+        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, protectedAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
         const processId = (await this.getDepegProductApi())!.extractProcessIdFromApplicationLogs(receipt.logs);
         console.log(`processId: ${processId}`);
         return {
