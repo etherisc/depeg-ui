@@ -15,7 +15,7 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
-import { ApplicationApi, BackendApi } from '../../backend/backend_api';
+import { ApplicationApi } from '../../backend/backend_api';
 import { BundleData, MAX_BUNDLE } from '../../backend/bundle_data';
 import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from '../../config/appConfig';
 import { INPUT_VARIANT } from '../../config/theme';
@@ -222,7 +222,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }
 
     async function checkBalanceForPremium() {
-        // console.log("checkBalanceForPremium", premium);
+        console.log("checkBalanceForPremium", premium);
+        if (formState.touchedFields.protectedAmount === undefined) {
+            // empty form ... protected amount not touched yet -> reset premium
+            dispatch(clearPremium());
+            return;
+        }
         if (premium === undefined || premium === "") {
             dispatch(setPremiumErrorKey(undefined));
             return;

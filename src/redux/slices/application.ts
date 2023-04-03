@@ -57,6 +57,8 @@ export const applicationSlice = createSlice({
         clearPremium(state) {
             state.selectedBundleId = undefined;
             state.premium = undefined;
+            state.premiumErrorKey = undefined;
+            state.premiumCalculationInProgress = false;
         },
         setPremiumErrorKey(state, action: PayloadAction<string|undefined>) {
             state.premiumErrorKey = action.payload;

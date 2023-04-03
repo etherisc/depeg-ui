@@ -66,7 +66,7 @@ export default function Application(props: ApplicationProps) {
             setPremiumTrxTextKey('bundle_loading');
             asyncGetProductStateAndBundles();
         }    
-    }, [isConnected, dispatch]);
+    }, [isConnected, dispatch, props.insurance]);
     
     // change steps according to application state
     useEffect(() => {
