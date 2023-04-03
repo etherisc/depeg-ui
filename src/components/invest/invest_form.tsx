@@ -52,6 +52,7 @@ export type IInvestFormValues = {
 export default function InvestForm(props: InvestFormProperties) {
     const { t } = useTranslation('invest');
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
+    const bundleNames = useSelector((state: RootState) => state.bundles.bundles.map(b => b.name));
 
     const investProps = props.backend.invest;
     const minLifetimeDays = investProps.minLifetime;
@@ -119,7 +120,7 @@ export default function InvestForm(props: InvestFormProperties) {
 
         try {
             const values = getValues();
-            const bundleName = values.bundleName;
+            const bundleName = values.bundleName.trim();
             const lifetime = parseInt(values.lifetime) * 24 * 60 * 60;
             const investedAmount = parseUnits(values.investedAmount, props.usd2Decimals);
             const minSumInsured = parseUnits(values.insuredAmountMin, props.usd2Decimals);
@@ -189,9 +190,15 @@ export default function InvestForm(props: InvestFormProperties) {
                         control={control}
                         rules={{ 
                             required: true, 
-                            minLength: 3,
-                            maxLength: 32,
+                            // (checked manually for trim -> see below)
+                            // minLength: 3, 
+                            // maxLength: 32,
                             pattern: /^[A-Za-z0-9 _-]+$/,
+                            validate: {
+                                minLength: (value) => value.trim().length >= 3,
+                                maxLength: (value) => value.trim().length <= 32,
+                                unique: (value) => bundleNames.find((name) => name === value.trim()) === undefined
+                            }
                         }}
                         render={({ field }) => 
                             <TextField 
@@ -209,6 +216,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                         ) 
                                     : ""
                                 }
+                                data-testid="bundle-name"
                                 />}
                         />
                 </Grid>

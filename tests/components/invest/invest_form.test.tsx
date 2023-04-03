@@ -5,6 +5,7 @@ import ApplicationForm from '../../../src/components/application/application_for
 import InvestForm from '../../../src/components/invest/invest_form';
 import { mockSimple, mockSimpleRemainingRiskpoolCapSmallerThanBundleCap } from '../../mocks/backend_api/backend_api_mock';
 import { renderWithProviders } from '../../util/render_with_provider';
+import { BundleData } from '../../../src/backend/bundle_data';
 
 jest.mock('react-i18next', () => ({
     ...jest.requireActual('react-i18next'),
@@ -20,6 +21,122 @@ jest.mock('react-i18next', () => ({
 }));
 
 describe('When rendering the InvestForm', () => {
+    it('the name is trimmed, checked for length, characters and uniqueness', async () => {
+        const backendApi = mockSimple();
+        
+        renderWithProviders(
+            <InvestForm
+                formDisabled={false}
+                usd2="USDT"
+                usd2Decimals={6}
+                backend={backendApi}
+                readyToSubmit={(isFormReady: boolean) => jest.fn()}
+                invest={(
+                    name: string, lifetime: number, 
+                    investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+                    minDuration: number, maxDuration: number, annualPctReturn: number
+                ) => jest.fn() }
+                />,
+        {
+            preloadedState: {
+                chain: {
+                    chainId: "1",
+                    isConnected: true,
+                    isExpectedChain: true,
+                    provider: undefined,
+                    signer: undefined,
+                    blockNumber: 1234,
+                    blockTime: 42
+                },
+                bundles: {
+                    bundles: [
+                        { name: "abcdefgh" } as BundleData,
+                    ],
+                    maxActiveBundles: 10,
+                    isLoadingBundles: false,
+                    showBundle: undefined,
+                    showCreationConfirmation: false,
+                    isShowBundleFund: false,
+                    isShowBundleWithdraw: false,
+                }
+            }
+        });
+
+        const bundleName = screen.getByTestId("bundle-name").querySelector("input");
+
+        act(() => {
+            fireEvent.change(bundleName!, { target: { value: " " } });
+            fireEvent.change(bundleName!, { target: { value: "" } });
+        });
+
+        await waitFor(async () => {
+            console.log(bundleName?.value);
+            const e = await screen.findByTestId("bundle-name");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.required");
+        });
+
+        act(() => {
+            fireEvent.change(bundleName!, { target: { value: " " } });
+        });
+
+        await waitFor(async () => {
+            console.log(bundleName?.value);
+            const e = await screen.findByTestId("bundle-name");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.minLength");
+        });
+
+        act(() => {
+            fireEvent.change(bundleName!, { target: { value: " aa" } });
+        });
+
+        await waitFor(async () => {
+            console.log(bundleName?.value);
+            const e = await screen.findByTestId("bundle-name");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.minLength");
+        });
+
+        act(() => {
+            fireEvent.change(bundleName!, { target: { value: " abcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh  " } });
+        });
+
+        await waitFor(async () => {
+            console.log(bundleName?.value);
+            const e = await screen.findByTestId("bundle-name");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.maxLength");
+        });
+
+        act(() => {
+            fireEvent.change(bundleName!, { target: { value: "abcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh" } });
+        });
+
+        await waitFor(async () => {
+            console.log(bundleName?.value);
+            const e = await screen.findByTestId("bundle-name");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.maxLength");
+        });
+
+        act(() => {
+            fireEvent.change(bundleName!, { target: { value: " abcdefgh., " } });
+        });
+
+        await waitFor(async () => {
+            console.log(bundleName?.value);
+            const e = await screen.findByTestId("bundle-name");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.name.pattern");
+        });
+
+        act(() => {
+            fireEvent.change(bundleName!, { target: { value: " abcdefgh " } });
+        });
+
+        await waitFor(async () => {
+            console.log(bundleName?.value);
+            const e = await screen.findByTestId("bundle-name");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.unique");
+        });
+    });
+
+
     it('the apr is checked', async () => {
         const backendApi = mockSimple();
         

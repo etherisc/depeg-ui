@@ -48,7 +48,8 @@
             "min": "This field must be at least {{minValue}}",
             "max": "This field must be at most {{maxValue}}",
             "minmax": "The minimum value must be smaller than the maximum value",
-            "balance": "The amount is larger than your available balance"
+            "balance": "The amount is larger than your available balance",
+            "unique": "The value is already in use"
         },
         "approval_failed": "Setting allowance permission in wallet app failed. Reason: {{error}}",
         "transaction_failed": "The blockchain transaction failed. Reason: {{error}}",
