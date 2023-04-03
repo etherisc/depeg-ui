@@ -38,12 +38,12 @@ export interface ApplicationFormProperties {
     premiumTrxTextKey: string|undefined;
     hasBalance: (walletAddress: string, amount: BigNumber) => Promise<boolean>;
     readyToSubmit: (isFormReady: boolean) => void;
-    applyForPolicy: (walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number) => void;
+    applyForPolicy: (walletAddress: string, protectedAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number) => void;
 }
 
 export type IAplicationFormValues = {
     insuredWallet: string;
-    insuredAmount: string;
+    protectedAmount: string;
     coverageDuration: string;
     coverageEndDate: Dayjs;
     termsAndConditions: boolean;
@@ -75,14 +75,14 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         reValidateMode: "onChange",
         defaultValues: {
             insuredWallet: "",
-            insuredAmount: undefined,
+            protectedAmount: undefined,
             coverageDuration: props.applicationApi.coverageDurationDaysMax.toString(),
             coverageEndDate: dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days'),
             termsAndConditions: false,
         }
     });
 
-    const watchInsuredAmount = watch("insuredAmount");
+    const watchProtectedAmount = watch("protectedAmount");
 
     // update wallet address when it changes
     useEffect(() => {
@@ -93,12 +93,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     const validateFormState = useCallback(() => {
         // console.log("validateFormState");
-        if (formState.touchedFields.insuredAmount === undefined) {
+        if (formState.touchedFields.protectedAmount === undefined) {
             console.log("amount not touched, not calculating premium...");
             return false;
         }
 
-        if (errors.coverageDuration !== undefined || errors.insuredWallet !== undefined || errors.insuredAmount !== undefined) {
+        if (errors.coverageDuration !== undefined || errors.insuredWallet !== undefined || errors.protectedAmount !== undefined) {
             console.log("Form is invalid, not calculating premium...");
             return false;
         }
@@ -108,15 +108,15 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             return false;
         }
         return true;
-    }, [errors, formState.touchedFields.insuredAmount, bundles.length]);
+    }, [errors, formState.touchedFields.protectedAmount, bundles.length]);
 
     const getPremiumParameters = useCallback(() => {
         // console.log("getPremiumParameters");
         const values = getValues();
         const insuredWallet = values.insuredWallet;
-        const insuredAmount = parseUnits(values.insuredAmount ?? "0", props.usd1Decimals);
+        const protectedAmount = parseUnits(values.protectedAmount ?? "0", props.usd1Decimals);
         const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
-        return { insuredWallet, insuredAmount, coverageSeconds };
+        return { insuredWallet, protectedAmount, coverageSeconds };
     }, [getValues, props.usd1Decimals]);
 
     const calculatePremium = useCallback(async () => {
@@ -130,9 +130,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         
         dispatch(setPremiumCalculationInProgress(true));
         try {
-            const { insuredWallet, insuredAmount, coverageSeconds } = getPremiumParameters();
+            const { insuredWallet, protectedAmount, coverageSeconds } = getPremiumParameters();
             // filter bundles matching application
-            const fbid = filterApplicableBundles(bundles, insuredAmount, coverageSeconds).map(b => b.id);
+            const fbid = filterApplicableBundles(bundles, protectedAmount, coverageSeconds).map(b => b.id);
             dispatch(setApplicableBundleIds(fbid));
             console.log("fbid", fbid);
 
@@ -149,7 +149,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             console.log("bestBundle", bestBundle);
 
             // calculate premium
-            const premium = await props.applicationApi.calculatePremium(insuredWallet, insuredAmount, coverageSeconds, bestBundle);
+            const premium = await props.applicationApi.calculatePremium(insuredWallet, protectedAmount, coverageSeconds, bestBundle);
             console.log("premium", premium.toString());
             dispatch(setPremium([bestBundle.id, premium.toString()]));
         } finally {
@@ -198,8 +198,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     }, [bundles, props.usd1Decimals, setValue]);
 
     const switchBundle = useCallback(async (bundle: BundleData) => {
-        const { insuredWallet, insuredAmount, coverageSeconds } = getPremiumParameters();
-        const premium = await props.applicationApi.calculatePremium(insuredWallet, insuredAmount, coverageSeconds, bundle);
+        const { insuredWallet, protectedAmount, coverageSeconds } = getPremiumParameters();
+        const premium = await props.applicationApi.calculatePremium(insuredWallet, protectedAmount, coverageSeconds, bundle);
         console.log("premium", premium.toString());
         dispatch(setPremium([bundle.id, premium.toString()]));    
     }, [getPremiumParameters, props.applicationApi, dispatch]);
@@ -213,9 +213,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         try {
             const values = getValues();
             const walletAddress = values.insuredWallet;
-            const insuredAmountWei = parseUnits(values.insuredAmount, props.usd1Decimals);
+            const protectedAmountWei = parseUnits(values.protectedAmount, props.usd1Decimals);
             const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
-            props.applyForPolicy(walletAddress, insuredAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!);
+            props.applyForPolicy(walletAddress, protectedAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!);
         } finally {
             setApplicationInProgress(false);
         }
@@ -292,12 +292,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 </Grid>
                 <Grid item xs={12}>
                     <Controller
-                        name="insuredAmount"
+                        name="protectedAmount"
                         control={control}
                         rules={{ required: true, min: insuredAmountMin, max: insuredAmountMax, pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS  }}
                         render={({ field }) => 
                             <TextField 
-                                label={t('insuredAmount')}
+                                label={t('protectedAmount')}
                                 fullWidth
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
@@ -309,11 +309,11 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                     field.onBlur();
                                     await calculatePremium();
                                 }}
-                                error={errors.insuredAmount !== undefined}
-                                helperText={errors.insuredAmount !== undefined 
-                                    ? ( errors.insuredAmount.type == 'pattern' 
+                                error={errors.protectedAmount !== undefined}
+                                helperText={errors.protectedAmount !== undefined 
+                                    ? ( errors.protectedAmount.type == 'pattern' 
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
-                                            : t(`error.field.${errors.insuredAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${insuredAmountMin}`, "maxValue": `${props.usd1} ${insuredAmountMax}` })
+                                            : t(`error.field.${errors.protectedAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${insuredAmountMin}`, "maxValue": `${props.usd1} ${insuredAmountMax}` })
                                     ) : ""}
                                 data-testid="insured-amount"
                                 />}
@@ -378,7 +378,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                 </Grid>
                 <Grid item xs={12}>
                     <PayoutExample 
-                        insuredAmount={errors.insuredAmount !== undefined ? undefined : watchInsuredAmount}
+                        protectedAmount={errors.protectedAmount !== undefined ? undefined : watchProtectedAmount}
                         currency={props.usd1}
                         currency2={props.usd2}
                         />

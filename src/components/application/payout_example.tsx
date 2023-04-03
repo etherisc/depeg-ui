@@ -1,15 +1,12 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Link, Typography } from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Box, Link, Typography } from "@mui/material";
 import { Trans, useTranslation } from "next-i18next";
-import { formatCurrency } from "../../utils/numbers";
-import { ProxyType } from "immer/dist/internal";
-import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { formatCurrency } from "../../utils/numbers";
 import WithTooltip from "../with_tooltip";
 
 interface PayoutExampleProps {
-    insuredAmount: string | undefined;
+    protectedAmount: string | undefined;
     currency: string;
     currency2: string;
 }
@@ -27,16 +24,16 @@ export default function PayoutExample(props: PayoutExampleProps) {
     const maximumDepegPct = process.env.NEXT_PUBLIC_DEPEG_MAXIMUM_DEPEG_PCT || '20';
     const exampleRate = useSelector((state: RootState) => state.application.exampleRate);
 
-    let insuredAmt = 1000;
+    let protectedAmt = 1000;
 
-    if (props.insuredAmount !== undefined) {
-        insuredAmt = parseFloat(props.insuredAmount);
+    if (props.protectedAmount !== undefined) {
+        protectedAmt = parseFloat(props.protectedAmount);
     }
-    const insuredAmount = formatCurrency(insuredAmt, 0);
+    const protectedAmount = formatCurrency(protectedAmt, 0);
 
-    const payoutAmt = insuredAmt - insuredAmt * parseFloat(exampleRate);
+    const payoutAmt = protectedAmt - protectedAmt * parseFloat(exampleRate);
     const payoutAmount = formatCurrency(payoutAmt, 0);
-    const maxProtectedAmount = formatCurrency(insuredAmt * (1 - parseFloat(minimumPrice)), 0);
+    const maxProtectedAmount = formatCurrency(protectedAmt * (1 - parseFloat(minimumPrice)), 0);
 
     return (<>
         <Typography variant="subtitle2" gutterBottom component="div">
@@ -58,7 +55,7 @@ export default function PayoutExample(props: PayoutExampleProps) {
             </Typography>
             <Typography variant="body2" component="div" data-testid="text2">
                 <Trans i18nKey="payout_example.text2" t={t} values={{
-                        insuredAmount,
+                        protectedAmount,
                         payoutAmount,
                         currency,
                         currency2,
@@ -70,13 +67,13 @@ export default function PayoutExample(props: PayoutExampleProps) {
                 >
                     <b>bold</b>
                     <WithTooltip dottedUnderline tooltipText={t('payout_example.calculation_tooltip', {
-                        insuredAmount,
+                        protectedAmount,
                         currency2,
                         exampleRate, 
                     })}>calculation formula</WithTooltip>
                     {/* print values for testing */}
                     {exampleRate}
-                    {insuredAmount}
+                    {protectedAmount}
                     {payoutAmount}
                     {maxProtectedAmount}
                 </Trans>

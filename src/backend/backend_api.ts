@@ -57,14 +57,14 @@ export interface ApplicationApi {
     calculatePremium: 
         (
             walletAddress: string, 
-            insuredAmount: BigNumber, 
+            protectedAmount: BigNumber, 
             coverageDurationSeconds: number,
             bundle: BundleData,
         ) => Promise<BigNumber>;
     applyForPolicy: 
         (
             walletAddress: string, 
-            insuredAmount: BigNumber, 
+            protectedAmount: BigNumber, 
             coverageDurationSeconds: number,
             bundleId: number,
             beforeApplyCallback?: (address: string) => void,

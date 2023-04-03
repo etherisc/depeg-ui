@@ -129,12 +129,12 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function doApplication(walletAddress: string, insuredAmount: BigNumber, coverageDuration: number, bundleId: number): Promise<{ status: boolean, processId: string|undefined}> {
+    async function doApplication(walletAddress: string, protectedAmount: BigNumber, coverageDuration: number, bundleId: number): Promise<{ status: boolean, processId: string|undefined}> {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
             return await props.insurance.application.applyForPolicy(
                 walletAddress, 
-                insuredAmount, 
+                protectedAmount, 
                 coverageDuration, 
                 bundleId, 
                 (address: string) => {

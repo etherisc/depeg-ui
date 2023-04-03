@@ -1,9 +1,7 @@
-import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { faFileSignature } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Alert, AlertTitle, Button, Card, CardActions, CardContent, Grid, Typography, useTheme } from "@mui/material";
+import { Alert, AlertTitle, Button, Grid, Typography, useTheme } from "@mui/material";
 import { BigNumber } from "ethers";
-import { formatUnits } from "ethers/lib/utils";
 import moment from "moment";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -25,11 +23,6 @@ export default function PolicyConfirmation(props: PolicyConfirmationProps) {
     const { t } = useTranslation(['application']);
     const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
-
-    async function copyAddressToClipboard(value: string) {
-        await navigator.clipboard.writeText(value);
-        enqueueSnackbar(t('action.address_copied', { ns: "common" }),  { autoHideDuration: 2000, variant: 'info' });
-    }
 
     return (<>
         <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={2} mt={{ 'xs': 0, 'md': 2 }} 

@@ -1,12 +1,9 @@
-import { TextField, InputAdornment, LinearProgress, Typography } from "@mui/material";
+import { InputAdornment, LinearProgress, TextField, Typography } from "@mui/material";
 import { BigNumber } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
-import { Control, Controller } from "react-hook-form";
-import { BundleData } from "../../backend/bundle_data";
-import { formatCurrencyBN } from "../../utils/numbers";
+import { Control } from "react-hook-form";
 import { IAplicationFormValues } from "./application_form";
-import { AvailableBundleList } from "./available_bundle_list";
 
 export interface PremiumProps {
     disabled: boolean;

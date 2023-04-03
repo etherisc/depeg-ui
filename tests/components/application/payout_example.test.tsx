@@ -25,7 +25,7 @@ describe('When rendering the PayoutExample', () => {
         
         renderWithProviders(
             <PayoutExample
-                insuredAmount={undefined}
+                protectedAmount={undefined}
                 currency="USDC"
                 currency2="USDT"
                 />,
@@ -38,6 +38,8 @@ describe('When rendering the PayoutExample', () => {
                         applicableBundleIds: undefined,
                         selectedBundleId: undefined,
                         premium: undefined,
+                        premiumErrorKey: undefined,
+                        premiumCalculationInProgress: false,
                     }
                 }
             }
@@ -58,7 +60,7 @@ describe('When rendering the PayoutExample', () => {
         
         renderWithProviders(
             <PayoutExample
-                insuredAmount="20000"
+                protectedAmount="20000"
                 currency="USDC"
                 currency2="USDT"
                 />,
@@ -71,6 +73,8 @@ describe('When rendering the PayoutExample', () => {
                         applicableBundleIds: undefined,
                         selectedBundleId: undefined,
                         premium: undefined,
+                        premiumErrorKey: undefined,
+                        premiumCalculationInProgress: false,
                     }
                 }
             }
