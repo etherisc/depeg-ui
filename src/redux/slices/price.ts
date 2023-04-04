@@ -40,7 +40,7 @@ const initialState: PriceState = {
     depeggedAt: 0,
     history: [], // no initial history
     historyLoading: false,
-    historyDisplayRange: '1w',
+    historyDisplayRange: '1M',
     noUpdates: false,
     productDepegState: DepegState.Active,
 }
