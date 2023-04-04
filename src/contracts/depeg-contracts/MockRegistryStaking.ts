@@ -66,8 +66,10 @@ export interface MockRegistryStakingInterface extends utils.Interface {
     "rewardBalance()": FunctionFragment;
     "rewardRate()": FunctionFragment;
     "rewardReserves()": FunctionFragment;
+    "setStakeBalance(uint256)": FunctionFragment;
     "setStakedDip(uint96,uint256)": FunctionFragment;
     "setStakingRate(bytes5,address,uint256)": FunctionFragment;
+    "stakeBalance()": FunctionFragment;
     "stakingRate(bytes5,address)": FunctionFragment;
     "symbol()": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
@@ -116,8 +118,10 @@ export interface MockRegistryStakingInterface extends utils.Interface {
       | "rewardBalance"
       | "rewardRate"
       | "rewardReserves"
+      | "setStakeBalance"
       | "setStakedDip"
       | "setStakingRate"
+      | "stakeBalance"
       | "stakingRate"
       | "symbol"
       | "toChain"
@@ -228,6 +232,10 @@ export interface MockRegistryStakingInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setStakeBalance",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setStakedDip",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -238,6 +246,10 @@ export interface MockRegistryStakingInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "stakeBalance",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "stakingRate",
@@ -345,11 +357,19 @@ export interface MockRegistryStakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setStakeBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setStakedDip",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setStakingRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "stakeBalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -545,6 +565,11 @@ export interface MockRegistryStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { dipAmount: BigNumber }>;
 
+    setStakeBalance(
+      dipAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setStakedDip(
       targetNftId: PromiseOrValue<BigNumberish>,
       dipAmount: PromiseOrValue<BigNumberish>,
@@ -557,6 +582,10 @@ export interface MockRegistryStaking extends BaseContract {
       rate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    stakeBalance(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { dipAmount: BigNumber }>;
 
     stakingRate(
       chain: PromiseOrValue<BytesLike>,
@@ -701,6 +730,11 @@ export interface MockRegistryStaking extends BaseContract {
 
   rewardReserves(overrides?: CallOverrides): Promise<BigNumber>;
 
+  setStakeBalance(
+    dipAmount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setStakedDip(
     targetNftId: PromiseOrValue<BigNumberish>,
     dipAmount: PromiseOrValue<BigNumberish>,
@@ -713,6 +747,8 @@ export interface MockRegistryStaking extends BaseContract {
     rate: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  stakeBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
   stakingRate(
     chain: PromiseOrValue<BytesLike>,
@@ -857,6 +893,11 @@ export interface MockRegistryStaking extends BaseContract {
 
     rewardReserves(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setStakeBalance(
+      dipAmount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setStakedDip(
       targetNftId: PromiseOrValue<BigNumberish>,
       dipAmount: PromiseOrValue<BigNumberish>,
@@ -869,6 +910,8 @@ export interface MockRegistryStaking extends BaseContract {
       rate: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    stakeBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     stakingRate(
       chain: PromiseOrValue<BytesLike>,
@@ -1035,6 +1078,11 @@ export interface MockRegistryStaking extends BaseContract {
 
     rewardReserves(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setStakeBalance(
+      dipAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setStakedDip(
       targetNftId: PromiseOrValue<BigNumberish>,
       dipAmount: PromiseOrValue<BigNumberish>,
@@ -1047,6 +1095,8 @@ export interface MockRegistryStaking extends BaseContract {
       rate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    stakeBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     stakingRate(
       chain: PromiseOrValue<BytesLike>,
@@ -1190,6 +1240,11 @@ export interface MockRegistryStaking extends BaseContract {
 
     rewardReserves(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    setStakeBalance(
+      dipAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setStakedDip(
       targetNftId: PromiseOrValue<BigNumberish>,
       dipAmount: PromiseOrValue<BigNumberish>,
@@ -1202,6 +1257,8 @@ export interface MockRegistryStaking extends BaseContract {
       rate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    stakeBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     stakingRate(
       chain: PromiseOrValue<BytesLike>,
