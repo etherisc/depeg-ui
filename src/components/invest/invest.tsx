@@ -288,6 +288,7 @@ export default function Invest(props: InvestProps) {
                         usd2Decimals={props.backend.usd2Decimals}
                         backend={props.backend}
                         readyToSubmit={formReadyForInvest}
+                        hasUsd2Balance={(walletAddress, amount) => props.backend.hasUsd2Balance(walletAddress, amount)}
                         invest={invest}
                     />
             </div>

@@ -28,6 +28,7 @@ export interface InvestFormProperties {
     usd2: string;
     usd2Decimals: number;
     backend: BackendApi;
+    hasUsd2Balance: (walletAddress: string, amount: BigNumber) => Promise<boolean>;
     readyToSubmit: (isFormReady: boolean) => void;
     invest: (
         name: string, lifetime: number, 
@@ -171,9 +172,10 @@ export default function InvestForm(props: InvestFormProperties) {
             }
         }
         if (isConnected) {
+            trigger("investedAmount");
             checkAmountLimits();
         }
-    }, [isConnected, props.backend.invest, investProps.maxInvestedAmount, props.usd2Decimals, maxInvestedAmount, setValue]);
+    }, [isConnected, props.backend.invest, investProps.maxInvestedAmount, props.usd2Decimals, maxInvestedAmount, setValue, maxSumInsured, trigger]);
 
     const waitForPayment = paymentInProgress ? <LinearProgress /> : null;
 
@@ -294,7 +296,7 @@ export default function InvestForm(props: InvestFormProperties) {
                                 balance: async (value) => {
                                     const walletAddress = await props.backend.getWalletAddress();
                                     const investedAmount = BigNumber.from(parseFloat(value) * Math.pow(10, props.usd2Decimals));
-                                    return  props.backend.hasUsd2Balance(walletAddress, investedAmount);
+                                    return  props.hasUsd2Balance(walletAddress, investedAmount);
                                 }
                             }
                         }}

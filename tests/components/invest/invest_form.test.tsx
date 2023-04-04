@@ -29,6 +29,7 @@ describe('When rendering the InvestForm', () => {
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
+                hasUsd2Balance={async () => true }
                 backend={backendApi}
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
                 invest={(
@@ -145,6 +146,7 @@ describe('When rendering the InvestForm', () => {
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
+                hasUsd2Balance={async () => true }
                 backend={backendApi}
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
                 invest={(
@@ -215,6 +217,7 @@ describe('When rendering the InvestForm', () => {
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
+                hasUsd2Balance={async () => true }
                 backend={backendApi}
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
                 invest={(
@@ -257,6 +260,7 @@ describe('When rendering the InvestForm', () => {
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
+                hasUsd2Balance={async () => true }
                 backend={backendApi}
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
                 invest={(
@@ -307,6 +311,7 @@ describe('When rendering the InvestForm', () => {
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
+                hasUsd2Balance={async () => true }
                 backend={backendApi}
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
                 invest={(
@@ -344,6 +349,68 @@ describe('When rendering the InvestForm', () => {
         await waitFor(async () => {
             const ia = await screen.findByTestId("invested-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.max");
+        });
+    })
+
+    it('the wallet balance is checked when invested amount is changed', async () => {
+        const backendApi = mockSimple();
+        let hasBalance = false;
+
+        renderWithProviders(
+            <InvestForm
+                formDisabled={false}
+                usd2="USDT"
+                usd2Decimals={6}
+                backend={backendApi}
+                hasUsd2Balance={async () => hasBalance }
+                readyToSubmit={(isFormReady: boolean) => jest.fn()}
+                invest={(
+                    name: string, lifetime: number, 
+                    investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+                    minDuration: number, maxDuration: number, annualPctReturn: number
+                ) => jest.fn() }
+                />,
+        {
+            preloadedState: {
+                chain: {
+                    chainId: "1",
+                    isConnected: true,
+                    isExpectedChain: true,
+                    provider: undefined,
+                    signer: undefined,
+                    blockNumber: 1234,
+                    blockTime: 42
+                }
+            }
+        });
+
+        // initially the balance is not too low
+        const investedAmount = screen.getByTestId("invested-amount").querySelector("input");
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("invested-amount");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.balance");
+        });
+
+        // reducing invested amount to amount that is below the balance
+        hasBalance = true;
+        act(() => {
+            fireEvent.change(investedAmount!, { target: { value: "2000" } });
+        });
+        
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("invested-amount");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toBeNull();
+        });
+
+        // increasing invested amount to amount that is above the balance again
+        hasBalance = false;
+        act(() => {
+            fireEvent.change(investedAmount!, { target: { value: "2200" } });
+        });
+        
+        await waitFor(async () => {
+            const ia = await screen.findByTestId("invested-amount");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.balance");
         });
     })
 
