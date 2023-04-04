@@ -18,6 +18,7 @@
     "days": "Days",
     "error_no_matching_bundle_found": "No risk bundle matching your criteria was found",
     "error_wallet_balance_too_low": "The wallet does not contain enough {{currency}} to pay for the premium",
+    "error_calculating_premium": "An unexpected error occurred while calculating the premium. Please try again",
     "bundle_loading": "Fetching risk bundle information from blockchain",
     "premium_calculation_in_progress": "Premium is being calculated",
     "apply_info": "Second - please confirm issuing your protection on contract {{address}}",

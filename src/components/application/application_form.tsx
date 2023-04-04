@@ -61,6 +61,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const premiumErrorKey = useSelector((state: RootState) => state.application.premiumErrorKey);
     const premiumCalculationInProgress = useSelector((state: RootState) => state.application.premiumCalculationInProgress);
 
+    const hasBalance = props.hasBalance;
+
     const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin.toNumber());
     const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax.toNumber());
 
@@ -129,6 +131,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         }
         
         dispatch(setPremiumCalculationInProgress(true));
+        dispatch(clearPremium());
         try {
             const { insuredWallet, protectedAmount, coverageSeconds } = getPremiumParameters();
             // filter bundles matching application
@@ -137,7 +140,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             console.log("fbid", fbid);
 
             if (fbid.length == 0) {
-                dispatch(clearPremium());
                 return;
             }
             
@@ -149,13 +151,25 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             console.log("bestBundle", bestBundle);
 
             // calculate premium
-            const premium = await props.applicationApi.calculatePremium(insuredWallet, protectedAmount, coverageSeconds, bestBundle);
-            console.log("premium", premium.toString());
-            dispatch(setPremium([bestBundle.id, premium.toString()]));
+            const calculatedPremium = await props.applicationApi.calculatePremium(insuredWallet, protectedAmount, coverageSeconds, bestBundle);
+            console.log("premium", calculatedPremium.toString());
+            dispatch(setPremium([bestBundle.id, calculatedPremium.toString()]));
+
+            // and finally check if the wallet has enough balance
+            const walletBalanceSufficient = await hasBalance(insuredWallet, calculatedPremium);
+            console.log("walletBalanceSufficient", calculatedPremium, walletBalanceSufficient);
+            if (! walletBalanceSufficient) {
+                dispatch(setPremiumErrorKey("error_wallet_balance_too_low"));
+            } else {
+                dispatch(setPremiumErrorKey(undefined));
+            }
+        } catch (e) {
+            console.log(e);
+            dispatch(setPremiumErrorKey("error_calculating_premium"));
         } finally {
             dispatch(setPremiumCalculationInProgress(false));
         }
-    }, [bundles, dispatch, getPremiumParameters, validateFormState, props.applicationApi]);
+    }, [validateFormState, dispatch, getPremiumParameters, bundles, props.applicationApi, hasBalance]);
 
     //-------------------------------------------------------------------------
     // update min/max sum insured and coverage period when bundles are available
@@ -220,29 +234,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setApplicationInProgress(false);
         }
     }
-
-    async function checkBalanceForPremium() {
-        console.log("checkBalanceForPremium", premium);
-        if (formState.touchedFields.protectedAmount === undefined) {
-            // empty form ... protected amount not touched yet -> reset premium
-            dispatch(clearPremium());
-            return;
-        }
-        if (premium === undefined || premium === "") {
-            dispatch(setPremiumErrorKey(undefined));
-            return;
-        }
-        const hasBalance = await props.hasBalance(props.connectedWalletAddress, BigNumber.from(premium));
-        console.log("hasBalance", premium, hasBalance);
-        if (! hasBalance) {
-            dispatch(setPremiumErrorKey("error_wallet_balance_too_low"));
-        } else {
-            dispatch(setPremiumErrorKey(undefined));
-        }
-    }
-
-    // always check balance when premium changes
-    checkBalanceForPremium();
 
     const readyToSubmit = formState.isValid && ! premiumCalculationInProgress && ! props.formDisabled && selectedBundleId !== undefined && premiumErrorKey === undefined;
     props.readyToSubmit(readyToSubmit);
@@ -438,7 +429,6 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         type="submit"
                         disabled={!readyToSubmit}
                         fullWidth
-                        // onClick={buy}
                         sx={{ p: 1 }}
                     >
                         <FontAwesomeIcon icon={faShoppingCart} className="fa" />
