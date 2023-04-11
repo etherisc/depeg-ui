@@ -293,8 +293,8 @@ export default function StakingForm(props: StakingFormProperties) {
                             validate: {
                                 balance: async (value) => {
                                     const walletAddress = await props.backend.getWalletAddress();
-                                    const investedAmount = BigNumber.from(parseFloat(value) * Math.pow(10, props.usd2Decimals));
-                                    return  props.hasUsd2Balance(walletAddress, investedAmount);
+                                    const stakedAmount = BigNumber.from(parseFloat(value) * Math.pow(10, props.usd2Decimals));
+                                    return  props.hasUsd2Balance(walletAddress, stakedAmount);
                                 }
                             }
                         }}

@@ -9,7 +9,7 @@ import { getBackendApi } from '../backend/backend_api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 
-export default function InvestPage() {
+export default function StakePage() {
   const { enqueueSnackbar } = useSnackbar();
   const {t} = useTranslation('common');
   const signer = useSelector((state: RootState) => state.chain.signer);

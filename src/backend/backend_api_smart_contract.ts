@@ -48,14 +48,14 @@ export class BackendApiSmartContract implements BackendApi {
         const insuredAmountMax = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_SUMINSURED_MAXIMUM || "0");
         const coverageDurationDaysMin = parseInt(process.env.NEXT_PUBLIC_DEPEG_COVERAGE_DURATION_DAYS_MINIMUM || "0");
         const coverageDurationDaysMax = parseInt(process.env.NEXT_PUBLIC_DEPEG_COVERAGE_DURATION_DAYS_MAXIMUM || "0");
-        const investedAmountMin = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MINIMUM || "0");
-        const investedAmountMax = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MAXIMUM || "0");
+        const stakedAmountMin = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MINIMUM || "0");
+        const stakedAmountMax = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MAXIMUM || "0");
         const annualPctReturn = parseInt(process.env.NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN || "0");
         const annualPctReturnMax = parseInt(process.env.NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN_MAXIMUM || "0");
 
         this.doNoUseDirectlyDepegProductApi = new DepegProductApi(this.depegProductAddress, this.signer);
         this.application = new ApplicationApiSmartContract(this.doNoUseDirectlyDepegProductApi, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, this.usd2Decimals);
-        this.bundleManagement = new InvestApiSmartContract(this.doNoUseDirectlyDepegProductApi, minLifetime, maxLifetime, investedAmountMin, investedAmountMax, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, annualPctReturn, annualPctReturnMax, this.usd2Decimals);
+        this.bundleManagement = new InvestApiSmartContract(this.doNoUseDirectlyDepegProductApi, minLifetime, maxLifetime, stakedAmountMin, stakedAmountMax, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, annualPctReturn, annualPctReturnMax, this.usd2Decimals);
         this.priceFeed = new PriceFeed(this.depegProductAddress, this.signer);
     }
 
