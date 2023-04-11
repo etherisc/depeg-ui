@@ -170,8 +170,8 @@ const bundles = [
 
 function applicationMock() {
     return {
-        insuredAmountMin: BigNumber.from(1000),
-        insuredAmountMax: BigNumber.from(2000),
+        protectedAmountMin: BigNumber.from(1000),
+        protectedAmountMax: BigNumber.from(2000),
         coverageDurationDaysMin: 14,
         coverageDurationDaysMax: 45,
         getRiskBundles(handleBundle: (bundle: BundleData) => void) {

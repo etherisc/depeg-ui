@@ -69,7 +69,7 @@ const mockPoliciesActive = [
         createdAt: dayjs().add(-2, 'days').unix(),
         duration: 14 * 24 * 60 * 60,
         premium: BigNumber.from(17).toString(),
-        suminsured: BigNumber.from(10000).toString()
+        protectedAmount: BigNumber.from(10000).toString()
     } as PolicyData,
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF62',
@@ -81,7 +81,7 @@ const mockPoliciesActive = [
         createdAt: dayjs().add(-2, 'days').unix(),
         duration: 14 * 24 * 60 * 60,
         premium: BigNumber.from(17).toString(),
-        suminsured: BigNumber.from(11000000000).toString()
+        protectedAmount: BigNumber.from(11000000000).toString()
     } as PolicyData,
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF63',
@@ -93,7 +93,7 @@ const mockPoliciesActive = [
         createdAt: dayjs().add(-2, 'days').unix(),
         duration: 14 * 24 * 60 * 60,
         premium: BigNumber.from(17).toString(),
-        suminsured: BigNumber.from(12000000000).toString()
+        protectedAmount: BigNumber.from(12000000000).toString()
     } as PolicyData,
     {
         id: '0x34e190322453300229d2be2a38450b8a8bd8cf64',
@@ -103,7 +103,7 @@ const mockPoliciesActive = [
         createdAt: dayjs().add(-1, 'days').unix(),
         duration: 47 * 24 * 60 * 60,
         premium: BigNumber.from(27).toString(),
-        suminsured: BigNumber.from(15000000000).toString()
+        protectedAmount: BigNumber.from(15000000000).toString()
     } as PolicyData,
 ];
 
@@ -117,7 +117,7 @@ const mockPolicies = mockPoliciesActive.concat(
         createdAt: dayjs().add(-20, 'days').unix(),
         duration: 14 * 24 * 60 * 60,
         premium: BigNumber.from(100).toString(),
-        suminsured: BigNumber.from(35000).toString()
+        protectedAmount: BigNumber.from(35000).toString()
     } as PolicyData,
     {
         id: '0xc23223453200229d2be2a38450b8a8bd8cf72',
@@ -128,7 +128,7 @@ const mockPolicies = mockPoliciesActive.concat(
         createdAt: dayjs().add(-3, 'months').unix(),
         duration: 28 * 24 * 60 * 60,
         premium: BigNumber.from(67).toString(),
-        suminsured: BigNumber.from(36000000000).toString()
+        protectedAmount: BigNumber.from(36000000000).toString()
     } as PolicyData,
 );
 
@@ -156,8 +156,8 @@ const bundles = [
 
 function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
-        insuredAmountMin: BigNumber.from(3000000000),
-        insuredAmountMax: BigNumber.from(10000000000),
+        protectedAmountMin: BigNumber.from(3000000000),
+        protectedAmountMax: BigNumber.from(10000000000),
         coverageDurationDaysMin: 14,
         coverageDurationDaysMax: 45,
         getRiskBundles(handleBundle: (bundle: BundleData) => void) {

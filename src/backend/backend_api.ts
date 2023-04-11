@@ -43,8 +43,8 @@ export interface BackendApi {
 }
 
 export interface ApplicationApi {
-    insuredAmountMin: BigNumber;
-    insuredAmountMax: BigNumber;
+    protectedAmountMin: BigNumber;
+    protectedAmountMax: BigNumber;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
     getProductComponentState(): Promise<ComponentState>;
