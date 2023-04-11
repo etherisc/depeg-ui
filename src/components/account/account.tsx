@@ -1,14 +1,16 @@
+import { Avatar, Box } from "@mui/material";
 import { useEffect, useState } from "react";
 import Blockies from 'react-blockies';
-import { DOT, NBSP } from "../../utils/chars";
-import { Box, Avatar } from "@mui/material";
-import Balance from "../balance";
-import Address from "../address";
-import Logout from "./logout";
-import { reconnectWallets } from "../../utils/wallet";
-import Login from "./login";
 import { useDispatch, useSelector } from "react-redux";
+import { useAccount } from "wagmi";
 import { RootState } from "../../redux/store";
+import { DOT, NBSP } from "../../utils/chars";
+import { reconnectWallets } from "../../utils/wallet";
+import Address from "../address";
+import Balance from "../balance";
+import Login from "./login";
+import Logout from "./logout";
+import WagmiAccount from "./wagmi_account";
 
 export default function Account() {
     const dispatch = useDispatch();
@@ -16,6 +18,9 @@ export default function Account() {
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const address = useSelector((state: RootState) => state.account.address);
     
+    // wagmi - we're all gonna make it :-)
+    const { isConnected: wagmiIsConnected } = useAccount();
+
     const [ loggedIn, setLoggedIn ] = useState(false);
 
     useEffect(() => {
@@ -32,9 +37,18 @@ export default function Account() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+
+    // web3model connections are not available in the first render 
+    const [wagmiConnected, setWagmiConnected] = useState(false);
+    useEffect(() => {
+        console.log("zz wagmi isConnected", wagmiIsConnected);
+        setTimeout(() => setWagmiConnected(wagmiIsConnected), 100);
+    }, [wagmiIsConnected, setWagmiConnected]);
+
     if (! loggedIn) {
         return (
             <>
+                {wagmiConnected && <WagmiAccount />}
                 <Login />
             </>
         );
@@ -60,5 +74,8 @@ export default function Account() {
         );
     }
 
-    return (<>{account}</>);
+    return (<>
+        {/* {wagmiConnected && <WagmiAccount />} */}
+        {account}
+    </>);
 }

@@ -9,15 +9,20 @@ import { StaticJsonRpcProvider } from '@ethersproject/providers';
 
 export async function getChainState(provider: Web3Provider): Promise<ChainState> {
     const signer = provider.getSigner(); 
-    const network = await provider.getNetwork();
-    const chainId = toHex(network.chainId);
+    const chainId = (await provider.getNetwork()).chainId;
+    return getChainStateWithSigner(provider, chainId, signer);
+}
+
+export async function getChainStateWithSigner(provider: providers.Provider, chainId: number, signer: Signer): Promise<ChainState> {
+    // const network = await provider.getNetwork();
+    const hexChainId = toHex(chainId);
     const blockNumber = await provider.getBlockNumber();
     const blockTime = (await provider.getBlock(blockNumber)).timestamp;
 
     return {
-        chainId: chainId,
+        chainId: hexChainId,
         isConnected: true,
-        isExpectedChain: chainId === expectedChain,
+        isExpectedChain: hexChainId === expectedChain,
         provider: provider,
         signer: signer,
         blockNumber: blockNumber,
@@ -26,7 +31,7 @@ export async function getChainState(provider: Web3Provider): Promise<ChainState>
 }
 
 
-export async function getAndUpdateBlock(dispatch: Dispatch<AnyAction>, provider: providers.Web3Provider, blockNumber: number) {
+export async function getAndUpdateBlock(dispatch: Dispatch<AnyAction>, provider: providers.Provider, blockNumber: number) {
     const blockTime = (await provider.getBlock(blockNumber)).timestamp;
     dispatch(setBlock([blockNumber, blockTime ]));
 }

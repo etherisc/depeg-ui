@@ -9,6 +9,9 @@ import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { connectChain } from "../../redux/slices/chain";
 import { getAndUpdateBlock, getChainState, removeSigner, setAccountRedux, updateSigner } from "../../utils/chain";
+import { Web3Button } from "@web3modal/react";
+import { useAccount, useProvider } from "wagmi";
+import { useEffect } from "react";
 
 // TODO: remove this class
 export default function LoginWithWalletConnectButton(props: any) {
@@ -19,7 +22,25 @@ export default function LoginWithWalletConnectButton(props: any) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const dispatch = useDispatch();
-    const isConnected = useSelector((state: any) => state.chain.isConnected);
+    // const isConnected = useSelector((state: any) => state.chain.isConnected);
+
+    const provider = useProvider();
+    const { isConnected, address } = useAccount();
+
+    console.log("wagmi provider", provider);
+    console.log("wagmi isConnected", isConnected, address);
+
+    useEffect(() => {
+        async function checkReady() {
+            const ready = await provider.ready;
+            console.log("provider ready", ready);    
+        }
+        checkReady();
+    }, [provider]);
+
+    useEffect(() => {
+        console.log("wagmi isConnected", isConnected, address);
+    }, [address, isConnected]);
 
     async function login() {
         console.log("wallet connect login");
@@ -69,23 +90,24 @@ export default function LoginWithWalletConnectButton(props: any) {
         // });
     }
 
-    let button = (<></>);
-    let buttonText = t('action.login_walletconnect');
+    // TODO: mobile and disconnect button
+    // let button = (<></>);
+    // let buttonText = t('action.login_walletconnect');
 
-    if (isMobile) {
-        buttonText = t('action.login_walletconnect_short');
-    }
+    // if (isMobile) {
+    //     buttonText = t('action.login_walletconnect_short');
+    // }
     
-    if (! isConnected ) {
-        button = (
-            <Button variant="contained" color="secondary" onClick={login} fullWidth>
-                <FontAwesomeIcon icon={faRightToBracket} className="fa" />
-                {buttonText}
-            </Button>
-        );
-    }
+    // if (! isConnected ) {
+    //     button = (
+    //         <Button variant="contained" color="secondary" onClick={login} fullWidth>
+    //             <FontAwesomeIcon icon={faRightToBracket} className="fa" />
+    //             {buttonText}
+    //         </Button>
+    //     );
+    // }
 
     return (
-        <>{button}</>
+        <Web3Button />
     );
 }

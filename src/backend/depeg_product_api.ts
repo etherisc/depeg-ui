@@ -98,20 +98,26 @@ export class DepegProductApi {
         beforeApplyCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void,
     ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("111");
         if (beforeApplyCallback !== undefined) {
+            console.log("222");
             beforeApplyCallback(this.depegProduct!.address);
         }
+        console.log("333");
         try {
             const tx = await this.depegProduct!.applyForPolicyWithBundle(
                 walletAddress,
                 protectedAmount, 
                 coverageDurationSeconds,
                 bundleId);
+            console.log("4444");
             if (beforeWaitCallback !== undefined) {
+                console.log("555");
                 beforeWaitCallback(this.depegProduct!.address);
             }
+            console.log("666");
             const receipt = await tx.wait();
-            // console.log(receipt);
+            console.log(receipt);
             return [tx, receipt];
         } catch (e) {
             console.log("caught error while applying for policy: ", e);

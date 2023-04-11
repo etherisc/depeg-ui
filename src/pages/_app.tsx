@@ -17,6 +17,10 @@ import { etheriscTheme } from '../config/theme';
 import Layout from '../components/layout/layout';
 import { faCartShopping, faShieldHalved, faSackDollar, faCoins, faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { GoogleAnalytics } from "nextjs-google-analytics";
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
+import { Web3Modal } from '@web3modal/react'
+import { configureChains, createClient, WagmiConfig } from 'wagmi'
+import { arbitrum, mainnet, polygon, polygonMumbai } from 'wagmi/chains'
 
 // The following import prevents a Font Awesome icon server-side rendering bug,
 // where the icons flash from a very large icon down to a properly sized one:
@@ -30,7 +34,18 @@ import { resetSelectedBundle } from '../redux/slices/bundles';
 config.autoAddCss = false; /* eslint-disable import/first */
 
 export function App(appProps: AppProps) {
-  
+
+  const chains = [polygon, polygonMumbai];
+  const projectId = '6cf24be37dc19d58bc113806ab03aded';
+
+  const { provider } = configureChains(chains, [w3mProvider({ projectId })])
+  const wagmiClient = createClient({
+    autoConnect: true,
+    connectors: w3mConnectors({ projectId, version: 1, chains }),
+    provider
+  })
+  const ethereumClient = new EthereumClient(wagmiClient, chains);
+
   return (
     <React.Fragment>
       <Head>
@@ -43,9 +58,13 @@ export function App(appProps: AppProps) {
       <ThemeProvider theme={etheriscTheme}>
         <CssBaseline enableColorScheme />
         <Provider store={store}>
-          <AppWithBlockchainConnection {...appProps} />
+          <WagmiConfig client={wagmiClient}>
+            <AppWithBlockchainConnection {...appProps} />
+          </WagmiConfig>
         </Provider>
       </ThemeProvider>
+
+      <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </React.Fragment>
   );
 }

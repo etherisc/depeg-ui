@@ -30,6 +30,8 @@
     "@reduxjs/toolkit": "^1.9.3",
     "@types/color": "^3.0.3",
     "@types/request-ip": "^0.0.37",
+    "@web3modal/ethereum": "^2.2.2",
+    "@web3modal/react": "^2.2.2",
     "abi-coder": "^4.1.1",
     "canvas-confetti": "^1.6.0",
     "chart.js": "^4.2.1",
@@ -55,7 +57,8 @@
     "redis": "^4.6.5",
     "redis-om": "^0.3.6",
     "request-ip": "^3.3.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "wagmi": "^0.12.10"
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.6.1",

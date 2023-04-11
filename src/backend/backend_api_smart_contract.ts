@@ -98,7 +98,12 @@ export class BackendApiSmartContract implements BackendApi {
     ): Promise<boolean> {
         console.log("createApproval", walletAddress, premium);
         const depegProduct = (await this.getProductApi()).getDepegProduct();
-        const { tx, receipt, exists } = await createApprovalForTreasury(await depegProduct.getToken(), this.signer, premium, await depegProduct.getRegistry());
+        console.log("fsdsfsd");
+        const token = await (await this.getProductApi()).getUsd2Address();
+        console.log("fsdsfsd1");
+        const registry = await depegProduct.getRegistry();
+        console.log("fsdsfsd2");
+        const { tx, receipt, exists } = await createApprovalForTreasury(token, this.signer, premium, registry);
         if (exists) {
             return true;
         }
@@ -107,6 +112,8 @@ export class BackendApiSmartContract implements BackendApi {
     }
 
     async getDepegState(): Promise<DepegState> {
+        const token = await (await this.getProductApi()).getUsd2Address();
+
         return await (await this.getProductApi()).getDepegState();
     }
 
