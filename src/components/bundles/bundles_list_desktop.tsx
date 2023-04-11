@@ -1,6 +1,6 @@
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FormControlLabel, Switch, useMediaQuery, useTheme } from "@mui/material";
+import { Container, FormControlLabel, Switch, useMediaQuery, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import dayjs from "dayjs";
 import { BigNumber } from "ethers";
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
@@ -212,9 +212,15 @@ export default function BundlesListDesktop(props: BundlesProps) {
         );
     }
 
-    const loadingBar = isLoadingBundles ? <LinearProgress /> : null;
-    
+    function NoRowsOverlay() {
+        return (<Container maxWidth={false} sx={{ height: 1, display: 'flex', alignItems: 'center', justifyContent: "center" }}>
+                <Trans i18nKey="no_bundles" t={t}>
+                    <Link href="/stake">click here</Link>
+                </Trans>
+            </Container>);
+    }
 
+    const loadingBar = isLoadingBundles ? <LinearProgress /> : null;
 
     return (
         <>
@@ -229,6 +235,9 @@ export default function BundlesListDesktop(props: BundlesProps) {
                 getRowId={(row) => row.id}
                 components={{
                     Toolbar: GridToolbar,
+                }}
+                slots={{
+                    noRowsOverlay: NoRowsOverlay,
                 }}
                 initialState={{
                     sorting: {
