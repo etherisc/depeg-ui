@@ -1,6 +1,6 @@
 import { faCircleInfo, faFileInvoiceDollar, faHandHoldingDollar, faInfoCircle, faShieldHalved, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Alert, AlertTitle, Tooltip } from "@mui/material";
+import { Alert, AlertTitle, Container, Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { grey } from "@mui/material/colors";
@@ -11,7 +11,7 @@ import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, GridSortCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { BigNumber } from "ethers";
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
@@ -341,6 +341,14 @@ export default function Policies(props: PoliciesProps) {
         );
     }
 
+    function NoRowsOverlay() {
+        return (<Container maxWidth={false} sx={{ height: 1, display: 'flex', alignItems: 'center', justifyContent: "center" }}>
+                <Trans i18nKey="no_policies" t={t}>
+                    <Link href="/">click here</Link>
+                </Trans>
+            </Container>);
+    }
+
     const loadingBar = isLoading ? <LinearProgress /> : null;
 
     return (
@@ -368,6 +376,9 @@ export default function Policies(props: PoliciesProps) {
                 getRowId={(row) => row.id}
                 components={{
                     Toolbar: GridToolbar,
+                }}
+                slots={{
+                    noRowsOverlay: NoRowsOverlay,
                 }}
                 initialState={{
                     sorting: {
