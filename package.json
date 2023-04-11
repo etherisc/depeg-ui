@@ -54,7 +54,7 @@
     "react-redux": "^8.0.5",
     "redis": "^4.6.5",
     "redis-om": "^0.3.6",
-    "typescript": "^5.0.3"
+    "typescript": "^5.0.4"
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.6.1",
