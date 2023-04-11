@@ -6,8 +6,8 @@ export type BundleData = {
     owner: string;
     tokenId: number;
     apr: number;
-    minSumInsured: string;
-    maxSumInsured: string;
+    minProtectedAmount: string;
+    maxProtectedAmount: string;
     minDuration: number;
     maxDuration: number;
     balance: string;
@@ -31,5 +31,5 @@ export const MAX_BUNDLE =
 { 
     apr: 100, 
     minDuration: Number.MAX_SAFE_INTEGER, maxDuration: Number.MIN_SAFE_INTEGER + 1, 
-    minSumInsured: BigNumber.from(Number.MAX_SAFE_INTEGER - 1).toString(), maxSumInsured: BigNumber.from(Number.MIN_SAFE_INTEGER + 1).toString() 
+    minProtectedAmount: BigNumber.from(Number.MAX_SAFE_INTEGER - 1).toString(), maxProtectedAmount: BigNumber.from(Number.MIN_SAFE_INTEGER + 1).toString()
 } as BundleData;

@@ -41,7 +41,7 @@ export default async function handler(
             return false;
         }
         // ignore bundles with less capacity then min protected amount (inconsistent)
-        if (BigNumber.from(bundle.minSumInsured).gt(capacity)) {
+        if (BigNumber.from(bundle.minProtectedAmount).gt(capacity)) {
             console.log("bundle minSumInsured greater than capacity", bundle.id);
             return false;
         }
@@ -56,7 +56,7 @@ export default async function handler(
                 console.log("remaining capacity less than 0", bundle.id);
                 return false;
             }
-            if (remainingCapacity.lt(BigNumber.from(bundle.minSumInsured))) {
+            if (remainingCapacity.lt(BigNumber.from(bundle.minProtectedAmount))) {
                 console.log("remaining capacity less than min sum insured", bundle.id);
                 return false;
             }

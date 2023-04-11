@@ -30,8 +30,8 @@ export default function BundleDetails(props: BundleDetailsProps) {
     const locked = BigNumber.from(props.bundle.locked);
     const supportedCapacity = BigNumber.from(props.bundle.supportedCapacity);
     let supportedCapacityRemaining = BigNumber.from(props.bundle.supportedCapacityRemaining ?? 0);
-    const minSumInsured = BigNumber.from(props.bundle.minSumInsured);
-    const maxSumInsured = BigNumber.from(props.bundle.maxSumInsured);
+    const minSumInsured = BigNumber.from(props.bundle.minProtectedAmount);
+    const maxSumInsured = BigNumber.from(props.bundle.maxProtectedAmount);
     const minDuration = props.bundle.minDuration / 86400;
     const maxDuration = props.bundle.maxDuration / 86400;
     const state = props.bundle.state;

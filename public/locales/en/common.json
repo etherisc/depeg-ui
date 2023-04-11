@@ -4,7 +4,7 @@
     "terms_and_conditions": "By checking this box, I confirm that I have read and agree to the <0>Terms of service</0>.",
     "nav": {
         "link": {
-            "invest": "Stake",
+            "stake": "Stake",
             "policies": "Policies",
             "bundles": "Risk bundles",
             "apply": "Apply",

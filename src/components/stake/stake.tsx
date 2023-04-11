@@ -12,17 +12,17 @@ import { RootState } from "../../redux/store";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { ga_event } from "../../utils/google_analytics";
 import { REVOKE_INFO_URL } from "../application/application";
-import InvestForm from "./invest_form";
+import StakingForm from "./staking_form";
 import { ComponentState } from "../../types/component_state";
 
-export interface InvestProps {
+export interface StakeProps {
     backend: BackendApi;
 }
 
 const steps = ['step0', 'step1', 'step2', 'step3', 'step4'];
 
-export default function Invest(props: InvestProps) {
-    const { t } = useTranslation(['invest', 'common']);
+export default function Stake(props: StakeProps) {
+    const { t } = useTranslation(['stake', 'common']);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const router = useRouter();
     const dispatch = useDispatch();
@@ -43,13 +43,13 @@ export default function Invest(props: InvestProps) {
     useEffect(() => {
         async function checkStakingAllowed() {
             if (isConnected && investorAddress !== undefined) {
-                const riskpoolComponentState = await props.backend.invest.getRiskpoolComponentState();
+                const riskpoolComponentState = await props.backend.bundleManagement.getRiskpoolComponentState();
                 if (riskpoolComponentState !== ComponentState.Active) {
                     setRiskpoolComponentActive(false);
                     return;
                 }
-                if (! await props.backend.invest.isAllowAllAccountsEnabled()) {
-                    const isInvestorWhitelisted = await props.backend.invest.isInvestorWhitelisted(investorAddress!);
+                if (! await props.backend.bundleManagement.isAllowAllAccountsEnabled()) {
+                    const isInvestorWhitelisted = await props.backend.bundleManagement.isInvestorWhitelisted(investorAddress!);
                     console.log("whitelist check result", isInvestorWhitelisted);
                     if (! isInvestorWhitelisted) {
                         setIsInvestorWhitelisted(false);
@@ -58,7 +58,7 @@ export default function Invest(props: InvestProps) {
                         setIsInvestorWhitelisted(true);
                     }
                 }
-                const riskpoolCapacityAvailable = await props.backend.invest.isRiskpoolCapacityAvailable();
+                const riskpoolCapacityAvailable = await props.backend.bundleManagement.isRiskpoolCapacityAvailable();
                 console.log("riskpoolCapacityAvailable", riskpoolCapacityAvailable);
                 if (! riskpoolCapacityAvailable) {
                     setNoRiskpoolCapacityAvailable(false);
@@ -66,8 +66,8 @@ export default function Invest(props: InvestProps) {
                 } else {
                     setNoRiskpoolCapacityAvailable(true);
                 }
-                const activeBundleCount = await props.backend.invest.activeBundles();
-                const maxBundles = await props.backend.invest.maxBundles();
+                const activeBundleCount = await props.backend.bundleManagement.activeBundles();
+                const maxBundles = await props.backend.bundleManagement.maxBundles();
                 console.log("activeBundleCount", activeBundleCount, "maxBundles", maxBundles);
                 if (activeBundleCount >= maxBundles) {
                     setMaxBundlesUsed(true);
@@ -77,7 +77,7 @@ export default function Invest(props: InvestProps) {
             }    
         }
         checkStakingAllowed();
-    }, [isConnected, props.backend.invest, investorAddress]);
+    }, [isConnected, props.backend.bundleManagement, investorAddress]);
 
             
 
@@ -136,19 +136,19 @@ export default function Invest(props: InvestProps) {
 
     async function doInvest(
         name: string, lifetime: number, investorWalletAddress: string, 
-        investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+        investedAmount: BigNumber, minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
         minDuration: number, maxDuration: number, 
         annualPctReturn: number
     ): Promise<{ status: boolean, bundleId: string | undefined}> {
         let snackbar: SnackbarKey | undefined = undefined; 
         try {
-            return await props.backend.invest.invest(
+            return await props.backend.bundleManagement.stake(
                 name, 
                 lifetime,
                 investorWalletAddress, 
                 investedAmount, 
-                minSumInsured, 
-                maxSumInsured, 
+                minProtectedAmount,
+                maxProtectedAmount,
                 minDuration, 
                 maxDuration, 
                 annualPctReturn, 
@@ -219,7 +219,7 @@ export default function Invest(props: InvestProps) {
 
     async function invest(
         name: string, lifetime: number, investedAmount: BigNumber, 
-        minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+        minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
         minDuration: number, maxDuration: number, annualPctReturn: number
     ) {
         ga_event("trx_start_stake", { category: 'chain_trx' });
@@ -243,7 +243,7 @@ export default function Invest(props: InvestProps) {
             }
             ga_event("trx_success_stake_approve", { category: 'chain_trx' });
             setActiveStep(4);
-            const investResult = await doInvest(name, lifetime, investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+            const investResult = await doInvest(name, lifetime, investorWalletAddress, investedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
             if ( ! investResult.status) {
                 ga_event("trx_fail_stake", { category: 'chain_trx' });
                 setActiveStep(2);
@@ -282,14 +282,14 @@ export default function Invest(props: InvestProps) {
                 { ! riskpoolCapacityAvailable && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.no_riskpool_capacity')}</Alert>)}
                 { maxBundlesUsed && (<Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.max_bundles')}</Alert>)}
 
-                <InvestForm 
+                <StakingForm
                         formDisabled={formDisabled || maxBundlesUsed || ! isInvestorWhitelisted || ! riskpoolCapacityAvailable || ! riskpookComponentActive}
                         usd2={props.backend.usd2}
                         usd2Decimals={props.backend.usd2Decimals}
                         backend={props.backend}
                         readyToSubmit={formReadyForInvest}
                         hasUsd2Balance={(walletAddress, amount) => props.backend.hasUsd2Balance(walletAddress, amount)}
-                        invest={invest}
+                        stake={invest}
                     />
             </div>
         </>

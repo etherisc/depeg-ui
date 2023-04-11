@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers/lib/ethers";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
-import { ApplicationApi, BackendApi, InvestApi } from "./backend_api";
+import { ApplicationApi, BackendApi, BundleManagementApi } from "./backend_api";
 import { delay } from "../utils/delay";
 import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
@@ -38,12 +38,15 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
             return Promise.resolve(DepegState.Active);
         },
         application: applicationMock(enqueueSnackbar),
-        invest: investMock(enqueueSnackbar),
+        bundleManagement: bundleManagementMock(enqueueSnackbar),
         triggerBundleUpdate(bundleId: number) {
             return Promise.resolve({} as BundleData);
         },
         priceFeed: {
-            getLatestPrice(priceRetrieved: (price: PriceInfo, triggeredAt: number, depeggedAt: number) => void): Promise<void> {
+            getLatestPrice(priceRetrieved: (price: PriceInfo) => void): Promise<void> {
+                return Promise.resolve();
+            },
+            getLatestProductState(stateRetrieved: (triggeredAt: number, depeggedAt: number) => void): Promise<void> {
                 return Promise.resolve();
             },
             getPrice(roundId: BigNumber, priceRetrieved: (price: PriceInfo) => void): Promise<void> {
@@ -135,8 +138,8 @@ const bundles = [
         "riskpoolId": 11,
         "owner": "0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729",
         "apr": 2.5,
-        "minSumInsured": BigNumber.from(2300000000).toString(),
-        "maxSumInsured": BigNumber.from(2500000000).toString(),
+        "minProtectedAmount": BigNumber.from(2300000000).toString(),
+        "maxProtectedAmount": BigNumber.from(2500000000).toString(),
         "minDuration": 1987200,
         "maxDuration": 2160000,
         "capital": BigNumber.from(100000000000).toString(),
@@ -182,17 +185,17 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
     } as ApplicationApi
 }
 
-function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
+function bundleManagementMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
         usd1: 'USDC',
         minLifetime: 14,
         maxLifetime: 180,
-        minInvestedAmount: BigNumber.from(25000000000),
-        maxInvestedAmount: BigNumber.from(100000000000),
-        minSumInsured: BigNumber.from(1000000000),
-        maxSumInsured: BigNumber.from(25000000000),
-        minCoverageDuration: 14,
-        maxCoverageDuration: 90,
+        minStakedAmount: BigNumber.from(25000000000),
+        maxStakedAmount: BigNumber.from(100000000000),
+        minProtectedAmount: BigNumber.from(1000000000),
+        maxProtectedAmount: BigNumber.from(25000000000),
+        minProtectionDuration: 14,
+        maxProtectionDuration: 90,
         annualPctReturn: 5,
         maxAnnualPctReturn: 20,
         isRiskpoolCapacityAvailable() {
@@ -207,7 +210,7 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         isInvestorWhitelisted(walletAddress: string) {
             return Promise.resolve(true);
         },
-        async invest(
+        async stake(
             name: string,
             lifetime: number,
             investorWalletAddress: string, 
@@ -280,5 +283,5 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         getRiskpoolComponentState() {
             return Promise.resolve(ComponentState.Active);
         },
-    } as InvestApi;
+    } as BundleManagementApi;
 };

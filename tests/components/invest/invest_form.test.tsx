@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { BigNumber } from 'ethers';
 import ApplicationForm from '../../../src/components/application/application_form';
-import InvestForm from '../../../src/components/invest/invest_form';
+import StakingForm from '../../../src/components/stake/staking_form';
 import { mockSimple, mockSimpleRemainingRiskpoolCapSmallerThanBundleCap } from '../../mocks/backend_api/backend_api_mock';
 import { renderWithProviders } from '../../util/render_with_provider';
 import { BundleData } from '../../../src/backend/bundle_data';
@@ -20,21 +20,21 @@ jest.mock('react-i18next', () => ({
     },
 }));
 
-describe('When rendering the InvestForm', () => {
+describe('When rendering the StakingForm', () => {
     it('the name is trimmed, checked for length, characters and uniqueness', async () => {
         const backendApi = mockSimple();
         
         renderWithProviders(
-            <InvestForm
+            <StakingForm
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
                 hasUsd2Balance={async () => true }
                 backend={backendApi}
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
-                invest={(
+                stake={(
                     name: string, lifetime: number, 
-                    investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+                    investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber,
                     minDuration: number, maxDuration: number, annualPctReturn: number
                 ) => jest.fn() }
                 />,
@@ -142,14 +142,14 @@ describe('When rendering the InvestForm', () => {
         const backendApi = mockSimple();
         
         renderWithProviders(
-            <InvestForm
+            <StakingForm
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
                 hasUsd2Balance={async () => true }
                 backend={backendApi}
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
-                invest={(
+                stake={(
                     name: string, lifetime: number, 
                     investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
                     minDuration: number, maxDuration: number, annualPctReturn: number
@@ -213,14 +213,14 @@ describe('When rendering the InvestForm', () => {
         // bundle cap is 2500 USDT
         
         renderWithProviders(
-            <InvestForm
+            <StakingForm
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
                 hasUsd2Balance={async () => true }
                 backend={backendApi}
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
-                invest={(
+                stake={(
                     name: string, lifetime: number, 
                     investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
                     minDuration: number, maxDuration: number, annualPctReturn: number
@@ -242,7 +242,7 @@ describe('When rendering the InvestForm', () => {
                 
         );
 
-        const maxSumInsured = screen.getByTestId("max-sum-insured").querySelector("input");
+        const maxSumInsured = screen.getByTestId("max-protected-amount").querySelector("input");
 
         await waitFor(async () => {
             console.log(maxSumInsured?.value);
@@ -250,20 +250,20 @@ describe('When rendering the InvestForm', () => {
         });
     })
 
-    it('the invested amount is limited to the bundle capacity', async () => {
+    it('the staked amount is limited to the bundle capacity', async () => {
         const backendApi = mockSimple();
         // remaining capacity is 25000 USDT
         // bundle cap is 2500 USDT
         
         renderWithProviders(
-            <InvestForm
+            <StakingForm
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
                 hasUsd2Balance={async () => true }
                 backend={backendApi}
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
-                invest={(
+                stake={(
                     name: string, lifetime: number, 
                     investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
                     minDuration: number, maxDuration: number, annualPctReturn: number
@@ -283,38 +283,38 @@ describe('When rendering the InvestForm', () => {
             }
         });
 
-        const investedAmount = screen.getByTestId("invested-amount").querySelector("input");
+        const stakedAmount = screen.getByTestId("staked-amount").querySelector("input");
 
         await waitFor(async () => {
-            console.log(investedAmount?.value);
-            expect(investedAmount).toHaveAttribute("value", "2500");
+            console.log(stakedAmount?.value);
+            expect(stakedAmount).toHaveAttribute("value", "2500");
         });
 
         // value is too high
         act(() => {
-            fireEvent.change(investedAmount!, { target: { value: "10000" } });
+            fireEvent.change(stakedAmount!, { target: { value: "10000" } });
         });
         
         await waitFor(async () => {
-            const ia = await screen.findByTestId("invested-amount");
+            const ia = await screen.findByTestId("staked-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.max");
         });
     })
 
-    it('the invested amount is limited to the remaining riskpool capacity if its smaller than the bundle capacity', async () => {
+    it('the staked amount is limited to the remaining riskpool capacity if its smaller than the bundle capacity', async () => {
         const backendApi = mockSimpleRemainingRiskpoolCapSmallerThanBundleCap();
         // remaining capacity is 1000 USDT
         // bundle cap is 2500 USDT
         
         renderWithProviders(
-            <InvestForm
+            <StakingForm
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
                 hasUsd2Balance={async () => true }
                 backend={backendApi}
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
-                invest={(
+                stake={(
                     name: string, lifetime: number, 
                     investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
                     minDuration: number, maxDuration: number, annualPctReturn: number
@@ -334,7 +334,7 @@ describe('When rendering the InvestForm', () => {
             }
         });
 
-        const investedAmount = screen.getByTestId("invested-amount").querySelector("input");
+        const investedAmount = screen.getByTestId("staked-amount").querySelector("input");
 
         await waitFor(async () => {
             console.log(investedAmount?.value);
@@ -347,24 +347,24 @@ describe('When rendering the InvestForm', () => {
         });
         
         await waitFor(async () => {
-            const ia = await screen.findByTestId("invested-amount");
+            const ia = await screen.findByTestId("staked-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.max");
         });
     })
 
-    it('the wallet balance is checked when invested amount is changed', async () => {
+    it('the wallet balance is checked when staked amount is changed', async () => {
         const backendApi = mockSimple();
         let hasBalance = false;
 
         renderWithProviders(
-            <InvestForm
+            <StakingForm
                 formDisabled={false}
                 usd2="USDT"
                 usd2Decimals={6}
                 backend={backendApi}
                 hasUsd2Balance={async () => hasBalance }
                 readyToSubmit={(isFormReady: boolean) => jest.fn()}
-                invest={(
+                stake={(
                     name: string, lifetime: number, 
                     investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
                     minDuration: number, maxDuration: number, annualPctReturn: number
@@ -385,9 +385,9 @@ describe('When rendering the InvestForm', () => {
         });
 
         // initially the balance is not too low
-        const investedAmount = screen.getByTestId("invested-amount").querySelector("input");
+        const investedAmount = screen.getByTestId("staked-amount").querySelector("input");
         await waitFor(async () => {
-            const ia = await screen.findByTestId("invested-amount");
+            const ia = await screen.findByTestId("staked-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.balance");
         });
 
@@ -398,7 +398,7 @@ describe('When rendering the InvestForm', () => {
         });
         
         await waitFor(async () => {
-            const ia = await screen.findByTestId("invested-amount");
+            const ia = await screen.findByTestId("staked-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toBeNull();
         });
 
@@ -409,7 +409,7 @@ describe('When rendering the InvestForm', () => {
         });
         
         await waitFor(async () => {
-            const ia = await screen.findByTestId("invested-amount");
+            const ia = await screen.findByTestId("staked-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.balance");
         });
     })

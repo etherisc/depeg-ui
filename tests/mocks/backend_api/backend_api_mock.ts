@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { BigNumber } from "ethers/lib/ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
-import { BackendApi, ApplicationApi, InvestApi } from "../../../src/backend/backend_api";
+import { BackendApi, ApplicationApi, BundleManagementApi } from "../../../src/backend/backend_api";
 import { BundleData } from "../../../src/backend/bundle_data";
 import { PolicyData } from "../../../src/backend/policy_data";
 import { PriceFeedApi } from "../../../src/backend/price_feed/api";
@@ -39,12 +39,15 @@ export function mockSimple() {
             return Promise.resolve(DepegState.Active);
         },
         application: applicationMock(),
-        invest: investMock(),
+        bundleManagement: bundleManagementMock(),
         triggerBundleUpdate(bundleId: number) {
             return Promise.resolve({} as BundleData);
         },
         priceFeed: {
-            getLatestPrice(priceRetrieved: (price: PriceInfo, triggeredAt: number, depeggedAt: number) => void): Promise<void> { 
+            getLatestPrice(priceRetrieved: (price: PriceInfo) => void): Promise<void> {
+                return Promise.resolve();
+            },
+            getLatestProductState(stateRetrieved: (triggeredAt: number, depeggedAt: number) => void): Promise<void> {
                 return Promise.resolve();
             },
             getPrice(roundId: BigNumber, priceRetrieved: (price: PriceInfo) => void): Promise<void> {
@@ -91,12 +94,15 @@ export function mockSimpleRemainingRiskpoolCapSmallerThanBundleCap() {
             return Promise.resolve(DepegState.Active);
         },
         application: applicationMock(),
-        invest: investMock(parseUnits("1000", 6)),
+        bundleManagement: bundleManagementMock(parseUnits("1000", 6)),
         triggerBundleUpdate(bundleId: number) {
             return Promise.resolve({} as BundleData);
         },
         priceFeed: {
-            getLatestPrice(priceRetrieved: (price: PriceInfo, triggeredAt: number, depeggedAt: number) => void): Promise<void> { 
+            getLatestPrice(priceRetrieved: (price: PriceInfo) => void): Promise<void> {
+                return Promise.resolve();
+            },
+            getLatestProductState(stateRetrieved: (triggeredAt: number, depeggedAt: number) => void): Promise<void> {
                 return Promise.resolve();
             },
             getPrice(roundId: BigNumber, priceRetrieved: (price: PriceInfo) => void): Promise<void> {
@@ -146,8 +152,8 @@ const bundles = [
         "riskpoolId": 11,
         "owner": "0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729",
         "apr": 2.5,
-        "minSumInsured": BigNumber.from(2300000000).toString(),
-        "maxSumInsured": BigNumber.from(2500000000).toString(),
+        "minProtectedAmount": BigNumber.from(2300000000).toString(),
+        "maxProtectedAmount": BigNumber.from(2500000000).toString(),
         "minDuration": 1987200,
         "maxDuration": 2160000,
         "capital": BigNumber.from(100000000000).toString(),
@@ -188,7 +194,7 @@ function applicationMock() {
     } as ApplicationApi
 }
 
-function investMock(
+function bundleManagementMock(
     remainingRiskpoolCapacity: BigNumber = parseUnits("25000", 6), 
     bundleCapitalCap: BigNumber = parseUnits("2500", 6),
 ) {
@@ -196,12 +202,12 @@ function investMock(
         usd1: 'USDC',
         minLifetime: 14,
         maxLifetime: 180,
-        minInvestedAmount: BigNumber.from(400),
-        maxInvestedAmount: BigNumber.from(10000),
-        minSumInsured: BigNumber.from(2000),
-        maxSumInsured: BigNumber.from(100000),
-        minCoverageDuration: 14,
-        maxCoverageDuration: 120,
+        minStakedAmount: BigNumber.from(400),
+        maxStakedAmount: BigNumber.from(10000),
+        minProtectedAmount: BigNumber.from(2000),
+        maxProtectedAmount: BigNumber.from(100000),
+        minProtectionDuration: 14,
+        maxProtectionDuration: 120,
         annualPctReturn: 5,
         maxAnnualPctReturn: 15,
         isRiskpoolCapacityAvailable() {
@@ -216,7 +222,7 @@ function investMock(
         isInvestorWhitelisted(walletAddress: string) {
             return Promise.resolve(true);
         },
-        async invest(
+        async stake(
             name: string,
             lifetime: number,
             investorWalletAddress: string, 
@@ -285,5 +291,5 @@ function investMock(
         getRiskpoolComponentState() {
             return Promise.resolve(ComponentState.Active);
         },
-    } as InvestApi;
+    } as BundleManagementApi;
 };

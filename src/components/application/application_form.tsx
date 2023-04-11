@@ -180,8 +180,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             let minCoverageSecs = Number.MAX_SAFE_INTEGER;
             let maxCoverageSecs = 0;
             for( let b of bundles) {
-                const bminSumInsured = BigNumber.from(b.minSumInsured);
-                const bmaxSumInsured = BigNumber.from(b.maxSumInsured);
+                const bminSumInsured = BigNumber.from(b.minProtectedAmount);
+                const bmaxSumInsured = BigNumber.from(b.maxProtectedAmount);
 
                 if (bminSumInsured.lt(minSumInsured)) {
                     minSumInsured = bminSumInsured;

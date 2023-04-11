@@ -62,7 +62,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
                 continue;
             }
             // ignore bundles with less capacity then min protected amount (inconsistent)
-            if (BigNumber.from(bundle.minSumInsured).gt(capacity)) {
+            if (BigNumber.from(bundle.minProtectedAmount).gt(capacity)) {
                 continue;
             }
             const capitalSupport = bundle.capitalSupport;

@@ -4,7 +4,7 @@ import { Dispatch } from "react";
 import { updateBundle } from "../redux/slices/bundles";
 import { DepegState } from "../types/depeg_state";
 import { ApplicationApiSmartContract } from "./application_api_smart_contract";
-import { ApplicationApi, BackendApi, InvestApi } from "./backend_api";
+import { ApplicationApi, BackendApi, BundleManagementApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { hasBalance } from "./erc20";
@@ -28,7 +28,7 @@ export class BackendApiSmartContract implements BackendApi {
     usd2: string;
     usd2Decimals: number;
     application: ApplicationApi;
-    invest: InvestApi;
+    bundleManagement: BundleManagementApi;
     priceFeed: PriceFeedApi;
 
     constructor(
@@ -55,7 +55,7 @@ export class BackendApiSmartContract implements BackendApi {
 
         this.doNoUseDirectlyDepegProductApi = new DepegProductApi(this.depegProductAddress, this.signer);
         this.application = new ApplicationApiSmartContract(this.doNoUseDirectlyDepegProductApi, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, this.usd2Decimals);
-        this.invest = new InvestApiSmartContract(this.doNoUseDirectlyDepegProductApi, minLifetime, maxLifetime, investedAmountMin, investedAmountMax, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, annualPctReturn, annualPctReturnMax, this.usd2Decimals);
+        this.bundleManagement = new InvestApiSmartContract(this.doNoUseDirectlyDepegProductApi, minLifetime, maxLifetime, investedAmountMin, investedAmountMax, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, annualPctReturn, annualPctReturnMax, this.usd2Decimals);
         this.priceFeed = new PriceFeed(this.depegProductAddress, this.signer);
     }
 

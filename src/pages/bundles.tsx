@@ -33,7 +33,7 @@ export default function BundlesPage() {
 
     useEffect(() => {
         async function fetchBundle(id: number, confirmation: boolean) {
-            const bundle = await backend.invest.bundle(id);
+            const bundle = await backend.bundleManagement.bundle(id);
             router.push(`/bundles`, undefined, { shallow: true });
             dispatch(showBundle(bundle));
             

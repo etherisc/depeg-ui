@@ -165,7 +165,7 @@ export function AvailableBundleRow(compProps: AvailableBundleRowProps) {
                 {bundle.name}
             </TableCell>
             <TableCell align="right" data-testid="bundle-apr">{bundle.apr}%</TableCell>
-            <TableCell align="right" data-testid="bundle-suminsured">{currency} {formatCurrencyBN(BigNumber.from(bundle.minSumInsured), currencyDecimals)} / {formatCurrencyBN(BigNumber.from(bundle.maxSumInsured), currencyDecimals)}</TableCell>
+            <TableCell align="right" data-testid="bundle-suminsured">{currency} {formatCurrencyBN(BigNumber.from(bundle.minProtectedAmount), currencyDecimals)} / {formatCurrencyBN(BigNumber.from(bundle.maxProtectedAmount), currencyDecimals)}</TableCell>
             <TableCell align="right" data-testid="bundle-duration">{bundle.minDuration / 86400 } / {bundle.maxDuration / 86400 } {t('days')}</TableCell>
             <TableCell align="right" data-testid="bundle-remainingCapacity">{remainingCapacity(bundle)}</TableCell>
         </StyledTableRow>);

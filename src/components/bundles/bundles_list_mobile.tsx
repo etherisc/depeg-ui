@@ -28,7 +28,7 @@ export default function BundlesListMobile(props: BundlesProps) {
     const bundles = useSelector((state: RootState) => state.bundles.bundles);
     const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
 
-    const investmentApi = props.backend.invest;
+    const bundleManagementApi = props.backend.bundleManagement;
     
     useEffect(() => {
         async function getBundles() {
@@ -40,14 +40,14 @@ export default function BundlesListMobile(props: BundlesProps) {
                 return;
             }
     
-            await investmentApi.fetchAllBundles((bundle: BundleData) => dispatch(addBundle(bundle)) );
-            const maxActiveBundles = await investmentApi.maxBundles();
-            const activeBundles = await investmentApi.activeBundles();
+            await bundleManagementApi.fetchAllBundles((bundle: BundleData) => dispatch(addBundle(bundle)) );
+            const maxActiveBundles = await bundleManagementApi.maxBundles();
+            const activeBundles = await bundleManagementApi.activeBundles();
             dispatch(setMaxActiveBundles(maxActiveBundles));
             dispatch(finishLoading());
         }
         getBundles();
-    }, [signer, investmentApi, address, dispatch]); // update bundles when signer changes
+    }, [signer, bundleManagementApi, address, dispatch]); // update bundles when signer changes
 
 
     function renderListItemTitle(bundle: BundleData) {
