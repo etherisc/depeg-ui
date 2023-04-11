@@ -14,7 +14,7 @@ export function mockPoliciesSimple() {
             createdAt: dayjs().add(-2, 'days').unix(),
             duration: 14 * 24 * 60 * 60,
             premium: BigNumber.from(17).toString(),
-            suminsured: BigNumber.from(10000).toString(),
+            protectedAmount: BigNumber.from(10000).toString(),
             payoutCap: BigNumber.from(2000).toString(),
         } as PolicyData,
         {
@@ -27,7 +27,7 @@ export function mockPoliciesSimple() {
             createdAt: dayjs().add(-2, 'days').unix(),
             duration: 14 * 24 * 60 * 60,
             premium: BigNumber.from(17).toString(),
-            suminsured: BigNumber.from(11000000000).toString()
+            protectedAmount: BigNumber.from(11000000000).toString()
         } as PolicyData,
         {
             id: '0x54E190322453300229D2BE2A38450B8A8BD8CF63',
@@ -38,7 +38,7 @@ export function mockPoliciesSimple() {
             createdAt: dayjs().add(-2, 'days').unix(),
             duration: 14 * 24 * 60 * 60,
             premium: BigNumber.from(17).toString(),
-            suminsured: BigNumber.from(10000).toString()
+            protectedAmount: BigNumber.from(10000).toString()
         } as PolicyData,
     ];
 }
@@ -55,7 +55,7 @@ export function mockPoliciesSimpleWithClaim() {
             createdAt: dayjs().add(-2, 'days').unix(),
             duration: 14 * 24 * 60 * 60,
             premium: BigNumber.from(17).toString(),
-            suminsured: BigNumber.from(10000).toString()
+            protectedAmount: BigNumber.from(10000).toString()
         } as PolicyData,
         {
             id: '0x54E190322453300229D2BE2A38450B8A8BD8CF62',
@@ -67,7 +67,7 @@ export function mockPoliciesSimpleWithClaim() {
             createdAt: dayjs().add(-2, 'days').unix(),
             duration: 14 * 24 * 60 * 60,
             premium: BigNumber.from(17).toString(),
-            suminsured: BigNumber.from(11000000000).toString()
+            protectedAmount: BigNumber.from(11000000000).toString()
         } as PolicyData,
         {
             id: '0xccE190322453300229D2BE2A38450B8A8BD8CF63',
@@ -78,7 +78,7 @@ export function mockPoliciesSimpleWithClaim() {
             createdAt: dayjs().add(-2, 'days').unix(),
             duration: 14 * 24 * 60 * 60,
             premium: BigNumber.from(17).toString(),
-            suminsured: BigNumber.from(10000).toString(),
+            protectedAmount: BigNumber.from(10000).toString(),
             isAllowedToClaim: true,
         } as PolicyData,
         {
@@ -91,7 +91,7 @@ export function mockPoliciesSimpleWithClaim() {
             createdAt: dayjs().add(-2, 'days').unix(),
             duration: 15 * 24 * 60 * 60,
             premium: BigNumber.from(17).toString(),
-            suminsured: BigNumber.from(10000000000).toString(),
+            protectedAmount: BigNumber.from(10000000000).toString(),
             isAllowedToClaim: false,
             claim: {
                 state: ClaimState.APPLIED,
@@ -111,7 +111,7 @@ export function mockPoliciesSimpleWithClaim() {
             createdAt: dayjs().add(-2, 'days').unix(),
             duration: 15 * 24 * 60 * 60,
             premium: BigNumber.from(17).toString(),
-            suminsured: BigNumber.from(8000000000).toString(),
+            protectedAmount: BigNumber.from(8000000000).toString(),
             isAllowedToClaim: false,
             claim: {
                 state: ClaimState.CLOSED,

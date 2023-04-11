@@ -130,7 +130,7 @@ const mockPolicies = [
         createdAt: dayjs().add(-2, 'days').unix(),
         duration: 14 * 24 * 60 * 60,
         premium: BigNumber.from(17).toString(),
-        suminsured: BigNumber.from(10000).toString()
+        protectedAmount: BigNumber.from(10000).toString()
     } as PolicyData,
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF62',
@@ -142,7 +142,7 @@ const mockPolicies = [
         createdAt: dayjs().add(-2, 'days').unix(),
         duration: 14 * 24 * 60 * 60,
         premium: BigNumber.from(17).toString(),
-        suminsured: BigNumber.from(11000000000).toString()
+        protectedAmount: BigNumber.from(11000000000).toString()
     } as PolicyData,
 ];
 
