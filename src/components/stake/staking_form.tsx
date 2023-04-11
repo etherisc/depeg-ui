@@ -21,66 +21,64 @@ import { INPUT_VARIANT } from '../../config/theme';
 import { RootState } from '../../redux/store';
 import TermsOfService from '../terms_of_service';
 
-const formInputVariant = 'outlined';
-
-export interface InvestFormProperties {
+export interface StakingFormProperties {
     formDisabled: boolean;
     usd2: string;
     usd2Decimals: number;
     backend: BackendApi;
     hasUsd2Balance: (walletAddress: string, amount: BigNumber) => Promise<boolean>;
     readyToSubmit: (isFormReady: boolean) => void;
-    invest: (
+    stake: (
         name: string, lifetime: number, 
-        investedAmount: BigNumber, minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+        stakedAmount: BigNumber, minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
         minDuration: number, maxDuration: number, annualPctReturn: number
     ) => void;
 }
 
-export type IInvestFormValues = {
+export type IStakingFormValues = {
     bundleName: string,
     lifetime: string;
     lifetimeEndDate: Dayjs;
-    investedAmount: string;
-    insuredAmountMin: string;
-    insuredAmountMax: string;
+    stakedAmount: string;
+    protectedAmountMin: string;
+    protectedAmountMax: string;
     coverageDurationMin: string;
     coverageDurationMax: string;
     annualPctReturn: string;
     termsAndConditions: boolean;
 };
 
-export default function InvestForm(props: InvestFormProperties) {
-    const { t } = useTranslation('invest');
+export default function StakingForm(props: StakingFormProperties) {
+    const { t } = useTranslation('stake');
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const bundleNames = useSelector((state: RootState) => state.bundles.bundles.map(b => b.name));
 
-    const investProps = props.backend.invest;
-    const minLifetimeDays = investProps.minLifetime;
+    const bundleManagementProps = props.backend.bundleManagement;
+    const minLifetimeDays = bundleManagementProps.minLifetime;
     const minLifetimeEndDate = dayjs().add(minLifetimeDays, 'days');
-    const maxLifetimeDays = investProps.maxLifetime;
+    const maxLifetimeDays = bundleManagementProps.maxLifetime;
     const maxLifetimeEndDate = dayjs().add(maxLifetimeDays, 'days');
-    const minInvestedAmount = investProps.minInvestedAmount.toNumber();
-    const [ maxInvestedAmount, setMaxInvestedAmount ] = useState(investProps.maxInvestedAmount.toNumber());
-    const minSumInsured = investProps.minSumInsured.toNumber();
-    const maxSumInsured = investProps.maxSumInsured.toNumber();
-    const minCoverageDuration = investProps.minCoverageDuration;
-    const maxCoverageDuration = investProps.maxCoverageDuration;
-    const annualPctReturn = investProps.annualPctReturn;
-    const maxAnnualPctReturn = investProps.maxAnnualPctReturn;
+    const minStakedAmount = bundleManagementProps.minStakedAmount.toNumber();
+    const [ maxStakedAmount, setMaxStakedAmount ] = useState(bundleManagementProps.maxStakedAmount.toNumber());
+    const minProtectedAmount = bundleManagementProps.minProtectedAmount.toNumber();
+    const maxProtectedAmount = bundleManagementProps.maxProtectedAmount.toNumber();
+    const minCoverageDuration = bundleManagementProps.minProtectionDuration;
+    const maxCoverageDuration = bundleManagementProps.maxProtectionDuration;
+    const annualPctReturn = bundleManagementProps.annualPctReturn;
+    const maxAnnualPctReturn = bundleManagementProps.maxAnnualPctReturn;
 
     const defaultLifetime = 90;
 
-    const { handleSubmit, control, formState, getValues, setValue, watch, trigger } = useForm<IInvestFormValues>({ 
+    const { handleSubmit, control, formState, getValues, setValue, watch, trigger } = useForm<IStakingFormValues>({
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
             bundleName: '',
             lifetime: defaultLifetime.toString(),
             lifetimeEndDate: dayjs().add(defaultLifetime, 'days'),
-            investedAmount: maxInvestedAmount.toString(),
-            insuredAmountMin: minSumInsured.toString(),
-            insuredAmountMax: maxSumInsured.toString(),
+            stakedAmount: maxStakedAmount.toString(),
+            protectedAmountMin: minProtectedAmount.toString(),
+            protectedAmountMax: maxProtectedAmount.toString(),
             coverageDurationMin: minCoverageDuration.toString(),
             coverageDurationMax: maxCoverageDuration.toString(),
             annualPctReturn: annualPctReturn.toString(),
@@ -91,17 +89,17 @@ export default function InvestForm(props: InvestFormProperties) {
     const errors = useMemo(() => formState.errors, [formState]);
 
     // handle changes in insured amount min/max / coverage duration and validate the other field accordingly
-    const watchInsuredAmountMin = watch("insuredAmountMin");
+    const watchProtectedAmountMin = watch("protectedAmountMin");
     useEffect(() => {
-        // console.log("insuredAmountMin changed", watchInsuredAmountMin);
-        trigger(["insuredAmountMax", "insuredAmountMin"]);
-    }, [watchInsuredAmountMin, trigger]);
+        // console.log("insuredAmountMin changed", watchProtectedAmountMin);
+        trigger(["protectedAmountMax", "protectedAmountMin"]);
+    }, [watchProtectedAmountMin, trigger]);
 
-    const watchInsuredAmountMax = watch("insuredAmountMax");
+    const watchProtectedAmountMax = watch("protectedAmountMax");
     useEffect(() => {
-        // console.log("insuredAmountMax changed", watchInsuredAmountMax);
-        trigger("insuredAmountMin");
-    }, [watchInsuredAmountMax, trigger]);
+        // console.log("insuredAmountMax changed", watchProtectedAmountMax);
+        trigger("protectedAmountMin");
+    }, [watchProtectedAmountMax, trigger]);
 
     const watchCoverageDurationMin = watch("coverageDurationMin");
     useEffect(() => {
@@ -115,7 +113,7 @@ export default function InvestForm(props: InvestFormProperties) {
 
     const [ paymentInProgress, setPaymentInProgress ] = useState(false);
 
-    const onSubmit: SubmitHandler<IInvestFormValues> = async data => {
+    const onSubmit: SubmitHandler<IStakingFormValues> = async data => {
         console.log("submit clicked", data);
         setPaymentInProgress(true);
 
@@ -123,13 +121,13 @@ export default function InvestForm(props: InvestFormProperties) {
             const values = getValues();
             const bundleName = values.bundleName.trim();
             const lifetime = parseInt(values.lifetime) * 24 * 60 * 60;
-            const investedAmount = parseUnits(values.investedAmount, props.usd2Decimals);
-            const minSumInsured = parseUnits(values.insuredAmountMin, props.usd2Decimals);
-            const maxSumInsured = parseUnits(values.insuredAmountMax, props.usd2Decimals);
+            const stakedAmount = parseUnits(values.stakedAmount, props.usd2Decimals);
+            const minProtectedAmount = parseUnits(values.protectedAmountMin, props.usd2Decimals);
+            const maxProtectedAmount = parseUnits(values.protectedAmountMax, props.usd2Decimals);
             const minDuration = parseInt(values.coverageDurationMin);
             const maxDuration = parseInt(values.coverageDurationMax);
             const annualPctReturn = parseFloat(values.annualPctReturn);
-            await props.invest(bundleName, lifetime, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+            await props.stake(bundleName, lifetime, stakedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
         } finally {
             setPaymentInProgress(false);
         }
@@ -137,45 +135,45 @@ export default function InvestForm(props: InvestFormProperties) {
 
     useEffect(() => {
         async function checkAmountLimits() {
-            // check if bundle cap is small than maxInvestedAmount
-            let investedAmountMax = maxInvestedAmount;
-            const bundleCapitalCapBN = await props.backend.invest.getBundleCapitalCap();
+            // check if bundle cap is small than maxStakedAmount
+            let stakedAmountMax = maxStakedAmount;
+            const bundleCapitalCapBN = await props.backend.bundleManagement.getBundleCapitalCap();
             const bundleCapitalCap = parseInt(formatUnits(bundleCapitalCapBN, props.usd2Decimals));
             console.log("bundleCapitalCap", bundleCapitalCap);
             
-            // the bundle cap is the maximum amount that can be invested in the bundle
-            if (bundleCapitalCap < investedAmountMax) {
-                investedAmountMax = bundleCapitalCap;
+            // the bundle cap is the maximum amount that can be staked in the bundle
+            if (bundleCapitalCap < stakedAmountMax) {
+                stakedAmountMax = bundleCapitalCap;
             }
 
-            const riskpoolRemainingCapacityBN = await props.backend.invest.riskpoolRemainingCapacity();
+            const riskpoolRemainingCapacityBN = await props.backend.bundleManagement.riskpoolRemainingCapacity();
             const riskpoolRemainingCapacity = parseInt(formatUnits(riskpoolRemainingCapacityBN, props.usd2Decimals));
             console.log("riskpoolRemainingCapacity", riskpoolRemainingCapacity);
             
             // the bundle cannot be larger than the remaining capacity of the riskpool
-            if (riskpoolRemainingCapacity < investedAmountMax) {
-                investedAmountMax = riskpoolRemainingCapacity;
+            if (riskpoolRemainingCapacity < stakedAmountMax) {
+                stakedAmountMax = riskpoolRemainingCapacity;
             }
 
-            if (investedAmountMax < maxInvestedAmount) {
-                console.log("updating maxInvestedAmount", investedAmountMax);
-                setMaxInvestedAmount(investedAmountMax);
-                setValue("investedAmount", investedAmountMax.toString());
+            if (stakedAmountMax < maxStakedAmount) {
+                console.log("updating maxStakedAmount", stakedAmountMax);
+                setMaxStakedAmount(stakedAmountMax);
+                setValue("stakedAmount", stakedAmountMax.toString());
             }
 
             // limit the maximum protected amount to the bundle cap (multiplied by the protected amount factor)
-            const protectedAmountFactor = await props.backend.invest.getProtectedAmountFactor();
+            const protectedAmountFactor = await props.backend.bundleManagement.getProtectedAmountFactor();
             const bundleCapitalCapProtectedAmount = parseInt(formatUnits(bundleCapitalCapBN.mul(protectedAmountFactor), props.usd2Decimals));
-            if (bundleCapitalCapProtectedAmount < maxSumInsured) {
+            if (bundleCapitalCapProtectedAmount < maxProtectedAmount) {
                 console.log("updating insuredAmountMax", bundleCapitalCapProtectedAmount);
-                setValue("insuredAmountMax", bundleCapitalCapProtectedAmount.toString());
+                setValue("protectedAmountMax", bundleCapitalCapProtectedAmount.toString());
             }
         }
         if (isConnected) {
-            trigger("investedAmount");
+            trigger("stakedAmount");
             checkAmountLimits();
         }
-    }, [isConnected, props.backend.invest, investProps.maxInvestedAmount, props.usd2Decimals, maxInvestedAmount, setValue, maxSumInsured, trigger]);
+    }, [isConnected, props.backend.bundleManagement, bundleManagementProps.maxStakedAmount, props.usd2Decimals, maxStakedAmount, setValue, maxProtectedAmount, trigger]);
 
     const waitForPayment = paymentInProgress ? <LinearProgress /> : null;
 
@@ -285,24 +283,24 @@ export default function InvestForm(props: InvestFormProperties) {
                 </Grid>
                 <Grid item xs={12}>
                     <Controller
-                        name="investedAmount"
+                        name="stakedAmount"
                         control={control}
                         rules={{ 
                             required: true, 
-                            min: minInvestedAmount, 
-                            max: maxInvestedAmount,
+                            min: minStakedAmount,
+                            max: maxStakedAmount,
                             pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS,
                             validate: {
                                 balance: async (value) => {
                                     const walletAddress = await props.backend.getWalletAddress();
-                                    const investedAmount = BigNumber.from(parseFloat(value) * Math.pow(10, props.usd2Decimals));
-                                    return  props.hasUsd2Balance(walletAddress, investedAmount);
+                                    const stakedAmount = BigNumber.from(parseFloat(value) * Math.pow(10, props.usd2Decimals));
+                                    return  props.hasUsd2Balance(walletAddress, stakedAmount);
                                 }
                             }
                         }}
                         render={({ field }) => 
                             <TextField 
-                                label={t('investedAmount')}
+                                label={t('stakedAmount')}
                                 fullWidth
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
@@ -310,32 +308,32 @@ export default function InvestForm(props: InvestFormProperties) {
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>,
                                 }}
-                                error={errors.investedAmount !== undefined}
-                                helperText={errors.investedAmount !== undefined 
-                                    ? ( errors.investedAmount.type == 'pattern' 
+                                error={errors.stakedAmount !== undefined}
+                                helperText={errors.stakedAmount !== undefined
+                                    ? ( errors.stakedAmount.type == 'pattern'
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
-                                            : t(`error.field.${errors.investedAmount.type}`, { "ns": "common", "minValue": `${props.usd2} ${minInvestedAmount}`, "maxValue": `${props.usd2} ${maxInvestedAmount}` }) 
+                                            : t(`error.field.${errors.stakedAmount.type}`, { "ns": "common", "minValue": `${props.usd2} ${minStakedAmount}`, "maxValue": `${props.usd2} ${maxStakedAmount}` })
                                     ) : ""}
-                                data-testid="invested-amount"
+                                data-testid="staked-amount"
                                 />}
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <Controller
-                        name="insuredAmountMin"
+                        name="protectedAmountMin"
                         control={control}
                         rules={{ 
                             required: true, 
-                            min: minSumInsured, 
-                            max: maxSumInsured,
+                            min: minProtectedAmount,
+                            max: maxProtectedAmount,
                             pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS,
                             validate: {
-                                minmax: (v: string) => parseFloat(v) <= parseFloat(watchInsuredAmountMax)
+                                minmax: (v: string) => parseFloat(v) <= parseFloat(watchProtectedAmountMax)
                             }
                         }}
                         render={({ field }) => 
                             <TextField 
-                                label={t('minSumInsured')}
+                                label={t('minProtectedAmount')}
                                 fullWidth
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
@@ -343,32 +341,32 @@ export default function InvestForm(props: InvestFormProperties) {
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>,
                                 }}
-                                error={errors.insuredAmountMin !== undefined}
-                                helperText={errors.insuredAmountMin !== undefined 
-                                    ? ( errors.insuredAmountMin.type == 'pattern' 
+                                error={errors.protectedAmountMin !== undefined}
+                                helperText={errors.protectedAmountMin !== undefined
+                                    ? ( errors.protectedAmountMin.type == 'pattern'
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
-                                            : t(`error.field.${errors.insuredAmountMin.type}`, { "ns": "common", "minValue": `${props.usd2} ${minSumInsured}`, "maxValue": `${props.usd2} ${maxSumInsured}` }) 
+                                            : t(`error.field.${errors.protectedAmountMin.type}`, { "ns": "common", "minValue": `${props.usd2} ${minProtectedAmount}`, "maxValue": `${props.usd2} ${maxProtectedAmount}` })
                                     ) : ""}
-                                data-testid="min-sum-insured"
+                                data-testid="min-protected-amount"
                                 />}
                         />
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <Controller
-                        name="insuredAmountMax"
+                        name="protectedAmountMax"
                         control={control}
                         rules={{ 
                             required: true, 
-                            min: minSumInsured, 
-                            max: maxSumInsured,
+                            min: minProtectedAmount,
+                            max: maxProtectedAmount,
                             pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS,
                             validate: {
-                                minmax: (v: string) => parseFloat(watchInsuredAmountMin) <= parseFloat(v)
+                                minmax: (v: string) => parseFloat(watchProtectedAmountMin) <= parseFloat(v)
                             }                        
                         }}
                         render={({ field }) => 
                             <TextField 
-                                label={t('maxSumInsured')}
+                                label={t('maxProtectedAmount')}
                                 fullWidth
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
@@ -376,13 +374,13 @@ export default function InvestForm(props: InvestFormProperties) {
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>,
                                 }}
-                                error={errors.insuredAmountMax !== undefined}
-                                helperText={errors.insuredAmountMax !== undefined 
-                                    ? ( errors.insuredAmountMax.type == 'pattern' 
+                                error={errors.protectedAmountMax !== undefined}
+                                helperText={errors.protectedAmountMax !== undefined
+                                    ? ( errors.protectedAmountMax.type == 'pattern'
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
-                                            : t(`error.field.${errors.insuredAmountMax.type}`, { "ns": "common", "minValue": `${props.usd2} ${minSumInsured}`, "maxValue": `${props.usd2} ${maxSumInsured}` }) 
+                                            : t(`error.field.${errors.protectedAmountMax.type}`, { "ns": "common", "minValue": `${props.usd2} ${minProtectedAmount}`, "maxValue": `${props.usd2} ${maxProtectedAmount}` })
                                     ) : ""}
-                                data-testid="max-sum-insured"
+                                data-testid="max-protected-amount"
                                 />}
                                 
                         />
@@ -511,7 +509,7 @@ export default function InvestForm(props: InvestFormProperties) {
                         sx={{ p: 1 }}
                         >
                         <FontAwesomeIcon icon={faSackDollar} className="fa" />
-                        {t('button_invest')}
+                        {t('button_stake')}
                     </Button>
                     {waitForPayment}
                 </Grid>

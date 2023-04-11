@@ -1,24 +1,24 @@
 import { BigNumber } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { minBigNumber } from "../utils/bignumber";
-import { InvestApi } from "./backend_api";
+import { BundleManagementApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
 import { ComponentState } from "../types/component_state";
 
-export class InvestApiSmartContract implements InvestApi {
+export class InvestApiSmartContract implements BundleManagementApi {
     private doNoUseDirectlydepegRiskpoolApi?: DepegRiskpoolApi;
     private depegProductApi: DepegProductApi;
 
     minLifetime: number;
     maxLifetime: number;
-    minInvestedAmount: BigNumber;
-    maxInvestedAmount: BigNumber;
-    minSumInsured: BigNumber;
-    maxSumInsured: BigNumber;
-    minCoverageDuration: number;
-    maxCoverageDuration: number;
+    minStakedAmount: BigNumber;
+    maxStakedAmount: BigNumber;
+    minProtectedAmount: BigNumber;
+    maxProtectedAmount: BigNumber;
+    minProtectionDuration: number;
+    maxProtectionDuration: number;
     annualPctReturn: number;
     maxAnnualPctReturn: number;
     usd2Decimals: number;
@@ -27,20 +27,20 @@ export class InvestApiSmartContract implements InvestApi {
 
     constructor(depegProductApi: DepegProductApi, 
         minLifetime: number, maxLifetime: number, 
-        minInvestedAmount: BigNumber, maxInvestedAmount: BigNumber, 
-        minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+        minStakedAmount: BigNumber, maxStakedAmount: BigNumber, 
+        minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber, 
         minCoverageDuration: number, maxCoverageDuration: number, 
         annualPctReturn: number, maxAnnualPctReturn: number,
         usd2Decimals: number,
     ) {
         this.minLifetime = minLifetime;
         this.maxLifetime = maxLifetime;
-        this.minInvestedAmount = minInvestedAmount;
-        this.maxInvestedAmount = maxInvestedAmount;
-        this.minSumInsured = minSumInsured;
-        this.maxSumInsured = maxSumInsured;
-        this.minCoverageDuration = minCoverageDuration;
-        this.maxCoverageDuration = maxCoverageDuration;
+        this.minStakedAmount = minStakedAmount;
+        this.maxStakedAmount = maxStakedAmount;
+        this.minProtectedAmount = minProtectedAmount;
+        this.maxProtectedAmount = maxProtectedAmount;
+        this.minProtectionDuration = minCoverageDuration;
+        this.maxProtectionDuration = maxCoverageDuration;
         this.annualPctReturn = annualPctReturn;
         this.maxAnnualPctReturn = maxAnnualPctReturn;
         this.depegProductApi = depegProductApi;
@@ -88,7 +88,7 @@ export class InvestApiSmartContract implements InvestApi {
             riskpoolCap = minBigNumber(contractRiskpoolCap, this.riskpoolCapacityLimit!);
         }
         const remaining = riskpoolCap.sub(capital);
-        return this.minInvestedAmount.lte(remaining);
+        return this.minStakedAmount.lte(remaining);
     }
 
     async riskpoolRemainingCapacity(): Promise<BigNumber> {
@@ -119,7 +119,7 @@ export class InvestApiSmartContract implements InvestApi {
     }
 
 
-    async invest(
+    async stake(
         name: string,
         lifetime: number,
         investorWalletAddress: string, 
@@ -132,7 +132,7 @@ export class InvestApiSmartContract implements InvestApi {
         beforeInvestCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void
     ): Promise<{ status: boolean, bundleId: string | undefined}> {
-        console.log("invest", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+        console.log("stake", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         const [tx, receipt] = await (await this.riskpoolApi()).createBundle(
             name, 
             lifetime,

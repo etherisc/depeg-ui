@@ -96,14 +96,14 @@ describe('ApplicationForm', () => {
                 />
         );
 
-        const insuredAmountInput = screen.getByTestId("insured-amount").querySelector("input");
+        const insuredAmountInput = screen.getByTestId("protected-amount").querySelector("input");
         expect(insuredAmountInput).toHaveAttribute("value", "");
 
         act(() => {
             fireEvent.change(insuredAmountInput!, { target: { value: "100" } });
         });
         await waitFor(async () => {
-            const ia = await screen.findByTestId("insured-amount");
+            const ia = await screen.findByTestId("protected-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.min");
         });
 
@@ -111,7 +111,7 @@ describe('ApplicationForm', () => {
             fireEvent.change(insuredAmountInput!, { target: { value: "10000" } });
         });
         await waitFor(async () => {
-            const ia = await screen.findByTestId("insured-amount");
+            const ia = await screen.findByTestId("protected-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.max");
         });
 
@@ -119,7 +119,7 @@ describe('ApplicationForm', () => {
             fireEvent.change(insuredAmountInput!, { target: { value: "" } });
         });
         await waitFor(async () => {
-            const ia = await screen.findByTestId("insured-amount");
+            const ia = await screen.findByTestId("protected-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.required");
         });
 
@@ -127,7 +127,7 @@ describe('ApplicationForm', () => {
             fireEvent.change(insuredAmountInput!, { target: { value: "abc" } });
         });
         await waitFor(async () => {
-            const ia = await screen.findByTestId("insured-amount");
+            const ia = await screen.findByTestId("protected-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.amountType");
         });
 
@@ -135,7 +135,7 @@ describe('ApplicationForm', () => {
             fireEvent.change(insuredAmountInput!, { target: { value: "1000.0" } });
         });
         await waitFor(async () => {
-            const ia = await screen.findByTestId("insured-amount");
+            const ia = await screen.findByTestId("protected-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.amountType");
         });
 
@@ -143,7 +143,7 @@ describe('ApplicationForm', () => {
             fireEvent.change(insuredAmountInput!, { target: { value: "1000,0" } });
         });
         await waitFor(async () => {
-            const ia = await screen.findByTestId("insured-amount");
+            const ia = await screen.findByTestId("protected-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.amountType");
         });
 
@@ -151,7 +151,7 @@ describe('ApplicationForm', () => {
             fireEvent.change(insuredAmountInput!, { target: { value: "1000" } });
         });
         await waitFor(async () => {
-            const ia = await screen.findByTestId("insured-amount");
+            const ia = await screen.findByTestId("protected-amount");
             return expect(ia.querySelector("p.MuiFormHelperText-root")).toBeNull();
         });
     })
@@ -227,8 +227,8 @@ describe('ApplicationForm', () => {
             owner: "0x1234",
             tokenId: 27,
             apr: 5,
-            minSumInsured: BigNumber.from(1000 * Math.pow(10, 6)).toString(),
-            maxSumInsured: BigNumber.from(2000 * Math.pow(10, 6)).toString(),
+            minProtectedAmount: BigNumber.from(1000 * Math.pow(10, 6)).toString(),
+            maxProtectedAmount: BigNumber.from(2000 * Math.pow(10, 6)).toString(),
             minDuration: 30 * 86400,
             maxDuration: 40 * 86400,
             capacity: BigNumber.from(20000 * Math.pow(10, 6)).toString(),
@@ -271,7 +271,7 @@ describe('ApplicationForm', () => {
             }
         );
 
-        const insuredAmountInput = screen.getByTestId("insured-amount").querySelector("input");
+        const insuredAmountInput = screen.getByTestId("protected-amount").querySelector("input");
 
         act(() => {
             fireEvent.change(insuredAmountInput!, { target: { value: "1000" } });

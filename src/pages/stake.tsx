@@ -3,13 +3,13 @@ import { useTranslation } from "next-i18next";
 import Head from "next/head";
 import { i18n } from "next-i18next";
 import { useSnackbar } from "notistack";
-import Invest from '../components/invest/invest';
+import Stake from '../components/stake/stake';
 import { useMemo } from 'react';
 import { getBackendApi } from '../backend/backend_api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 
-export default function InvestPage() {
+export default function StakePage() {
   const { enqueueSnackbar } = useSnackbar();
   const {t} = useTranslation('common');
   const signer = useSelector((state: RootState) => state.chain.signer);
@@ -28,7 +28,7 @@ export default function InvestPage() {
           <title>{t('apptitle')}</title>
       </Head>
             
-      <Invest backend={backend} />
+      <Stake backend={backend} />
     </>
   )
 }
@@ -39,6 +39,6 @@ export async function getStaticProps() {
   }
   return {
     props: {
-      ...(await serverSideTranslations('en', ['common', 'invest'])),    },
+      ...(await serverSideTranslations('en', ['common', 'stake'])),    },
   }
 }

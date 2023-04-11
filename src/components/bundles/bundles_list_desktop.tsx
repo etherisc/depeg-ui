@@ -38,7 +38,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
     const bundles = useSelector((state: RootState) => state.bundles.bundles);
     const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
 
-    const investmentApi = props.backend.invest;
+    const bundleManagementApi = props.backend.bundleManagement;
     
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [paginationModel, setPaginationModel] = useState({
@@ -62,14 +62,14 @@ export default function BundlesListDesktop(props: BundlesProps) {
                 return;
             }
     
-            await investmentApi.fetchAllBundles((bundle: BundleData) => dispatch(addBundle(bundle)) );
-            const maxActiveBundles = await investmentApi.maxBundles();
-            const activeBundles = await investmentApi.activeBundles();
+            await bundleManagementApi.fetchAllBundles((bundle: BundleData) => dispatch(addBundle(bundle)) );
+            const maxActiveBundles = await bundleManagementApi.maxBundles();
+            const activeBundles = await bundleManagementApi.activeBundles();
             dispatch(setMaxActiveBundles(maxActiveBundles));
             dispatch(finishLoading());
         }
         getBundles();
-    }, [signer, showAllBundles, investmentApi, address, dispatch]); // update bundles when signer changes
+    }, [signer, showAllBundles, bundleManagementApi, address, dispatch]); // update bundles when signer changes
 
     function mouseHovering(id: number): boolean {
         return hoveringOverBundleId === id;

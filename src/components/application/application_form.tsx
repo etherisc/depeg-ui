@@ -63,8 +63,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     const hasBalance = props.hasBalance;
 
-    const [ insuredAmountMin, setInsuredAmountMin ] = useState(props.applicationApi.insuredAmountMin.toNumber());
-    const [ insuredAmountMax, setInsuredAmountMax ] = useState(props.applicationApi.insuredAmountMax.toNumber());
+    const [ protectedAmountMin, setProtectedAmountMin ] = useState(props.applicationApi.protectedAmountMin.toNumber());
+    const [ protectedAmountMax, setProtectedAmountMax ] = useState(props.applicationApi.protectedAmountMax.toNumber());
 
     // coverage period (days and date)
     const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
@@ -180,8 +180,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             let minCoverageSecs = Number.MAX_SAFE_INTEGER;
             let maxCoverageSecs = 0;
             for( let b of bundles) {
-                const bminSumInsured = BigNumber.from(b.minSumInsured);
-                const bmaxSumInsured = BigNumber.from(b.maxSumInsured);
+                const bminSumInsured = BigNumber.from(b.minProtectedAmount);
+                const bmaxSumInsured = BigNumber.from(b.maxProtectedAmount);
 
                 if (bminSumInsured.lt(minSumInsured)) {
                     minSumInsured = bminSumInsured;
@@ -196,8 +196,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     maxCoverageSecs = b.maxDuration;
                 }
             }
-            setInsuredAmountMin(parseInt(formatUnits(minSumInsured, props.usd1Decimals)));
-            setInsuredAmountMax(parseInt(formatUnits(maxSumInsured, props.usd1Decimals)));
+            setProtectedAmountMin(parseInt(formatUnits(minSumInsured, props.usd1Decimals)));
+            setProtectedAmountMax(parseInt(formatUnits(maxSumInsured, props.usd1Decimals)));
             const minCoverageDays = minCoverageSecs / 86400;
             const maxCoverageDays = maxCoverageSecs / 86400;
             setCoverageDaysMin(minCoverageDays);
@@ -290,7 +290,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Controller
                         name="protectedAmount"
                         control={control}
-                        rules={{ required: true, min: insuredAmountMin, max: insuredAmountMax, pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS  }}
+                        rules={{ required: true, min: protectedAmountMin, max: protectedAmountMax, pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS  }}
                         render={({ field }) => 
                             <TextField 
                                 label={t('protectedAmount')}
@@ -309,9 +309,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 helperText={errors.protectedAmount !== undefined 
                                     ? ( errors.protectedAmount.type == 'pattern' 
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
-                                            : t(`error.field.${errors.protectedAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${insuredAmountMin}`, "maxValue": `${props.usd1} ${insuredAmountMax}` })
+                                            : t(`error.field.${errors.protectedAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${protectedAmountMin}`, "maxValue": `${props.usd1} ${protectedAmountMax}` })
                                     ) : ""}
-                                data-testid="insured-amount"
+                                data-testid="protected-amount"
                                 />}
                         />
                 </Grid>

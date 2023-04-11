@@ -205,7 +205,7 @@ export class DepegProductApi {
             payoutState: payoutState,
             createdAt: createdAt.toNumber(),
             premium: premiumAmount.toString(),
-            suminsured: sumInsuredAmount.mul(this.protectedAmountFactor).toString(),
+            protectedAmount: sumInsuredAmount.mul(this.protectedAmountFactor).toString(),
             payoutCap: sumInsuredAmount.toString(),
             duration: duration.toNumber(),
             isAllowedToClaim: false,

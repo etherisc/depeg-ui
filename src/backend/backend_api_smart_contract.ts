@@ -4,7 +4,7 @@ import { Dispatch } from "react";
 import { updateBundle } from "../redux/slices/bundles";
 import { DepegState } from "../types/depeg_state";
 import { ApplicationApiSmartContract } from "./application_api_smart_contract";
-import { ApplicationApi, BackendApi, InvestApi } from "./backend_api";
+import { ApplicationApi, BackendApi, BundleManagementApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { hasBalance } from "./erc20";
@@ -28,7 +28,7 @@ export class BackendApiSmartContract implements BackendApi {
     usd2: string;
     usd2Decimals: number;
     application: ApplicationApi;
-    invest: InvestApi;
+    bundleManagement: BundleManagementApi;
     priceFeed: PriceFeedApi;
 
     constructor(
@@ -44,18 +44,18 @@ export class BackendApiSmartContract implements BackendApi {
 
         const minLifetime = parseInt(process.env.NEXT_PUBLIC_DEPEG_LIFETIME_DAYS_MINIMUM || "14");
         const maxLifetime = parseInt(process.env.NEXT_PUBLIC_DEPEG_LIFETIME_DAYS_MAXIMUM || "365");
-        const insuredAmountMin = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_SUMINSURED_MINIMUM || "0");
-        const insuredAmountMax = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_SUMINSURED_MAXIMUM || "0");
+        const protectedAmountMin = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_PROTECTED_AMOUNT_MINIMUM || "0");
+        const protectedAmountMax = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_PROTECTED_AMOUNT_MAXIMUM || "0");
         const coverageDurationDaysMin = parseInt(process.env.NEXT_PUBLIC_DEPEG_COVERAGE_DURATION_DAYS_MINIMUM || "0");
         const coverageDurationDaysMax = parseInt(process.env.NEXT_PUBLIC_DEPEG_COVERAGE_DURATION_DAYS_MAXIMUM || "0");
-        const investedAmountMin = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MINIMUM || "0");
-        const investedAmountMax = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_INVESTED_AMOUNT_MAXIMUM || "0");
+        const stakedAmountMin = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_STAKED_AMOUNT_MINIMUM || "0");
+        const stakedAmountMax = BigNumber.from(process.env.NEXT_PUBLIC_DEPEG_STAKED_AMOUNT_MAXIMUM || "0");
         const annualPctReturn = parseInt(process.env.NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN || "0");
         const annualPctReturnMax = parseInt(process.env.NEXT_PUBLIC_DEPEG_ANNUAL_PCT_RETURN_MAXIMUM || "0");
 
         this.doNoUseDirectlyDepegProductApi = new DepegProductApi(this.depegProductAddress, this.signer);
-        this.application = new ApplicationApiSmartContract(this.doNoUseDirectlyDepegProductApi, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, this.usd2Decimals);
-        this.invest = new InvestApiSmartContract(this.doNoUseDirectlyDepegProductApi, minLifetime, maxLifetime, investedAmountMin, investedAmountMax, insuredAmountMin, insuredAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, annualPctReturn, annualPctReturnMax, this.usd2Decimals);
+        this.application = new ApplicationApiSmartContract(this.doNoUseDirectlyDepegProductApi, protectedAmountMin, protectedAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, this.usd2Decimals);
+        this.bundleManagement = new InvestApiSmartContract(this.doNoUseDirectlyDepegProductApi, minLifetime, maxLifetime, stakedAmountMin, stakedAmountMax, protectedAmountMin, protectedAmountMax, coverageDurationDaysMin, coverageDurationDaysMax, annualPctReturn, annualPctReturnMax, this.usd2Decimals);
         this.priceFeed = new PriceFeed(this.depegProductAddress, this.signer);
     }
 

@@ -37,14 +37,14 @@ export interface BackendApi {
         ): Promise<number>;
     getDepegState(): Promise<DepegState>;
     application: ApplicationApi;
-    invest: InvestApi;
+    bundleManagement: BundleManagementApi;
     priceFeed: PriceFeedApi;
     triggerBundleUpdate: (bundleId: number, dispatch: Dispatch<AnyAction>) => Promise<BundleData>;
 }
 
 export interface ApplicationApi {
-    insuredAmountMin: BigNumber;
-    insuredAmountMax: BigNumber;
+    protectedAmountMin: BigNumber;
+    protectedAmountMax: BigNumber;
     coverageDurationDaysMin: number;
     coverageDurationDaysMax: number;
     getProductComponentState(): Promise<ComponentState>;
@@ -80,15 +80,15 @@ export interface ApplicationApi {
     ): Promise<{ status: boolean, claimId: string|undefined}>;
 }
 
-export interface InvestApi {
+export interface BundleManagementApi {
     minLifetime: number;
     maxLifetime: number;
-    minInvestedAmount: BigNumber;
-    maxInvestedAmount: BigNumber;
-    minSumInsured: BigNumber;
-    maxSumInsured: BigNumber;
-    minCoverageDuration: number;
-    maxCoverageDuration: number;
+    minStakedAmount: BigNumber;
+    maxStakedAmount: BigNumber;
+    minProtectedAmount: BigNumber;
+    maxProtectedAmount: BigNumber;
+    minProtectionDuration: number;
+    maxProtectionDuration: number;
     annualPctReturn: number;
     maxAnnualPctReturn: number;
     getRiskpoolComponentState(): Promise<ComponentState>;
@@ -96,14 +96,14 @@ export interface InvestApi {
     riskpoolRemainingCapacity(): Promise<BigNumber>;
     isAllowAllAccountsEnabled(): Promise<boolean>;
     isInvestorWhitelisted(walletAddress: string): Promise<boolean>;
-    invest: 
+    stake:
         (
             name: string,
             lifetime: number,
             investorWalletAddress: string, 
-            investedAmount: BigNumber, 
-            minSumInsured: BigNumber, 
-            maxSumInsured: BigNumber, 
+            stakedAmount: BigNumber,
+            minProtectedAmount: BigNumber,
+            maxProtectedAmount: BigNumber,
             minDuration: number, 
             maxDuration: number, 
             annualPctReturn: number,

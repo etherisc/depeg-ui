@@ -103,8 +103,8 @@ export class DepegRiskpoolApi {
             riskpoolId: this.riskpoolId,
             owner: owner,
             apr: apr,
-            minSumInsured: minSumInsured.mul(this.protectedAmountFactor).toString(),
-            maxSumInsured: maxSumInsured.mul(this.protectedAmountFactor).toString(),
+            minProtectedAmount: minSumInsured.mul(this.protectedAmountFactor).toString(),
+            maxProtectedAmount: maxSumInsured.mul(this.protectedAmountFactor).toString(),
             minDuration: minDuration.toNumber(),
             maxDuration: maxDuration.toNumber(),
             balance: balance.toString(),
@@ -133,8 +133,8 @@ export class DepegRiskpoolApi {
             if (lastBlockTimestamp > (bundle.createdAt + parseInt(bundle.lifetime))) {
                 return best;
             }
-            const minSumInsured = BigNumber.from(bundle.minSumInsured);
-            const maxSumInsured = BigNumber.from(bundle.maxSumInsured);
+            const minSumInsured = BigNumber.from(bundle.minProtectedAmount);
+            const maxSumInsured = BigNumber.from(bundle.maxProtectedAmount);
             if (sumInsured.lt(minSumInsured)) {
                 console.log("sumInsured less that min sum insured", sumInsured, bundle);
                 return best;

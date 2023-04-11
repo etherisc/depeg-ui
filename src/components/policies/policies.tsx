@@ -250,12 +250,12 @@ export default function Policies(props: PoliciesProps) {
                 gridStringOrNumberComparator(v1.protectedWallet, v2.protectedWallet, cellParams1, cellParams2)
         },
         { 
-            field: 'suminsured', 
-            headerName: t('table.header.insuredAmount'), 
+            field: 'protectedAmount', 
+            headerName: t('table.header.protectedAmount'), 
             flex: 0.8,
             valueGetter: (params: GridValueGetterParams) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
-                const protectedAmount = BigNumber.from(params.value!.suminsured);
+                const protectedAmount = BigNumber.from(params.value!.protectedAmount);
                 const payoutCap = BigNumber.from(params.value!.payoutCap || 0);
                 return (<>
                     {props.backend.usd1} {formatCurrency(protectedAmount.toNumber(), props.backend.usd1Decimals)}

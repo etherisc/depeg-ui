@@ -55,7 +55,7 @@ export default function ShowBundle(props: ShowBundleProps) {
     async function withdrawAmount(bundleId: number, amount: BigNumber): Promise<boolean> {
         ga_event("trx_start_unstake", { category: 'chain_trx' });
         try {
-            const r = await props.backend.invest.withdrawBundle(bundleId, amount);
+            const r = await props.backend.bundleManagement.withdrawBundle(bundleId, amount);
             showSuccessNotification(t('withdraw_successful'));
             ga_event("trx_success_unstake", { category: 'chain_trx' });
             return r;
@@ -91,7 +91,7 @@ export default function ShowBundle(props: ShowBundleProps) {
         }
         
         try {
-            const r = await props.backend.invest.fundBundle(bundleId, amount);
+            const r = await props.backend.bundleManagement.fundBundle(bundleId, amount);
             ga_event("trx_success_stake_add", { category: 'chain_trx' });
             showSuccessNotification(t('fund_successful'));
             return r;
@@ -114,7 +114,7 @@ export default function ShowBundle(props: ShowBundleProps) {
         const bundleId = bundle.id;
         ga_event("trx_start_lock", { category: 'chain_trx' });
         try {
-            const r = await props.backend.invest.lockBundle(bundleId);
+            const r = await props.backend.bundleManagement.lockBundle(bundleId);
             ga_event("trx_success_lock", { category: 'chain_trx' });
             showSuccessNotification(t('lock_successful'));
             return r;
@@ -136,7 +136,7 @@ export default function ShowBundle(props: ShowBundleProps) {
         const bundleId = bundle.id;
         ga_event("trx_start_unlock", { category: 'chain_trx' });
         try {
-            const r = await props.backend.invest.unlockBundle(bundleId);
+            const r = await props.backend.bundleManagement.unlockBundle(bundleId);
             ga_event("trx_success_unlock", { category: 'chain_trx' });
             showSuccessNotification(t('unlock_successful'));
             return r;
@@ -158,7 +158,7 @@ export default function ShowBundle(props: ShowBundleProps) {
         const bundleId = bundle.id;
         ga_event("trx_start_close", { category: 'chain_trx' });
         try {
-            const r = await props.backend.invest.closeBundle(bundleId);
+            const r = await props.backend.bundleManagement.closeBundle(bundleId);
             ga_event("trx_success_close", { category: 'chain_trx' });
             showSuccessNotification(t('close_successful'));
             return r;
@@ -180,7 +180,7 @@ export default function ShowBundle(props: ShowBundleProps) {
         const bundleId = bundle.id;
         ga_event("trx_start_burn", { category: 'chain_trx' });
         try {
-            const r = await props.backend.invest.burnBundle(bundleId);
+            const r = await props.backend.bundleManagement.burnBundle(bundleId);
             ga_event("trx_success_burn", { category: 'chain_trx' });
             showSuccessNotification(t('burn_successful'));
             return r;
@@ -221,12 +221,12 @@ export default function ShowBundle(props: ShowBundleProps) {
     }
 
     async function getRemainingCapacity() {
-        const riskpoolRemainingCapacityBN = await props.backend.invest.riskpoolRemainingCapacity();
+        const riskpoolRemainingCapacityBN = await props.backend.bundleManagement.riskpoolRemainingCapacity();
         return parseInt(formatUnits(riskpoolRemainingCapacityBN, props.backend.usd2Decimals));
     }
 
     async function getBundleCapitalCap() {
-        return await props.backend.invest.getBundleCapitalCap();
+        return await props.backend.bundleManagement.getBundleCapitalCap();
     }
     
     return (<>
@@ -284,7 +284,7 @@ export default function ShowBundle(props: ShowBundleProps) {
                 }
                 { isShowBundleFund && <BundleFundForm 
                         bundle={bundle!} 
-                        maxInvestedAmount={props.backend.invest.maxInvestedAmount}
+                        maxStakedAmount={props.backend.bundleManagement.maxStakedAmount}
                         getRemainingRiskpoolCapacity={getRemainingCapacity}
                         getBundleCapitalCap={getBundleCapitalCap}
                         currency={props.backend.usd2} 

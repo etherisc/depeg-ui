@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers/lib/ethers";
 import { OptionsObject, SnackbarKey, SnackbarMessage } from "notistack";
-import { ApplicationApi, BackendApi, InvestApi } from "./backend_api";
+import { ApplicationApi, BackendApi, BundleManagementApi } from "./backend_api";
 import { delay } from "../utils/delay";
 import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
@@ -38,12 +38,15 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
             return Promise.resolve(DepegState.Active);
         },
         application: applicationMock(enqueueSnackbar),
-        invest: investMock(enqueueSnackbar),
+        bundleManagement: bundleManagementMock(enqueueSnackbar),
         triggerBundleUpdate(bundleId: number) {
             return Promise.resolve({} as BundleData);
         },
         priceFeed: {
-            getLatestPrice(priceRetrieved: (price: PriceInfo, triggeredAt: number, depeggedAt: number) => void): Promise<void> {
+            getLatestPrice(priceRetrieved: (price: PriceInfo) => void): Promise<void> {
+                return Promise.resolve();
+            },
+            getLatestProductState(stateRetrieved: (triggeredAt: number, depeggedAt: number) => void): Promise<void> {
                 return Promise.resolve();
             },
             getPrice(roundId: BigNumber, priceRetrieved: (price: PriceInfo) => void): Promise<void> {
@@ -66,7 +69,7 @@ const mockPoliciesActive = [
         createdAt: dayjs().add(-2, 'days').unix(),
         duration: 14 * 24 * 60 * 60,
         premium: BigNumber.from(17).toString(),
-        suminsured: BigNumber.from(10000).toString()
+        protectedAmount: BigNumber.from(10000).toString()
     } as PolicyData,
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF62',
@@ -78,7 +81,7 @@ const mockPoliciesActive = [
         createdAt: dayjs().add(-2, 'days').unix(),
         duration: 14 * 24 * 60 * 60,
         premium: BigNumber.from(17).toString(),
-        suminsured: BigNumber.from(11000000000).toString()
+        protectedAmount: BigNumber.from(11000000000).toString()
     } as PolicyData,
     {
         id: '0x54E190322453300229D2BE2A38450B8A8BD8CF63',
@@ -90,7 +93,7 @@ const mockPoliciesActive = [
         createdAt: dayjs().add(-2, 'days').unix(),
         duration: 14 * 24 * 60 * 60,
         premium: BigNumber.from(17).toString(),
-        suminsured: BigNumber.from(12000000000).toString()
+        protectedAmount: BigNumber.from(12000000000).toString()
     } as PolicyData,
     {
         id: '0x34e190322453300229d2be2a38450b8a8bd8cf64',
@@ -100,7 +103,7 @@ const mockPoliciesActive = [
         createdAt: dayjs().add(-1, 'days').unix(),
         duration: 47 * 24 * 60 * 60,
         premium: BigNumber.from(27).toString(),
-        suminsured: BigNumber.from(15000000000).toString()
+        protectedAmount: BigNumber.from(15000000000).toString()
     } as PolicyData,
 ];
 
@@ -114,7 +117,7 @@ const mockPolicies = mockPoliciesActive.concat(
         createdAt: dayjs().add(-20, 'days').unix(),
         duration: 14 * 24 * 60 * 60,
         premium: BigNumber.from(100).toString(),
-        suminsured: BigNumber.from(35000).toString()
+        protectedAmount: BigNumber.from(35000).toString()
     } as PolicyData,
     {
         id: '0xc23223453200229d2be2a38450b8a8bd8cf72',
@@ -125,7 +128,7 @@ const mockPolicies = mockPoliciesActive.concat(
         createdAt: dayjs().add(-3, 'months').unix(),
         duration: 28 * 24 * 60 * 60,
         premium: BigNumber.from(67).toString(),
-        suminsured: BigNumber.from(36000000000).toString()
+        protectedAmount: BigNumber.from(36000000000).toString()
     } as PolicyData,
 );
 
@@ -135,8 +138,8 @@ const bundles = [
         "riskpoolId": 11,
         "owner": "0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729",
         "apr": 2.5,
-        "minSumInsured": BigNumber.from(2300000000).toString(),
-        "maxSumInsured": BigNumber.from(2500000000).toString(),
+        "minProtectedAmount": BigNumber.from(2300000000).toString(),
+        "maxProtectedAmount": BigNumber.from(2500000000).toString(),
         "minDuration": 1987200,
         "maxDuration": 2160000,
         "capital": BigNumber.from(100000000000).toString(),
@@ -153,8 +156,8 @@ const bundles = [
 
 function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
-        insuredAmountMin: BigNumber.from(3000000000),
-        insuredAmountMax: BigNumber.from(10000000000),
+        protectedAmountMin: BigNumber.from(3000000000),
+        protectedAmountMax: BigNumber.from(10000000000),
         coverageDurationDaysMin: 14,
         coverageDurationDaysMax: 45,
         getRiskBundles(handleBundle: (bundle: BundleData) => void) {
@@ -182,17 +185,17 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
     } as ApplicationApi
 }
 
-function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
+function bundleManagementMock(enqueueSnackbar: (message: SnackbarMessage, options?: OptionsObject) => SnackbarKey) {
     return {
         usd1: 'USDC',
         minLifetime: 14,
         maxLifetime: 180,
-        minInvestedAmount: BigNumber.from(25000000000),
-        maxInvestedAmount: BigNumber.from(100000000000),
-        minSumInsured: BigNumber.from(1000000000),
-        maxSumInsured: BigNumber.from(25000000000),
-        minCoverageDuration: 14,
-        maxCoverageDuration: 90,
+        minStakedAmount: BigNumber.from(25000000000),
+        maxStakedAmount: BigNumber.from(100000000000),
+        minProtectedAmount: BigNumber.from(1000000000),
+        maxProtectedAmount: BigNumber.from(25000000000),
+        minProtectionDuration: 14,
+        maxProtectionDuration: 90,
         annualPctReturn: 5,
         maxAnnualPctReturn: 20,
         isRiskpoolCapacityAvailable() {
@@ -207,19 +210,19 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         isInvestorWhitelisted(walletAddress: string) {
             return Promise.resolve(true);
         },
-        async invest(
+        async stake(
             name: string,
             lifetime: number,
             investorWalletAddress: string, 
-            investedAmount: BigNumber, 
-            minSumInsured: BigNumber, 
-            maxSumInsured: BigNumber, 
+            stakedAmount: BigNumber, 
+            minProtectedAmount: BigNumber, 
+            maxProtectedAmount: BigNumber, 
             minDuration: number, 
             maxDuration: number, 
             annualPctReturn: number
         ): Promise<{ status: boolean, bundleId: string | undefined}> {
             enqueueSnackbar(
-                `Riskpool mocked ($name, $lifetime, $investorWalletAddress, $investedAmount, $minSumInsured, $maxSumInsured, $minDuration, $maxDuration, $annualPctReturn)`,
+                `Riskpool mocked ($name, $lifetime, $investorWalletAddress, $stakedAmount, $minProtectedAmount, $maxProtectedAmount, $minDuration, $maxDuration, $annualPctReturn)`,
                 { autoHideDuration: 3000, variant: 'info' }
             );
             await delay(2000);
@@ -280,5 +283,5 @@ function investMock(enqueueSnackbar: (message: SnackbarMessage, options?: Option
         getRiskpoolComponentState() {
             return Promise.resolve(ComponentState.Active);
         },
-    } as InvestApi;
+    } as BundleManagementApi;
 };
