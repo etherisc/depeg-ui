@@ -8,6 +8,8 @@ const chainUrl = process.env.NEXT_PUBLIC_CHAIN_RPC_URL;
 
 console.log("wallet connect config", "chainid", chainId, "chainUrl", chainUrl);
 
+// TODO: remove all of this
+
 export const walletConnectConfig = {
     projectId: '6cf24be37dc19d58bc113806ab03aded',
     rpc: {
