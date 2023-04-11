@@ -12,7 +12,7 @@ export const walletConnectConfig = {
     projectId: '6cf24be37dc19d58bc113806ab03aded',
     rpc: {
         chainId: chainUrl, // main chain connection
-        "1": "https://main-light.eth.linkpool.io/",
+        "1": "https://ethereum.publicnode.com", 
         "5": "https://goerli-light.eth.linkpool.io/", // goerli
         "80001": "https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78", // mumbai
     },
