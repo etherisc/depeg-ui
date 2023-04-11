@@ -8,6 +8,7 @@ import { getBackendVoidSigner } from "../../../utils/chain";
 import { redisOmClient } from "../../../utils/redis";
 import { clearAllPrices } from "./clear";
 import { Price, PRICE_SCHEMA } from "./redis_price_objects";
+import { isIpAllowedToConnect } from "../../../utils/check_ip";
 
 const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
 
@@ -19,6 +20,11 @@ export default async function handler(
     res: NextApiResponse<number>
 ) {
     console.log("called /api/prices/fetch");
+
+    if (! isIpAllowedToConnect(req, res)) {
+        return;
+    }
+
     const aggregator = await getAggregator();
     const priceRepository = await getPriceRepository();
 

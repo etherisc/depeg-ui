@@ -6,6 +6,7 @@ import { DepegRiskpoolApi } from "../../../backend/riskpool_api";
 import { DepegProduct, DepegProduct__factory, DepegRiskpool, IInstanceService } from "../../../contracts/depeg-contracts";
 import { getBackendVoidSigner } from "../../../utils/chain";
 import { redisClient } from "../../../utils/redis";
+import { isIpAllowedToConnect } from "../../../utils/check_ip";
 
 const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
 const usd2Decimals = parseInt(process.env.NEXT_PUBLIC_USD2_DECIMALS ?? "6");
@@ -15,6 +16,10 @@ export default async function handler(
     res: NextApiResponse<Array<BundleData>>
 ) {
     console.log("called /api/bundles/update");
+
+    if (! isIpAllowedToConnect(req, res)) {
+        return;
+    }
 
     const signer = await getBackendVoidSigner();
     const { depegRiskpool, depegRiskpoolId, instanceService } = await getRiskpool(signer);

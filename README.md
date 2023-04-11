@@ -43,6 +43,10 @@ The docker image `redis/redis-stack` can be used to run a redis instance with th
 The application expects that the `depeg-contracts` are deployed to the blockchain. Use the two environment variables `NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS` and `NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS` to specify the addresses of the depeg product and staking contracts.
 The expected version of the contracts can be found in the `package.json` file (look for the package `@etherisc/depeg-contracts`).
 
+### IP Access limit
+
+To limit access to the API to a list of IP addresses, the application expects a environment variable called `API_IP_ALLOWED` to be set. The variable should contain a comma separated list of IP addresses. If the variable is not set, no IP access limit is applied.
+
 ## Run in development mode 
 
 The repository includes a vscode _devcontainer_ that installs all the necessary dependencies to run the application.
