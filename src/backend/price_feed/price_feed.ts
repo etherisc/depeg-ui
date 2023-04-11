@@ -50,7 +50,10 @@ export class PriceFeed implements PriceFeedApi {
         return this.priceDataProvider!;
     }
 
-    async getLatestPrice(priceRetrieved: (price: PriceInfo, triggeredAt: number, depeggedAt: number) => void): Promise<void> {
+    /**
+     * Get the latest price from the price feed api
+     */
+    async getLatestPrice(priceRetrieved: (price: PriceInfo) => void): Promise<void> {
         const priceDataRes = await fetch('/api/prices/latest');
 
         if (priceDataRes.status !== 200) {
@@ -63,15 +66,22 @@ export class PriceFeed implements PriceFeedApi {
             return;
         }
 
-        const aggregator = await this.getPriceDataProvider();
-        const { triggeredAt, depeggedAt } = await aggregator.getLatestPriceInfo();
-        const priceInfo: PriceInfo = { 
+        // console.log(priceInfo, triggeredAt.toNumber(), depeggedAt.toNumber());
+        priceRetrieved({ 
             roundId: BigNumber.from(priceData.roundId).toString(),
             price: BigNumber.from(priceData.price).toString(),
             timestamp: priceData.timestamp / 1000,
-        };
+        });
+    }
+
+    /**
+     * Get the latest product state from the onchain price data provider
+     */
+    async getLatestProductState(stateRetrieved: (triggeredAt: number, depeggedAt: number) => void): Promise<void> {
+        const aggregator = await this.getPriceDataProvider();
+        const { triggeredAt, depeggedAt } = await aggregator.getLatestPriceInfo();
         // console.log(priceInfo, triggeredAt.toNumber(), depeggedAt.toNumber());
-        priceRetrieved(priceInfo, triggeredAt.toNumber(), depeggedAt.toNumber());
+        stateRetrieved(triggeredAt.toNumber(), depeggedAt.toNumber());
     }
 
     async getPrice(roundId: BigNumber, priceRetrieved: (price: PriceInfo) => void): Promise<void> {

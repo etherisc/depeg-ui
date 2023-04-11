@@ -1,5 +1,4 @@
-import { Box, Typography } from "@mui/material";
-import { timeStamp } from "console";
+import { Box } from "@mui/material";
 import moment, { unitOfTime } from "moment";
 import { useTranslation } from "next-i18next";
 import { useEffect } from "react";
@@ -10,7 +9,7 @@ import { RootState } from "../../redux/store";
 import LatestPrice from "./latest_price";
 import PriceHistory from "./price_history";
 
-const ONE_MINUTE = 60 * 1000;
+const PRICE_UPDATE_INTERVAL = 60 * 1000;
 
 interface PriceInfoProps {
     backend: BackendApi;
@@ -39,33 +38,48 @@ export default function PriceInfo(props: PriceInfoProps) {
 
     useEffect(() => {
         async function getPrices() {
-            if (isConnected) {
+            // get latest price
+            await priceFeedApi.getLatestPrice((price: PriceInfo) => {
+                dispatch(addPrice(price));
+            });
+
+            // update price and state every minute
+            setInterval(async () => {
                 // get latest price
-                await priceFeedApi.getLatestPrice((price: PriceInfo, triggeredAt: number, depeggedAt: number) => {
-                    dispatch(addPrice(price))
+                await priceFeedApi.getLatestPrice((price: PriceInfo) => {
+                    dispatch(addPrice(price));
+                });
+            }, PRICE_UPDATE_INTERVAL);
+
+            // and if blockchain is connected get the onchain data
+            if (isConnected) {
+                // get produce state
+                await priceFeedApi.getLatestProductState((triggeredAt: number, depeggedAt: number) => {
                     dispatch(setTriggeredAt(triggeredAt));
                     dispatch(setDepeggedAt(depeggedAt));
-                });    
+                });
 
-                if ( enablePriceHistory ) {
-                    dispatch(clearHistory());
-                    const amount =parseInt(historyDisplayRange.at(0) ?? '1');
-                    const unit = historyDisplayRange.at(1) ?? 'w';
-                    const after = moment().add(-amount, unit as unitOfTime.Base).unix();
-                    await priceFeedApi.getAllPricesAfter(after, 
-                        (price: PriceInfo) => dispatch(addPrice(price)),
-                        () => dispatch(historyLoading()),
-                        () => dispatch(historyLoadingFinished())
-                    );
-                }
-
+                // and update it every minute
                 setInterval(async () => {
-                    await priceFeedApi.getLatestPrice((price: PriceInfo, triggeredAt: number, depeggedAt: number) => {
-                        dispatch(addPrice(price));
+                    // and state
+                    await priceFeedApi.getLatestProductState((triggeredAt: number, depeggedAt: number) => {
                         dispatch(setTriggeredAt(triggeredAt));
                         dispatch(setDepeggedAt(depeggedAt));
-                    })
-                }, 60000);                
+                    });
+                }, PRICE_UPDATE_INTERVAL);
+            }
+
+            // featch price history if enabled
+            if ( enablePriceHistory ) {
+                dispatch(clearHistory());
+                const amount = parseInt(historyDisplayRange.at(0) ?? '1');
+                const unit = historyDisplayRange.at(1) ?? 'w';
+                const after = moment().add(-amount, unit as unitOfTime.Base).unix();
+                await priceFeedApi.getAllPricesAfter(after, 
+                    (price: PriceInfo) => dispatch(addPrice(price)),
+                    () => dispatch(historyLoading()),
+                    () => dispatch(historyLoadingFinished())
+                );
             }
         }
         getPrices();
