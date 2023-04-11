@@ -11,9 +11,10 @@ console.log("wallet connect config", "chainid", chainId, "chainUrl", chainUrl);
 export const walletConnectConfig = {
     projectId: '6cf24be37dc19d58bc113806ab03aded',
     rpc: {
-        "43113": "https://api.avax-test.network/ext/bc/C/rpc", // fuji
-        "80001": "https://polygon-testnet-rpc.allthatnode.com:8545", // mumbai
         chainId: chainUrl, // main chain connection
+        "1": "https://main-light.eth.linkpool.io/",
+        "5": "https://goerli-light.eth.linkpool.io/", // goerli
+        "80001": "https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78", // mumbai
     },
 };
 
