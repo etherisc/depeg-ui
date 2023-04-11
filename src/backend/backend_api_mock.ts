@@ -214,15 +214,15 @@ function bundleManagementMock(enqueueSnackbar: (message: SnackbarMessage, option
             name: string,
             lifetime: number,
             investorWalletAddress: string, 
-            investedAmount: BigNumber, 
-            minSumInsured: BigNumber, 
-            maxSumInsured: BigNumber, 
+            stakedAmount: BigNumber, 
+            minProtectedAmount: BigNumber, 
+            maxProtectedAmount: BigNumber, 
             minDuration: number, 
             maxDuration: number, 
             annualPctReturn: number
         ): Promise<{ status: boolean, bundleId: string | undefined}> {
             enqueueSnackbar(
-                `Riskpool mocked ($name, $lifetime, $investorWalletAddress, $investedAmount, $minSumInsured, $maxSumInsured, $minDuration, $maxDuration, $annualPctReturn)`,
+                `Riskpool mocked ($name, $lifetime, $investorWalletAddress, $stakedAmount, $minProtectedAmount, $maxProtectedAmount, $minDuration, $maxDuration, $annualPctReturn)`,
                 { autoHideDuration: 3000, variant: 'info' }
             );
             await delay(2000);

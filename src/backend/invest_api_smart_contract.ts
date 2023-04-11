@@ -27,18 +27,18 @@ export class InvestApiSmartContract implements BundleManagementApi {
 
     constructor(depegProductApi: DepegProductApi, 
         minLifetime: number, maxLifetime: number, 
-        minInvestedAmount: BigNumber, maxInvestedAmount: BigNumber, 
-        minSumInsured: BigNumber, maxSumInsured: BigNumber, 
+        minStakedAmount: BigNumber, maxStakedAmount: BigNumber, 
+        minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber, 
         minCoverageDuration: number, maxCoverageDuration: number, 
         annualPctReturn: number, maxAnnualPctReturn: number,
         usd2Decimals: number,
     ) {
         this.minLifetime = minLifetime;
         this.maxLifetime = maxLifetime;
-        this.minStakedAmount = minInvestedAmount;
-        this.maxStakedAmount = maxInvestedAmount;
-        this.minProtectedAmount = minSumInsured;
-        this.maxProtectedAmount = maxSumInsured;
+        this.minStakedAmount = minStakedAmount;
+        this.maxStakedAmount = maxStakedAmount;
+        this.minProtectedAmount = minProtectedAmount;
+        this.maxProtectedAmount = maxProtectedAmount;
         this.minProtectionDuration = minCoverageDuration;
         this.maxProtectionDuration = maxCoverageDuration;
         this.annualPctReturn = annualPctReturn;
@@ -132,7 +132,7 @@ export class InvestApiSmartContract implements BundleManagementApi {
         beforeInvestCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void
     ): Promise<{ status: boolean, bundleId: string | undefined}> {
-        console.log("invest", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+        console.log("stake", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         const [tx, receipt] = await (await this.riskpoolApi()).createBundle(
             name, 
             lifetime,

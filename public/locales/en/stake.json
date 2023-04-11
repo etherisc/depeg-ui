@@ -24,11 +24,11 @@
     "annualPercentageReturn": "Annual percentage return",
     "annualPctReturnMinError": "Annual percentage return cannot be 0%",
     "annualPctReturnMaxError": "Annual percentage return must be at most {{pct}}%",
-    "button_invest": "Stake",
+    "button_stake": "Stake",
     "application_success": "Congratulations, you have staked a new risk bundle!",
     "days": "Days",
-    "invest_info": "Second - please confirm risk bundle creation on contract {{address}}",
-    "invest_wait": "Transaction created, waiting for onchain confirmation",
+    "stake_info": "Second - please confirm risk bundle creation on contract {{address}}",
+    "stake_wait": "Transaction created, waiting for onchain confirmation",
     "balance_insufficient": "{{currency}} balance of wallet is insufficient to fund this risk bundle",
     "error": {
         "name": {

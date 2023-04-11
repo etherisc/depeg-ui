@@ -38,7 +38,7 @@ export default function Stake(props: StakeProps) {
     const [ maxBundlesUsed, setMaxBundlesUsed ] = useState(false);
     const [ activeStep, setActiveStep ] = useState(isConnected ? 0 : 1);
     const [ formDisabled, setFormDisabled ] = useState(true);
-    const [ readyToInvest, setReadyToInvest ] = useState(false);
+    const [ readyToStake, setReadyToStake ] = useState(false);
 
     useEffect(() => {
         async function checkStakingAllowed() {
@@ -87,14 +87,14 @@ export default function Stake(props: StakeProps) {
             setActiveStep(0);
         } else if (activeStep < 1 && isConnected) {
             setActiveStep(1);
-        } else if (activeStep == 1 && readyToInvest) {
+        } else if (activeStep == 1 && readyToStake) {
             setActiveStep(2);
-        } else if (activeStep == 2 && !readyToInvest) { 
+        } else if (activeStep == 2 && !readyToStake) { 
             setActiveStep(1);
         } else if (activeStep > 4) { // application completed
             setFormDisabled(true);
         }
-    }, [isConnected, activeStep, readyToInvest]);
+    }, [isConnected, activeStep, readyToStake]);
 
     useEffect(() => {
         if (activeStep < 1 || activeStep > 2) {
@@ -104,8 +104,8 @@ export default function Stake(props: StakeProps) {
         }
     }, [activeStep]);
 
-    function formReadyForInvest(isFormReady: boolean) {
-        setReadyToInvest(isFormReady);
+    function formReadyForStake(isFormReady: boolean) {
+        setReadyToStake(isFormReady);
     }
 
     async function applicationSuccessful(bundleId: number) {
@@ -113,11 +113,11 @@ export default function Stake(props: StakeProps) {
         router.push("/bundles?confirmation=true&&id=" + bundleId);
     }
 
-    async function doApproval(walletAddress: string, investedAmount: BigNumber): Promise<Boolean> {
+    async function doApproval(walletAddress: string, stakedAmount: BigNumber): Promise<Boolean> {
         try {
             return await props.backend.createTreasuryApproval(
                 walletAddress, 
-                investedAmount, 
+                stakedAmount, 
             );
         } catch(e) { 
             if ( e instanceof ApprovalFailedError) {
@@ -134,9 +134,9 @@ export default function Stake(props: StakeProps) {
         }
     }
 
-    async function doInvest(
+    async function doStake(
         name: string, lifetime: number, investorWalletAddress: string, 
-        investedAmount: BigNumber, minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
+        stakedAmount: BigNumber, minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
         minDuration: number, maxDuration: number, 
         annualPctReturn: number
     ): Promise<{ status: boolean, bundleId: string | undefined}> {
@@ -146,7 +146,7 @@ export default function Stake(props: StakeProps) {
                 name, 
                 lifetime,
                 investorWalletAddress, 
-                investedAmount, 
+                stakedAmount, 
                 minProtectedAmount,
                 maxProtectedAmount,
                 minDuration, 
@@ -154,7 +154,7 @@ export default function Stake(props: StakeProps) {
                 annualPctReturn, 
                 (address: string) => {
                     snackbar = enqueueSnackbar(
-                        t('invest_info', { address }),
+                        t('stake_info', { address }),
                         { variant: "warning", persist: true }
                     );
                 },
@@ -163,7 +163,7 @@ export default function Stake(props: StakeProps) {
                         closeSnackbar(snackbar);
                     }
                     snackbar = enqueueSnackbar(
-                        t('invest_wait'),
+                        t('stake_wait'),
                         { variant: "info", persist: true }
                     );
                 });
@@ -217,8 +217,8 @@ export default function Stake(props: StakeProps) {
         }
     }
 
-    async function invest(
-        name: string, lifetime: number, investedAmount: BigNumber, 
+    async function stake(
+        name: string, lifetime: number, stakedAmount: BigNumber, 
         minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
         minDuration: number, maxDuration: number, annualPctReturn: number
     ) {
@@ -226,7 +226,7 @@ export default function Stake(props: StakeProps) {
         try {
             enableUnloadWarning(true);
             const investorWalletAddress = await signer!.getAddress();
-            if (! await checkBalance(investorWalletAddress, BigNumber.from(investedAmount))) {
+            if (! await checkBalance(investorWalletAddress, BigNumber.from(stakedAmount))) {
                 enqueueSnackbar(
                     t('balance_insufficient', { currency: props.backend.usd2 }),
                     { variant: "error", autoHideDuration: 3000 }
@@ -234,7 +234,7 @@ export default function Stake(props: StakeProps) {
                 return;
             }
             setActiveStep(3);
-            const approvalSuccess = await doApproval(investorWalletAddress, investedAmount);
+            const approvalSuccess = await doApproval(investorWalletAddress, stakedAmount);
             if ( ! approvalSuccess) {
                 ga_event("trx_fail_stake_approve", { category: 'chain_trx' });
                 setActiveStep(2);
@@ -243,8 +243,8 @@ export default function Stake(props: StakeProps) {
             }
             ga_event("trx_success_stake_approve", { category: 'chain_trx' });
             setActiveStep(4);
-            const investResult = await doInvest(name, lifetime, investorWalletAddress, investedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
-            if ( ! investResult.status) {
+            const stakeResult = await doStake(name, lifetime, investorWalletAddress, stakedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
+            if ( ! stakeResult.status) {
                 ga_event("trx_fail_stake", { category: 'chain_trx' });
                 setActiveStep(2);
                 showAllowanceNotice();
@@ -252,7 +252,7 @@ export default function Stake(props: StakeProps) {
             }
             ga_event("trx_success_stake", { category: 'chain_trx' });
             setActiveStep(5);
-            await applicationSuccessful(parseInt(investResult.bundleId as string));
+            await applicationSuccessful(parseInt(stakeResult.bundleId as string));
         } finally {
             enableUnloadWarning(false);
         }
@@ -287,9 +287,9 @@ export default function Stake(props: StakeProps) {
                         usd2={props.backend.usd2}
                         usd2Decimals={props.backend.usd2Decimals}
                         backend={props.backend}
-                        readyToSubmit={formReadyForInvest}
+                        readyToSubmit={formReadyForStake}
                         hasUsd2Balance={(walletAddress, amount) => props.backend.hasUsd2Balance(walletAddress, amount)}
-                        stake={invest}
+                        stake={stake}
                     />
             </div>
         </>

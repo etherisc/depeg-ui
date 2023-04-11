@@ -284,7 +284,7 @@ export default function ShowBundle(props: ShowBundleProps) {
                 }
                 { isShowBundleFund && <BundleFundForm 
                         bundle={bundle!} 
-                        maxInvestedAmount={props.backend.bundleManagement.maxStakedAmount}
+                        maxStakedAmount={props.backend.bundleManagement.maxStakedAmount}
                         getRemainingRiskpoolCapacity={getRemainingCapacity}
                         getBundleCapitalCap={getBundleCapitalCap}
                         currency={props.backend.usd2} 

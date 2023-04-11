@@ -121,13 +121,13 @@ export default function StakingForm(props: StakingFormProperties) {
             const values = getValues();
             const bundleName = values.bundleName.trim();
             const lifetime = parseInt(values.lifetime) * 24 * 60 * 60;
-            const investedAmount = parseUnits(values.stakedAmount, props.usd2Decimals);
+            const stakedAmount = parseUnits(values.stakedAmount, props.usd2Decimals);
             const minProtectedAmount = parseUnits(values.protectedAmountMin, props.usd2Decimals);
             const maxProtectedAmount = parseUnits(values.protectedAmountMax, props.usd2Decimals);
             const minDuration = parseInt(values.coverageDurationMin);
             const maxDuration = parseInt(values.coverageDurationMax);
             const annualPctReturn = parseFloat(values.annualPctReturn);
-            await props.stake(bundleName, lifetime, investedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
+            await props.stake(bundleName, lifetime, stakedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
         } finally {
             setPaymentInProgress(false);
         }
@@ -136,14 +136,14 @@ export default function StakingForm(props: StakingFormProperties) {
     useEffect(() => {
         async function checkAmountLimits() {
             // check if bundle cap is small than maxStakedAmount
-            let investedAmountMax = maxStakedAmount;
+            let stakedAmountMax = maxStakedAmount;
             const bundleCapitalCapBN = await props.backend.bundleManagement.getBundleCapitalCap();
             const bundleCapitalCap = parseInt(formatUnits(bundleCapitalCapBN, props.usd2Decimals));
             console.log("bundleCapitalCap", bundleCapitalCap);
             
-            // the bundle cap is the maximum amount that can be invested in the bundle
-            if (bundleCapitalCap < investedAmountMax) {
-                investedAmountMax = bundleCapitalCap;
+            // the bundle cap is the maximum amount that can be staked in the bundle
+            if (bundleCapitalCap < stakedAmountMax) {
+                stakedAmountMax = bundleCapitalCap;
             }
 
             const riskpoolRemainingCapacityBN = await props.backend.bundleManagement.riskpoolRemainingCapacity();
@@ -151,14 +151,14 @@ export default function StakingForm(props: StakingFormProperties) {
             console.log("riskpoolRemainingCapacity", riskpoolRemainingCapacity);
             
             // the bundle cannot be larger than the remaining capacity of the riskpool
-            if (riskpoolRemainingCapacity < investedAmountMax) {
-                investedAmountMax = riskpoolRemainingCapacity;
+            if (riskpoolRemainingCapacity < stakedAmountMax) {
+                stakedAmountMax = riskpoolRemainingCapacity;
             }
 
-            if (investedAmountMax < maxStakedAmount) {
-                console.log("updating maxStakedAmount", investedAmountMax);
-                setMaxStakedAmount(investedAmountMax);
-                setValue("stakedAmount", investedAmountMax.toString());
+            if (stakedAmountMax < maxStakedAmount) {
+                console.log("updating maxStakedAmount", stakedAmountMax);
+                setMaxStakedAmount(stakedAmountMax);
+                setValue("stakedAmount", stakedAmountMax.toString());
             }
 
             // limit the maximum protected amount to the bundle cap (multiplied by the protected amount factor)
@@ -509,7 +509,7 @@ export default function StakingForm(props: StakingFormProperties) {
                         sx={{ p: 1 }}
                         >
                         <FontAwesomeIcon icon={faSackDollar} className="fa" />
-                        {t('button_invest')}
+                        {t('button_stake')}
                     </Button>
                     {waitForPayment}
                 </Grid>

@@ -61,7 +61,7 @@ describe('When rendering the BundleFundForm', () => {
                 bundle={bundle}
                 currency="USDT"
                 decimals={6}
-                maxInvestedAmount={BigNumber.from("100000")}
+                maxStakedAmount={BigNumber.from("100000")}
                 getBundleCapitalCap={async () => parseUnits("100000", 6)}
                 getRemainingRiskpoolCapacity={async () => 100000}
                 doFund={fundMock}
@@ -157,7 +157,7 @@ describe('When rendering the BundleFundForm', () => {
                 bundle={bundle}
                 currency="USDT"
                 decimals={6}
-                maxInvestedAmount={BigNumber.from("100000")}
+                maxStakedAmount={BigNumber.from("100000")}
                 getRemainingRiskpoolCapacity={async () => 50000}
                 getBundleCapitalCap={async () => parseUnits("10000", 6)}
                 doFund={fundMock}
@@ -225,7 +225,7 @@ describe('When rendering the BundleFundForm', () => {
                 bundle={bundle}
                 currency="USDT"
                 decimals={6}
-                maxInvestedAmount={BigNumber.from("100000")}
+                maxStakedAmount={BigNumber.from("100000")}
                 getRemainingRiskpoolCapacity={async () => 5000}
                 getBundleCapitalCap={async () => parseUnits("10000", 6)}
                 doFund={fundMock}

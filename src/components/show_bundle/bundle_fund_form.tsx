@@ -17,7 +17,7 @@ interface BundleFundFormProps {
     bundle: BundleData;
     currency: string;
     decimals: number;
-    maxInvestedAmount: BigNumber;
+    maxStakedAmount: BigNumber;
     getBundleCapitalCap: () => Promise<BigNumber>;
     getRemainingRiskpoolCapacity: () => Promise<number>;
     doFund: (bundleId: number, amount: BigNumber) => Promise<boolean>;
@@ -33,7 +33,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
     const { t } = useTranslation('bundles');
 
     const [ fundInProgress, setFundInProgress ] = useState(false);
-    const [ maxFundAmount, setMaxFundAmount ] = useState(props.maxInvestedAmount.toNumber());
+    const [ maxFundAmount, setMaxFundAmount ] = useState(props.maxStakedAmount.toNumber());
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const getRemainingCapacity = props.getRemainingRiskpoolCapacity;
     const decimals = props.decimals;
