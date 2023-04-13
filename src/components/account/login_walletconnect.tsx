@@ -28,18 +28,20 @@ export default function LoginWithWalletConnectButton(props: any) {
         console.log("wallet connect login");
         closeDialog();
 
-        const MAINNET_RPC_URL = 'http://localhost:7545'
-
+        const chainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "1");
+        const chainName = process.env.NEXT_PUBLIC_CHAIN_NAME || "Ethereum";
+        const chainTokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL || "ETH";
+        const chainUrl = process.env.NEXT_PUBLIC_CHAIN_RPC_URL;
         const injected = injectedModule();
 
         const onboard = Onboard({
         wallets: [injected],
         chains: [
             {
-            id: toHex(1337),
-            token: 'ETH',
-            label: 'Ganache',
-            rpcUrl: MAINNET_RPC_URL
+            id: toHex(chainId),
+            token: chainTokenSymbol,
+            label: chainName,
+            rpcUrl: chainUrl
             }
         ]
         });
