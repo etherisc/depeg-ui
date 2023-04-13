@@ -12,6 +12,10 @@ import { ethers } from 'ethers'
 import { toHex } from "../../utils/numbers";
 import { connectChain } from "../../redux/slices/chain";
 import { getChainState, setAccountRedux } from "../../utils/chain";
+import coinbaseWalletModule from '@web3-onboard/coinbase'
+import enrkypt from '@web3-onboard/enkrypt'
+import gnosisModule from '@web3-onboard/gnosis'
+import ledgerModule from '@web3-onboard/ledger'
 
 // TODO: rename to web3-onboard
 export default function LoginWithWalletConnectButton(props: any) {
@@ -33,9 +37,13 @@ export default function LoginWithWalletConnectButton(props: any) {
         const chainTokenSymbol = process.env.NEXT_PUBLIC_CHAIN_TOKEN_SYMBOL || "ETH";
         const chainUrl = process.env.NEXT_PUBLIC_CHAIN_RPC_URL;
         const injected = injectedModule();
+        const coinbaseWalletSdk = coinbaseWalletModule({ darkMode: true })
+        const enrkyptModule = enrkypt()
+        const gnosis = gnosisModule()
+        const ledger = ledgerModule()
 
         const onboard = Onboard({
-        wallets: [injected],
+        wallets: [injected, coinbaseWalletSdk, enrkyptModule, gnosis, ledger],
         chains: [
             {
             id: toHex(chainId),
