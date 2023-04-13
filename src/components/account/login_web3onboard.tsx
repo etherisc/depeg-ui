@@ -11,14 +11,15 @@ import injectedModule from '@web3-onboard/injected-wallets'
 import { ethers } from 'ethers'
 import { toHex } from "../../utils/numbers";
 import { connectChain } from "../../redux/slices/chain";
-import { getChainState, setAccountRedux } from "../../utils/chain";
+import { getAndUpdateBlock, getChainState, removeSigner, setAccountRedux } from "../../utils/chain";
 import coinbaseWalletModule from '@web3-onboard/coinbase'
 import enrkypt from '@web3-onboard/enkrypt'
 import gnosisModule from '@web3-onboard/gnosis'
 import ledgerModule from '@web3-onboard/ledger'
+import { getAndUpdateWalletAccount } from "../../utils/wallet";
 
 // TODO: rename to web3-onboard
-export default function LoginWithWalletConnectButton(props: any) {
+export default function LoginWithWeb3OnboardButton(props: any) {
     const { closeDialog } = props;
 
     const { t } = useTranslation('common');
@@ -29,7 +30,7 @@ export default function LoginWithWalletConnectButton(props: any) {
     const isConnected = useSelector((state: any) => state.chain.isConnected);
 
     async function login() {
-        console.log("wallet connect login");
+        console.log("web3onboard login");
         closeDialog();
 
         const chainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "1");
@@ -42,6 +43,7 @@ export default function LoginWithWalletConnectButton(props: any) {
         const gnosis = gnosisModule()
         const ledger = ledgerModule()
 
+        console.log("initializing onboard");
         const onboard = Onboard({
         wallets: [injected, coinbaseWalletSdk, enrkyptModule, gnosis, ledger],
         chains: [
@@ -53,68 +55,42 @@ export default function LoginWithWalletConnectButton(props: any) {
             }
         ]
         });
-
+        // connect wallet
         const wallets = await onboard.connectWallet();
 
         console.log(wallets)
 
         if (wallets[0]) {
-            // create an ethers provider with the last connected wallet provider
-            // if using ethers v6 this is:
-            // ethersProvider = new ethers.BrowserProvider(wallet.provider, 'any')
+            // create an ethers provider with the connected wallet
             const ethersProvider = new ethers.providers.Web3Provider(wallets[0].provider, 'any')
 
             dispatch(connectChain(await getChainState(ethersProvider)));
             setAccountRedux(ethersProvider.getSigner(), dispatch);
+
+            ethersProvider.on("block", (blockNumber: number) => {
+                getAndUpdateBlock(dispatch, ethersProvider, blockNumber);
+            });
+
+            ethersProvider.on('accountsChanged', function (accounts: string[]) {
+                console.log('accountsChanged', accounts);
+                if (accounts.length == 0) {
+                    removeSigner(dispatch);
+                } else {
+                    getAndUpdateWalletAccount(dispatch);
+                }
+                location.reload();
+            });
+            ethersProvider.on('chainChanged', function (chain: any) {
+                console.log('chainChanged', chain);
+                location.reload();
+            });
+            ethersProvider.on('network', (newNetwork: any, oldNetwork: any) => {
+                console.log('network', newNetwork, oldNetwork);
+                location.reload();
+            });
         }
         
-        // TODO: accounts changed
-        // TODO: chain changed
-        // TODO: block update
         // TODO: fix ui to handle web3-onboard component
-
-        // TODO: remove this
-        //  Create WalletConnect Provider
-        // const wcProvider = new WalletConnectProvider(walletConnectConfig);
-
-        // try {
-        //     //  Enable session (triggers QR Code modal)
-        //     await wcProvider.enable();
-        // } catch (error) {
-        //     enqueueSnackbar(
-        //         t('error.wallet_connect_failed'),
-        //         { 
-        //             variant: 'warning',
-        //             autoHideDuration: 4000,
-        //             preventDuplicate: true,
-        //         }
-        //     );
-        // }
-
-        // wcProvider.on("accountsChanged", async (accounts: string[]) => {
-        //     console.log("accountsChanged", accounts);
-        //     await provider?.send("eth_requestAccounts", []);
-        //     updateSigner(dispatch, provider);
-        //     location.reload();
-        // });
-        // wcProvider.on("chainChanged", (chainId: number) => {
-        //     console.log("chainChanged", chainId);
-        //     if (chainId != 43113) {
-        //         wcProvider.disconnect();
-        //         removeSigner(dispatch);
-        //     }
-        //     location.reload();
-        // });
-
-        // A Web3Provider wraps a standard Web3 provider, which is
-        // what MetaMask injects as window.ethereum into each page
-        // const provider = new ethers.providers.Web3Provider(wcProvider);
-        // dispatch(connectChain(await getChainState(provider)));
-        // setAccountRedux(provider.getSigner(), dispatch);
-
-        // provider.on("block", (blockNumber: number) => {
-        //     getAndUpdateBlock(dispatch, provider, blockNumber);
-        // });
     }
 
     let button = (<></>);

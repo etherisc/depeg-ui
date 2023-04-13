@@ -6,8 +6,8 @@ import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, G
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import LoginWithMetaMaskButton from "./login_metamask";
-import LoginWithWalletConnectButton from "./login_walletconnect";
 import { useSelector } from "react-redux";
+import LoginWithWeb3OnboardButton from "./login_web3onboard";
 
 export default function Login() {
     const { t } = useTranslation('common');
@@ -48,7 +48,7 @@ export default function Login() {
                             <LoginWithMetaMaskButton closeDialog={() => setShowLoginDialog(false)} />
                         </Grid>
                         <Grid item xs={12}  sx={{ p: 1 }}>
-                            <LoginWithWalletConnectButton closeDialog={() => setShowLoginDialog(false)} /> 
+                            <LoginWithWeb3OnboardButton closeDialog={() => setShowLoginDialog(false)} /> 
                         </Grid>
                     </Grid>
                 </DialogContentText>
