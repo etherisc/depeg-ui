@@ -26,6 +26,7 @@ import TermsOfService from '../terms_of_service';
 import { AvailableBundleList } from './available_bundle_list';
 import PayoutExample from './payout_example';
 import Premium from './premium';
+import { applyForPolicyGasless } from "../../utils/gasless_poc";
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -60,6 +61,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const premium = useSelector((state: RootState) => state.application.premium);
     const premiumErrorKey = useSelector((state: RootState) => state.application.premiumErrorKey);
     const premiumCalculationInProgress = useSelector((state: RootState) => state.application.premiumCalculationInProgress);
+    const signer = useSelector((state: RootState) => state.chain.signer);
 
     const hasBalance = props.hasBalance;
 
@@ -229,7 +231,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             const walletAddress = values.insuredWallet;
             const protectedAmountWei = parseUnits(values.protectedAmount, props.usd1Decimals);
             const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
-            props.applyForPolicy(walletAddress, protectedAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!);
+            // props.applyForPolicy(walletAddress, protectedAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!);
+
+            await applyForPolicyGasless(signer!, walletAddress, protectedAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!)
         } finally {
             setApplicationInProgress(false);
         }
