@@ -1,8 +1,10 @@
 import { BigNumber, Signer, providers } from "ethers";
-import { formatEther, formatUnits } from "ethers/lib/utils";
+import { formatBytes32String, formatEther, formatUnits } from "ethers/lib/utils";
 import { toHex } from "./numbers";
-import { Gasless__factory } from "../contracts/depeg-contracts";
+import { DepegProduct__factory, Gasless__factory } from "../contracts/depeg-contracts";
+import { nanoid } from 'nanoid';
 
+const depegProductAddress = process.env.NEXT_PUBLIC_DEPEG_PRODUCT_ADDRESS;
 const gaslessContractAddress = process.env.NEXT_PUBLIC_GASLESS_CONTRACT_ADDRESS;
 const chainId = toHex(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "1"));
 
@@ -33,15 +35,19 @@ export async function applyForPolicyGasless(signer: Signer, walletAddress: strin
             { name: 'protectedBalance', type: 'uint256' },   
             { name: 'duration', type: 'uint256' },
             { name: 'bundleId', type: 'uint256' },
+            { name: 'signatureId', type: 'bytes32' },
         ],
     }
-
         
+
+    const sigId = nanoid();
+    const signatureId = formatBytes32String(sigId);
     const message = {
         wallet: walletAddress,
         protectedBalance: formatUnits(protectedAmount, 0),
         duration: coverageDuration,
         bundleId: bundleId,
+        signatureId: signatureId, 
     };
         // // This refers to the keys of the following types object.
         // primaryType: 'Policy',
@@ -54,9 +60,13 @@ export async function applyForPolicyGasless(signer: Signer, walletAddress: strin
     const signature = await signer._signTypedData(domain, types, message);
     console.log("signature", signature);
 
-    const signatureContract = Gasless__factory.connect(gaslessContractAddress!, signer);
-    console.log("sending tx", sender, walletAddress, protectedAmount, coverageDuration, bundleId, signature);
-    await signatureContract.applyForPolicy(sender, walletAddress, protectedAmount, coverageDuration, bundleId, signature);
+    // const signatureContract = Gasless__factory.connect(gaslessContractAddress!, signer);
+    // console.log("sending tx", sender, walletAddress, protectedAmount, coverageDuration, bundleId, signature);
+    // await signatureContract.applyForPolicy(sender, walletAddress, protectedAmount, coverageDuration, bundleId, signature);
+
+    const depegProduct = DepegProduct__factory.connect(depegProductAddress!, signer);
+    const tx = await depegProduct.applyForPolicyWithBundleAndSignature(walletAddress, walletAddress, protectedAmount, coverageDuration, bundleId, signatureId, signature);
+
 
     console.log("done");
 
