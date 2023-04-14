@@ -108,6 +108,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
             protectedAmount: BigNumber, 
             coverageDurationSeconds: number,
             bundleId: number,
+            gasless: boolean,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void,
         ): Promise<{ status: boolean, processId: string|undefined}> {

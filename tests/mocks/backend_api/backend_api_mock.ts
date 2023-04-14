@@ -181,7 +181,7 @@ function applicationMock() {
         calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
             return Promise.resolve(insuredAmount.div(10));
         },
-        async applyForPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId) {
+        async applyForPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId, gasless: boolean) {
             await delay(2000);
             return Promise.resolve({ status: true, processId: "0x12345678"});
         },

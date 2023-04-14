@@ -133,7 +133,7 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function doApplication(walletAddress: string, protectedAmount: BigNumber, coverageDuration: number, bundleId: number): Promise<{ status: boolean, processId: string|undefined}> {
+    async function doApplication(walletAddress: string, protectedAmount: BigNumber, coverageDuration: number, bundleId: number, gasless: boolean): Promise<{ status: boolean, processId: string|undefined}> {
         let snackbar: SnackbarKey | undefined = undefined;
         try {
             return await props.insurance.application.applyForPolicy(
@@ -141,6 +141,7 @@ export default function Application(props: ApplicationProps) {
                 protectedAmount, 
                 coverageDuration, 
                 bundleId, 
+                gasless,
                 (address: string) => {
                     snackbar = enqueueSnackbar(
                         t('apply_info', { address }),
@@ -206,7 +207,7 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function applyForPolicy(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, premium: BigNumber, bundleId: number) {
+    async function applyForPolicy(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, premium: BigNumber, bundleId: number, gasless: boolean) {
         ga_event("trx_start_application", { category: 'chain_trx' });
         try {
             enableUnloadWarning(true);
@@ -221,7 +222,7 @@ export default function Application(props: ApplicationProps) {
             }
             ga_event("trx_success_application_approve", { category: 'chain_trx' });
             setActiveStep(4);
-            const applicationResult = await doApplication(walletAddress, insuredAmount, coverageDurationSeconds, bundleId);
+            const applicationResult = await doApplication(walletAddress, insuredAmount, coverageDurationSeconds, bundleId, gasless);
             if ( ! applicationResult.status ) {
                 ga_event("trx_fail_application", { category: 'chain_trx' });
                 setActiveStep(2);

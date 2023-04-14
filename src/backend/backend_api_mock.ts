@@ -168,7 +168,7 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
             const premium = insuredAmount.toNumber() * 0.017 * coverageDurationSeconds / 365;
             return Promise.resolve(BigNumber.from(premium));
         },
-        async applyForPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId) {
+        async applyForPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId, gasless) {
             enqueueSnackbar(`Policy mocked (${walletAddress}, ${insuredAmount}, ${coverageDurationSeconds})`,  { autoHideDuration: 3000, variant: 'info' });
             await delay(2000);
             return Promise.resolve({ status: true, processId: "0x12345678"});

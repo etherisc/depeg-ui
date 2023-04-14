@@ -13,6 +13,7 @@
     "coverageDurationDays": "Coverage duration",
     "coverageDurationUntil": "Coverage until *",
     "premiumAmount": "Premium",
+    "gasless_checkbox_label": "I would like Etherisc to pay for the gas fee",
     "button_buy": "Buy",
     "application_success": "Congratulations, your protection has been issued successfully!",
     "days": "Days",
