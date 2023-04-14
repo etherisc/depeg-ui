@@ -1,4 +1,4 @@
-import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -26,6 +26,9 @@ import TermsOfService from '../terms_of_service';
 import { AvailableBundleList } from './available_bundle_list';
 import PayoutExample from './payout_example';
 import Premium from './premium';
+import WithTooltip from "../with_tooltip";
+import { Typography } from "@mui/material";
+import { grey } from "@mui/material/colors";
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -62,6 +65,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const premiumErrorKey = useSelector((state: RootState) => state.application.premiumErrorKey);
     const premiumCalculationInProgress = useSelector((state: RootState) => state.application.premiumCalculationInProgress);
 
+    const maxGasPrice = process.env.NEXT_PUBLIC_MAX_GAS_PRICE_LIMIT ? parseInt(process.env.NEXT_PUBLIC_MAX_GAS_PRICE_LIMIT) : 30;
+
     const hasBalance = props.hasBalance;
 
     const [ protectedAmountMin, setProtectedAmountMin ] = useState(props.applicationApi.protectedAmountMin.toNumber());
@@ -82,7 +87,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             coverageDuration: props.applicationApi.coverageDurationDaysMax.toString(),
             coverageEndDate: dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days'),
             termsAndConditions: false,
-            gasless: true, // TODO: false if feature flag disabled
+            gasless: false, 
         }
     });
 
@@ -416,12 +421,15 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                             <FormControlLabel 
                                 control={
                                     <Checkbox 
-                                        defaultChecked={true}
+                                        defaultChecked={false}
                                         {...field}
                                         />
                                 } 
                                 disabled={props.formDisabled}
-                                label={t('gasless_checkbox_label')} // TODO: needs some more description (consequences)
+                                label={<>
+                                    {t('gasless_checkbox_label')}
+                                    <WithTooltip tooltipText={t('gasless_checkbox_label_hint', {maxGasPrice: maxGasPrice })}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
+                                </>}
                                 />
                         } />
                     <Controller
