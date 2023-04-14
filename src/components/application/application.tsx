@@ -12,13 +12,13 @@ import useTransactionNotifications from "../../hooks/trx_notifications";
 import { addBundle, finishLoading, reset, setProductComponentState, startLoading } from "../../redux/slices/application";
 import { setProductDepegState } from "../../redux/slices/price";
 import { RootState } from "../../redux/store";
+import { ComponentState } from "../../types/component_state";
 import { DepegState } from "../../types/depeg_state";
 import { updateAccountBalance } from "../../utils/chain";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { ga_event } from "../../utils/google_analytics";
 import ApplicationForm from "./application_form";
 import PolicyConfirmation from "./policy_confirmation";
-import { ComponentState } from "../../types/component_state";
 
 export interface ApplicationProps {
     insurance: BackendApi;
@@ -135,6 +135,7 @@ export default function Application(props: ApplicationProps) {
 
     async function doApplication(walletAddress: string, protectedAmount: BigNumber, coverageDuration: number, bundleId: number, gasless: boolean): Promise<{ status: boolean, processId: string|undefined}> {
         let snackbar: SnackbarKey | undefined = undefined;
+        const applyMessage = gasless ? t('apply_info_gasless') : t('apply_info');
         try {
             return await props.insurance.application.applyForPolicy(
                 walletAddress, 
@@ -144,7 +145,7 @@ export default function Application(props: ApplicationProps) {
                 gasless,
                 (address: string) => {
                     snackbar = enqueueSnackbar(
-                        t('apply_info', { address }),
+                        t(applyMessage, { address }),
                         { variant: "warning", persist: true }
                     );
                 },
