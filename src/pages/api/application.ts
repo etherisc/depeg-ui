@@ -1,20 +1,31 @@
-import { request } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
+import { PendingTransaction, getPendingTransactionRepository } from "../../utils/pending_trx";
 import { redisClient } from "../../utils/redis";
-import { nanoid } from "@reduxjs/toolkit";
-import { BigNumber } from "ethers";
 
 const STREAM_KEY = "application:signatures";
 
+/**
+ * GET request will return all pending application transactions. 
+ * POST request will add a new application to the queue.
+ */
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<string>
+    res: NextApiResponse
 ) {
-    if (req.method === 'POST') {
+    if (req.method === 'GET') {
+        await handleGet(req, res);
+    } else if (req.method === 'POST') {
         await handlePost(req, res);
     } else {
         res.status(405).send('Only POST requests allowed');
     }
+}
+
+async function handleGet(req: NextApiRequest, res: NextApiResponse<Array<PendingTransaction>>) {
+    console.log("POST request to /api/application");
+    const pendingTxRepo = await getPendingTransactionRepository();
+    const pendingTransactions = await pendingTxRepo.search().return.all();
+    res.status(200).json(pendingTransactions);
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
