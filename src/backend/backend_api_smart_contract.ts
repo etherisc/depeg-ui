@@ -131,7 +131,7 @@ export class BackendApiSmartContract implements BackendApi {
             throw new Error("provider is undefined");
         }
         const receipt = await provider.getTransactionReceipt(trxHash);
-        return receipt.status === 1 && receipt.blockNumber !== null;
+        return receipt !== null;
     }
 
 }
