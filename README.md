@@ -108,6 +108,15 @@ Check if the investor is whitelisted before investment and show a warning if the
 
 
 ### Feature flags
+
+#### Gasless transactions 
+
+Enable gasless transactions for the application 
+
+- `NEXT_PUBLIC_FEATURE_GASLESS=true` - enable gasless transactions
+- Make sure the [depeg-backend-processor](https://github.com/etherisc/depeg-backend-processor) service is running and connected to the same redis and product. The backend processor is responsible for sending the signed transactions to the blockchain.
+
+
 #### Price
 
 Show a page that displays the latest price of the protected coin and (if enabled) the price history of the protected coin.
