@@ -17,7 +17,7 @@ import { SnackbarKey, useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
-import { ClaimData, PolicyData, PolicyState } from "../../backend/policy_data";
+import { APPLICATION_STATE_PENDING_MINING, ClaimData, PolicyData, PolicyState } from "../../backend/policy_data";
 import { addPolicy, finishLoading, reset, setClaimedPolicy, setDepegged, startLoading } from "../../redux/slices/policies";
 import { RootState } from "../../redux/store";
 import { DepegState } from "../../types/depeg_state";
@@ -30,6 +30,8 @@ import Address from "../address";
 import { LinkBehaviour } from "../link_behaviour";
 import Timestamp from "../timestamp";
 import WithTooltip from "../with_tooltip";
+import { PropaneSharp } from "@mui/icons-material";
+import { PendingTransaction } from "../../utils/pending_trx";
 
 export interface PoliciesProps {
     backend: BackendApi;
@@ -84,6 +86,11 @@ export default function Policies(props: PoliciesProps) {
                     continue;
                 }
                 dispatch(addPolicy(policy));
+            }
+            if (process.env.NEXT_PUBLIC_FEATURE_GASLESS_TRANSACTION === 'true') {
+                await props.backend.application.fetchPending(walletAddress, async (policyData: PolicyData) => {
+                    dispatch(addPolicy(policyData));
+                });
             }
             dispatch(finishLoading());
         } else {
@@ -180,7 +187,11 @@ export default function Policies(props: PoliciesProps) {
     }
 
     function renderClaimCell(policy: PolicyData) {
-        if (policy.isAllowedToClaim) {
+        if (policy.applicationState === APPLICATION_STATE_PENDING_MINING) {
+            const blockExplorerUrl = process.env.NEXT_PUBLIC_CHAIN_TOKEN_BLOCKEXPLORER_URL || "https://etherscan.io";
+            const trxHref = blockExplorerUrl + "/tx/" + policy.transactionHash;
+            return (<Button variant="text" color="secondary" href={trxHref} target="_blank">{t('action.show_trx')}</Button>);
+        } else if (policy.isAllowedToClaim) {
             return (<Button variant="text" color="secondary" onClick={() => claim(policy)}>{t('action.claim')}</Button>);
         }
         return (<></>);

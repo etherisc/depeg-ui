@@ -13,6 +13,8 @@
     "coverageDurationDays": "Coverage duration",
     "coverageDurationUntil": "Coverage until *",
     "premiumAmount": "Premium",
+    "gasless_checkbox_label": "I would like Etherisc to submit the transaction and pay fees on by behalf.",
+    "gasless_checkbox_label_hint": "This service is provided on a best effort basis with a maximum gas price of {{maxGasPrice}} Gwei. Etherisc does not guarantee that the transaction will be submitted and mined in a timely and successful manner.",
     "button_buy": "Buy",
     "application_success": "Congratulations, your protection has been issued successfully!",
     "days": "Days",
@@ -22,6 +24,7 @@
     "bundle_loading": "Fetching risk bundle information from blockchain",
     "premium_calculation_in_progress": "Premium is being calculated",
     "apply_info": "Second - please confirm issuing your protection on contract {{address}}",
+    "apply_info_gasless": "Second - please sign the message to allow Etherisc to pay for the transaction fee",
     "apply_wait": "Transaction created, waiting for onchain confirmation",
     "bundles": {
         "title": "Please choose from the risk bundles below",

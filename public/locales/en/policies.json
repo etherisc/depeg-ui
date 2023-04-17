@@ -16,7 +16,8 @@
         "create_application": "Apply for new policy",
         "filter_active": "Show only active policies",
         "claim": "Claim",
-        "show_claim": "Show claim"
+        "show_claim": "Show claim",
+        "show_trx": "Details"
     },
     "no_policies": "No policies for this wallet found - \u00A0<0>click here</0>\u00A0to apply for a new policy",
     "is_owner": "The connected wallet is the owner of the policy",

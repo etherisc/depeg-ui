@@ -1,13 +1,22 @@
 import { BigNumber } from "ethers";
 import { ComponentState } from "../types/component_state";
+import { toHex } from "../utils/numbers";
+import { ApplicationGasless } from "./application_gasless";
 import { ApplicationApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
+import { PendingTransaction } from "../utils/pending_trx";
+import { APPLICATION_STATE_PENDING_MINING, PolicyData } from "./policy_data";
+import { DateRange } from "@mui/icons-material";
+
+const depegProductAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
+const chainId = toHex(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "1"));
 
 export class ApplicationApiSmartContract implements ApplicationApi {
     private depegProductApi: DepegProductApi;
     private doNoUseDirectlyDepegRiskpoolApi?: DepegRiskpoolApi;
+    private applicationGasless?: ApplicationGasless;
     protectedAmountMin: BigNumber;
     protectedAmountMax: BigNumber;
     coverageDurationDaysMin: number;
@@ -29,6 +38,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
     private async getDepegProductApi(): Promise<DepegProductApi> {
         if (! this.depegProductApi.isInitialized()) {
             await this.depegProductApi.initialize();
+            this.applicationGasless = new ApplicationGasless(this.depegProductApi.getSigner());
         }
         return this.depegProductApi;
     }
@@ -108,10 +118,26 @@ export class ApplicationApiSmartContract implements ApplicationApi {
             protectedAmount: BigNumber, 
             coverageDurationSeconds: number,
             bundleId: number,
+            gasless: boolean,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void,
         ): Promise<{ status: boolean, processId: string|undefined}> {
-        console.log("applyForPolicy", walletAddress, protectedAmount, coverageDurationSeconds, bundleId);
+        if (gasless) {
+            return await this.applicationGasless!.applyForPolicyGasless(walletAddress, protectedAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
+        } else {
+            return await this.applyForPolicyOnChain(walletAddress, protectedAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
+        }
+    }
+
+    async applyForPolicyOnChain(
+        walletAddress: string, 
+        protectedAmount: BigNumber, 
+        coverageDurationSeconds: number,
+        bundleId: number,
+        beforeApplyCallback?: (address: string) => void,
+        beforeWaitCallback?: (address: string) => void,
+    ): Promise<{ status: boolean, processId: string|undefined}> {
+        console.log("applyForPolicyOnChain", walletAddress, protectedAmount, coverageDurationSeconds, bundleId);
         const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, protectedAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
         const processId = (await this.getDepegProductApi())!.extractProcessIdFromApplicationLogs(receipt.logs);
         console.log(`processId: ${processId}`);
@@ -143,6 +169,45 @@ export class ApplicationApiSmartContract implements ApplicationApi {
 
     async getProductComponentState(): Promise<ComponentState> {
         return (await this.getDepegProductApi())!.getComponentState();
+    }
+
+    async fetchPending(walletAddress: string, handlePending: (application: PolicyData) => Promise<void>): Promise<void> {
+        const res = await fetch("/api/application?address=" + walletAddress);
+        if (res.status != 200) {
+            throw new Error(`invalid response from backend. statuscode ${res.status}. test: ${res.text}`);
+            return;
+        }
+
+        const pendingApplications = await res.json() as PendingTransaction[];
+        console.log("pendingApplications", pendingApplications.length);
+        const signer = (await this.getDepegProductApi()).getSigner();
+
+        for (const application of pendingApplications) {
+            const receipt = await signer.provider!.getTransactionReceipt(application.transactionHash);
+            // const isMined = receipt.status === 1 && receipt.blockNumber !== null;
+            // if (isMined) {
+            //     console.log("Transaction already mined, skipping", application.transactionHash);
+            //     continue;
+            // }
+
+            const pd = {
+                id: application.transactionHash,
+                policyHolder: application.policyHolder,
+                protectedWallet: application.protectedWallet,
+                applicationState: APPLICATION_STATE_PENDING_MINING, 
+                policyState: 0, 
+                payoutState: 0,
+                createdAt: parseInt((new Date(application.timestamp).valueOf() / 1000).toFixed(0)),
+                duration: application.duration,
+                premium: BigNumber.from(0).toString(),
+                protectedAmount: application.protectedBalance,
+                payoutCap: BigNumber.from(0).toString(),
+                isAllowedToClaim: false,
+                claim: undefined,
+                transactionHash: application.transactionHash,
+            } as PolicyData
+            await handlePending(pd);
+        }
     }
 
 }

@@ -14,6 +14,7 @@ export interface PolicyData {
     payoutCap: string;
     isAllowedToClaim: boolean;
     claim: ClaimData | undefined;
+    transactionHash: string | undefined;
 }
 
 export enum PolicyState {
@@ -21,6 +22,7 @@ export enum PolicyState {
     APPLIED, REVOKED, UNDERWRITTEN, DECLINED,
     ACTIVE, EXPIRED, CLOSED, 
     CLAIMABLE, PAYOUT_EXPECTED, PAIDOUT, 
+    PENDING_MINING,
 }
 
 export interface ClaimData {
@@ -39,6 +41,7 @@ export const APPLICATION_STATE_APPLIED = 0;
 export const APPLICATION_STATE_REVOKED = 1;
 export const APPLICATION_STATE_UNDERWRITTEN = 2;
 export const APPLICATION_STATE_DECLINED = 3;
+export const APPLICATION_STATE_PENDING_MINING = 99;
 
 export const POLICY_STATE_ACTIVE = 0;
 export const POLICY_STATE_EXPIRED = 1;

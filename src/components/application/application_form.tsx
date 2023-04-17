@@ -1,4 +1,4 @@
-import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -26,6 +26,9 @@ import TermsOfService from '../terms_of_service';
 import { AvailableBundleList } from './available_bundle_list';
 import PayoutExample from './payout_example';
 import Premium from './premium';
+import WithTooltip from "../with_tooltip";
+import { Typography } from "@mui/material";
+import { grey } from "@mui/material/colors";
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -38,7 +41,7 @@ export interface ApplicationFormProperties {
     premiumTrxTextKey: string|undefined;
     hasBalance: (walletAddress: string, amount: BigNumber) => Promise<boolean>;
     readyToSubmit: (isFormReady: boolean) => void;
-    applyForPolicy: (walletAddress: string, protectedAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number) => void;
+    applyForPolicy: (walletAddress: string, protectedAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number, gasless: boolean) => void;
 }
 
 export type IAplicationFormValues = {
@@ -46,6 +49,7 @@ export type IAplicationFormValues = {
     protectedAmount: string;
     coverageDuration: string;
     coverageEndDate: Dayjs;
+    gasless: boolean;
     termsAndConditions: boolean;
 };
 
@@ -60,6 +64,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const premium = useSelector((state: RootState) => state.application.premium);
     const premiumErrorKey = useSelector((state: RootState) => state.application.premiumErrorKey);
     const premiumCalculationInProgress = useSelector((state: RootState) => state.application.premiumCalculationInProgress);
+
+    const maxGasPrice = process.env.NEXT_PUBLIC_MAX_GAS_PRICE_LIMIT ? parseInt(process.env.NEXT_PUBLIC_MAX_GAS_PRICE_LIMIT) : 30;
 
     const hasBalance = props.hasBalance;
 
@@ -81,6 +87,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             coverageDuration: props.applicationApi.coverageDurationDaysMax.toString(),
             coverageEndDate: dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days'),
             termsAndConditions: false,
+            gasless: false, 
         }
     });
 
@@ -229,7 +236,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             const walletAddress = values.insuredWallet;
             const protectedAmountWei = parseUnits(values.protectedAmount, props.usd1Decimals);
             const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
-            props.applyForPolicy(walletAddress, protectedAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!);
+            const gasless = values.gasless;
+            props.applyForPolicy(walletAddress, protectedAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!, gasless);
         } finally {
             setApplicationInProgress(false);
         }
@@ -405,7 +413,27 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         trxTextKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
                         />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} >
+                    { process.env.NEXT_PUBLIC_FEATURE_GASLESS_TRANSACTION === 'true' &&
+                        <Controller
+                            name="gasless"
+                            control={control}
+                            render={({ field }) => 
+                                <FormControlLabel 
+                                    control={
+                                        <Checkbox 
+                                            defaultChecked={false}
+                                            {...field}
+                                            />
+                                    } 
+                                    disabled={props.formDisabled}
+                                    label={<>
+                                        {t('gasless_checkbox_label')}
+                                        <WithTooltip tooltipText={t('gasless_checkbox_label_hint', {maxGasPrice: maxGasPrice })}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
+                                    </>}
+                                    />
+                            } /> 
+                    }
                     <Controller
                         name="termsAndConditions"
                         control={control}
