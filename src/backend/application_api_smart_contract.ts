@@ -184,11 +184,11 @@ export class ApplicationApiSmartContract implements ApplicationApi {
 
         for (const application of pendingApplications) {
             const receipt = await signer.provider!.getTransactionReceipt(application.transactionHash);
-            const isMined = receipt.status === 1 && receipt.blockNumber !== null;
-            if (isMined) {
-                console.log("Transaction already mined, skipping", application.transactionHash);
-                continue;
-            }
+            // const isMined = receipt.status === 1 && receipt.blockNumber !== null;
+            // if (isMined) {
+            //     console.log("Transaction already mined, skipping", application.transactionHash);
+            //     continue;
+            // }
 
             const pd = {
                 id: application.transactionHash,
@@ -204,6 +204,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
                 payoutCap: BigNumber.from(0).toString(),
                 isAllowedToClaim: false,
                 claim: undefined,
+                transactionHash: application.transactionHash,
             } as PolicyData
             await handlePending(pd);
         }
