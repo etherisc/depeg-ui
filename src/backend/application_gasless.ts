@@ -23,6 +23,10 @@ export class ApplicationGasless {
         beforeApplyCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void,
     ): Promise<{ status: boolean, processId: string|undefined}> {
+        if (process.env.NEXT_PUBLIC_FEATURE_GASLESS_TRANSACTION !== 'true') {
+            throw new Error("Gasless transactions are not enabled");
+        }
+        
         console.log("applyForPolicyGasless", walletAddress, protectedAmount, coverageDurationSeconds, bundleId);
 
         if (beforeApplyCallback !== undefined) {

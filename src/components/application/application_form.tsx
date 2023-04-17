@@ -414,24 +414,26 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         />
                 </Grid>
                 <Grid item xs={12} >
-                    <Controller
-                        name="gasless"
-                        control={control}
-                        render={({ field }) => 
-                            <FormControlLabel 
-                                control={
-                                    <Checkbox 
-                                        defaultChecked={false}
-                                        {...field}
-                                        />
-                                } 
-                                disabled={props.formDisabled}
-                                label={<>
-                                    {t('gasless_checkbox_label')}
-                                    <WithTooltip tooltipText={t('gasless_checkbox_label_hint', {maxGasPrice: maxGasPrice })}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
-                                </>}
-                                />
-                        } />
+                    { process.env.NEXT_PUBLIC_FEATURE_GASLESS_TRANSACTION === 'true' &&
+                        <Controller
+                            name="gasless"
+                            control={control}
+                            render={({ field }) => 
+                                <FormControlLabel 
+                                    control={
+                                        <Checkbox 
+                                            defaultChecked={false}
+                                            {...field}
+                                            />
+                                    } 
+                                    disabled={props.formDisabled}
+                                    label={<>
+                                        {t('gasless_checkbox_label')}
+                                        <WithTooltip tooltipText={t('gasless_checkbox_label_hint', {maxGasPrice: maxGasPrice })}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
+                                    </>}
+                                    />
+                            } /> 
+                    }
                     <Controller
                         name="termsAndConditions"
                         control={control}

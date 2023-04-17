@@ -12,7 +12,9 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    if (req.method === 'GET') {
+    if (process.env.NEXT_PUBLIC_FEATURE_GASLESS_TRANSACTION !== 'true') {
+        res.status(404).send('Unsupported feature');
+    } else if (req.method === 'GET') {
         await handleGet(req, res);
     } else if (req.method === 'POST') {
         await handlePost(req, res);

@@ -87,9 +87,11 @@ export default function Policies(props: PoliciesProps) {
                 }
                 dispatch(addPolicy(policy));
             }
-            await props.backend.application.fetchPending(walletAddress, async (policyData: PolicyData) => {
-                dispatch(addPolicy(policyData));
-            });
+            if (process.env.NEXT_PUBLIC_FEATURE_GASLESS_TRANSACTION === 'true') {
+                await props.backend.application.fetchPending(walletAddress, async (policyData: PolicyData) => {
+                    dispatch(addPolicy(policyData));
+                });
+            }
             dispatch(finishLoading());
         } else {
             dispatch(startLoading());
