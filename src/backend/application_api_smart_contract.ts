@@ -1,17 +1,12 @@
 import { BigNumber } from "ethers";
 import { ComponentState } from "../types/component_state";
-import { toHex } from "../utils/numbers";
+import { PendingTransaction } from "../utils/pending_trx";
 import { ApplicationGasless } from "./application_gasless";
 import { ApplicationApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
-import { DepegRiskpoolApi } from "./riskpool_api";
-import { PendingTransaction } from "../utils/pending_trx";
 import { APPLICATION_STATE_PENDING_MINING, PolicyData } from "./policy_data";
-import { DateRange } from "@mui/icons-material";
-
-const depegProductAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
-const chainId = toHex(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "1"));
+import { DepegRiskpoolApi } from "./riskpool_api";
 
 export class ApplicationApiSmartContract implements ApplicationApi {
     private depegProductApi: DepegProductApi;
