@@ -178,8 +178,8 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         const signer = (await this.getDepegProductApi()).getSigner();
 
         for (const application of pendingApplications) {
-            const receipt = await signer.provider!.getTransactionReceipt(application.transactionHash);
-            const isMined = receipt !== null;
+            const trx = await signer.provider!.getTransaction(application.transactionHash);
+            const isMined = trx.blockHash !== null;
             if (isMined) {
                 console.log("Transaction already mined, skipping", application.transactionHash);
                 continue;
