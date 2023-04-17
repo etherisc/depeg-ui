@@ -70,6 +70,7 @@
     "application_state_8": "Claimable",
     "application_state_9": "Payout pending",
     "application_state_10": "Paid & Closed",
+    "application_state_11": "Transaction pending",
     "bundle_state_0": "Active",
     "bundle_state_1": "Locked",
     "bundle_state_2": "Closed",

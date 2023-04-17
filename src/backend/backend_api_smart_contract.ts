@@ -124,5 +124,15 @@ export class BackendApiSmartContract implements BackendApi {
         }
         return updatedBundle;
     }
+
+    async isTrxMined(trxHash: string): Promise<boolean> {
+        const provider = this.signer.provider;
+        if (provider === undefined) {
+            throw new Error("provider is undefined");
+        }
+        const receipt = await provider.getTransactionReceipt(trxHash);
+        return receipt.status === 1 && receipt.blockNumber !== null;
+    }
+
 }
 

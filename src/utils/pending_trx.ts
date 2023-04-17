@@ -18,8 +18,8 @@ export class PendingTransaction extends Entity {
 
 export const PENDING_TRANSACTION_SCHEMA = new Schema(PendingTransaction, {
     policyHolder: { type: 'string', sortable: true },
-    protectedWallet: { type: 'string' },
-    protectedBalance: { type: 'string' },
+    protectedWallet: { type: 'string', sortable: true  },
+    protectedBalance: { type: 'string', sortable: true  },
     duration: { type: 'number' },
     bundleId: { type: 'number' },
     signatureId: { type: 'string' },

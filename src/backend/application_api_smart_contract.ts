@@ -6,6 +6,9 @@ import { ApplicationApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { DepegRiskpoolApi } from "./riskpool_api";
+import { PendingTransaction } from "../utils/pending_trx";
+import { APPLICATION_STATE_PENDING_MINING, PolicyData } from "./policy_data";
+import { DateRange } from "@mui/icons-material";
 
 const depegProductAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
 const chainId = toHex(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "1"));
@@ -166,6 +169,44 @@ export class ApplicationApiSmartContract implements ApplicationApi {
 
     async getProductComponentState(): Promise<ComponentState> {
         return (await this.getDepegProductApi())!.getComponentState();
+    }
+
+    async fetchPending(walletAddress: string, handlePending: (application: PolicyData) => Promise<void>): Promise<void> {
+        const res = await fetch("/api/application?address=" + walletAddress);
+        if (res.status != 200) {
+            throw new Error(`invalid response from backend. statuscode ${res.status}. test: ${res.text}`);
+            return;
+        }
+
+        const pendingApplications = await res.json() as PendingTransaction[];
+        console.log("pendingApplications", pendingApplications.length);
+        const signer = (await this.getDepegProductApi()).getSigner();
+
+        for (const application of pendingApplications) {
+            const receipt = await signer.provider!.getTransactionReceipt(application.transactionHash);
+            const isMined = receipt.status === 1 && receipt.blockNumber !== null;
+            if (isMined) {
+                console.log("Transaction already mined, skipping", application.transactionHash);
+                continue;
+            }
+
+            const pd = {
+                id: application.transactionHash,
+                policyHolder: application.policyHolder,
+                protectedWallet: application.protectedWallet,
+                applicationState: APPLICATION_STATE_PENDING_MINING, 
+                policyState: 0, 
+                payoutState: 0,
+                createdAt: parseInt((new Date(application.timestamp).valueOf() / 1000).toFixed(0)),
+                duration: application.duration,
+                premium: BigNumber.from(0).toString(),
+                protectedAmount: application.protectedBalance,
+                payoutCap: BigNumber.from(0).toString(),
+                isAllowedToClaim: false,
+                claim: undefined,
+            } as PolicyData
+            await handlePending(pd);
+        }
     }
 
 }

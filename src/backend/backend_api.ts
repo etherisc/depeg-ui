@@ -8,6 +8,7 @@ import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
 import { PriceFeedApi } from "./price_feed/api";
 import { ComponentState } from "react";
+import { PendingTransaction } from "../utils/pending_trx";
 
 export interface BackendApi {
     usd1: string;
@@ -40,6 +41,7 @@ export interface BackendApi {
     bundleManagement: BundleManagementApi;
     priceFeed: PriceFeedApi;
     triggerBundleUpdate: (bundleId: number, dispatch: Dispatch<AnyAction>) => Promise<BundleData>;
+    isTrxMined: (trxHash: string) => Promise<boolean>;
 }
 
 export interface ApplicationApi {
@@ -79,6 +81,10 @@ export interface ApplicationApi {
         beforeTrxCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void,
     ): Promise<{ status: boolean, claimId: string|undefined}>;
+    fetchPending(
+        walletAddress: string,
+        handlePending: (application: PolicyData) => Promise<void>,
+    ): Promise<void>;
 }
 
 export interface BundleManagementApi {

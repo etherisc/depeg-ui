@@ -56,6 +56,9 @@ export function BackendApiMock(enqueueSnackbar: (message: SnackbarMessage, optio
                 return Promise.resolve();
             },
         },
+        isTrxMined(txHash: string): Promise<boolean> {
+            return Promise.resolve(true);
+        },
     } as BackendApi;
 }
 
@@ -181,6 +184,9 @@ function applicationMock(enqueueSnackbar: (message: SnackbarMessage, options?: O
         },
         getProductComponentState() {
             return Promise.resolve(ComponentState.Active);
+        },
+        fetchPending(walletAddress, handlePending) {
+            return Promise.resolve();
         },
     } as ApplicationApi
 }

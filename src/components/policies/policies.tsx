@@ -17,7 +17,7 @@ import { SnackbarKey, useSnackbar } from "notistack";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
-import { ClaimData, PolicyData, PolicyState } from "../../backend/policy_data";
+import { APPLICATION_STATE_PENDING_MINING, ClaimData, PolicyData, PolicyState } from "../../backend/policy_data";
 import { addPolicy, finishLoading, reset, setClaimedPolicy, setDepegged, startLoading } from "../../redux/slices/policies";
 import { RootState } from "../../redux/store";
 import { DepegState } from "../../types/depeg_state";
@@ -30,6 +30,8 @@ import Address from "../address";
 import { LinkBehaviour } from "../link_behaviour";
 import Timestamp from "../timestamp";
 import WithTooltip from "../with_tooltip";
+import { PropaneSharp } from "@mui/icons-material";
+import { PendingTransaction } from "../../utils/pending_trx";
 
 export interface PoliciesProps {
     backend: BackendApi;
@@ -85,6 +87,9 @@ export default function Policies(props: PoliciesProps) {
                 }
                 dispatch(addPolicy(policy));
             }
+            await props.backend.application.fetchPending(walletAddress, async (policyData: PolicyData) => {
+                dispatch(addPolicy(policyData));
+            });
             dispatch(finishLoading());
         } else {
             dispatch(startLoading());

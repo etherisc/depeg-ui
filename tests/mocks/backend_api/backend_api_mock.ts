@@ -62,7 +62,10 @@ export function mockSimple() {
                 return Promise.resolve();
             }
         } as PriceFeedApi,
-    };
+        isTrxMined(trxHash) {
+            return Promise.resolve(true);
+        },
+    } as BackendApi;
 }
 
 export function mockSimpleRemainingRiskpoolCapSmallerThanBundleCap() {
@@ -117,7 +120,10 @@ export function mockSimpleRemainingRiskpoolCapSmallerThanBundleCap() {
                 return Promise.resolve();
             }
         } as PriceFeedApi,
-    };
+        isTrxMined(trxHash) {
+            return Promise.resolve(true);
+        },
+    } as BackendApi;
 }
 
 const mockPolicies = [
@@ -191,7 +197,10 @@ function applicationMock() {
         getProductComponentState() {
             return Promise.resolve(ComponentState.Active);
         },
-    } as ApplicationApi
+        fetchPending(walletAddress, handlePending) {
+            return Promise.resolve();
+        },
+    } as ApplicationApi;
 }
 
 function bundleManagementMock(

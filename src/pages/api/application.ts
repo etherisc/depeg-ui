@@ -23,9 +23,15 @@ export default async function handler(
 
 async function handleGet(req: NextApiRequest, res: NextApiResponse<Array<PendingTransaction>>) {
     console.log("POST request to /api/application");
+    const address = req.query.address as string;
+    if (!address) {
+        res.status(400).send([]);
+        return; 
+    }
     const pendingTxRepo = await getPendingTransactionRepository();
-    const pendingTransactions = await pendingTxRepo.search().return.all();
-    res.status(200).json(pendingTransactions);
+    const pendingPolicyHolderTransactions = await pendingTxRepo.search().where("policyHolder").equals(address).return.all();
+    console.log("pendingPolicyHolderTransactions", pendingPolicyHolderTransactions.length);
+    res.status(200).json(pendingPolicyHolderTransactions);
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
@@ -44,17 +50,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         res.status(400).send("Missing required fields");
         return;
     }
-
-    // const application = {
-    //     policyHolder,
-    //     protectedWallet,
-    //     protectedBalance,
-    //     duration,
-    //     bundleId,
-    //     signatureId,
-    //     signature,
-    // };
-    // console.log("adding application to queue", application);
 
     const redisId = await redisClient.xAdd(STREAM_KEY, "*", 
         { 
