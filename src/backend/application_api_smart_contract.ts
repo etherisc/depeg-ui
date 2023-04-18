@@ -212,7 +212,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
                 payoutCap: BigNumber.from(0).toString(),
                 isAllowedToClaim: false,
                 claim: undefined,
-                transactionHash: undefined,
+                transactionHash: application.transactionHash,
             } as PolicyData
             await handlePending(pd);
         }

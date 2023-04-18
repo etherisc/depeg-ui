@@ -185,7 +185,7 @@ export default function Policies(props: PoliciesProps) {
     }
 
     function renderClaimCell(policy: PolicyData) {
-        if (policy.applicationState === APPLICATION_STATE_PENDING_MINING && policy.transactionHash !== undefined) {
+        if (policy.applicationState === APPLICATION_STATE_PENDING_MINING && policy.transactionHash !== null) {
             const blockExplorerUrl = process.env.NEXT_PUBLIC_CHAIN_TOKEN_BLOCKEXPLORER_URL || "https://etherscan.io";
             const trxHref = blockExplorerUrl + "/tx/" + policy.transactionHash;
             return (<Button variant="text" color="secondary" href={trxHref} target="_blank">{t('action.show_trx')}</Button>);

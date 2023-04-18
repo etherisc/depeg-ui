@@ -14,7 +14,7 @@ export interface PolicyData {
     payoutCap: string;
     isAllowedToClaim: boolean;
     claim: ClaimData | undefined;
-    transactionHash: string | undefined;
+    transactionHash: string;
 }
 
 export enum PolicyState {

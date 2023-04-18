@@ -209,7 +209,6 @@ export class DepegProductApi {
             payoutCap: sumInsuredAmount.toString(),
             duration: duration.toNumber(),
             isAllowedToClaim: false,
-            transactionHash: undefined,
         } as PolicyData;
     }
 
