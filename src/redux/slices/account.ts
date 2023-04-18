@@ -5,9 +5,9 @@ import { fetchBalances } from '../thunks/account';
 
 export interface AccountState {
     address: string | undefined,
-    balance: Amount | undefined,
-    balanceUsd1: Amount | undefined,
-    balanceUsd2: Amount | undefined,
+    balance: Amount,
+    balanceUsd1: Amount,
+    balanceUsd2: Amount,
 }
 
 const emptyEth = {

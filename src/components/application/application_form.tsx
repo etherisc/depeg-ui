@@ -29,6 +29,7 @@ import Premium from './premium';
 import WithTooltip from "../with_tooltip";
 import { Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
+import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -64,6 +65,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const premium = useSelector((state: RootState) => state.application.premium);
     const premiumErrorKey = useSelector((state: RootState) => state.application.premiumErrorKey);
     const premiumCalculationInProgress = useSelector((state: RootState) => state.application.premiumCalculationInProgress);
+    const walletUsd1Balance = useSelector((state: RootState) => state.account.balanceUsd1);
 
     const maxGasPrice = process.env.NEXT_PUBLIC_MAX_GAS_PRICE_LIMIT ? parseInt(process.env.NEXT_PUBLIC_MAX_GAS_PRICE_LIMIT) : 30;
 
@@ -247,7 +249,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     props.readyToSubmit(readyToSubmit);
     
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
-    
+    const walletUsd1BalanceBN = BigNumber.from(walletUsd1Balance.amount);
+
     return (<>
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
@@ -318,7 +321,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                     ? ( errors.protectedAmount.type == 'pattern' 
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.protectedAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${protectedAmountMin}`, "maxValue": `${props.usd1} ${protectedAmountMax}` })
-                                    ) : ""}
+                                    ) : walletUsd1BalanceBN.gt(0) 
+                                        ? t('protected_amount_helper', { currency: walletUsd1Balance?.currency, balance: formatCurrencyBN(walletUsd1BalanceBN, walletUsd1Balance.decimals)}) 
+                                        : ''
+                                }
                                 data-testid="protected-amount"
                                 />}
                         />

@@ -10,6 +10,7 @@
     "insuredWalletRequired": "Protected wallet is required",
     "insuredWalletInvalid": "Protected wallet is not valid address",
     "protectedAmount": "Protected amount",
+    "protected_amount_helper": "Wallet balance: {{currency}} {{balance}}",
     "coverageDurationDays": "Coverage duration",
     "coverageDurationUntil": "Coverage until *",
     "premiumAmount": "Premium",
