@@ -4,6 +4,8 @@ import { walletConnectConfig } from "../config/appConfig";
 import { connectChain } from "../redux/slices/chain";
 import { getAndUpdateBlock, getChainState, setAccountRedux, updateSigner } from "./chain";
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
+import { fetchBalances } from "../redux/thunks/account";
+import { store } from "../redux/store";
 
 
 export async function reconnectWallets(dispatch: Dispatch<AnyAction>) {
@@ -52,6 +54,7 @@ export async function getAndSetWalletAccount(dispatch: Dispatch<AnyAction>) {
     // For this, you need the account signer...
     dispatch(connectChain(await getChainState(provider)));
     setAccountRedux(provider.getSigner(), dispatch);
+    store.dispatch(fetchBalances(provider.getSigner()));
 
     provider.on("block", (blockNumber: number) => {
         getAndUpdateBlock(dispatch, provider, blockNumber);

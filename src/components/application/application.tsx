@@ -11,14 +11,14 @@ import useNotifications from "../../hooks/notifications";
 import useTransactionNotifications from "../../hooks/trx_notifications";
 import { addBundle, finishLoading, reset, setProductComponentState, startLoading } from "../../redux/slices/application";
 import { setProductDepegState } from "../../redux/slices/price";
-import { RootState } from "../../redux/store";
+import { RootState, store } from "../../redux/store";
 import { ComponentState } from "../../types/component_state";
 import { DepegState } from "../../types/depeg_state";
-import { updateAccountBalance } from "../../utils/chain";
 import { ApprovalFailedError, TransactionFailedError } from "../../utils/error";
 import { ga_event } from "../../utils/google_analytics";
 import ApplicationForm from "./application_form";
 import PolicyConfirmation from "./policy_confirmation";
+import { fetchBalances } from "../../redux/thunks/account";
 
 export interface ApplicationProps {
     insurance: BackendApi;
@@ -110,7 +110,7 @@ export default function Application(props: ApplicationProps) {
             origin: { y: 0.6 }
         });
 
-        updateAccountBalance(signer!, dispatch);
+        store.dispatch(fetchBalances(signer!));
     }
 
     async function doApproval(walletAddress: string, premium: BigNumber): Promise<Boolean> {
