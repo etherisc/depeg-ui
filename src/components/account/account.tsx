@@ -12,7 +12,6 @@ import { RootState } from "../../redux/store";
 
 export default function Account() {
     const dispatch = useDispatch();
-    const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const address = useSelector((state: RootState) => state.account.address);
     const balance = useSelector((state: RootState) => state.account.balance);
@@ -31,7 +30,7 @@ export default function Account() {
         } else {
             setLoggedIn(false);
         }
-    }, [signer, isConnected]);
+    }, [isConnected]);
 
     useEffect(() => {
         reconnectWallets(dispatch);
