@@ -265,7 +265,7 @@ Example using service _depeg-mumbai-redis_:
 
 1. Expose redis port on dokku `dokku redis:expose depeg-mumbai-redis`
 1. Find the exposed port in the output above or via `dokku redis:info depeg-mumbai-redis`
-1. Open ssh tunnel with dokku redis port forward `ssh -L 6479:localhost:15956 marc@5.75.149.199`
+1. Open ssh tunnel with dokku redis port forward `ssh -L 6479:localhost:15956 user@host`
 1. Now connect with redis client of choice (e.g. RedisInsight) using `localhost:6479` as host and the password mentioned in redis info
 1. When finished, close the ssh tunnel by logging out of the ssh shell and unexpose the redis port `dokku redis:unexpose depeg-mumbai-redis`
 
