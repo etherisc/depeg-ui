@@ -152,7 +152,7 @@ describe('ApplicationForm', () => {
         });
         await waitFor(async () => {
             const ia = await screen.findByTestId("protected-amount");
-            return expect(ia.querySelector("p.MuiFormHelperText-root")).toBeNull();
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("protected_amount_helper");
         });
     })
 
