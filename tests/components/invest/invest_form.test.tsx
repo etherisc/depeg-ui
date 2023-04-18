@@ -175,7 +175,7 @@ describe('When rendering the StakingForm', () => {
         
         await waitFor(async () => {
             const ia = await screen.findByTestId("annual-pct-return");
-            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.numberTypeFloatTwoDec");
+            return expect(ia.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.numberTypeFloat");
         });
 
         act(() => {

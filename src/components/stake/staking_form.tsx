@@ -474,7 +474,7 @@ export default function StakingForm(props: StakingFormProperties) {
                                 error={errors.annualPctReturn !== undefined}
                                 helperText={errors.annualPctReturn !== undefined 
                                     ? ( errors.annualPctReturn.type == 'pattern' 
-                                        ? t(`error.field.numberTypeFloatTwoDec`, { "ns": "common"})
+                                        ? t(`error.field.numberTypeFloat`, { "ns": "common"})
                                         : t(`error.field.${errors.annualPctReturn.type}`, { "ns": "common", "minValue": 0.01, "maxValue": maxAnnualPctReturn })
                                     )
                                     : ""}
