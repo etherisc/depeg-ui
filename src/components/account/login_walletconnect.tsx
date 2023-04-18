@@ -9,6 +9,8 @@ import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { connectChain } from "../../redux/slices/chain";
 import { getAndUpdateBlock, getChainState, removeSigner, setAccountRedux, updateSigner } from "../../utils/chain";
+import { store } from "../../redux/store";
+import { fetchBalances } from "../../redux/thunks/account";
 
 export default function LoginWithWalletConnectButton(props: any) {
     const { closeDialog } = props;
@@ -62,6 +64,7 @@ export default function LoginWithWalletConnectButton(props: any) {
         const provider = new ethers.providers.Web3Provider(wcProvider);
         dispatch(connectChain(await getChainState(provider)));
         setAccountRedux(provider.getSigner(), dispatch);
+        store.dispatch(fetchBalances(provider.getSigner()));
 
         provider.on("block", (blockNumber: number) => {
             getAndUpdateBlock(dispatch, provider, blockNumber);

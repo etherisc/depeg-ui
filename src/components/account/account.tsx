@@ -12,10 +12,15 @@ import { RootState } from "../../redux/store";
 
 export default function Account() {
     const dispatch = useDispatch();
-    const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const address = useSelector((state: RootState) => state.account.address);
+    const balance = useSelector((state: RootState) => state.account.balance);
+    const balanceUsd1 = useSelector((state: RootState) => state.account.balanceUsd1);
+    const balanceUsd2 = useSelector((state: RootState) => state.account.balanceUsd2);
+    const balances = [balance, balanceUsd1, balanceUsd2];
     
+    const [ activeBalance, setActiveBalance ] = useState(0);
+
     const [ loggedIn, setLoggedIn ] = useState(false);
 
     useEffect(() => {
@@ -25,7 +30,7 @@ export default function Account() {
         } else {
             setLoggedIn(false);
         }
-    }, [signer, isConnected]);
+    }, [isConnected]);
 
     useEffect(() => {
         reconnectWallets(dispatch);
@@ -52,7 +57,7 @@ export default function Account() {
                     <Address address={address}/>
                     <Box component="span" sx={{ display: { 'xs': 'none', 'md': 'inline-flex'}}}>
                         {NBSP} {DOT} {NBSP}
-                        <Balance />
+                        <Balance balance={balances[activeBalance]} onClick={() => setActiveBalance((activeBalance + 1) % balances.length)} />
                     </Box>
                 </Box>
                 <Logout />
