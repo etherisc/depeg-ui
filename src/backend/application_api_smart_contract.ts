@@ -7,7 +7,10 @@ import { DepegProductApi } from "./depeg_product_api";
 import { APPLICATION_STATE_PENDING_MINING, PolicyData } from "./policy_data";
 import { DepegRiskpoolApi } from "./riskpool_api";
 import { PendingApplication } from "../utils/pending_application";
+import ts from "typescript";
 import { store } from "../redux/store";
+
+export const CHAIN_MINUMUM_REQUIRED_CONFIRMATIONS = process.env.NEXT_PUBLIC_CHAIN_MINUMUM_REQUIRED_CONFIRMATIONS ? parseInt(process.env.NEXT_PUBLIC_CHAIN_MINUMUM_REQUIRED_CONFIRMATIONS) : 6;
 
 export class ApplicationApiSmartContract implements ApplicationApi {
     private depegProductApi: DepegProductApi;
@@ -177,13 +180,21 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         const pendingApplications = await res.json() as PendingApplication[];
         console.log("pendingApplications", pendingApplications.length);
         const signer = this.depegProductApi.getSigner();
+        const knownProcessIds = store.getState().policies.policies.map(p => p.id);
 
         for (const application of pendingApplications) {
             if (application.transactionHash !== null && application.transactionHash !== '') {
-                // don't show mined applications
+                // don't show mined applications with a known processId or with enough confirmations
                 const tx = await signer.provider?.getTransaction(application.transactionHash);
                 if (tx !== null && tx?.blockHash !== null) {
-                    continue;
+                    const rcpt = await signer.provider?.getTransactionReceipt(application.transactionHash);
+                    const processId = (await this.getDepegProductApi()).extractProcessIdFromApplicationLogs(rcpt?.logs ?? []);
+                    if (processId !== undefined && knownProcessIds.indexOf(processId) >= 0) {
+                        continue;
+                    }
+                    if (tx?.confirmations !== undefined && tx.confirmations > CHAIN_MINUMUM_REQUIRED_CONFIRMATIONS) {
+                        continue;
+                    }
                 }
             }
             
