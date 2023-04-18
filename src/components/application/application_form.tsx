@@ -321,9 +321,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                     ? ( errors.protectedAmount.type == 'pattern' 
                                             ? t(`error.field.amountType`, { "ns": "common"}) 
                                             : t(`error.field.${errors.protectedAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${protectedAmountMin}`, "maxValue": `${props.usd1} ${protectedAmountMax}` })
-                                    ) : walletUsd1BalanceBN.gt(0) 
-                                        ? t('protected_amount_helper', { currency: walletUsd1Balance?.currency, balance: formatCurrencyBN(walletUsd1BalanceBN, walletUsd1Balance.decimals)}) 
-                                        : ''
+                                    ) : t('protected_amount_helper', { currency: walletUsd1Balance?.currency, balance: formatCurrencyBN(walletUsd1BalanceBN, walletUsd1Balance.decimals)})
                                 }
                                 data-testid="protected-amount"
                                 />}
