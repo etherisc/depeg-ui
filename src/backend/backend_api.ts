@@ -8,7 +8,6 @@ import { BundleData } from "./bundle_data";
 import { PolicyData } from "./policy_data";
 import { PriceFeedApi } from "./price_feed/api";
 import { ComponentState } from "react";
-import { PendingTransaction } from "../utils/pending_trx";
 
 export interface BackendApi {
     usd1: string;

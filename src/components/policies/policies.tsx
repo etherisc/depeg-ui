@@ -30,8 +30,6 @@ import Address from "../address";
 import { LinkBehaviour } from "../link_behaviour";
 import Timestamp from "../timestamp";
 import WithTooltip from "../with_tooltip";
-import { PropaneSharp } from "@mui/icons-material";
-import { PendingTransaction } from "../../utils/pending_trx";
 
 export interface PoliciesProps {
     backend: BackendApi;

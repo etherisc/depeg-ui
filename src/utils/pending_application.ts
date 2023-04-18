@@ -1,7 +1,7 @@
 import { Schema, Entity, Repository } from "redis-om";
 import { redisOmClient } from "./redis";
 
-export interface PendingTransaction {
+export interface PendingApplication {
     policyHolder: string;
     protectedWallet: string;
     protectedBalance: string;
@@ -13,10 +13,10 @@ export interface PendingTransaction {
     timestamp: Date;
 }
 
-export class PendingTransaction extends Entity {
+export class PendingApplication extends Entity {
 }
 
-export const PENDING_TRANSACTION_SCHEMA = new Schema(PendingTransaction, {
+export const PENDING_APPLICATION_SCHEMA = new Schema(PendingApplication, {
     policyHolder: { type: 'string', sortable: true },
     protectedWallet: { type: 'string', sortable: true  },
     protectedBalance: { type: 'string', sortable: true  },
@@ -30,8 +30,8 @@ export const PENDING_TRANSACTION_SCHEMA = new Schema(PendingTransaction, {
     dataStructure: 'HASH'
 });
 
-export async function getPendingTransactionRepository(): Promise<Repository<PendingTransaction>> {
-    const priceRepository = (await redisOmClient).fetchRepository(PENDING_TRANSACTION_SCHEMA);
-    await priceRepository.createIndex();
-    return priceRepository;
+export async function getPendingApplicationRepository(): Promise<Repository<PendingApplication>> {
+    const repository = (await redisOmClient).fetchRepository(PENDING_APPLICATION_SCHEMA);
+    await repository.createIndex();
+    return repository;
 }

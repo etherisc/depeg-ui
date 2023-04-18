@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PendingTransaction, getPendingTransactionRepository } from "../../utils/pending_trx";
 import { redisClient } from "../../utils/redis";
+import { PendingApplication, getPendingApplicationRepository } from "../../utils/pending_application";
 
 export const STREAM_KEY = process.env.REDIS_QUEUE_STREAM_KEY ?? "application:signatures";
 
@@ -23,14 +23,14 @@ export default async function handler(
     }
 }
 
-async function handleGet(req: NextApiRequest, res: NextApiResponse<Array<PendingTransaction>>) {
+async function handleGet(req: NextApiRequest, res: NextApiResponse<Array<PendingApplication>>) {
     console.log("POST request to /api/application");
     const address = req.query.address as string;
     if (!address) {
         res.status(400).send([]);
         return; 
     }
-    const pendingTxRepo = await getPendingTransactionRepository();
+    const pendingTxRepo = await getPendingApplicationRepository();
     const pendingPolicyHolderTransactions = await pendingTxRepo.search().where("policyHolder").equals(address).return.all();
     console.log("pendingPolicyHolderTransactions", pendingPolicyHolderTransactions.length);
     res.status(200).json(pendingPolicyHolderTransactions);

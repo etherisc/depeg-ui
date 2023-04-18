@@ -1,12 +1,12 @@
 import { BigNumber } from "ethers";
 import { ComponentState } from "../types/component_state";
-import { PendingTransaction } from "../utils/pending_trx";
 import { ApplicationGasless } from "./application_gasless";
 import { ApplicationApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { APPLICATION_STATE_PENDING_MINING, PolicyData } from "./policy_data";
 import { DepegRiskpoolApi } from "./riskpool_api";
+import { PendingApplication } from "../utils/pending_application";
 
 export class ApplicationApiSmartContract implements ApplicationApi {
     private depegProductApi: DepegProductApi;
@@ -173,12 +173,13 @@ export class ApplicationApiSmartContract implements ApplicationApi {
             return;
         }
 
-        const pendingApplications = await res.json() as PendingTransaction[];
+        const pendingApplications = await res.json() as PendingApplication[];
         console.log("pendingApplications", pendingApplications.length);
         const signer = (await this.getDepegProductApi()).getSigner();
 
         for (const application of pendingApplications) {
             const trx = await signer.provider!.getTransaction(application.transactionHash);
+            // TODO: don't check mined, check if contained in existing policies
             const isMined = trx.blockHash !== null;
             if (isMined) {
                 console.log("Transaction already mined, skipping", application.transactionHash);
