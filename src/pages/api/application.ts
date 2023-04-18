@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { redisClient } from "../../utils/redis";
 import { PendingApplication, getPendingApplicationRepository } from "../../utils/pending_application";
+import { CollectionsOutlined } from "@mui/icons-material";
 
 export const STREAM_KEY = process.env.REDIS_QUEUE_STREAM_KEY ?? "application:signatures";
 
@@ -24,7 +25,9 @@ export default async function handler(
 }
 
 async function handleGet(req: NextApiRequest, res: NextApiResponse<Array<PendingApplication>>) {
-    console.log("POST request to /api/application");
+    console.log("GET request to /api/application");
+    // don't cache this request
+    res.setHeader('Cache-Control', 'no-store');
     const address = req.query.address as string;
     if (!address) {
         res.status(400).send([]);
@@ -53,17 +56,27 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
+    // store pending application in redis
+    const repo = await getPendingApplicationRepository();
+    await repo.createAndSave({
+        policyHolder: policyHolder,
+        protectedWallet: protectedWallet,
+        protectedBalance: protectedBalance.toString(),
+        duration: duration,
+        bundleId: bundleId,
+        signatureId: signatureId,
+        signature: signature,
+        transactionHash: null,
+        timestamp: new Date(),
+    });
+    console.log("created pending application", signatureId);
+
+    // push message to stream (queue)
     const redisId = await redisClient.xAdd(STREAM_KEY, "*", 
-        { 
-            "policyHolder": policyHolder,
-            "protectedWallet": protectedWallet,
-            "protectedBalance": protectedBalance,
-            "duration": duration.toString(),
-            "bundleId": bundleId.toString(),
-            "signatureId": signatureId,
-            "signature": signature 
-        });
-    console.log("added application to queue", redisId);
+    { 
+        "signatureId": signatureId,
+    });
+    console.log("added signatureId of application to queue", redisId, signatureId);
     
     res.status(200).send(redisId);
 }

@@ -7,6 +7,7 @@ import { DepegProductApi } from "./depeg_product_api";
 import { APPLICATION_STATE_PENDING_MINING, PolicyData } from "./policy_data";
 import { DepegRiskpoolApi } from "./riskpool_api";
 import { PendingApplication } from "../utils/pending_application";
+import { store } from "../redux/store";
 
 export class ApplicationApiSmartContract implements ApplicationApi {
     private depegProductApi: DepegProductApi;
@@ -175,19 +176,19 @@ export class ApplicationApiSmartContract implements ApplicationApi {
 
         const pendingApplications = await res.json() as PendingApplication[];
         console.log("pendingApplications", pendingApplications.length);
-        const signer = (await this.getDepegProductApi()).getSigner();
+        const signer = this.depegProductApi.getSigner();
 
         for (const application of pendingApplications) {
-            const trx = await signer.provider!.getTransaction(application.transactionHash);
-            // TODO: don't check mined, check if contained in existing policies
-            const isMined = trx.blockHash !== null;
-            if (isMined) {
-                console.log("Transaction already mined, skipping", application.transactionHash);
-                continue;
+            if (application.transactionHash !== null && application.transactionHash !== '') {
+                // don't show mined applications
+                const tx = await signer.provider?.getTransaction(application.transactionHash);
+                if (tx !== null && tx?.blockHash !== null) {
+                    continue;
+                }
             }
-
+            
             const pd = {
-                id: application.transactionHash,
+                id: '',
                 policyHolder: application.policyHolder,
                 protectedWallet: application.protectedWallet,
                 applicationState: APPLICATION_STATE_PENDING_MINING, 
@@ -200,7 +201,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
                 payoutCap: BigNumber.from(0).toString(),
                 isAllowedToClaim: false,
                 claim: undefined,
-                transactionHash: application.transactionHash,
+                transactionHash: undefined,
             } as PolicyData
             await handlePending(pd);
         }

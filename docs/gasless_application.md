@@ -11,12 +11,18 @@ sequenceDiagram
     participant R as Redis
     participant C as Blockchain
     
-    U ->> D: Apply for policy an sign transaction
-    D ->> RQ: put message
-    RQ -->> +BG: listen for messages
+    BG -->> RQ: subscribe and listen for messages
+    U ->> D: Apply for policy and signs transaction
+    D ->> R: store PendingApplication without tx hash
+    D ->> RQ: put signatureId
+    RQ -->> BG: received signatureId
+    BG ->> R: fetch PendingApplication
     BG ->> C: submit
     activate C
-    BG ->> R: store PendingTransaction
-    C ->> C: mine()
+    BG ->> R: update PendingApplication with tx hash
+    C ->> C: mine new blocks
     deactivate C
+    activate BG
+    BG ->> BG: check PendingApplication and drop after tx mined
+    deactivate BG
 ```

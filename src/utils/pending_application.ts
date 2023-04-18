@@ -22,7 +22,7 @@ export const PENDING_APPLICATION_SCHEMA = new Schema(PendingApplication, {
     protectedBalance: { type: 'string', sortable: true  },
     duration: { type: 'number' },
     bundleId: { type: 'number' },
-    signatureId: { type: 'string' },
+    signatureId: { type: 'string', sortable: true },
     signature: { type: 'string' },
     transactionHash: { type: 'string', sortable: true },
     timestamp: { type: 'date', sortable: true },

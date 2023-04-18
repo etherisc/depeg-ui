@@ -185,7 +185,7 @@ export default function Policies(props: PoliciesProps) {
     }
 
     function renderClaimCell(policy: PolicyData) {
-        if (policy.applicationState === APPLICATION_STATE_PENDING_MINING) {
+        if (policy.applicationState === APPLICATION_STATE_PENDING_MINING && policy.transactionHash !== undefined) {
             const blockExplorerUrl = process.env.NEXT_PUBLIC_CHAIN_TOKEN_BLOCKEXPLORER_URL || "https://etherscan.io";
             const trxHref = blockExplorerUrl + "/tx/" + policy.transactionHash;
             return (<Button variant="text" color="secondary" href={trxHref} target="_blank">{t('action.show_trx')}</Button>);
@@ -242,6 +242,9 @@ export default function Policies(props: PoliciesProps) {
             flex: 0.8,
             valueGetter: (params: GridValueGetterParams) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                if (params.value.id === '') {
+                    return (<></>);
+                }
                 return (<><Address address={params.value!.id} iconColor="secondary.main" />{ownerBadge(params.value!)}</>);
             },
             sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => 
