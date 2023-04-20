@@ -7,7 +7,8 @@ import { Tooltip } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons"; 
 
-export default function ChainData() {
+export default function ChainData(props: any) {
+    const fontSize = props.fontSize ?? '10px';
 
     let chainData = (<></>);
     const dispatch = useDispatch();
@@ -37,7 +38,7 @@ export default function ChainData() {
     if (blockNumber > 0) {
         chainData = (
             <Tooltip title={timestamp}>
-                <Typography variant="body2" sx={{ fontSize: '10px', ml: 1 }}>
+                <Typography variant="body2" sx={{ fontSize: fontSize, ml: 1 }}>
                     {blockNumber} 
                     <FontAwesomeIcon icon={faCircleInfo} className="fa" />
                 </Typography>
