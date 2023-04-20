@@ -95,7 +95,7 @@ export default function BundleFundForm(props: BundleFundFormProps) {
     if (bundleIsAsCapacity) {
         return (<>
             <Typography variant="h6" m={2} mt={4}>{t('title_fund')}</Typography>
-            <Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.bundle_at_capacity')}</Alert>
+            <Alert severity="error" variant="outlined" sx={{ mt: 4 }} data-testid="alert-bundle-at-capacity">{t('alert.bundle_at_capacity')}</Alert>
         </>);
     }
 

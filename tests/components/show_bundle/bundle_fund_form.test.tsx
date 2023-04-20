@@ -39,11 +39,11 @@ describe('When rendering the BundleFundForm', () => {
             tokenId: 7,
             name: "Happy Testing",
             apr: 3.1415,
-            capital: parseUnits("100000", 6).toString(),
-            balance: parseUnits("100123", 6).toString(),
-            capacity: parseUnits("90000", 6).toString(),
-            locked: parseUnits("10000", 6).toString(),
-            capitalSupport: parseUnits("80000", 6).toString(),
+            capital: parseUnits("10000", 6).toString(),
+            balance: parseUnits("10123", 6).toString(),
+            capacity: parseUnits("9000", 6).toString(),
+            locked: parseUnits("1000", 6).toString(),
+            capitalSupport: parseUnits("8000", 6).toString(),
             minProtectedAmount: parseUnits("1123", 6).toString(),
             maxProtectedAmount: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
@@ -135,11 +135,11 @@ describe('When rendering the BundleFundForm', () => {
             tokenId: 7,
             name: "Happy Testing",
             apr: 3.1415,
-            capital: parseUnits("100000", 6).toString(),
-            balance: parseUnits("100123", 6).toString(),
-            capacity: parseUnits("90000", 6).toString(),
+            capital: parseUnits("2000", 6).toString(),
+            balance: parseUnits("2123", 6).toString(),
+            capacity: parseUnits("10000", 6).toString(),
             locked: parseUnits("10000", 6).toString(),
-            capitalSupport: parseUnits("80000", 6).toString(),
+            capitalSupport: parseUnits("10000", 6).toString(),
             minProtectedAmount: parseUnits("1123", 6).toString(),
             maxProtectedAmount: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
@@ -186,11 +186,19 @@ describe('When rendering the BundleFundForm', () => {
         });
 
         act(() => {
-            fireEvent.change(amountInput!, { target: { value: "10001" } });
+            fireEvent.change(amountInput!, { target: { value: "8001" } });
         });
         await waitFor(async () => {
             const e = await screen.findByTestId("amount");
             return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.max");
+        });
+
+        act(() => {
+            fireEvent.change(amountInput!, { target: { value: "8000" } });
+        });
+        await waitFor(async () => {
+            const e = await screen.findByTestId("amount");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toBeNull();
         });
 
     })
@@ -203,11 +211,11 @@ describe('When rendering the BundleFundForm', () => {
             tokenId: 7,
             name: "Happy Testing",
             apr: 3.1415,
-            capital: parseUnits("100000", 6).toString(),
-            balance: parseUnits("100123", 6).toString(),
-            capacity: parseUnits("90000", 6).toString(),
+            capital: parseUnits("2000", 6).toString(),
+            balance: parseUnits("2123", 6).toString(),
+            capacity: parseUnits("1000", 6).toString(),
             locked: parseUnits("10000", 6).toString(),
-            capitalSupport: parseUnits("80000", 6).toString(),
+            capitalSupport: parseUnits("50000", 6).toString(),
             minProtectedAmount: parseUnits("1123", 6).toString(),
             maxProtectedAmount: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
@@ -247,6 +255,10 @@ describe('When rendering the BundleFundForm', () => {
             }
         );
 
+        const capacityAlert = screen.queryByTestId("alert-bundle-at-capacity");
+        expect(capacityAlert).toBeNull();
+
+
         const amountInput = screen.getByTestId("amount").querySelector("input");
 
         await waitFor(async () => {
@@ -259,6 +271,73 @@ describe('When rendering the BundleFundForm', () => {
         await waitFor(async () => {
             const e = await screen.findByTestId("amount");
             return expect(e.querySelector("p.MuiFormHelperText-root")).toHaveTextContent("error.field.max");
+        });
+
+        act(() => {
+            fireEvent.change(amountInput!, { target: { value: "5000" } });
+        });
+        await waitFor(async () => {
+            const e = await screen.findByTestId("amount");
+            return expect(e.querySelector("p.MuiFormHelperText-root")).toBeNull();
+        });
+
+    });
+
+    it('show an alert if the bundle is at the bundle capacity', async () => {
+        const bundle = {
+            id: 42,
+            riskpoolId: 13,
+            owner: "0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729",
+            tokenId: 7,
+            name: "Happy Testing",
+            apr: 3.1415,
+            capital: parseUnits("10000", 6).toString(),
+            balance: parseUnits("10123", 6).toString(),
+            capacity: parseUnits("10000", 6).toString(),
+            locked: parseUnits("10000", 6).toString(),
+            capitalSupport: parseUnits("50000", 6).toString(),
+            minProtectedAmount: parseUnits("1123", 6).toString(),
+            maxProtectedAmount: parseUnits("10456", 6).toString(),
+            minDuration: 11 * 24 * 60 * 60,
+            maxDuration: 28 * 24 * 60 * 60,
+            createdAt: 1676541508,
+            lifetime: BigNumber.from(28 * 24 * 60 * 60).toString(),    
+            state: 1,
+            policies: 789,
+        } as BundleData;
+
+        const fundMock = jest.fn();
+        
+        renderWithProviders(
+            <BundleFundForm
+                bundle={bundle}
+                currency="USDT"
+                decimals={6}
+                maxStakedAmount={BigNumber.from("100000")}
+                getRemainingRiskpoolCapacity={async () => 5000}
+                getBundleCapitalCap={async () => parseUnits("10000", 6)}
+                doFund={fundMock}
+                doCancel={async () => true}
+                />
+            ,
+            {
+                preloadedState: {
+                    chain: {
+                        chainId: "0x0",
+                        isConnected: true,
+                        isExpectedChain: true,
+                        provider: undefined,
+                        signer: undefined,
+                        blockNumber: 0,
+                        blockTime: 0,
+                    }
+                }
+            }
+        );
+
+        await waitFor(async () => {
+            const capacityAlert = screen.queryByTestId("alert-bundle-at-capacity");
+            expect(capacityAlert).toBeInTheDocument();
         });
 
     })
