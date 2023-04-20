@@ -13,9 +13,9 @@ export default function Footer() {
     const stakingWebsiteUrl = process.env.NEXT_PUBLIC_STAKING_WEBSITE_URL;
 
     return (
-        <footer>
+        <footer style={{ marginTop: 'auto', marginBottom: 0 }}>
             <Container maxWidth={false} sx={{
-                position: "fixed",
+                marginTop: '32px', 
                 bottom: 0,
                 left: 0,
                 right: 0,
