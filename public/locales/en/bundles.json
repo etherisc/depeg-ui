@@ -71,6 +71,7 @@
         }
     },
     "alert": {
-        "actions_only_owner": "Risk bundle management operations are only available to the owner of the risk bundle."
+        "actions_only_owner": "Risk bundle management operations are only available to the owner of the risk bundle.",
+        "bundle_at_capacity": "The risk bundle is at capacity and cannot accept any more funds."
     }
 }

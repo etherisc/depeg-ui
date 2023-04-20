@@ -1,6 +1,6 @@
 import { faArrowLeft, faMoneyBillTransfer } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Box, Button, Checkbox, FormControlLabel, Grid, InputAdornment, LinearProgress, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Checkbox, FormControlLabel, Grid, InputAdornment, LinearProgress, TextField, Typography } from "@mui/material";
 import { BigNumber } from "ethers";
 import { formatUnits, parseUnits } from "ethers/lib/utils";
 import { useTranslation } from "next-i18next";
@@ -88,6 +88,15 @@ export default function BundleFundForm(props: BundleFundFormProps) {
         } finally {
             setFundInProgress(false);
         }
+    }
+
+    const bundleIsAsCapacity = maxFundAmount <= 0;
+
+    if (bundleIsAsCapacity) {
+        return (<>
+            <Typography variant="h6" m={2} mt={4}>{t('title_fund')}</Typography>
+            <Alert severity="error" variant="outlined" sx={{ mt: 4 }}>{t('alert.bundle_at_capacity')}</Alert>
+        </>);
     }
 
     const readyToSubmit = formState.isValid;

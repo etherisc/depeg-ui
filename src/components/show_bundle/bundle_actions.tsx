@@ -23,13 +23,6 @@ interface BundleActionsProps {
 
 export default function BundleActions(props: BundleActionsProps) {
     const { t } = useTranslation('bundles');
-    
-    // enum BundleState {
-    //     Active,
-    //     Locked,
-    //     Closed,
-    //     Burned
-    // }
 
     const isOwner = props.connectedWallet !== undefined && props.connectedWallet === props.bundle.owner;
     
