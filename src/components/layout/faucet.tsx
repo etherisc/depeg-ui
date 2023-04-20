@@ -11,7 +11,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import WithTooltip from "../with_tooltip";
 
-export default function Faucet() {
+export default function Faucet(props: any) {
+    const fontSize = props.fontSize ?? '10px';
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const { t } = useTranslation('common');
     const currency = process.env.NEXT_PUBLIC_FAUCET_SYMBOL;
@@ -64,21 +65,21 @@ export default function Faucet() {
     return (<>
         <Button variant="text" sx={{ p: 0 }} >
             <WithTooltip tooltipText={t('help.faucet', { currency: currency })}>
-                <Typography variant="body2" sx={{ fontSize: '10px' }} onClick={useFaucet}>
+                <Typography variant="body2" sx={{ fontSize: fontSize }} onClick={useFaucet}>
                     {currency} faucet
                     <FontAwesomeIcon icon={faFaucet} className="fa cursor-pointer" />
                 </Typography>
             </WithTooltip>
-            <Typography variant="body2" sx={{ fontSize: '10px' }} onClick={copyAddressToClipboard} title={t('help.faucet_copy', { currency: currency })}>
+            <Typography variant="body2" sx={{ fontSize: fontSize }} onClick={copyAddressToClipboard} title={t('help.faucet_copy', { currency: currency })}>
                 <FontAwesomeIcon icon={faCopy} className="fa cursor-pointer" />
             </Typography>
         </Button>
         {chainTokenFaucetUrl !== undefined && <>
-            <Typography variant="body2" sx={{ fontSize: '10px' }} >
+            <Typography variant="body2" sx={{ fontSize: fontSize }} >
                 {DOT}
             </Typography>
             <Button variant="text" sx={{ p: 0, ml: 1 }} href={chainTokenFaucetUrl!} target="_blank" rel="noreferrer">
-                <Typography variant="body2" sx={{ fontSize: '10px' }} >
+                <Typography variant="body2" sx={{ fontSize: fontSize }} >
                     {chainTokenSymbol} faucet
                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="fa cursor-pointer" />
                 </Typography>

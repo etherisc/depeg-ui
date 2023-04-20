@@ -1,4 +1,4 @@
-import { Alert, AlertColor, Button, Collapse } from "@mui/material";
+import { Alert, AlertColor, Box, Button, Collapse } from "@mui/material";
 import Container from "@mui/material/Container";
 import { useTranslation } from "next-i18next";
 import { AppProps } from "next/app";
@@ -55,12 +55,12 @@ export default function Layout({ Component, pageProps }: AppProps) {
         return (<></>);
     }, [noticeDismissed]);
 
-    return (<>
+    return (<Box component="div" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         {globalNotice()}
         <Header title={title} items={items} />
-        <Container maxWidth="lg" sx={{ p: 1, marginBottom: "5vh" }}>
+        <Container maxWidth="lg" sx={{ p: 1 }}>
             {content()}
         </Container>
         <Footer />
-    </>);
+    </Box>);
 }
