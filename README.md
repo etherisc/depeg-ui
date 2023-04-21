@@ -193,14 +193,16 @@ The build process requires the following arguments:
 
 - `INSTANCE` - the name of the instance to build the image for. The instance name is used to load the correct configuration from the `.env.INSTANCE` file in the root diretory of the project (see `.env.mumbai` as an example). 
 
-### Dokku
+### Dokku Deployment
 
 We use [dokku](https://dokku.com/) for deployment. 
 
 With the current setup (dokku repo is added as remote repo called `dokku` to the local git), deployment is triggered by running the following command in the root directory of the project:
 
 ```
-git push dokku <branch-to-deploy>:main
+npm version <major|minor|patch> 
+git push && git push --tags
+git push <dokku-remote-repo> <branch-to-deploy>:main
 ```
 
 #### Initial instance setup
