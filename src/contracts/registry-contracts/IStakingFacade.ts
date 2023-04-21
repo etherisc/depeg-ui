@@ -34,6 +34,7 @@ export interface IStakingFacadeInterface extends utils.Interface {
     "rewardBalance()": FunctionFragment;
     "rewardRate()": FunctionFragment;
     "rewardReserves()": FunctionFragment;
+    "stakeBalance()": FunctionFragment;
     "stakingRate(bytes5,address)": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
     "toRate(uint256,int8)": FunctionFragment;
@@ -54,6 +55,7 @@ export interface IStakingFacadeInterface extends utils.Interface {
       | "rewardBalance"
       | "rewardRate"
       | "rewardReserves"
+      | "stakeBalance"
       | "stakingRate"
       | "toChain"
       | "toRate"
@@ -97,6 +99,10 @@ export interface IStakingFacadeInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "rewardReserves",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "stakeBalance",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -150,6 +156,10 @@ export interface IStakingFacadeInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "rewardRate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rewardReserves",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "stakeBalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -231,6 +241,10 @@ export interface IStakingFacade extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { dipAmount: BigNumber }>;
 
+    stakeBalance(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { dipAmount: BigNumber }>;
+
     stakingRate(
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
@@ -282,6 +296,8 @@ export interface IStakingFacade extends BaseContract {
 
   rewardReserves(overrides?: CallOverrides): Promise<BigNumber>;
 
+  stakeBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
   stakingRate(
     chain: PromiseOrValue<BytesLike>,
     token: PromiseOrValue<string>,
@@ -332,6 +348,8 @@ export interface IStakingFacade extends BaseContract {
     rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     rewardReserves(overrides?: CallOverrides): Promise<BigNumber>;
+
+    stakeBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     stakingRate(
       chain: PromiseOrValue<BytesLike>,
@@ -387,6 +405,8 @@ export interface IStakingFacade extends BaseContract {
 
     rewardReserves(overrides?: CallOverrides): Promise<BigNumber>;
 
+    stakeBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
     stakingRate(
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
@@ -436,6 +456,8 @@ export interface IStakingFacade extends BaseContract {
     rewardRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     rewardReserves(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    stakeBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     stakingRate(
       chain: PromiseOrValue<BytesLike>,

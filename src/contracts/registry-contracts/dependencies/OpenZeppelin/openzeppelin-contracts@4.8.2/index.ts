@@ -15,6 +15,7 @@ export type { IERC20Metadata } from "./IERC20Metadata";
 export type { IERC721 } from "./IERC721";
 export type { IERC721Enumerable } from "./IERC721Enumerable";
 export type { IERC721Metadata } from "./IERC721Metadata";
+export type { IERC721Receiver } from "./IERC721Receiver";
 export type { Ownable } from "./Ownable";
 export type { Proxy } from "./Proxy";
 export type { TransparentUpgradeableProxy } from "./TransparentUpgradeableProxy";
