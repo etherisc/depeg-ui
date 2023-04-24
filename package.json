@@ -37,7 +37,7 @@
     "chartjs-adapter-moment": "^1.0.1",
     "color": "^4.2.3",
     "dayjs": "^1.11.7",
-    "eslint": "^8.38.0",
+    "eslint": "^8.39.0",
     "eslint-config-next": "^13.3.0",
     "ethers": "^5.7.2",
     "i18next": "^22.4.14",
