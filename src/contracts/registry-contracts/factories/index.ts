@@ -28,6 +28,7 @@ export { MockInstance__factory } from "./MockInstance__factory";
 export { MockInstanceRegistry__factory } from "./MockInstanceRegistry__factory";
 export { OwnableProxyAdmin__factory } from "./OwnableProxyAdmin__factory";
 export { StakingV01__factory } from "./StakingV01__factory";
+export { StakingV02__factory } from "./StakingV02__factory";
 export { UFixedMathTest__factory } from "./UFixedMathTest__factory";
 export { UFixedType__factory } from "./UFixedType__factory";
 export { USD1__factory } from "./USD1__factory";

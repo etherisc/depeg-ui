@@ -15,6 +15,7 @@ export { IERC20Metadata__factory } from "./IERC20Metadata__factory";
 export { IERC721__factory } from "./IERC721__factory";
 export { IERC721Enumerable__factory } from "./IERC721Enumerable__factory";
 export { IERC721Metadata__factory } from "./IERC721Metadata__factory";
+export { IERC721Receiver__factory } from "./IERC721Receiver__factory";
 export { Ownable__factory } from "./Ownable__factory";
 export { Proxy__factory } from "./Proxy__factory";
 export { TransparentUpgradeableProxy__factory } from "./TransparentUpgradeableProxy__factory";

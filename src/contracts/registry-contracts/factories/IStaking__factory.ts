@@ -1013,6 +1013,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "stakeBalance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "dipAmount",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "NftId",

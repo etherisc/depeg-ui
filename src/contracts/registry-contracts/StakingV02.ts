@@ -81,9 +81,21 @@ export declare namespace IVersionable {
   };
 }
 
-export interface IStakingInterface extends utils.Interface {
+export interface StakingV02Interface extends utils.Interface {
   functions: {
+    "DIP_CONTRACT_ADDRESS()": FunctionFragment;
+    "DIP_DECIMALS()": FunctionFragment;
+    "EXP()": FunctionFragment;
+    "MAINNET_ID()": FunctionFragment;
+    "MAX_REWARD_RATE_EXP()": FunctionFragment;
+    "MAX_REWARD_RATE_VALUE()": FunctionFragment;
+    "MULTIPLIER()": FunctionFragment;
+    "MULTIPLIER_HALF()": FunctionFragment;
+    "ROUNDING_DEFAULT()": FunctionFragment;
+    "YEAR_DURATION()": FunctionFragment;
     "activate(address,address)": FunctionFragment;
+    "activateAndSetOwner(address,address,address)": FunctionFragment;
+    "blockNumber()": FunctionFragment;
     "calculateCapitalSupport(bytes5,address,uint256)": FunctionFragment;
     "calculateRequiredStaking(bytes5,address,uint256)": FunctionFragment;
     "calculateRewards(uint256,uint256)": FunctionFragment;
@@ -91,7 +103,11 @@ export interface IStakingInterface extends utils.Interface {
     "capitalSupport(uint96)": FunctionFragment;
     "claimRewards(uint96)": FunctionFragment;
     "createStake(uint96,uint256)": FunctionFragment;
+    "decimals()": FunctionFragment;
+    "ftoi(uint256,uint8)": FunctionFragment;
+    "ftoi(uint256)": FunctionFragment;
     "getBundleInfo(uint96)": FunctionFragment;
+    "getBundleState(uint96)": FunctionFragment;
     "getDip()": FunctionFragment;
     "getInfo(uint96)": FunctionFragment;
     "getRegistry()": FunctionFragment;
@@ -99,17 +115,24 @@ export interface IStakingInterface extends utils.Interface {
     "getVersion(uint256)": FunctionFragment;
     "getVersionInfo(uint48)": FunctionFragment;
     "implementsIStaking()": FunctionFragment;
+    "intToBytes(uint256,uint8)": FunctionFragment;
     "isActivated(uint48)": FunctionFragment;
     "isStakeOwner(uint96,address)": FunctionFragment;
     "isStakingSupported(uint96)": FunctionFragment;
     "isStakingSupportedForType(uint8)": FunctionFragment;
     "isUnstakingSupported(uint96)": FunctionFragment;
+    "itof(uint256)": FunctionFragment;
+    "itof(uint256,int8)": FunctionFragment;
     "maxRewardRate()": FunctionFragment;
+    "owner()": FunctionFragment;
     "rateDecimals()": FunctionFragment;
     "refillRewardReserves(uint256)": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
     "rewardBalance()": FunctionFragment;
     "rewardRate()": FunctionFragment;
     "rewardReserves()": FunctionFragment;
+    "setDipContract(address)": FunctionFragment;
+    "setRegistry(address)": FunctionFragment;
     "setRewardRate(uint256)": FunctionFragment;
     "setStakingRate(bytes5,address,uint256)": FunctionFragment;
     "setStakingWallet(address)": FunctionFragment;
@@ -118,7 +141,11 @@ export interface IStakingInterface extends utils.Interface {
     "stakes(uint96)": FunctionFragment;
     "stakingRate(bytes5,address)": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
+    "toInt(bytes5)": FunctionFragment;
+    "toInt(uint32)": FunctionFragment;
+    "toInt(uint40)": FunctionFragment;
     "toRate(uint256,int8)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
     "unstake(uint96,uint256)": FunctionFragment;
     "unstakeAndClaimRewards(uint96)": FunctionFragment;
     "version()": FunctionFragment;
@@ -129,7 +156,19 @@ export interface IStakingInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "DIP_CONTRACT_ADDRESS"
+      | "DIP_DECIMALS"
+      | "EXP"
+      | "MAINNET_ID"
+      | "MAX_REWARD_RATE_EXP"
+      | "MAX_REWARD_RATE_VALUE"
+      | "MULTIPLIER"
+      | "MULTIPLIER_HALF"
+      | "ROUNDING_DEFAULT"
+      | "YEAR_DURATION"
       | "activate"
+      | "activateAndSetOwner"
+      | "blockNumber"
       | "calculateCapitalSupport"
       | "calculateRequiredStaking"
       | "calculateRewards"
@@ -137,7 +176,11 @@ export interface IStakingInterface extends utils.Interface {
       | "capitalSupport"
       | "claimRewards"
       | "createStake"
+      | "decimals"
+      | "ftoi(uint256,uint8)"
+      | "ftoi(uint256)"
       | "getBundleInfo"
+      | "getBundleState"
       | "getDip"
       | "getInfo"
       | "getRegistry"
@@ -145,17 +188,24 @@ export interface IStakingInterface extends utils.Interface {
       | "getVersion"
       | "getVersionInfo"
       | "implementsIStaking"
+      | "intToBytes"
       | "isActivated"
       | "isStakeOwner"
       | "isStakingSupported"
       | "isStakingSupportedForType"
       | "isUnstakingSupported"
+      | "itof(uint256)"
+      | "itof(uint256,int8)"
       | "maxRewardRate"
+      | "owner"
       | "rateDecimals"
       | "refillRewardReserves"
+      | "renounceOwnership"
       | "rewardBalance"
       | "rewardRate"
       | "rewardReserves"
+      | "setDipContract"
+      | "setRegistry"
       | "setRewardRate"
       | "setStakingRate"
       | "setStakingWallet"
@@ -164,7 +214,11 @@ export interface IStakingInterface extends utils.Interface {
       | "stakes"
       | "stakingRate"
       | "toChain"
+      | "toInt(bytes5)"
+      | "toInt(uint32)"
+      | "toInt(uint40)"
       | "toRate"
+      | "transferOwnership"
       | "unstake"
       | "unstakeAndClaimRewards"
       | "version"
@@ -174,8 +228,57 @@ export interface IStakingInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "DIP_CONTRACT_ADDRESS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DIP_DECIMALS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "EXP", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "MAINNET_ID",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MAX_REWARD_RATE_EXP",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MAX_REWARD_RATE_VALUE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MULTIPLIER",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MULTIPLIER_HALF",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ROUNDING_DEFAULT",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "YEAR_DURATION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "activate",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "activateAndSetOwner",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "blockNumber",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "calculateCapitalSupport",
@@ -213,8 +316,21 @@ export interface IStakingInterface extends utils.Interface {
     functionFragment: "createStake",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ftoi(uint256,uint8)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ftoi(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getBundleInfo",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBundleState",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "getDip", values?: undefined): string;
@@ -243,6 +359,10 @@ export interface IStakingInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "intToBytes",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isActivated",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -263,9 +383,18 @@ export interface IStakingInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "itof(uint256)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "itof(uint256,int8)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "maxRewardRate",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "rateDecimals",
     values?: undefined
@@ -273,6 +402,10 @@ export interface IStakingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "refillRewardReserves",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "rewardBalance",
@@ -285,6 +418,14 @@ export interface IStakingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "rewardReserves",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setDipContract",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRegistry",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setRewardRate",
@@ -323,8 +464,24 @@ export interface IStakingInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "toInt(bytes5)",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "toInt(uint32)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "toInt(uint40)",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "toRate",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "unstake",
@@ -345,7 +502,46 @@ export interface IStakingInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "DIP_CONTRACT_ADDRESS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DIP_DECIMALS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "EXP", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "MAINNET_ID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "MAX_REWARD_RATE_EXP",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MAX_REWARD_RATE_VALUE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "MULTIPLIER", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "MULTIPLIER_HALF",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ROUNDING_DEFAULT",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "YEAR_DURATION",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "activate", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "activateAndSetOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "blockNumber",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "calculateCapitalSupport",
     data: BytesLike
@@ -374,8 +570,21 @@ export interface IStakingInterface extends utils.Interface {
     functionFragment: "createStake",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ftoi(uint256,uint8)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ftoi(uint256)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getBundleInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBundleState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getDip", data: BytesLike): Result;
@@ -397,6 +606,7 @@ export interface IStakingInterface extends utils.Interface {
     functionFragment: "implementsIStaking",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "intToBytes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isActivated",
     data: BytesLike
@@ -418,9 +628,18 @@ export interface IStakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "itof(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "itof(uint256,int8)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "maxRewardRate",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rateDecimals",
     data: BytesLike
@@ -430,12 +649,24 @@ export interface IStakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "rewardBalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "rewardRate", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "rewardReserves",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setDipContract",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRegistry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -461,7 +692,23 @@ export interface IStakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "toChain", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "toInt(bytes5)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "toInt(uint32)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "toInt(uint40)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "toRate", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "unstake", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "unstakeAndClaimRewards",
@@ -479,6 +726,7 @@ export interface IStakingInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "Initialized(uint8)": EventFragment;
     "LogStakingNewStakeCreated(uint96,address,uint96)": EventFragment;
     "LogStakingRewardRateSet(address,uint256,uint256)": EventFragment;
     "LogStakingRewardReservesDecreased(address,uint256,uint256)": EventFragment;
@@ -490,8 +738,10 @@ export interface IStakingInterface extends utils.Interface {
     "LogStakingUnstaked(uint96,address,uint96,uint256,uint256)": EventFragment;
     "LogStakingWalletChanged(address,address,address)": EventFragment;
     "LogVersionableActivated(uint48,address,address)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogStakingNewStakeCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogStakingRewardRateSet"): EventFragment;
   getEvent(
@@ -507,7 +757,15 @@ export interface IStakingInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "LogStakingUnstaked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogStakingWalletChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LogVersionableActivated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface LogStakingNewStakeCreatedEventObject {
   target: BigNumber;
@@ -658,12 +916,24 @@ export type LogVersionableActivatedEvent = TypedEvent<
 export type LogVersionableActivatedEventFilter =
   TypedEventFilter<LogVersionableActivatedEvent>;
 
-export interface IStaking extends BaseContract {
+export interface OwnershipTransferredEventObject {
+  previousOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferredEventObject
+>;
+
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface StakingV02 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: IStakingInterface;
+  interface: StakingV02Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -685,11 +955,40 @@ export interface IStaking extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    DIP_CONTRACT_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
+
+    DIP_DECIMALS(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    EXP(overrides?: CallOverrides): Promise<[number]>;
+
+    MAINNET_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MAX_REWARD_RATE_EXP(overrides?: CallOverrides): Promise<[number]>;
+
+    MAX_REWARD_RATE_VALUE(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MULTIPLIER(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MULTIPLIER_HALF(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    ROUNDING_DEFAULT(overrides?: CallOverrides): Promise<[number]>;
+
+    YEAR_DURATION(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     activate(
       implementation: PromiseOrValue<string>,
       activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    activateAndSetOwner(
+      implementation: PromiseOrValue<string>,
+      newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    blockNumber(overrides?: CallOverrides): Promise<[number]>;
 
     calculateCapitalSupport(
       chain: PromiseOrValue<BytesLike>,
@@ -722,7 +1021,7 @@ export interface IStaking extends BaseContract {
     ): Promise<[BigNumber] & { capitalAmount: BigNumber }>;
 
     claimRewards(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -732,8 +1031,21 @@ export interface IStaking extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    decimals(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "ftoi(uint256,uint8)"(
+      a: PromiseOrValue<BigNumberish>,
+      rounding: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "ftoi(uint256)"(
+      a: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getBundleInfo(
-      bundle: PromiseOrValue<BigNumberish>,
+      bundleNft: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -757,11 +1069,22 @@ export interface IStaking extends BaseContract {
         expiryAt: number;
         stakingSupported: boolean;
         unstakingSupported: boolean;
-        stakeBalance: BigNumber;
+        stakeAmount: BigNumber;
       }
     >;
 
-    getDip(overrides?: CallOverrides): Promise<[string]>;
+    getBundleState(
+      target: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [number, number, number] & {
+        objectState: number;
+        bundleState: number;
+        expiryAt: number;
+      }
+    >;
+
+    getDip(overrides?: CallOverrides): Promise<[string] & { dip: string }>;
 
     getInfo(
       id: PromiseOrValue<BigNumberish>,
@@ -790,13 +1113,19 @@ export interface IStaking extends BaseContract {
 
     implementsIStaking(overrides?: CallOverrides): Promise<[boolean]>;
 
+    intToBytes(
+      x: PromiseOrValue<BigNumberish>,
+      shift: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     isActivated(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     isStakeOwner(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean] & { isOwner: boolean }>;
@@ -816,40 +1145,61 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean] & { isSupported: boolean }>;
 
-    maxRewardRate(
+    "itof(uint256)"(
+      a: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { rate: BigNumber }>;
+    ): Promise<[BigNumber]>;
 
-    rateDecimals(
+    "itof(uint256,int8)"(
+      a: PromiseOrValue<BigNumberish>,
+      exp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { decimals: BigNumber }>;
+    ): Promise<[BigNumber]>;
+
+    maxRewardRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    rateDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     refillRewardReserves(
       dipAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    renounceOwnership(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     rewardBalance(
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { dipAmount: BigNumber }>;
+    ): Promise<[BigNumber] & { dips: BigNumber }>;
 
-    rewardRate(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { rate: BigNumber }>;
+    rewardRate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     rewardReserves(
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { dipAmount: BigNumber }>;
+    ): Promise<[BigNumber] & { dips: BigNumber }>;
+
+    setDipContract(
+      dipToken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setRegistry(
+      registryAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     setRewardRate(
-      rewardRate: PromiseOrValue<BigNumberish>,
+      newRewardRate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setStakingRate(
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
-      stakingRate: PromiseOrValue<BigNumberish>,
+      newStakingRate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -859,14 +1209,14 @@ export interface IStaking extends BaseContract {
     ): Promise<ContractTransaction>;
 
     stake(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       dipAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     stakeBalance(
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { dipAmount: BigNumber }>;
+    ): Promise<[BigNumber] & { dips: BigNumber }>;
 
     stakes(
       target: PromiseOrValue<BigNumberish>,
@@ -877,12 +1227,27 @@ export interface IStaking extends BaseContract {
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { stakingRate: BigNumber }>;
+    ): Promise<[BigNumber] & { rate: BigNumber }>;
 
     toChain(
       chainId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    "toInt(bytes5)"(
+      x: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "toInt(uint32)"(
+      x: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "toInt(uint40)"(
+      x: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     toRate(
       value: PromiseOrValue<BigNumberish>,
@@ -890,14 +1255,19 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     unstake(
-      id: PromiseOrValue<BigNumberish>,
-      dipAmount: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     unstakeAndClaimRewards(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -917,11 +1287,40 @@ export interface IStaking extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  DIP_CONTRACT_ADDRESS(overrides?: CallOverrides): Promise<string>;
+
+  DIP_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
+
+  EXP(overrides?: CallOverrides): Promise<number>;
+
+  MAINNET_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MAX_REWARD_RATE_EXP(overrides?: CallOverrides): Promise<number>;
+
+  MAX_REWARD_RATE_VALUE(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MULTIPLIER(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MULTIPLIER_HALF(overrides?: CallOverrides): Promise<BigNumber>;
+
+  ROUNDING_DEFAULT(overrides?: CallOverrides): Promise<number>;
+
+  YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
   activate(
     implementation: PromiseOrValue<string>,
     activatedBy: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  activateAndSetOwner(
+    implementation: PromiseOrValue<string>,
+    newOwner: PromiseOrValue<string>,
+    activatedBy: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  blockNumber(overrides?: CallOverrides): Promise<number>;
 
   calculateCapitalSupport(
     chain: PromiseOrValue<BytesLike>,
@@ -954,7 +1353,7 @@ export interface IStaking extends BaseContract {
   ): Promise<BigNumber>;
 
   claimRewards(
-    id: PromiseOrValue<BigNumberish>,
+    stakeId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -964,8 +1363,21 @@ export interface IStaking extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "ftoi(uint256,uint8)"(
+    a: PromiseOrValue<BigNumberish>,
+    rounding: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "ftoi(uint256)"(
+    a: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getBundleInfo(
-    bundle: PromiseOrValue<BigNumberish>,
+    bundleNft: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
     [
@@ -989,7 +1401,18 @@ export interface IStaking extends BaseContract {
       expiryAt: number;
       stakingSupported: boolean;
       unstakingSupported: boolean;
-      stakeBalance: BigNumber;
+      stakeAmount: BigNumber;
+    }
+  >;
+
+  getBundleState(
+    target: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<
+    [number, number, number] & {
+      objectState: number;
+      bundleState: number;
+      expiryAt: number;
     }
   >;
 
@@ -1016,13 +1439,19 @@ export interface IStaking extends BaseContract {
 
   implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
 
+  intToBytes(
+    x: PromiseOrValue<BigNumberish>,
+    shift: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   isActivated(
     _version: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   isStakeOwner(
-    id: PromiseOrValue<BigNumberish>,
+    stakeId: PromiseOrValue<BigNumberish>,
     user: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -1042,12 +1471,29 @@ export interface IStaking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  "itof(uint256)"(
+    a: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "itof(uint256,int8)"(
+    a: PromiseOrValue<BigNumberish>,
+    exp: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   maxRewardRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
 
   rateDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
   refillRewardReserves(
     dipAmount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  renounceOwnership(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1057,15 +1503,25 @@ export interface IStaking extends BaseContract {
 
   rewardReserves(overrides?: CallOverrides): Promise<BigNumber>;
 
+  setDipContract(
+    dipToken: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setRegistry(
+    registryAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setRewardRate(
-    rewardRate: PromiseOrValue<BigNumberish>,
+    newRewardRate: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setStakingRate(
     chain: PromiseOrValue<BytesLike>,
     token: PromiseOrValue<string>,
-    stakingRate: PromiseOrValue<BigNumberish>,
+    newStakingRate: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1075,7 +1531,7 @@ export interface IStaking extends BaseContract {
   ): Promise<ContractTransaction>;
 
   stake(
-    id: PromiseOrValue<BigNumberish>,
+    stakeId: PromiseOrValue<BigNumberish>,
     dipAmount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1098,20 +1554,40 @@ export interface IStaking extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  "toInt(bytes5)"(
+    x: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "toInt(uint32)"(
+    x: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "toInt(uint40)"(
+    x: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   toRate(
     value: PromiseOrValue<BigNumberish>,
     exp: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  transferOwnership(
+    newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   unstake(
-    id: PromiseOrValue<BigNumberish>,
-    dipAmount: PromiseOrValue<BigNumberish>,
+    stakeId: PromiseOrValue<BigNumberish>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   unstakeAndClaimRewards(
-    id: PromiseOrValue<BigNumberish>,
+    stakeId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1131,11 +1607,40 @@ export interface IStaking extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    DIP_CONTRACT_ADDRESS(overrides?: CallOverrides): Promise<string>;
+
+    DIP_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    EXP(overrides?: CallOverrides): Promise<number>;
+
+    MAINNET_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MAX_REWARD_RATE_EXP(overrides?: CallOverrides): Promise<number>;
+
+    MAX_REWARD_RATE_VALUE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MULTIPLIER(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MULTIPLIER_HALF(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ROUNDING_DEFAULT(overrides?: CallOverrides): Promise<number>;
+
+    YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
     activate(
       implementation: PromiseOrValue<string>,
       activatedBy: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    activateAndSetOwner(
+      implementation: PromiseOrValue<string>,
+      newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    blockNumber(overrides?: CallOverrides): Promise<number>;
 
     calculateCapitalSupport(
       chain: PromiseOrValue<BytesLike>,
@@ -1168,7 +1673,7 @@ export interface IStaking extends BaseContract {
     ): Promise<BigNumber>;
 
     claimRewards(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1178,8 +1683,21 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "ftoi(uint256,uint8)"(
+      a: PromiseOrValue<BigNumberish>,
+      rounding: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "ftoi(uint256)"(
+      a: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBundleInfo(
-      bundle: PromiseOrValue<BigNumberish>,
+      bundleNft: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -1203,7 +1721,18 @@ export interface IStaking extends BaseContract {
         expiryAt: number;
         stakingSupported: boolean;
         unstakingSupported: boolean;
-        stakeBalance: BigNumber;
+        stakeAmount: BigNumber;
+      }
+    >;
+
+    getBundleState(
+      target: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<
+      [number, number, number] & {
+        objectState: number;
+        bundleState: number;
+        expiryAt: number;
       }
     >;
 
@@ -1230,13 +1759,19 @@ export interface IStaking extends BaseContract {
 
     implementsIStaking(overrides?: CallOverrides): Promise<boolean>;
 
+    intToBytes(
+      x: PromiseOrValue<BigNumberish>,
+      shift: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     isActivated(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     isStakeOwner(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1256,7 +1791,20 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    "itof(uint256)"(
+      a: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "itof(uint256,int8)"(
+      a: PromiseOrValue<BigNumberish>,
+      exp: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     maxRewardRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
 
     rateDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1265,21 +1813,33 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
     rewardBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     rewardRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     rewardReserves(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setDipContract(
+      dipToken: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setRegistry(
+      registryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setRewardRate(
-      rewardRate: PromiseOrValue<BigNumberish>,
+      newRewardRate: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setStakingRate(
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
-      stakingRate: PromiseOrValue<BigNumberish>,
+      newStakingRate: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1289,7 +1849,7 @@ export interface IStaking extends BaseContract {
     ): Promise<void>;
 
     stake(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       dipAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1312,20 +1872,40 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    "toInt(bytes5)"(
+      x: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "toInt(uint32)"(
+      x: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "toInt(uint40)"(
+      x: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     toRate(
       value: PromiseOrValue<BigNumberish>,
       exp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     unstake(
-      id: PromiseOrValue<BigNumberish>,
-      dipAmount: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     unstakeAndClaimRewards(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1346,6 +1926,9 @@ export interface IStaking extends BaseContract {
   };
 
   filters: {
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
     "LogStakingNewStakeCreated(uint96,address,uint96)"(
       target?: null,
       user?: null,
@@ -1478,14 +2061,52 @@ export interface IStaking extends BaseContract {
       implementation?: null,
       activatedBy?: null
     ): LogVersionableActivatedEventFilter;
+
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
+    ): OwnershipTransferredEventFilter;
   };
 
   estimateGas: {
+    DIP_CONTRACT_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    DIP_DECIMALS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    EXP(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MAINNET_ID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MAX_REWARD_RATE_EXP(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MAX_REWARD_RATE_VALUE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MULTIPLIER(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MULTIPLIER_HALF(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ROUNDING_DEFAULT(overrides?: CallOverrides): Promise<BigNumber>;
+
+    YEAR_DURATION(overrides?: CallOverrides): Promise<BigNumber>;
+
     activate(
       implementation: PromiseOrValue<string>,
       activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    activateAndSetOwner(
+      implementation: PromiseOrValue<string>,
+      newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    blockNumber(overrides?: CallOverrides): Promise<BigNumber>;
 
     calculateCapitalSupport(
       chain: PromiseOrValue<BytesLike>,
@@ -1518,7 +2139,7 @@ export interface IStaking extends BaseContract {
     ): Promise<BigNumber>;
 
     claimRewards(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1528,8 +2149,26 @@ export interface IStaking extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "ftoi(uint256,uint8)"(
+      a: PromiseOrValue<BigNumberish>,
+      rounding: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "ftoi(uint256)"(
+      a: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBundleInfo(
-      bundle: PromiseOrValue<BigNumberish>,
+      bundleNft: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBundleState(
+      target: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1556,13 +2195,19 @@ export interface IStaking extends BaseContract {
 
     implementsIStaking(overrides?: CallOverrides): Promise<BigNumber>;
 
+    intToBytes(
+      x: PromiseOrValue<BigNumberish>,
+      shift: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     isActivated(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isStakeOwner(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1582,12 +2227,29 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    "itof(uint256)"(
+      a: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "itof(uint256,int8)"(
+      a: PromiseOrValue<BigNumberish>,
+      exp: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     maxRewardRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     rateDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     refillRewardReserves(
       dipAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1597,15 +2259,25 @@ export interface IStaking extends BaseContract {
 
     rewardReserves(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setDipContract(
+      dipToken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setRegistry(
+      registryAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setRewardRate(
-      rewardRate: PromiseOrValue<BigNumberish>,
+      newRewardRate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setStakingRate(
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
-      stakingRate: PromiseOrValue<BigNumberish>,
+      newStakingRate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1615,7 +2287,7 @@ export interface IStaking extends BaseContract {
     ): Promise<BigNumber>;
 
     stake(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       dipAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1638,20 +2310,40 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    "toInt(bytes5)"(
+      x: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "toInt(uint32)"(
+      x: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "toInt(uint40)"(
+      x: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     toRate(
       value: PromiseOrValue<BigNumberish>,
       exp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     unstake(
-      id: PromiseOrValue<BigNumberish>,
-      dipAmount: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     unstakeAndClaimRewards(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1668,11 +2360,46 @@ export interface IStaking extends BaseContract {
   };
 
   populateTransaction: {
+    DIP_CONTRACT_ADDRESS(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    DIP_DECIMALS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    EXP(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MAINNET_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MAX_REWARD_RATE_EXP(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MAX_REWARD_RATE_VALUE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MULTIPLIER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MULTIPLIER_HALF(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ROUNDING_DEFAULT(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    YEAR_DURATION(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     activate(
       implementation: PromiseOrValue<string>,
       activatedBy: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    activateAndSetOwner(
+      implementation: PromiseOrValue<string>,
+      newOwner: PromiseOrValue<string>,
+      activatedBy: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    blockNumber(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     calculateCapitalSupport(
       chain: PromiseOrValue<BytesLike>,
@@ -1705,7 +2432,7 @@ export interface IStaking extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     claimRewards(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1715,8 +2442,26 @@ export interface IStaking extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "ftoi(uint256,uint8)"(
+      a: PromiseOrValue<BigNumberish>,
+      rounding: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "ftoi(uint256)"(
+      a: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getBundleInfo(
-      bundle: PromiseOrValue<BigNumberish>,
+      bundleNft: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBundleState(
+      target: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1745,13 +2490,19 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    intToBytes(
+      x: PromiseOrValue<BigNumberish>,
+      shift: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     isActivated(
       _version: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isStakeOwner(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       user: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1771,12 +2522,29 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    "itof(uint256)"(
+      a: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "itof(uint256,int8)"(
+      a: PromiseOrValue<BigNumberish>,
+      exp: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     maxRewardRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     rateDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     refillRewardReserves(
       dipAmount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1786,15 +2554,25 @@ export interface IStaking extends BaseContract {
 
     rewardReserves(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    setDipContract(
+      dipToken: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setRegistry(
+      registryAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setRewardRate(
-      rewardRate: PromiseOrValue<BigNumberish>,
+      newRewardRate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setStakingRate(
       chain: PromiseOrValue<BytesLike>,
       token: PromiseOrValue<string>,
-      stakingRate: PromiseOrValue<BigNumberish>,
+      newStakingRate: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1804,7 +2582,7 @@ export interface IStaking extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     stake(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       dipAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1827,20 +2605,40 @@ export interface IStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    "toInt(bytes5)"(
+      x: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "toInt(uint32)"(
+      x: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "toInt(uint40)"(
+      x: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     toRate(
       value: PromiseOrValue<BigNumberish>,
       exp: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    transferOwnership(
+      newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     unstake(
-      id: PromiseOrValue<BigNumberish>,
-      dipAmount: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     unstakeAndClaimRewards(
-      id: PromiseOrValue<BigNumberish>,
+      stakeId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -131,6 +131,10 @@ export declare namespace ITreasury {
 export interface DepegProductInterface extends utils.Interface {
   functions: {
     "CLAIM_ID()": FunctionFragment;
+    "EIP712_DOMAIN_NAME()": FunctionFragment;
+    "EIP712_DOMAIN_VERSION()": FunctionFragment;
+    "EIP712_POLICY_TYPE()": FunctionFragment;
+    "EIP712_TYPE_HASH()": FunctionFragment;
     "GANACHE()": FunctionFragment;
     "MAINNET()": FunctionFragment;
     "NAME()": FunctionFragment;
@@ -139,6 +143,7 @@ export interface DepegProductInterface extends utils.Interface {
     "addDepegBalances((address,uint256,uint256)[])": FunctionFragment;
     "applications()": FunctionFragment;
     "applyForPolicyWithBundle(address,uint256,uint256,uint256)": FunctionFragment;
+    "applyForPolicyWithBundleAndSignature(address,address,uint256,uint256,uint256,bytes32,bytes)": FunctionFragment;
     "approvalCallback()": FunctionFragment;
     "archiveCallback()": FunctionFragment;
     "calculateClaimAmount(uint256)": FunctionFragment;
@@ -179,11 +184,14 @@ export interface DepegProductInterface extends utils.Interface {
     "getProtectedWallet(bytes32)": FunctionFragment;
     "getRegistry()": FunctionFragment;
     "getRiskpoolId()": FunctionFragment;
+    "getSigner(bytes32,bytes)": FunctionFragment;
+    "getSignerFromDigestAndSignature(address,uint256,uint256,uint256,bytes32,bytes)": FunctionFragment;
     "getState()": FunctionFragment;
     "getTargetPrice()": FunctionFragment;
     "getToken()": FunctionFragment;
     "getTriggeredAt()": FunctionFragment;
     "getType()": FunctionFragment;
+    "getTypedDataV4Hash(bytes32)": FunctionFragment;
     "hasDepegClaim(bytes32)": FunctionFragment;
     "isNewPriceInfoEventAvailable()": FunctionFragment;
     "isOracle()": FunctionFragment;
@@ -213,6 +221,10 @@ export interface DepegProductInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "CLAIM_ID"
+      | "EIP712_DOMAIN_NAME"
+      | "EIP712_DOMAIN_VERSION"
+      | "EIP712_POLICY_TYPE"
+      | "EIP712_TYPE_HASH"
       | "GANACHE"
       | "MAINNET"
       | "NAME"
@@ -221,6 +233,7 @@ export interface DepegProductInterface extends utils.Interface {
       | "addDepegBalances"
       | "applications"
       | "applyForPolicyWithBundle"
+      | "applyForPolicyWithBundleAndSignature"
       | "approvalCallback"
       | "archiveCallback"
       | "calculateClaimAmount"
@@ -261,11 +274,14 @@ export interface DepegProductInterface extends utils.Interface {
       | "getProtectedWallet"
       | "getRegistry"
       | "getRiskpoolId"
+      | "getSigner"
+      | "getSignerFromDigestAndSignature"
       | "getState"
       | "getTargetPrice"
       | "getToken"
       | "getTriggeredAt"
       | "getType"
+      | "getTypedDataV4Hash"
       | "hasDepegClaim"
       | "isNewPriceInfoEventAvailable"
       | "isOracle"
@@ -293,6 +309,22 @@ export interface DepegProductInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "CLAIM_ID", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "EIP712_DOMAIN_NAME",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "EIP712_DOMAIN_VERSION",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "EIP712_POLICY_TYPE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "EIP712_TYPE_HASH",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "GANACHE", values?: undefined): string;
   encodeFunctionData(functionFragment: "MAINNET", values?: undefined): string;
   encodeFunctionData(functionFragment: "NAME", values?: undefined): string;
@@ -316,6 +348,18 @@ export interface DepegProductInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "applyForPolicyWithBundleAndSignature",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
@@ -477,6 +521,21 @@ export interface DepegProductInterface extends utils.Interface {
     functionFragment: "getRiskpoolId",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "getSigner",
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getSignerFromDigestAndSignature",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
   encodeFunctionData(functionFragment: "getState", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getTargetPrice",
@@ -488,6 +547,10 @@ export interface DepegProductInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getType", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getTypedDataV4Hash",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "hasDepegClaim",
     values: [PromiseOrValue<BytesLike>]
@@ -574,6 +637,22 @@ export interface DepegProductInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "CLAIM_ID", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "EIP712_DOMAIN_NAME",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "EIP712_DOMAIN_VERSION",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "EIP712_POLICY_TYPE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "EIP712_TYPE_HASH",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "GANACHE", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "MAINNET", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "NAME", data: BytesLike): Result;
@@ -592,6 +671,10 @@ export interface DepegProductInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "applyForPolicyWithBundle",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "applyForPolicyWithBundleAndSignature",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -745,6 +828,11 @@ export interface DepegProductInterface extends utils.Interface {
     functionFragment: "getRiskpoolId",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getSigner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getSignerFromDigestAndSignature",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getState", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTargetPrice",
@@ -756,6 +844,10 @@ export interface DepegProductInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getType", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTypedDataV4Hash",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "hasDepegClaim",
     data: BytesLike
@@ -1330,6 +1422,14 @@ export interface DepegProduct extends BaseContract {
   functions: {
     CLAIM_ID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    EIP712_DOMAIN_NAME(overrides?: CallOverrides): Promise<[string]>;
+
+    EIP712_DOMAIN_VERSION(overrides?: CallOverrides): Promise<[string]>;
+
+    EIP712_POLICY_TYPE(overrides?: CallOverrides): Promise<[string]>;
+
+    EIP712_TYPE_HASH(overrides?: CallOverrides): Promise<[string]>;
+
     GANACHE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     MAINNET(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -1350,10 +1450,21 @@ export interface DepegProduct extends BaseContract {
     ): Promise<[BigNumber] & { applicationCount: BigNumber }>;
 
     applyForPolicyWithBundle(
-      wallet: PromiseOrValue<string>,
+      protectedWallet: PromiseOrValue<string>,
       protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    applyForPolicyWithBundleAndSignature(
+      policyHolder: PromiseOrValue<string>,
+      protectedWallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      signatureId: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1579,6 +1690,22 @@ export interface DepegProduct extends BaseContract {
 
     getRiskpoolId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getSigner(
+      digest: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { signer: string }>;
+
+    getSignerFromDigestAndSignature(
+      protectedWallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      signatureId: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getState(overrides?: CallOverrides): Promise<[number]>;
 
     getTargetPrice(
@@ -1592,6 +1719,11 @@ export interface DepegProduct extends BaseContract {
     ): Promise<[BigNumber] & { triggeredAt: BigNumber }>;
 
     getType(overrides?: CallOverrides): Promise<[number]>;
+
+    getTypedDataV4Hash(
+      structHash: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     hasDepegClaim(
       processId: PromiseOrValue<BytesLike>,
@@ -1700,6 +1832,14 @@ export interface DepegProduct extends BaseContract {
 
   CLAIM_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
+  EIP712_DOMAIN_NAME(overrides?: CallOverrides): Promise<string>;
+
+  EIP712_DOMAIN_VERSION(overrides?: CallOverrides): Promise<string>;
+
+  EIP712_POLICY_TYPE(overrides?: CallOverrides): Promise<string>;
+
+  EIP712_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
   GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
   MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1718,10 +1858,21 @@ export interface DepegProduct extends BaseContract {
   applications(overrides?: CallOverrides): Promise<BigNumber>;
 
   applyForPolicyWithBundle(
-    wallet: PromiseOrValue<string>,
+    protectedWallet: PromiseOrValue<string>,
     protectedBalance: PromiseOrValue<BigNumberish>,
     duration: PromiseOrValue<BigNumberish>,
     bundleId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  applyForPolicyWithBundleAndSignature(
+    policyHolder: PromiseOrValue<string>,
+    protectedWallet: PromiseOrValue<string>,
+    protectedBalance: PromiseOrValue<BigNumberish>,
+    duration: PromiseOrValue<BigNumberish>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    signatureId: PromiseOrValue<BytesLike>,
+    signature: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1907,6 +2058,22 @@ export interface DepegProduct extends BaseContract {
 
   getRiskpoolId(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getSigner(
+    digest: PromiseOrValue<BytesLike>,
+    signature: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getSignerFromDigestAndSignature(
+    protectedWallet: PromiseOrValue<string>,
+    protectedBalance: PromiseOrValue<BigNumberish>,
+    duration: PromiseOrValue<BigNumberish>,
+    bundleId: PromiseOrValue<BigNumberish>,
+    signatureId: PromiseOrValue<BytesLike>,
+    signature: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getState(overrides?: CallOverrides): Promise<number>;
 
   getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1916,6 +2083,11 @@ export interface DepegProduct extends BaseContract {
   getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
 
   getType(overrides?: CallOverrides): Promise<number>;
+
+  getTypedDataV4Hash(
+    structHash: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   hasDepegClaim(
     processId: PromiseOrValue<BytesLike>,
@@ -2020,6 +2192,14 @@ export interface DepegProduct extends BaseContract {
   callStatic: {
     CLAIM_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
+    EIP712_DOMAIN_NAME(overrides?: CallOverrides): Promise<string>;
+
+    EIP712_DOMAIN_VERSION(overrides?: CallOverrides): Promise<string>;
+
+    EIP712_POLICY_TYPE(overrides?: CallOverrides): Promise<string>;
+
+    EIP712_TYPE_HASH(overrides?: CallOverrides): Promise<string>;
+
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2043,10 +2223,21 @@ export interface DepegProduct extends BaseContract {
     applications(overrides?: CallOverrides): Promise<BigNumber>;
 
     applyForPolicyWithBundle(
-      wallet: PromiseOrValue<string>,
+      protectedWallet: PromiseOrValue<string>,
       protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    applyForPolicyWithBundleAndSignature(
+      policyHolder: PromiseOrValue<string>,
+      protectedWallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      signatureId: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -2226,6 +2417,22 @@ export interface DepegProduct extends BaseContract {
 
     getRiskpoolId(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getSigner(
+      digest: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getSignerFromDigestAndSignature(
+      protectedWallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      signatureId: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getState(overrides?: CallOverrides): Promise<number>;
 
     getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2235,6 +2442,11 @@ export interface DepegProduct extends BaseContract {
     getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
 
     getType(overrides?: CallOverrides): Promise<number>;
+
+    getTypedDataV4Hash(
+      structHash: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     hasDepegClaim(
       processId: PromiseOrValue<BytesLike>,
@@ -2602,6 +2814,14 @@ export interface DepegProduct extends BaseContract {
   estimateGas: {
     CLAIM_ID(overrides?: CallOverrides): Promise<BigNumber>;
 
+    EIP712_DOMAIN_NAME(overrides?: CallOverrides): Promise<BigNumber>;
+
+    EIP712_DOMAIN_VERSION(overrides?: CallOverrides): Promise<BigNumber>;
+
+    EIP712_POLICY_TYPE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    EIP712_TYPE_HASH(overrides?: CallOverrides): Promise<BigNumber>;
+
     GANACHE(overrides?: CallOverrides): Promise<BigNumber>;
 
     MAINNET(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2620,10 +2840,21 @@ export interface DepegProduct extends BaseContract {
     applications(overrides?: CallOverrides): Promise<BigNumber>;
 
     applyForPolicyWithBundle(
-      wallet: PromiseOrValue<string>,
+      protectedWallet: PromiseOrValue<string>,
       protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    applyForPolicyWithBundleAndSignature(
+      policyHolder: PromiseOrValue<string>,
+      protectedWallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      signatureId: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2779,6 +3010,22 @@ export interface DepegProduct extends BaseContract {
 
     getRiskpoolId(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getSigner(
+      digest: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSignerFromDigestAndSignature(
+      protectedWallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      signatureId: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getState(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTargetPrice(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2788,6 +3035,11 @@ export interface DepegProduct extends BaseContract {
     getTriggeredAt(overrides?: CallOverrides): Promise<BigNumber>;
 
     getType(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getTypedDataV4Hash(
+      structHash: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     hasDepegClaim(
       processId: PromiseOrValue<BytesLike>,
@@ -2885,6 +3137,20 @@ export interface DepegProduct extends BaseContract {
   populateTransaction: {
     CLAIM_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    EIP712_DOMAIN_NAME(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    EIP712_DOMAIN_VERSION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    EIP712_POLICY_TYPE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    EIP712_TYPE_HASH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     GANACHE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     MAINNET(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2903,10 +3169,21 @@ export interface DepegProduct extends BaseContract {
     applications(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     applyForPolicyWithBundle(
-      wallet: PromiseOrValue<string>,
+      protectedWallet: PromiseOrValue<string>,
       protectedBalance: PromiseOrValue<BigNumberish>,
       duration: PromiseOrValue<BigNumberish>,
       bundleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    applyForPolicyWithBundleAndSignature(
+      policyHolder: PromiseOrValue<string>,
+      protectedWallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      signatureId: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3076,6 +3353,22 @@ export interface DepegProduct extends BaseContract {
 
     getRiskpoolId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getSigner(
+      digest: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSignerFromDigestAndSignature(
+      protectedWallet: PromiseOrValue<string>,
+      protectedBalance: PromiseOrValue<BigNumberish>,
+      duration: PromiseOrValue<BigNumberish>,
+      bundleId: PromiseOrValue<BigNumberish>,
+      signatureId: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTargetPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -3085,6 +3378,11 @@ export interface DepegProduct extends BaseContract {
     getTriggeredAt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getType(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getTypedDataV4Hash(
+      structHash: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     hasDepegClaim(
       processId: PromiseOrValue<BytesLike>,

@@ -137,6 +137,7 @@ export interface StakingV01Interface extends utils.Interface {
     "setStakingRate(bytes5,address,uint256)": FunctionFragment;
     "setStakingWallet(address)": FunctionFragment;
     "stake(uint96,uint256)": FunctionFragment;
+    "stakeBalance()": FunctionFragment;
     "stakes(uint96)": FunctionFragment;
     "stakingRate(bytes5,address)": FunctionFragment;
     "toChain(uint256)": FunctionFragment;
@@ -209,6 +210,7 @@ export interface StakingV01Interface extends utils.Interface {
       | "setStakingRate"
       | "setStakingWallet"
       | "stake"
+      | "stakeBalance"
       | "stakes"
       | "stakingRate"
       | "toChain"
@@ -446,6 +448,10 @@ export interface StakingV01Interface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "stakeBalance",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "stakes",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -676,6 +682,10 @@ export interface StakingV01Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "stakeBalance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "stakes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "stakingRate",
@@ -1204,6 +1214,10 @@ export interface StakingV01 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    stakeBalance(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { dips: BigNumber }>;
+
     stakes(
       target: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1522,6 +1536,8 @@ export interface StakingV01 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  stakeBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
   stakes(
     target: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -1837,6 +1853,8 @@ export interface StakingV01 extends BaseContract {
       dipAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    stakeBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
     stakes(
       target: PromiseOrValue<BigNumberish>,
@@ -2274,6 +2292,8 @@ export interface StakingV01 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    stakeBalance(overrides?: CallOverrides): Promise<BigNumber>;
+
     stakes(
       target: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2566,6 +2586,8 @@ export interface StakingV01 extends BaseContract {
       dipAmount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    stakeBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     stakes(
       target: PromiseOrValue<BigNumberish>,

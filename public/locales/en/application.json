@@ -14,7 +14,7 @@
     "coverageDurationDays": "Coverage duration",
     "coverageDurationUntil": "Coverage until *",
     "premiumAmount": "Premium",
-    "gasless_checkbox_label": "I would like Etherisc to submit the transaction and pay fees on by behalf.",
+    "gasless_checkbox_label": "I would like Etherisc to submit the transaction and pay fees on my behalf.",
     "gasless_checkbox_label_hint": "This service is provided on a best effort basis with a maximum gas price of {{maxGasPrice}} Gwei. Etherisc does not guarantee that the transaction will be submitted and mined in a timely and successful manner.",
     "button_buy": "Buy",
     "application_success": "Congratulations, your protection has been issued successfully!",
