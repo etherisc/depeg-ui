@@ -33,7 +33,7 @@
     "@walletconnect/web3-provider": "^1.8.0",
     "abi-coder": "^4.1.1",
     "canvas-confetti": "^1.6.0",
-    "chart.js": "^4.2.1",
+    "chart.js": "^4.3.0",
     "chartjs-adapter-moment": "^1.0.1",
     "color": "^4.2.3",
     "dayjs": "^1.11.7",
