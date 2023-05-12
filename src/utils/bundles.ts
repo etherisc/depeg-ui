@@ -1,6 +1,16 @@
 import { BigNumber } from "ethers";
 import { BundleData } from "../backend/bundle_data";
 import { minBigNumber } from "./bignumber";
+import dayjs from "dayjs";
+
+export function formatBundleState(bundle: BundleData, t: (p: string, o: any) => string): string {
+    const expiredAt = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 's');
+    if (expiredAt.isBefore(dayjs())) {
+        return t('bundle_state_expired', { ns: 'common'})
+    }
+    return t('bundle_state_' + bundle.state, { ns: 'common'})
+}
+
 
 export function filterApplicableBundles(bundles: Array<BundleData>, sumInsured: BigNumber, durationSeconds: number): Array<BundleData> {
     return bundles.filter(bundle => {

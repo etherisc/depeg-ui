@@ -22,6 +22,7 @@ import { LinkBehaviour } from "../link_behaviour";
 import Timestamp from "../timestamp";
 import StakeUsageIndicator from "./stake_usage_indicator";
 import { Bundle } from "typescript";
+import { formatBundleState } from "../../utils/bundles";
 
 export interface BundlesProps {
     usd2: string;
@@ -62,14 +63,6 @@ export default function BundlesListDesktop(props: BundlesProps) {
         </Box>)
     }
 
-    function formatBundleState(bundle: BundleData) {
-        const expiredAt = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 's');
-        if (expiredAt.isBefore(dayjs())) {
-            return t('bundle_state_expired', { ns: 'common'})
-        }
-        return t('bundle_state_' + bundle.state, { ns: 'common'})
-    }
-
     const columns: GridColDef[] = [
         { 
             field: 'id', 
@@ -94,7 +87,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             headerName: t('table.header.state'), 
             flex: 0.3,
             valueGetter: (params: GridValueGetterParams) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<BundleData>) => formatBundleState(params.value!),
+            valueFormatter: (params: GridValueFormatterParams<BundleData>) => formatBundleState(params.value!, t),
         },
         {
             field: 'apr',
