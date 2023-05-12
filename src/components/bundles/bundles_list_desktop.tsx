@@ -1,6 +1,6 @@
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Container, FormControlLabel, Switch, useMediaQuery, useTheme } from "@mui/material";
+import { Container, FormControlLabel, Switch, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -10,11 +10,11 @@ import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams, GridToolbar
 import dayjs from "dayjs";
 import { BigNumber } from "ethers";
 import { Trans, useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
-import { addBundle, finishLoading, reset, setMaxActiveBundles, showBundle, startLoading } from "../../redux/slices/bundles";
+import { showBundle } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { ga_event } from "../../utils/google_analytics";
 import { formatCurrencyBN } from "../../utils/numbers";
@@ -24,21 +24,18 @@ import Timestamp from "../timestamp";
 import StakeUsageIndicator from "./stake_usage_indicator";
 
 export interface BundlesProps {
-    backend: BackendApi;
+    usd2: string;
+    usd2Decimals: number;
 }
 
 export default function BundlesListDesktop(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const dispatch = useDispatch();
 
-    const signer = useSelector((state: RootState) => state.chain.signer);
     const address = useSelector((state: RootState) => state.account.address);
     const bundles = useSelector((state: RootState) => state.bundles.bundles);
     const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
-
-    const bundleManagementApi = props.backend.bundleManagement;
     
     // handle bundles via reducer to avoid duplicates that are caused by the async nature of the data retrieval and the fact that react strictmode initialize components twice
     const [paginationModel, setPaginationModel] = useState({
@@ -51,25 +48,6 @@ export default function BundlesListDesktop(props: BundlesProps) {
     function handleShowAllBundlesChanged(event: React.ChangeEvent<HTMLInputElement>) {
         setShowAllBundles(!showAllBundles);
     }
-
-    useEffect(() => {
-        async function getBundles() {
-            dispatch(startLoading());
-            dispatch(reset());
-            
-            if (address === undefined ) {
-                dispatch(finishLoading());
-                return;
-            }
-    
-            await bundleManagementApi.fetchAllBundles((bundle: BundleData) => dispatch(addBundle(bundle)) );
-            const maxActiveBundles = await bundleManagementApi.maxBundles();
-            const activeBundles = await bundleManagementApi.activeBundles();
-            dispatch(setMaxActiveBundles(maxActiveBundles));
-            dispatch(finishLoading());
-        }
-        getBundles();
-    }, [signer, showAllBundles, bundleManagementApi, address, dispatch]); // update bundles when signer changes
 
     function mouseHovering(id: number): boolean {
         return hoveringOverBundleId === id;
@@ -123,8 +101,8 @@ export default function BundlesListDesktop(props: BundlesProps) {
             flex: 0.65,
             valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
-                const capital = formatCurrencyBN(params.value, props.backend.usd2Decimals);
-                return `${props.backend.usd2} ${capital}`;
+                const capital = formatCurrencyBN(params.value, props.usd2Decimals);
+                return `${props.usd2} ${capital}`;
             }
         },
         { 
@@ -133,8 +111,8 @@ export default function BundlesListDesktop(props: BundlesProps) {
             flex: 0.65,
             valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
-                const capacity = formatCurrencyBN(params.value, props.backend.usd2Decimals);
-                return `${props.backend.usd2} ${capacity}`
+                const capacity = formatCurrencyBN(params.value, props.usd2Decimals);
+                return `${props.usd2} ${capacity}`
             }
         },
         { 
@@ -170,7 +148,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
                 const capitalSupport = params.row.capitalSupport !== undefined ? BigNumber.from(params.row.capitalSupport) : undefined;
                 const lockedCapital = params.row.locked !== undefined ? BigNumber.from(params.row.locked) : BigNumber.from(0);
                 let stakeUsage = calculateStakeUsage(capitalSupport, lockedCapital);
-                return [ stakeUsage, capitalSupport, lockedCapital, props.backend.usd2, props.backend.usd2Decimals ];
+                return [ stakeUsage, capitalSupport, lockedCapital, props.usd2, props.usd2Decimals ];
             },
             renderCell: (params: GridRenderCellParams<[number|undefined, BigNumber, BigNumber, string, number]>) => {
                 const stakeUsage = params.value![0];
