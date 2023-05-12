@@ -15,14 +15,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { BundleData } from "../../backend/bundle_data";
 import { showBundle } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
+import { formatBundleState } from "../../utils/bundles";
 import { ga_event } from "../../utils/google_analytics";
-import { formatCurrencyBN, toHexString } from "../../utils/numbers";
+import { formatCurrencyBN } from "../../utils/numbers";
 import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
 import { LinkBehaviour } from "../link_behaviour";
 import Timestamp from "../timestamp";
 import StakeUsageIndicator from "./stake_usage_indicator";
-import { Bundle } from "typescript";
-import { formatBundleState } from "../../utils/bundles";
 
 export interface BundlesProps {
     usd2: string;

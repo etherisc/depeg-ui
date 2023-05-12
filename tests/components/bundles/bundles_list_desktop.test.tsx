@@ -1,15 +1,12 @@
 import '@testing-library/jest-dom';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import dayjs from 'dayjs';
-import { parseEther, parseUnits } from 'ethers/lib/utils';
-import { SnackbarProvider } from 'notistack';
-import Policies from '../../../src/components/policies/policies';
-import { mockSimple } from '../../mocks/backend_api/backend_api_mock';
-import { mockPoliciesSimple, mockPoliciesSimpleWithClaim } from '../../mocks/policies/simple';
-import { renderWithProviders } from '../../util/render_with_provider';
-import BundlesListDesktop from '../../../src/components/bundles/bundles_list_desktop';
-import { BundleData } from '../../../src/backend/bundle_data';
 import { BigNumber } from 'ethers';
+import { parseEther, parseUnits } from 'ethers/lib/utils';
+import { BundleData } from '../../../src/backend/bundle_data';
+import BundlesListDesktop from '../../../src/components/bundles/bundles_list_desktop';
+import { mockSimple } from '../../mocks/backend_api/backend_api_mock';
+import { renderWithProviders } from '../../util/render_with_provider';
 
 jest.mock('react-i18next', () => ({
     ...jest.requireActual('react-i18next'),
