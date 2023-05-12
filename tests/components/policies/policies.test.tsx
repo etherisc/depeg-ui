@@ -263,12 +263,9 @@ describe('When rendering the policies list', () => {
             }
         );
 
-        // await waitFor(async () => {
-            const count = await screen.findAllByRole("row");
-        //     console.log("count " + count);
-        //     console.log("\n\n");
-            expect(count).toHaveLength(5);
-        // });
+        await waitFor(async () => 
+            expect(await screen.findAllByRole("row")).toHaveLength(6)
+        );
         
         const rows = await screen.findAllByRole("row");
 
