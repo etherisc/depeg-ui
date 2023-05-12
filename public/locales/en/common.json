@@ -75,6 +75,7 @@
     "bundle_state_1": "Locked",
     "bundle_state_2": "Closed",
     "bundle_state_3": "Burned",
+    "bundle_state_expired": "Expired",
     "coins_sent": "Some coins have been sent to your wallet for testing purposes",
     "stake_usage": "Stake Usage",
     "locked_capital": "Locked Capital",

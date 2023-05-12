@@ -9,6 +9,7 @@ import { formatCurrencyBN } from "../../utils/numbers";
 import Address from "../address";
 import Timestamp from "../timestamp";
 import WithTooltip from "../with_tooltip";
+import { formatBundleState } from "../../utils/bundles";
 
 interface BundleDetailsProps {
     bundle: BundleData;
@@ -34,7 +35,6 @@ export default function BundleDetails(props: BundleDetailsProps) {
     const maxSumInsured = BigNumber.from(props.bundle.maxProtectedAmount);
     const minDuration = props.bundle.minDuration / 86400;
     const maxDuration = props.bundle.maxDuration / 86400;
-    const state = props.bundle.state;
     const createdAtTS = props.bundle.createdAt;
     const endTS = props.bundle.createdAt + BigNumber.from(props.bundle.lifetime).toNumber();
 
@@ -44,7 +44,7 @@ export default function BundleDetails(props: BundleDetailsProps) {
 
     return (<>
         <Grid container spacing={1} data-testid="bundle-details">
-            <NameValue name={t('state')} value={<>{t('bundle_state_' + state, { ns: 'common'})}</>}/>
+            <NameValue name={t('state')} value={<>{formatBundleState(props.bundle, t)}</>}/>
             <NameValue name={t('balance')} value={
                 <>
                     {symbol + " " + formatCurrencyBN(balance, props.decimals)} 

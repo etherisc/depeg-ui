@@ -1,54 +1,27 @@
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, useTheme } from "@mui/material";
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import { useTranslation } from "next-i18next";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
-import { addBundle, finishLoading, reset, setMaxActiveBundles, showBundle, startLoading } from "../../redux/slices/bundles";
+import { showBundle } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { formatDateUtc } from "../../utils/date";
 import { ga_event } from "../../utils/google_analytics";
 
 export interface BundlesProps {
-    backend: BackendApi;
 }
 
 export default function BundlesListMobile(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
-    const theme = useTheme();
     const dispatch = useDispatch();
 
-    const signer = useSelector((state: RootState) => state.chain.signer);
     const address = useSelector((state: RootState) => state.account.address);
     const bundles = useSelector((state: RootState) => state.bundles.bundles);
     const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
-
-    const bundleManagementApi = props.backend.bundleManagement;
-    
-    useEffect(() => {
-        async function getBundles() {
-            dispatch(startLoading());
-            dispatch(reset());
-            
-            if (address === undefined ) {
-                dispatch(finishLoading());
-                return;
-            }
-    
-            await bundleManagementApi.fetchAllBundles((bundle: BundleData) => dispatch(addBundle(bundle)) );
-            const maxActiveBundles = await bundleManagementApi.maxBundles();
-            const activeBundles = await bundleManagementApi.activeBundles();
-            dispatch(setMaxActiveBundles(maxActiveBundles));
-            dispatch(finishLoading());
-        }
-        getBundles();
-    }, [signer, bundleManagementApi, address, dispatch]); // update bundles when signer changes
-
 
     function renderListItemTitle(bundle: BundleData) {
         const lifetime = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 'seconds').unix();
