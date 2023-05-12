@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import { useTranslation } from "next-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
 import { showBundle } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";

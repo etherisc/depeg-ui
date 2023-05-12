@@ -12,16 +12,16 @@ import { BigNumber } from "ethers";
 import { Trans, useTranslation } from "next-i18next";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
 import { showBundle } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { ga_event } from "../../utils/google_analytics";
-import { formatCurrencyBN } from "../../utils/numbers";
+import { formatCurrencyBN, toHexString } from "../../utils/numbers";
 import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
 import { LinkBehaviour } from "../link_behaviour";
 import Timestamp from "../timestamp";
 import StakeUsageIndicator from "./stake_usage_indicator";
+import { Bundle } from "typescript";
 
 export interface BundlesProps {
     usd2: string;
@@ -62,6 +62,14 @@ export default function BundlesListDesktop(props: BundlesProps) {
         </Box>)
     }
 
+    function formatBundleState(bundle: BundleData) {
+        const expiredAt = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 's');
+        if (expiredAt.isBefore(dayjs())) {
+            return t('bundle_state_expired', { ns: 'common'})
+        }
+        return t('bundle_state_' + bundle.state, { ns: 'common'})
+    }
+
     const columns: GridColDef[] = [
         { 
             field: 'id', 
@@ -85,7 +93,8 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'state', 
             headerName: t('table.header.state'), 
             flex: 0.3,
-            valueFormatter: (params: GridValueFormatterParams<number>) => t('bundle_state_' + params.value, { ns: 'common'}),
+            valueGetter: (params: GridValueGetterParams) => params.row,
+            valueFormatter: (params: GridValueFormatterParams<BundleData>) => formatBundleState(params.value!),
         },
         {
             field: 'apr',
@@ -129,7 +138,11 @@ export default function BundlesListDesktop(props: BundlesProps) {
                 const lifetime = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 'seconds').unix();
                 return (<Timestamp at={lifetime} />);
             },
-            sortComparator: (v1: BundleData, v2: BundleData) =>  v1.createdAt - v2.createdAt,
+            sortComparator: (v1: BundleData, v2: BundleData) => {
+                const expiredAtV1 = dayjs.unix(v1.createdAt).add(parseInt(v1.lifetime), 'seconds').unix();
+                const expiredAtV2 = dayjs.unix(v2.createdAt).add(parseInt(v2.lifetime), 'seconds').unix();
+                return expiredAtV1 - expiredAtV2;
+            }
         },
         {
             field: 'policies', 
@@ -227,6 +240,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
                 onPaginationModelChange={setPaginationModel}
                 disableRowSelectionOnClick={true}
                 disableColumnMenu={true}
+                columnBuffer={9}
                 componentsProps={{ 
                     row: { 
                         onMouseEnter: (e: any) => {
