@@ -224,7 +224,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
                 }}
                 initialState={{
                     sorting: {
-                        sortModel: [{ field: 'apr', sort: 'asc' }, { field: 'coverageUntil', sort: 'asc' }],
+                        sortModel: [{ field: 'apr', sort: 'asc' }],
                     },
                 }}
                 paginationModel={paginationModel}

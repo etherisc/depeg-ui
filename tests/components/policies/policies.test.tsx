@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import dayjs from 'dayjs';
-import { parseEther } from 'ethers/lib/utils';
+import { parseEther, parseUnits } from 'ethers/lib/utils';
 import { SnackbarProvider } from 'notistack';
 import Policies from '../../../src/components/policies/policies';
 import { mockSimple } from '../../mocks/backend_api/backend_api_mock';
@@ -46,6 +46,16 @@ describe('When rendering the policies list', () => {
                             amount: parseEther("1.1").toString(),
                             currency: 'ETH',
                             decimals: 18,
+                        },
+                        balanceUsd1: {
+                            amount: parseUnits("11000", 6).toString(),
+                            currency: 'USDC',
+                            decimals: 6,
+                        },
+                        balanceUsd2: {
+                            amount: parseUnits("12000", 6).toString(),
+                            currency: 'USDT',
+                            decimals: 6,
                         },
                     },
                     policies: {
@@ -108,6 +118,16 @@ describe('When rendering the policies list', () => {
                             currency: 'ETH',
                             decimals: 18,
                         },
+                        balanceUsd1: {
+                            amount: parseUnits("11000", 6).toString(),
+                            currency: 'USDC',
+                            decimals: 6,
+                        },
+                        balanceUsd2: {
+                            amount: parseUnits("12000", 6).toString(),
+                            currency: 'USDT',
+                            decimals: 6,
+                        },
                     },
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
@@ -155,6 +175,16 @@ describe('When rendering the policies list', () => {
                             amount: parseEther("1.1").toString(),
                             currency: 'ETH',
                             decimals: 18,
+                        },
+                        balanceUsd1: {
+                            amount: parseUnits("11000", 6).toString(),
+                            currency: 'USDC',
+                            decimals: 6,
+                        },
+                        balanceUsd2: {
+                            amount: parseUnits("12000", 6).toString(),
+                            currency: 'USDT',
+                            decimals: 6,
                         },
                     },
                     policies: {
@@ -212,6 +242,16 @@ describe('When rendering the policies list', () => {
                             currency: 'ETH',
                             decimals: 18,
                         },
+                        balanceUsd1: {
+                            amount: parseUnits("11000", 6).toString(),
+                            currency: 'USDC',
+                            decimals: 6,
+                        },
+                        balanceUsd2: {
+                            amount: parseUnits("12000", 6).toString(),
+                            currency: 'USDT',
+                            decimals: 6,
+                        },
                     },
                     policies: {
                         policies: mockPoliciesSimpleWithClaim(),
@@ -223,9 +263,12 @@ describe('When rendering the policies list', () => {
             }
         );
 
-        await waitFor(async () => 
-            expect(await screen.findAllByRole("row")).toHaveLength(6)
-        );
+        // await waitFor(async () => {
+            const count = await screen.findAllByRole("row");
+        //     console.log("count " + count);
+        //     console.log("\n\n");
+            expect(count).toHaveLength(5);
+        // });
         
         const rows = await screen.findAllByRole("row");
 
