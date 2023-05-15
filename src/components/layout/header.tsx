@@ -89,15 +89,15 @@ export default function Header(props: HeaderProps) {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Box sx={{ mt: 0.25, display: { xs: 'none', md: 'inherit'}}}>
+                        <Box sx={{ pt: 1, display: { xs: 'none', md: 'inherit'}}}>
                             <Link href="https://www.etherisc.com" target="_blank" rel="noreferrer">
-                                <Typography sx={{lineHeight: '16px', color: theme.palette.text.primary}} >
-                                    <Image src="/etherisc_logo_white.svg" alt="Etherisc logo" width={100} height={22}  />
-                                </Typography>
+                                <Image src="/etherisc_logo_white.svg" alt="Etherisc logo" width={100} height={22}  />
                             </Link>
                         </Box>
-                        <Box sx={{ display: { xs: 'inherit', md: 'none'}}}>
-                            <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={28} height={22} />
+                        <Box sx={{ pt: 1, display: { xs: 'inherit', md: 'none'}}}>
+                            <Link href="https://www.etherisc.com" target="_blank" rel="noreferrer">
+                                <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={28} height={22} />
+                            </Link>
                         </Box>
                         <Box sx={{ ml: 2 }}>
                             <HeaderLink text={props.title} href="/" variant="h6" sx={{ display: { xs: 'none', md: 'block'}}} />
