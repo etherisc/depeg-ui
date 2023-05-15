@@ -1,17 +1,6 @@
-import { Button, Typography, useTheme } from '@mui/material';
+import { Button, Link, Typography, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-
-import Avatar from '@mui/material/Avatar';
-import Link from '@mui/material/Link';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import IconButton from '@mui/material/IconButton';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import TelegramIcon from '@mui/icons-material/Telegram';
-import GitHubIcon from '@mui/icons-material/GitHub';
-
 import React from 'react';
 import { DOT } from '../../utils/chars';
 import ChainData from './chain_data';
@@ -19,6 +8,8 @@ import Faucet from './faucet';
 import buildInfo from "../../version.json";
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDiscord, faGithub, faTelegram, faTwitter } from '@fortawesome/free-brands-svg-icons';
 
 export default function Footer() {
     const { t } = useTranslation('common');
@@ -43,18 +34,40 @@ export default function Footer() {
                     color="palette.secondary.dark"
                     >
                     <Box 
-                        sx={{ display: { 'xs': 'none', 'md': 'flex' }, ml: '0', mr: 'auto', verticalAlign: 'middle' }} 
+                        sx={{ 
+                            display: { 'xs': 'none', 'md': 'flex' }, 
+                            ml: '0', 
+                            mr: 'auto', 
+                            verticalAlign: 'middle', 
+                        }} 
                         justifySelf="left" 
-                    >
-                        <Link href="https://www.etherisc.com" target="_blank" rel="noopener noreferrer">
-                            <Avatar alt="Etherisc logo" src="/etherisc_logo_bird_blue.svg"  sx={{ width: 28, height: 28 }} />
+                        >
+                        <Box component="span" sx={{ mr: 0.5, mt: -0.5, mb: -1 }} >
+                            <Link href="https://etherisc.com" target="_blank" rel="noreferrer">
+                                <Image src="/etherisc_logo_bird_blue.svg" alt="Etherisc logo" width={24} height={24} />
+                            </Link>
+                        </Box>
+                        <Link href="https://twitter.com/Etherisc/" target="_blank" rel="noreferrer">
+                            <Typography sx={{lineHeight: '16px', color: theme.palette.text.primary}} >
+                                <FontAwesomeIcon icon={faTwitter} className="fa" />
+                            </Typography>
                         </Link>
-
-                        <IconButton aria-label="Twitter.com" sx={{ width: 24, height: 24, marginLeft: 1 }} onClick={() => window.open('https://twitter.com/Etherisc/')}><TwitterIcon fontSize="small" /></IconButton>
-                        <IconButton aria-label="t.me" sx={{ width: 24, height: 24 }} onClick={() => window.open('https://t.me/etherisc_community')}><TelegramIcon fontSize="small" /></IconButton>
-                        <IconButton aria-label="GitHub.com" sx={{ width: 24, height: 24, marginRight: 1 }} onClick={() => window.open('https://github.com/etherisc/')}><GitHubIcon fontSize="small" /></IconButton>
-
-                        <Typography variant="body2" sx={{ fontSize: fontSize, ml: 1, marginTop: 0.5 }} color={theme.palette.text.primary}>
+                        <Link href="https://t.me/etherisc_community" target="_blank" rel="noreferrer">
+                            <Typography sx={{lineHeight: '16px', color: theme.palette.text.primary}} >
+                                <FontAwesomeIcon icon={faTelegram} className="fa" />
+                            </Typography>
+                        </Link>
+                        <Link href="https://discord.gg/cVsgakVG4R" target="_blank" rel="noreferrer">
+                            <Typography sx={{lineHeight: '16px', color: theme.palette.text.primary}} >
+                                <FontAwesomeIcon icon={faDiscord} className="fa" />
+                            </Typography>
+                        </Link>
+                        <Link href="https://github.com/etherisc/" target="_blank" rel="noreferrer">
+                            <Typography sx={{lineHeight: '16px', color: theme.palette.text.primary}} >
+                                <FontAwesomeIcon icon={faGithub} className="fa" />
+                            </Typography>
+                        </Link>
+                        <Typography variant="body2" sx={{ fontSize: fontSize, ml: 1, verticalAlign: 'middle' }} color={theme.palette.text.primary}>
                             {buildInfo.name} v{buildInfo.version} ({buildInfo.date})
                         </Typography>
                     </Box>
