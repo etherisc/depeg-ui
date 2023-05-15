@@ -2,7 +2,6 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
 import Account from '../account/account';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
@@ -91,17 +90,12 @@ export default function Header(props: HeaderProps) {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Link sx={{ marginTop: 1}} href="https://www.etherisc.com" target="_blank" rel="noopener noreferrer" >
-                            <Box sx={{ mt: 0.25, display: { xs: 'none', md: 'inherit'}}}>
-                                <Image src="/etherisc_logo_white.svg" alt="Etherisc logo" width={100} height={22}  />
-                            </Box>
-                        </Link>
-                        <Link href="https://www.etherisc.com" target="_blank" rel="noopener noreferrer" sx={{ display: { xs: 'inherit', md: 'none'}}}>
-                            <Box sx={{ marginTop: 0.5, display: { xs: 'inherit', md: 'none'}}}>
-                                <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={28} height={22} />
-                            </Box>
-                        </Link>
-
+                        <Box sx={{ mt: 0.25, display: { xs: 'none', md: 'inherit'}}}>
+                            <Image src="/etherisc_logo_white.svg" alt="Etherisc logo" width={100} height={22}  />
+                        </Box>
+                        <Box sx={{ display: { xs: 'inherit', md: 'none'}}}>
+                            <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={28} height={22} />
+                        </Box>
                         <Box sx={{ ml: 2 }}>
                             <HeaderLink text={props.title} href="/" variant="h6" sx={{ display: { xs: 'none', md: 'block'}}} />
                         </Box>
