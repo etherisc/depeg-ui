@@ -1,6 +1,6 @@
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Container, FormControlLabel, Switch, useTheme } from "@mui/material";
+import { Alert, Container, FormControlLabel, Switch, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -30,9 +30,9 @@ export interface BundlesProps {
 
 export default function BundlesListDesktop(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
-    const theme = useTheme();
     const dispatch = useDispatch();
 
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const address = useSelector((state: RootState) => state.account.address);
     const bundles = useSelector((state: RootState) => state.bundles.bundles);
     const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
@@ -196,6 +196,14 @@ export default function BundlesListDesktop(props: BundlesProps) {
     }
 
     function NoRowsOverlay() {
+        if (! isConnected) {
+            return (<Container maxWidth={false} sx={{ height: 1, display: 'flex', alignItems: 'center', justifyContent: "center" }}>
+                <Alert variant="standard" severity="info">
+                    <Trans i18nKey="common:alert.no_wallet_connected" t={t} />
+                </Alert>
+            </Container>);
+        }
+        
         return (<Container maxWidth={false} sx={{ height: 1, display: 'flex', alignItems: 'center', justifyContent: "center" }}>
                 <Trans i18nKey="no_bundles" t={t}>
                     <Link href="/stake">click here</Link>
