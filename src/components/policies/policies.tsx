@@ -43,6 +43,7 @@ export default function Policies(props: PoliciesProps) {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const router = useRouter();
     const walletAddress = useSelector((state: RootState) => state.account.address);
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
 
     const dispatch = useDispatch();
     const policies = useSelector((state: RootState) => state.policies.policies);
@@ -354,6 +355,13 @@ export default function Policies(props: PoliciesProps) {
     }
 
     function NoRowsOverlay() {
+        if (! isConnected) {
+            return (<Container maxWidth={false} sx={{ height: 1, display: 'flex', alignItems: 'center', justifyContent: "center" }}>
+                <Alert variant="standard" severity="info">
+                    <Trans i18nKey="no_wallet_connected" t={t} />
+                </Alert>
+            </Container>);
+        }
         return (<Container maxWidth={false} sx={{ height: 1, display: 'flex', alignItems: 'center', justifyContent: "center" }}>
                 <Trans i18nKey="no_policies" t={t}>
                     <Link href="/">click here</Link>

@@ -20,6 +20,7 @@
         "show_trx": "Details"
     },
     "no_policies": "No policies for this wallet found - \u00A0<0>click here</0>\u00A0to apply for a new policy",
+    "no_wallet_connected": "Please connect your wallet to view your policies",
     "is_owner": "The connected wallet is the owner of the policy",
     "is_protected": "The connected wallet is protected by the policy",
     "claim_info": "Please confirm the claim transaction on contract {{address}} in your wallet app",
