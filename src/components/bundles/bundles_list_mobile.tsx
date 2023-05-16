@@ -51,7 +51,7 @@ export default function BundlesListMobile(props: BundlesProps) {
 
     if (!isConnected) {
         return (<Alert variant="standard" severity="info">
-                    <Trans i18nKey="common:alert.no_wallet_connected" t={t} />
+                    <Trans i18nKey="alert.no_wallet_connected" t={t} />
                 </Alert>);
     }
 

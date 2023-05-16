@@ -30,9 +30,6 @@
     "warning": {
         "unload_page": "The transaction is still pending. Please do not leave the page or close the browser window."
     },
-    "alert": {
-        "no_wallet_connected": "Please connect your wallet to view policies"
-    },
     "error": {
         "unexpected_network_title": "Unexpected network",
         "unexpected_network": "Please connect your wallet to '{{network}}'",

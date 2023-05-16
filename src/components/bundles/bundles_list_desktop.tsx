@@ -199,7 +199,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
         if (! isConnected) {
             return (<Container maxWidth={false} sx={{ height: 1, display: 'flex', alignItems: 'center', justifyContent: "center" }}>
                 <Alert variant="standard" severity="info">
-                    <Trans i18nKey="common:alert.no_wallet_connected" t={t} />
+                    <Trans i18nKey="alert.no_wallet_connected" t={t} />
                 </Alert>
             </Container>);
         }

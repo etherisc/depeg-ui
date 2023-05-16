@@ -39,7 +39,8 @@
         "claimable_policies": {
             "title": "{{currency}} has depegged",
             "message": "Ensure you are connected with the protected wallet, then click the 'claim' button to disburse your claim."
-        }
+        },
+        "no_wallet_connected": "Please connect your wallet to view policies"
     },
     "claim_success": {
         "alert": {
