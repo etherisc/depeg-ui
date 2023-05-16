@@ -1,10 +1,10 @@
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Alert, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
-import { useTranslation } from "next-i18next";
+import { Trans, useTranslation } from "next-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { BundleData } from "../../backend/bundle_data";
 import { showBundle } from "../../redux/slices/bundles";
@@ -19,6 +19,7 @@ export default function BundlesListMobile(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
     const dispatch = useDispatch();
 
+    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const address = useSelector((state: RootState) => state.account.address);
     const bundles = useSelector((state: RootState) => state.bundles.bundles);
     const isLoadingBundles = useSelector((state: RootState) => state.bundles.isLoadingBundles);
@@ -47,6 +48,12 @@ export default function BundlesListMobile(props: BundlesProps) {
     const bundlesToShow = [] as BundleData[];
     bundles.forEach((bundle: BundleData) => bundlesToShow.push(bundle));
     bundlesToShow.sort((a, b) => a.apr - b.apr);
+
+    if (!isConnected) {
+        return (<Alert variant="standard" severity="info">
+                    <Trans i18nKey="common:alert.no_wallet_connected" t={t} />
+                </Alert>);
+    }
 
     return (
         <>
