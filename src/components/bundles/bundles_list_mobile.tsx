@@ -49,12 +49,6 @@ export default function BundlesListMobile(props: BundlesProps) {
     bundles.forEach((bundle: BundleData) => bundlesToShow.push(bundle));
     bundlesToShow.sort((a, b) => a.apr - b.apr);
 
-    if (!isConnected) {
-        return (<Alert variant="standard" severity="info">
-                    <Trans i18nKey="alert.no_wallet_connected" t={t} />
-                </Alert>);
-    }
-
     return (
         <>
             <Typography variant="h5" mb={2}>{t('title')}</Typography>

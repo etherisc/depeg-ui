@@ -22,21 +22,27 @@ export default function BundlesList(props: BundlesProps) {
 
     useEffect(() => {
         async function getBundles() {
-            if (signer === undefined) {
-                return;
-            }
+            // TODO: remove
+            // if (signer === undefined) {
+            //     return;
+            // }
 
             dispatch(startLoading());
             dispatch(reset());
             
+            // TODO: remove
             if (address === undefined ) {
                 dispatch(finishLoading());
                 return;
             }
     
             await bundleManagementApi.fetchAllBundles((bundle: BundleData) => dispatch(addBundle(bundle)) );
-            const maxActiveBundles = await bundleManagementApi.maxBundles();
-            dispatch(setMaxActiveBundles(maxActiveBundles));
+
+            if (signer !== undefined) {
+                const maxActiveBundles = await bundleManagementApi.maxBundles();
+                dispatch(setMaxActiveBundles(maxActiveBundles));
+            }
+            
             dispatch(finishLoading());
         }
         getBundles();
