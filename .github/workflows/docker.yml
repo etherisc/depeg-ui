@@ -19,4 +19,4 @@ jobs:
       - uses: rlespinasse/github-slug-action@v2.x
       - run: docker build ghcr.io/etherisc/depeg-ui/depeg-ui:${{ env.GITHUB_REF_SLUG }} .
       # no push to ghcr.io for now
-      # - run: docker push ghcr.io/etherisc/vcm-frontend/vcm-frontend:${{ env.GITHUB_REF_SLUG }}
+      # - run: docker push ghcr.io/etherisc/depeg-ui/depeg-ui:${{ env.GITHUB_REF_SLUG }}
