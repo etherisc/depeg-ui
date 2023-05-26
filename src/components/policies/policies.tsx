@@ -192,8 +192,10 @@ export default function Policies(props: PoliciesProps) {
             return (<Button variant="text" color="secondary" href={trxHref} target="_blank">{t('action.show_trx')}</Button>);
         } else if (policy.isAllowedToClaim) {
             return (<Button variant="text" color="secondary" onClick={() => claim(policy)}>{t('action.claim')}</Button>);
+        } else {
+            return (<WithTooltip tooltipText={t('claiming_not_possible')}><Button variant="text" color="secondary" onClick={() => claim(policy)} 
+                        disabled={true} >{t('action.claim')}</Button></WithTooltip>);
         }
-        return (<></>);
     }
 
     function claimsTooltip(claim: ClaimData) {
