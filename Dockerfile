@@ -16,6 +16,7 @@ FROM ${VARIANT} AS builder
 ARG INSTANCE=production
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/src/contracts ./src/contracts
 COPY . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
