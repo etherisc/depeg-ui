@@ -1,0 +1,23 @@
+name: Docker
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+    - '*'
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  docker:
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # - run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u doerfli --password-stdin
+      - uses: rlespinasse/github-slug-action@v2.x
+      - run: docker build ghcr.io/etherisc/depeg-ui/depeg-ui:${{ env.GITHUB_REF_SLUG }} .
+        if: github.ref != 'refs/heads/master'
+      # no push to ghcr.io for now
+      # - run: docker push ghcr.io/etherisc/vcm-frontend/vcm-frontend:${{ env.GITHUB_REF_SLUG }}
