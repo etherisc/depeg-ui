@@ -25,7 +25,7 @@ export default function PayoutExample(props: PayoutExampleProps) {
     const minimumPrice = process.env.NEXT_PUBLIC_DEPEG_MINIMUM_PRICE || '0.80';
     const maximumDepegPct = process.env.NEXT_PUBLIC_DEPEG_MAXIMUM_DEPEG_PCT || '20';
     const exampleRate = useSelector((state: RootState) => state.application.exampleRate);
-    const claimGracePeriodDays = useSelector((state: RootState) => state.application.claimGracePeriod) / 3600 / 24;
+    const claimGracePeriodDays = (useSelector((state: RootState) => state.application.claimGracePeriod) / 3600 / 24).toString();
 
     let protectedAmt = 1000;
 
