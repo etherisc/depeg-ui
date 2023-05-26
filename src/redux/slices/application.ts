@@ -8,6 +8,7 @@ export interface ApplicationState {
     isLoadingBundles: boolean;
     bundles: BundleData[];
     exampleRate: string;
+    claimGracePeriod: number;
     applicableBundleIds: number[] | undefined;
     selectedBundleId: number | undefined;
     premium: string | undefined;
@@ -20,6 +21,7 @@ const initialState: ApplicationState = {
     bundles: [],
     isLoadingBundles: false,
     exampleRate: "0.9",
+    claimGracePeriod: 7 * 24 * 3600,
     applicableBundleIds: undefined,
     selectedBundleId: undefined,
     premium: undefined,

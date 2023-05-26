@@ -191,9 +191,11 @@ export default function Policies(props: PoliciesProps) {
             const trxHref = blockExplorerUrl + "/tx/" + policy.transactionHash;
             return (<Button variant="text" color="secondary" href={trxHref} target="_blank">{t('action.show_trx')}</Button>);
         } else if (policy.isAllowedToClaim) {
-            return (<Button variant="text" color="secondary" onClick={() => claim(policy)}>{t('action.claim')}</Button>);
+            return (<Button variant="text" color="secondary" onClick={() => claim(policy)} data-testid="claim-button">{t('action.claim')}</Button>);
+        } else {
+            return (<WithTooltip tooltipText={t('claiming_not_possible')}><Button variant="text" color="secondary" onClick={() => claim(policy)} 
+                        disabled={true} data-testid="claim-button">{t('action.claim')}</Button></WithTooltip>);
         }
-        return (<></>);
     }
 
     function claimsTooltip(claim: ClaimData) {

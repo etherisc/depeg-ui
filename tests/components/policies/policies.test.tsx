@@ -152,7 +152,9 @@ describe('When rendering the policies list', () => {
         expect(rows[3]).toHaveTextContent("application_state_8"); // claimable
         expect(rows[3].querySelector('[data-icon="user"]')).not.toBeInTheDocument();
         expect(rows[3].querySelector('[data-icon="shield-halved"]')).toBeInTheDocument();
-        expect(rows[3]).toHaveTextContent("action.claim");
+        const claimButtons = await screen.findAllByTestId("claim-button");
+        expect(claimButtons[2]).not.toHaveAttribute('disabled');
+        expect(claimButtons[2]).toHaveTextContent("action.claim");
     })
 
     it('a policy that has an open claim shows claim info and no claim button ', async () => {
@@ -205,7 +207,9 @@ describe('When rendering the policies list', () => {
 
         expect(rows[4]).toHaveTextContent("0xccE1…CF64");
         expect(rows[4]).toHaveTextContent("application_state_9"); // payout pending
-        expect(rows[4]).not.toHaveTextContent("action.claim");
+        const claimButtons = await screen.findAllByTestId("claim-button");
+        expect(claimButtons[3]).toHaveAttribute('disabled');
+
 
         const pendings = await screen.findAllByTestId("claim-pending-icon");
         expect(pendings).toHaveLength(2);
@@ -271,7 +275,8 @@ describe('When rendering the policies list', () => {
 
         expect(rows[4]).toHaveTextContent("0xccE1…CF64");
         expect(rows[4]).toHaveTextContent("application_state_9"); // payout pending
-        expect(rows[4]).not.toHaveTextContent("action.claim");
+        const claimButtons = await screen.findAllByTestId("claim-button");
+        expect(claimButtons[3]).toHaveAttribute('disabled');
 
         const pendings = await screen.findAllByTestId("claim-pending-icon");
         expect(pendings).toHaveLength(2);
