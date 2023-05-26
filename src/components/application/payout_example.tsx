@@ -1,9 +1,10 @@
 import { Box, Link, Typography } from "@mui/material";
 import { Trans, useTranslation } from "next-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { formatCurrency } from "../../utils/numbers";
 import WithTooltip from "../with_tooltip";
+import dayjs from "dayjs";
 
 interface PayoutExampleProps {
     protectedAmount: string | undefined;
@@ -13,7 +14,8 @@ interface PayoutExampleProps {
 
 export default function PayoutExample(props: PayoutExampleProps) {
     const { t } = useTranslation('application');
-    
+    const dispatch = useDispatch();
+
     const currency = props.currency;
     const currency2 = props.currency2;
     const currencyUSD = 'USD';
@@ -23,6 +25,7 @@ export default function PayoutExample(props: PayoutExampleProps) {
     const minimumPrice = process.env.NEXT_PUBLIC_DEPEG_MINIMUM_PRICE || '0.80';
     const maximumDepegPct = process.env.NEXT_PUBLIC_DEPEG_MAXIMUM_DEPEG_PCT || '20';
     const exampleRate = useSelector((state: RootState) => state.application.exampleRate);
+    const claimGracePeriodDays = useSelector((state: RootState) => state.application.claimGracePeriod) / 3600 / 24;
 
     let protectedAmt = 1000;
 
@@ -49,12 +52,26 @@ export default function PayoutExample(props: PayoutExampleProps) {
                     {triggerThreshold}
                     {recoveryThreshold}
                     {recoveryWindowHours}
-                    {minimumPrice}
-                    {maximumDepegPct}
                 </Trans> 
             </Typography>
-            <Typography variant="body2" component="div" data-testid="text2">
-                <Trans i18nKey="payout_example.text2" t={t} values={{
+            <Typography variant="body2" gutterBottom component="div" data-testid="text2">
+                <Trans i18nKey="payout_example.text2" t={t} 
+                    values={{ currency, currency2, currencyUSD, triggerThreshold, recoveryThreshold, recoveryWindowHours, minimumPrice, maximumDepegPct, claimGracePeriodDays}}
+                    >
+                    <Link target="_blank" href="/price" className="no_decoration">{t('payout_example.see_price_page')}</Link>
+                    <i>claim</i>
+                    <i>Policies</i>
+                    {/* print values for testing */}
+                    {triggerThreshold}
+                    {recoveryThreshold}
+                    {recoveryWindowHours}
+                    {minimumPrice}
+                    {maximumDepegPct}
+                    {claimGracePeriodDays}
+                </Trans> 
+            </Typography>
+            <Typography variant="body2" component="div" data-testid="text3">
+                <Trans i18nKey="payout_example.text3" t={t} values={{
                         protectedAmount,
                         payoutAmount,
                         currency,
