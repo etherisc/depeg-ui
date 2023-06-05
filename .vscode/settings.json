@@ -1,5 +1,7 @@
 {
   "peacock.remoteColor": "#033f5b",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#05618c",
     "activityBar.background": "#05618c",
@@ -18,7 +20,5 @@
     "titleBar.activeForeground": "#e7e7e7",
     "titleBar.inactiveBackground": "#033f5b99",
     "titleBar.inactiveForeground": "#e7e7e799"
-  },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
+  }
 }

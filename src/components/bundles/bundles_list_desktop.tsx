@@ -1,4 +1,4 @@
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Alert, Container, FormControlLabel, Switch, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridCellParams, GridColDef, GridRenderCellParams, GridRowParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import dayjs from "dayjs";
 import { BigNumber } from "ethers";
 import { Trans, useTranslation } from "next-i18next";
@@ -31,6 +31,7 @@ export interface BundlesProps {
 export default function BundlesListDesktop(props: BundlesProps) {
     const { t } = useTranslation(['bundles', 'common']);
     const dispatch = useDispatch();
+    const theme = useTheme();
 
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const address = useSelector((state: RootState) => state.account.address);
@@ -43,23 +44,9 @@ export default function BundlesListDesktop(props: BundlesProps) {
         page: 0,
     });
     const [ showAllBundles, setShowAllBundles ] = useState(true);
-    const [ hoveringOverBundleId, setHoveringOverBundleId ] = useState<number | undefined>(undefined);
 
     function handleShowAllBundlesChanged(event: React.ChangeEvent<HTMLInputElement>) {
         setShowAllBundles(!showAllBundles);
-    }
-
-    function mouseHovering(id: number): boolean {
-        return hoveringOverBundleId === id;
-    }
-
-    function renderActions(bundleData: BundleData) {
-        return (<Box display="flex" justifyContent="flex-end" minWidth="100%">
-            <Button variant="text" color="secondary" onClick={() => {
-                ga_event("bundle_details", { category: 'navigation' });
-                dispatch(showBundle(bundleData));
-            }} >{t('action.details')}</Button>
-        </Box>)
     }
 
     const columns: GridColDef[] = [
@@ -121,11 +108,8 @@ export default function BundlesListDesktop(props: BundlesProps) {
             headerName: t('table.header.lifetime'), 
             flex: 0.5,
             valueGetter: (params: GridValueGetterParams) => params.row,
-            colSpan: (params: GridCellParams<BundleData>) => mouseHovering(params.row.id) ? 2 : 1,
+            colSpan: 1,
             renderCell: (params: GridRenderCellParams<BundleData>) => {
-                if (mouseHovering(params.value!.id)) {
-                    return (renderActions(params.value!));
-                }
                 const bundle = params.value!;
                 const lifetime = dayjs.unix(bundle.createdAt).add(parseInt(bundle.lifetime), 'seconds').unix();
                 return (<Timestamp at={lifetime} />);
@@ -138,10 +122,34 @@ export default function BundlesListDesktop(props: BundlesProps) {
         },
         {
             field: 'policies', 
-            colSpan: (params: GridCellParams<BundleData>) => mouseHovering(params.row.id) ? 0 : 1,
+            colSpan: 1,
             headerName: t('table.header.policies'), 
             flex: 0.3
         },
+        {
+            field: 'actions',
+            type: 'actions',
+            flex: 0.2,
+            headerName: '', 
+            valueGetter: (params: GridValueGetterParams) => params.row,
+            getActions: (params: GridRowParams) => {
+                const bundleData = params.row as BundleData;
+                return [
+                <GridActionsCellItem 
+                    key={"details" + bundleData.id} 
+                    icon={
+                        <FontAwesomeIcon icon={faEye} color={theme.palette.primary.main} />
+                    } 
+                    title={t('action.details')}
+                    onClick={() => {
+                        console.log("show bundle details");
+                        ga_event("bundle_details", { category: 'navigation' });
+                        dispatch(showBundle(bundleData));
+                    }} 
+                    label="Details" 
+                    />,
+            ]}
+        }
     ];
 
     if (isStakingSupported) {
@@ -241,27 +249,6 @@ export default function BundlesListDesktop(props: BundlesProps) {
                 disableRowSelectionOnClick={true}
                 disableColumnMenu={true}
                 columnBuffer={9}
-                componentsProps={{ 
-                    row: { 
-                        onMouseEnter: (e: any) => {
-                            // console.log("enter", e);
-                            // onMouseEnter is also triggered when hovering over the embedded action button and we don't want to change the hover state in that case
-                            if ((e.target as HTMLElement).nodeName !== 'DIV') { 
-                                return;
-                            }
-                            const id = (e.target as HTMLElement).parentElement?.dataset?.id;
-                            setHoveringOverBundleId(id !== undefined ? parseInt(id) : undefined);
-                        },
-                        onMouseLeave: (e: any) => {
-                            // console.log("leave", e);
-                            const id = (e.target as HTMLElement).parentElement?.dataset?.id;
-                            if (id === undefined) {
-                                return;
-                            }
-                            setHoveringOverBundleId(undefined);
-                        },
-                    },
-                }}
                 />
         </>
     );
