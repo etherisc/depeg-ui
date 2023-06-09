@@ -55,7 +55,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.44.3",
     "react-i18next": "^12.3.1",
-    "react-redux": "^8.0.5",
+    "react-redux": "^8.0.7",
     "redis": "^4.6.6",
     "redis-om": "^0.3.6",
     "request-ip": "^3.3.0",
