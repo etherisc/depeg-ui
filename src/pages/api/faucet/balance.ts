@@ -22,7 +22,7 @@ export default async function handler(
     const coinSourceSigner: Signer = ethers.Wallet.fromMnemonic(process.env.NEXT_FAUCET_MNEMONIC ?? "").connect(provider);
 
     const erc20 = getErc20Token(process.env.NEXT_PUBLIC_FAUCET_COIN_ADDRESS ?? "", coinSourceSigner!);
-    const balance = await erc20.balanceOf(coinSourceSigner!.getAddress());
+    const balance = await erc20.balanceOf(await coinSourceSigner!.getAddress());
     const expectedBalance = parseUnits(process.env.NEXT_PUBLIC_FAUCET_EXPECTED_BALANCE ?? "1000000", currencyDecimals); // 1'000'000 USD2
     let status = 200;
 
