@@ -69,10 +69,11 @@ export class InvestApiSmartContract implements BundleManagementApi {
      */
     async riskpoolApi() {
         if (this.doNoUseDirectlydepegRiskpoolApi === undefined) {
+            const depegProductApi = await this.getDepegProductApi();
             this.doNoUseDirectlydepegRiskpoolApi = new DepegRiskpoolApi(
-                (await this.getDepegProductApi()).getDepegRiskpool(), 
-                (await this.getDepegProductApi()).getRiskpoolId(), 
-                (await this.getDepegProductApi()).getInstanceService(),
+                depegProductApi.getDepegRiskpool(), 
+                depegProductApi.getRiskpoolId(), 
+                depegProductApi.getInstanceService(),
                 this.usd2Decimals);
             await this.doNoUseDirectlydepegRiskpoolApi.initialize();
         }
