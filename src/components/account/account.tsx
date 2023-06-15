@@ -8,10 +8,16 @@ import Logout from "./logout";
 import { reconnectWallets } from "../../utils/wallet";
 import Login from "./login";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { RootState, store } from "../../redux/store";
+import { useWalletClient } from "wagmi";
+import { ethers, getDefaultProvider } from "ethers";
+import { connectChain } from "../../redux/slices/chain";
+import { getAndUpdateBlock, getChainState, setAccountRedux } from "../../utils/chain";
+import { fetchBalances } from "../../redux/thunks/account";
 
 export default function Account() {
     const dispatch = useDispatch();
+    const { data: walletClient } = useWalletClient();
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
     const address = useSelector((state: RootState) => state.account.address);
     const balance = useSelector((state: RootState) => state.account.balance);
@@ -23,6 +29,28 @@ export default function Account() {
 
     const [ loggedIn, setLoggedIn ] = useState(false);
 
+
+    useEffect(() => {
+        async function setEthersProvider(walletClient: any) {
+            console.log("wallet client", walletClient);
+            const provider = new ethers.providers.Web3Provider(walletClient.transport);
+            console.log("provider", provider);
+            console.log("connected with address", await provider.getSigner().getAddress());
+    
+            dispatch(connectChain(await getChainState(provider)));
+            setAccountRedux(provider.getSigner(), dispatch);
+            store.dispatch(fetchBalances(provider.getSigner()));
+    
+            provider.on("block", (blockNumber: number) => {
+                getAndUpdateBlock(dispatch, provider, blockNumber);
+            });
+        }
+
+        if (! isConnected && walletClient) {
+            setEthersProvider(walletClient);
+        }
+    }, [isConnected, walletClient, isConnected, dispatch]);
+
     useEffect(() => {
         console.log("signer changed");
         if (isConnected) {
@@ -33,7 +61,7 @@ export default function Account() {
     }, [isConnected]);
 
     useEffect(() => {
-        reconnectWallets(dispatch);
+        // reconnectWallets(dispatch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

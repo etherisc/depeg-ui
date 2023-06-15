@@ -11,7 +11,7 @@ import { connectChain } from "../../redux/slices/chain";
 import { getAndUpdateBlock, getChainState, removeSigner, setAccountRedux, updateSigner } from "../../utils/chain";
 import { store } from "../../redux/store";
 import { fetchBalances } from "../../redux/thunks/account";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useWalletClient } from "wagmi";
 
 
@@ -24,6 +24,7 @@ export default function LoginWithWalletConnectButton(props: any) {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const dispatch = useDispatch();
     const isConnected = useSelector((state: any) => state.chain.isConnected);
+    const { openConnectModal } = useConnectModal();
 
     // const { data: signer } = useSigner();
 
@@ -36,15 +37,17 @@ export default function LoginWithWalletConnectButton(props: any) {
         console.log("address", await provider.getSigner().getAddress());
     }
 
-    if (walletClient) {
-
-        fetchData(walletClient);
-
-    }
+    // if (walletClient) {
+    //     fetchData(walletClient);
+    // }
 
     async function login() {
         console.log("wallet connect login");
         closeDialog();
+
+        if (openConnectModal) {
+            openConnectModal();
+        }
 
         //  Create WalletConnect Provider
         // const wcProvider = new WalletConnectProvider(walletConnectConfig);
@@ -108,6 +111,11 @@ export default function LoginWithWalletConnectButton(props: any) {
     }
 
     return (
-        <><ConnectButton /></>
+        <>
+            <Button variant="contained" color="secondary" onClick={login} fullWidth>
+                <FontAwesomeIcon icon={faRightToBracket} className="fa" />
+                {buttonText}
+            </Button>
+        </>
     );
 }

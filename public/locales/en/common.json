@@ -13,8 +13,8 @@
     },
     "action": {
         "switch_network": "Switch to network '{{network}}'",
-        "login_walletconnect": "Connect with WalletConnect",
-        "login_walletconnect_short": "WalletConnect",
+        "login_walletconnect": "Connect with Rainbowkit",
+        "login_walletconnect_short": "Rainbowkit",
         "login_metamask": "Connect with Metamask",
         "login_metamask_short": "Metamask",
         "login": "Connect",
