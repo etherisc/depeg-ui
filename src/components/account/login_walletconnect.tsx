@@ -11,6 +11,9 @@ import { connectChain } from "../../redux/slices/chain";
 import { getAndUpdateBlock, getChainState, removeSigner, setAccountRedux, updateSigner } from "../../utils/chain";
 import { store } from "../../redux/store";
 import { fetchBalances } from "../../redux/thunks/account";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useWalletClient } from "wagmi";
+
 
 export default function LoginWithWalletConnectButton(props: any) {
     const { closeDialog } = props;
@@ -21,6 +24,23 @@ export default function LoginWithWalletConnectButton(props: any) {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const dispatch = useDispatch();
     const isConnected = useSelector((state: any) => state.chain.isConnected);
+
+    // const { data: signer } = useSigner();
+
+    const { data: walletClient } = useWalletClient();
+
+    async function fetchData(walletClient: any) {
+        console.log("wallet client", walletClient);
+        const provider = new ethers.providers.Web3Provider(walletClient.transport);
+        console.log("provider", provider);
+        console.log("address", await provider.getSigner().getAddress());
+    }
+
+    if (walletClient) {
+
+        fetchData(walletClient);
+
+    }
 
     async function login() {
         console.log("wallet connect login");
@@ -88,6 +108,6 @@ export default function LoginWithWalletConnectButton(props: any) {
     }
 
     return (
-        <>{button}</>
+        <><ConnectButton /></>
     );
 }

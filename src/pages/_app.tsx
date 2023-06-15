@@ -17,6 +17,16 @@ import { etheriscTheme } from '../config/theme';
 import Layout from '../components/layout/layout';
 import { faCartShopping, faShieldHalved, faSackDollar, faCoins, faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { GoogleAnalytics } from "nextjs-google-analytics";
+import '@rainbow-me/rainbowkit/styles.css';
+
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+} from '@rainbow-me/rainbowkit';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { polygonMumbai } from 'wagmi/chains';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { publicProvider } from 'wagmi/providers/public';
 
 // The following import prevents a Font Awesome icon server-side rendering bug,
 // where the icons flash from a very large icon down to a properly sized one:
@@ -57,6 +67,25 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
   const { t } = useTranslation('common');
   const dispatch = useDispatch();
   const provider = useSelector((state: RootState) => state.chain.provider);
+
+  const { chains, publicClient } = configureChains(
+    [polygonMumbai],
+    [
+      publicProvider()
+    ]
+  );
+  
+  const { connectors } = getDefaultWallets({
+    appName: 'Etherisc Depeg',
+    projectId: '6cf24be37dc19d58bc113806ab03aded',
+    chains
+  });
+  
+  const wagmiConfig = createConfig({
+    autoConnect: true,
+    connectors,
+    publicClient
+  })
 
   if (provider != undefined) {
     provider.on('network', (newNetwork: any, oldNetwork: any) => {
@@ -106,7 +135,11 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
   return (
     <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "center", vertical: "top" }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Layout {...appProps} />
+        <WagmiConfig config={wagmiConfig}>
+          <RainbowKitProvider chains={chains}>
+            <Layout {...appProps} />
+          </RainbowKitProvider>
+        </WagmiConfig>
       </LocalizationProvider>
     </SnackbarProvider>
   );

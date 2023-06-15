@@ -3,7 +3,7 @@
   "version": "1.1.17",
   "private": true,
   "scripts": {
-    "postinstall":"$npm_execpath run typechainDepegTypes && $npm_execpath run typechainRegistryTypes && $npm_execpath run typechainChainlinkTypes",
+    "postinstall": "$npm_execpath run typechainDepegTypes && $npm_execpath run typechainRegistryTypes && $npm_execpath run typechainChainlinkTypes",
     "dev": "next dev",
     "prebuild": "./extract_version.sh",
     "build": "next build",
@@ -21,14 +21,15 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.2",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
-    "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.4",
     "@mui/x-data-grid": "^6.7.0",
     "@mui/x-date-pickers": "^6.6.0",
+    "@rainbow-me/rainbowkit": "^1.0.2",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/color": "^3.0.3",
     "@types/request-ip": "^0.0.37",
@@ -58,7 +59,9 @@
     "redis": "^4.6.7",
     "redis-om": "^0.3.6",
     "request-ip": "^3.3.0",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.3",
+    "viem": "^1.0.7",
+    "wagmi": "^1.2.0"
   },
   "devDependencies": {
     "@chainlink/contracts": "^0.6.1",
