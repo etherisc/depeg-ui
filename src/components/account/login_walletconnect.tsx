@@ -13,6 +13,10 @@ import { store } from "../../redux/store";
 import { fetchBalances } from "../../redux/thunks/account";
 import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useWalletClient } from "wagmi";
+import UniversalProvider from "@walletconnect/universal-provider";
+import { polygonMumbai } from 'wagmi/chains'
+import { EthereumProvider } from '@walletconnect/ethereum-provider'
+import { createEmitAndSemanticDiagnosticsBuilderProgram } from "typescript";
 
 
 export default function LoginWithWalletConnectButton(props: any) {
@@ -45,9 +49,66 @@ export default function LoginWithWalletConnectButton(props: any) {
         console.log("wallet connect login");
         closeDialog();
 
-        if (openConnectModal) {
-            openConnectModal();
-        }
+        // const provider = await UniversalProvider.init({
+        //     logger: "info",
+        //     // relayUrl: "ws://<relay-url>",
+        //     projectId: "6cf24be37dc19d58bc113806ab03aded",
+        //     metadata: {
+        //       name: "React App",
+        //       description: "React App for WalletConnect",
+        //       url: "https://walletconnect.com/",
+        //       icons: ["https://avatars.githubusercontent.com/u/37784886"],
+        //     },
+        //     client: undefined, // optional instance of @walletconnect/sign-client
+        //   });
+          
+        //   //  create sub providers for each namespace/chain
+        //   await provider.connect({
+        //     namespaces: {
+        //       eip155: {
+        //         methods: [
+        //             "eth_sendTransaction",
+        //             "eth_signTransaction",
+        //             "eth_sign",
+        //             "personal_sign",
+        //             "eth_signTypedData",
+        //         ],
+        //         chains: ["eip155:80001"],
+        //         events: ["chainChanged", "accountsChanged"],
+        //         rpcMap: {
+        //           80001:
+        //             "https://rpc.walletconnect.com?chainId=eip155:80001&projectId=6cf24be37dc19d58bc113806ab03aded",
+        //         },
+        //       },
+        //     //   pairingTopic: "<123...topic>", // optional topic to connect to
+        //     //   skipPairing: false, // optional to skip pairing ( later it can be resumed by invoking .pair())
+        //     },
+        //   });
+
+        const provider = await EthereumProvider.init({
+            projectId: "6cf24be37dc19d58bc113806ab03aded", // REQUIRED your projectId
+            chains: [80001], // REQUIRED chain ids
+            showQrModal: true,
+            qrModalOptions: {
+                projectId: "6cf24be37dc19d58bc113806ab03aded", // REQUIRED your projectId
+                chains: [polygonMumbai], // REQUIRED chain ids
+                explorerRecommendedWalletIds: [
+                    "1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369"
+                ]
+            }
+        });
+
+        await provider.connect();
+        
+        //  Create Web3 Provider
+        const web3Provider = new ethers.providers.Web3Provider(provider);
+        dispatch(connectChain(await getChainState(web3Provider)));
+        setAccountRedux(web3Provider.getSigner(), dispatch);
+        store.dispatch(fetchBalances(web3Provider.getSigner()));
+
+        // if (openConnectModal) {
+        //     openConnectModal();
+        // }
 
         //  Create WalletConnect Provider
         // const wcProvider = new WalletConnectProvider(walletConnectConfig);

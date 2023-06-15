@@ -30,26 +30,26 @@ export default function Account() {
     const [ loggedIn, setLoggedIn ] = useState(false);
 
 
-    useEffect(() => {
-        async function setEthersProvider(walletClient: any) {
-            console.log("wallet client", walletClient);
-            const provider = new ethers.providers.Web3Provider(walletClient.transport);
-            console.log("provider", provider);
-            console.log("connected with address", await provider.getSigner().getAddress());
+    // useEffect(() => {
+    //     async function setEthersProvider(walletClient: any) {
+    //         console.log("wallet client", walletClient);
+    //         const provider = new ethers.providers.Web3Provider(walletClient.transport);
+    //         console.log("provider", provider);
+    //         console.log("connected with address", await provider.getSigner().getAddress());
     
-            dispatch(connectChain(await getChainState(provider)));
-            setAccountRedux(provider.getSigner(), dispatch);
-            store.dispatch(fetchBalances(provider.getSigner()));
+    //         dispatch(connectChain(await getChainState(provider)));
+    //         setAccountRedux(provider.getSigner(), dispatch);
+    //         store.dispatch(fetchBalances(provider.getSigner()));
     
-            provider.on("block", (blockNumber: number) => {
-                getAndUpdateBlock(dispatch, provider, blockNumber);
-            });
-        }
+    //         provider.on("block", (blockNumber: number) => {
+    //             getAndUpdateBlock(dispatch, provider, blockNumber);
+    //         });
+    //     }
 
-        if (! isConnected && walletClient) {
-            setEthersProvider(walletClient);
-        }
-    }, [isConnected, walletClient, isConnected, dispatch]);
+    //     if (! isConnected && walletClient) {
+    //         setEthersProvider(walletClient);
+    //     }
+    // }, [isConnected, walletClient, isConnected, dispatch]);
 
     useEffect(() => {
         console.log("signer changed");
