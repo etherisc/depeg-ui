@@ -3,7 +3,7 @@
   "version": "1.1.17",
   "private": true,
   "scripts": {
-    "postinstall":"$npm_execpath run typechainDepegTypes && $npm_execpath run typechainRegistryTypes && $npm_execpath run typechainChainlinkTypes",
+    "postinstall": "$npm_execpath run typechainDepegTypes && $npm_execpath run typechainRegistryTypes && $npm_execpath run typechainChainlinkTypes",
     "dev": "next dev",
     "prebuild": "./extract_version.sh",
     "build": "next build",
@@ -14,16 +14,18 @@
     "lint": "next lint",
     "typechainDepegTypes": "typechain --target ethers-v5 --out-dir src/contracts/depeg-contracts './node_modules/@etherisc/depeg-contracts/build/contracts/**/*json'",
     "typechainChainlinkTypes": "typechain --target ethers-v5 --out-dir src/contracts/chainlink-contracts './node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json'",
-    "typechainRegistryTypes": "typechain --target ethers-v5 --out-dir src/contracts/registry-contracts './node_modules/@etherisc/registry-contracts/build/contracts/**/*json'"
+    "typechainRegistryTypes": "typechain --target ethers-v5 --out-dir src/contracts/registry-contracts './node_modules/@etherisc/registry-contracts/build/contracts/**/*json'",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.2",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
-    "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.4",
@@ -66,6 +68,13 @@
     "@etherisc/depeg-contracts": "1.1.0",
     "@etherisc/registry-contracts": "1.1.0",
     "@hookform/devtools": "^4.3.1",
+    "@storybook/addon-essentials": "^7.0.21",
+    "@storybook/addon-interactions": "^7.0.21",
+    "@storybook/addon-links": "^7.0.21",
+    "@storybook/blocks": "^7.0.21",
+    "@storybook/nextjs": "^7.0.21",
+    "@storybook/react": "^7.0.21",
+    "@storybook/testing-library": "^0.0.14-next.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -75,9 +84,11 @@
     "@types/react": "^18.2.8",
     "@types/react-blockies": "^1.4.1",
     "@types/react-dom": "^18.2.4",
+    "eslint-plugin-storybook": "^0.6.12",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
     "node-mocks-http": "^1.12.2",
+    "storybook": "^7.0.21",
     "typechain": "^8.2.0"
   }
 }
