@@ -27,6 +27,7 @@ import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { polygonMumbai } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum';
 
 // The following import prevents a Font Awesome icon server-side rendering bug,
 // where the icons flash from a very large icon down to a properly sized one:
@@ -37,6 +38,7 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '../redux/store';
 import { removeSigner } from '../utils/chain';
 import { resetSelectedBundle } from '../redux/slices/bundles';
+import { Web3Modal } from '@web3modal/react';
 config.autoAddCss = false; /* eslint-disable import/first */
 
 export function App(appProps: AppProps) {
@@ -75,9 +77,10 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
     ]
   );
   
+  const projectId = '6cf24be37dc19d58bc113806ab03aded';
   const { connectors } = getDefaultWallets({
     appName: 'Etherisc Depeg',
-    projectId: '6cf24be37dc19d58bc113806ab03aded',
+    projectId,
     chains
   });
   
@@ -86,6 +89,8 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
     connectors,
     publicClient
   })
+  const ethereumClient = new EthereumClient(wagmiConfig, chains)
+
 
   if (provider != undefined) {
     provider.on('network', (newNetwork: any, oldNetwork: any) => {
@@ -136,11 +141,13 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
     <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "center", vertical: "top" }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <WagmiConfig config={wagmiConfig}>
-          <RainbowKitProvider chains={chains}>
+          {/* <RainbowKitProvider chains={chains}> */}
             <Layout {...appProps} />
-          </RainbowKitProvider>
+          {/* </RainbowKitProvider> */}
+          <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
         </WagmiConfig>
       </LocalizationProvider>
+      
     </SnackbarProvider>
   );
 }

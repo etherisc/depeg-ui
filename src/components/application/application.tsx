@@ -19,6 +19,8 @@ import { ga_event } from "../../utils/google_analytics";
 import ApplicationForm from "./application_form";
 import PolicyConfirmation from "./policy_confirmation";
 import { fetchBalances } from "../../redux/thunks/account";
+import { getEthersSigner } from "../../utils/walletconnect";
+import { DepegProduct__factory } from "../../contracts/depeg-contracts";
 
 export interface ApplicationProps {
     insurance: BackendApi;
@@ -246,6 +248,20 @@ export default function Application(props: ApplicationProps) {
     if (isConnected) {
         updateWalletAddress(signer!);
     }
+
+    async function client() {
+        const ethersSigner = await getEthersSigner({ chainId: 80001} );
+        if (ethersSigner !== undefined) {
+            console.log("ethers signer", ethersSigner);
+            console.log("address", await ethersSigner.getAddress());
+
+            const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
+            const depegProduct = DepegProduct__factory.connect(depegProductContractAddress!, ethersSigner);
+            console.log("depeg product", await depegProduct.getDepegState());
+        }
+    }
+
+    client();
 
     let content;
     if (activeStep < 5) {

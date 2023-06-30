@@ -14,6 +14,8 @@ import { ethers, getDefaultProvider } from "ethers";
 import { connectChain } from "../../redux/slices/chain";
 import { getAndUpdateBlock, getChainState, setAccountRedux } from "../../utils/chain";
 import { fetchBalances } from "../../redux/thunks/account";
+import { getEthersSigner } from "../../utils/walletconnect";
+import { DepegProduct__factory } from "../../contracts/depeg-contracts";
 
 export default function Account() {
     const dispatch = useDispatch();
@@ -50,7 +52,7 @@ export default function Account() {
     //         setEthersProvider(walletClient);
     //     }
     // }, [isConnected, walletClient, isConnected, dispatch]);
-
+    
     useEffect(() => {
         console.log("signer changed");
         if (isConnected) {
