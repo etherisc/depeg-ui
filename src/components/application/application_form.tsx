@@ -49,7 +49,7 @@ export type IAplicationFormValues = {
     insuredWallet: string;
     protectedAmount: string;
     coverageDuration: string;
-    coverageEndDate: Dayjs;
+    coverageEndDate: Dayjs | null;
     gasless: boolean;
     termsAndConditions: boolean;
 };
