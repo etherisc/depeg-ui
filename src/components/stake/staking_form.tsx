@@ -38,7 +38,7 @@ export interface StakingFormProperties {
 export type IStakingFormValues = {
     bundleName: string,
     lifetime: string;
-    lifetimeEndDate: Dayjs;
+    lifetimeEndDate: Dayjs | null;
     stakedAmount: string;
     protectedAmountMin: string;
     protectedAmountMax: string;
