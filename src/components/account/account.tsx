@@ -9,6 +9,8 @@ import { reconnectWallets } from "../../utils/wallet";
 import Login from "./login";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { Web3Modal } from "@web3modal/react";
+import { ethereumClient, walletConnectProjectId } from "../../config/walletconnect";
 
 export default function Account() {
     const dispatch = useDispatch();

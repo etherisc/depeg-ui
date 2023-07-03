@@ -11,22 +11,26 @@ import { connectChain } from "../../redux/slices/chain";
 import { getAndUpdateBlock, getChainState, removeSigner, setAccountRedux, updateSigner } from "../../utils/chain";
 import { store } from "../../redux/store";
 import { fetchBalances } from "../../redux/thunks/account";
+import { useWeb3Modal } from "@web3modal/react";
 
-// TODO: remove this component
-
-export default function LoginWithWalletConnectButton(props: any) {
+export default function LoginWithWalletConnectV2Button(props: any) {
     const { closeDialog } = props;
+    const { open } = useWeb3Modal();
 
     const { t } = useTranslation('common');
-    const { enqueueSnackbar } = useSnackbar();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    const dispatch = useDispatch();
     const isConnected = useSelector((state: any) => state.chain.isConnected);
 
     async function login() {
         console.log("wallet connect login");
         closeDialog();
+
+
+        // show walletconnect v2 modal
+        await open();
+
+        console.log("wallet connect login");
 
         //  Create WalletConnect Provider
         // const wcProvider = new WalletConnectProvider(walletConnectConfig);

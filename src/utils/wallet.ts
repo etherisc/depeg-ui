@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { walletConnectConfig } from "../config/appConfig";
+// import { walletConnectConfig } from "../config/appConfig";
 import { connectChain } from "../redux/slices/chain";
 import { getAndUpdateBlock, getChainState, setAccountRedux, updateSigner } from "./chain";
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";

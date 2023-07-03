@@ -27,6 +27,9 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '../redux/store';
 import { removeSigner } from '../utils/chain';
 import { resetSelectedBundle } from '../redux/slices/bundles';
+import { WagmiConfig } from 'wagmi';
+import { ethereumClient, wagmiConfig, walletConnectProjectId } from '../config/walletconnect';
+import { Web3Modal } from '@web3modal/react';
 config.autoAddCss = false; /* eslint-disable import/first */
 
 export function App(appProps: AppProps) {
@@ -103,10 +106,14 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
   appProps.pageProps.items = items;
   appProps.pageProps.title = t('apptitle_short');
 
+  
   return (
     <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "center", vertical: "top" }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Layout {...appProps} />
+        <WagmiConfig config={wagmiConfig}>
+          <Layout {...appProps} />
+          <Web3Modal projectId={walletConnectProjectId} ethereumClient={ethereumClient} />
+        </WagmiConfig>
       </LocalizationProvider>
     </SnackbarProvider>
   );

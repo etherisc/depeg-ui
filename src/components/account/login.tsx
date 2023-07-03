@@ -8,6 +8,7 @@ import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import LoginWithMetaMaskButton from "./login_metamask";
 import LoginWithWalletConnectButton from "./login_walletconnect";
 import { useSelector } from "react-redux";
+import LoginWithWalletConnectV2Button from "./login_walletconnectv2";
 
 export default function Login() {
     const { t } = useTranslation('common');
@@ -48,7 +49,7 @@ export default function Login() {
                             <LoginWithMetaMaskButton closeDialog={() => setShowLoginDialog(false)} />
                         </Grid>
                         <Grid item xs={12}  sx={{ p: 1 }}>
-                            <LoginWithWalletConnectButton closeDialog={() => setShowLoginDialog(false)} /> 
+                            <LoginWithWalletConnectV2Button closeDialog={() => setShowLoginDialog(false)} /> 
                         </Grid>
                     </Grid>
                 </DialogContentText>
