@@ -112,8 +112,8 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <WagmiConfig config={wagmiConfig}>
           <Layout {...appProps} />
-          <Web3Modal projectId={walletConnectProjectId} ethereumClient={ethereumClient} />
         </WagmiConfig>
+        <Web3Modal projectId={walletConnectProjectId} ethereumClient={ethereumClient} />
       </LocalizationProvider>
     </SnackbarProvider>
   );

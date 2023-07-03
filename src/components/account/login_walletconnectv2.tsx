@@ -23,14 +23,14 @@ export default function LoginWithWalletConnectV2Button(props: any) {
     const isConnected = useSelector((state: any) => state.chain.isConnected);
 
     async function login() {
-        console.log("wallet connect login");
+        console.log("wallet connect v2 login");
         closeDialog();
 
 
         // show walletconnect v2 modal
-        await open();
+        open();
 
-        console.log("wallet connect login");
+        // console.log("wallet connect v2 login");
 
         //  Create WalletConnect Provider
         // const wcProvider = new WalletConnectProvider(walletConnectConfig);
