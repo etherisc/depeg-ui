@@ -3,18 +3,18 @@ import { configureChains, createConfig } from "wagmi";
 import { polygonMumbai, mainnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 
-const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
-console.log("wallet connect config", "chainid", chainId);
+export const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID;
+console.log("wallet connect config", "chainid", CHAIN_ID);
 
 export const walletConnectProjectId = '6cf24be37dc19d58bc113806ab03aded';
 
 // TODO: enable this
 // configure walletconnect v2
 let chainsList;
-if (chainId === "80001") {
+if (CHAIN_ID === "80001") {
     // console.log("wallet connect config", "chainid", chainId, "polygonMumbai");
     chainsList = [polygonMumbai];
-} else if (chainId === "1") {
+} else if (CHAIN_ID === "1") {
     // console.log("wallet connect config", "chainid", chainId, "mainnet");
     chainsList = [mainnet];
 } else {

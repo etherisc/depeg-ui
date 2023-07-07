@@ -9,8 +9,10 @@ export interface ChainState {
     isConnected: boolean,
     // indicates if connected to expected chain
     isExpectedChain: boolean,
-    provider?: providers.Web3Provider | undefined,
+    provider?: providers.JsonRpcProvider | undefined,
     signer?: Signer | undefined,
+    // the connection was made through walletconnect
+    isWalletConnect: boolean,
     // the number of the last block that was mined
     blockNumber: number,
     // the timestamp of the last block that was mined
@@ -23,6 +25,7 @@ const initialState: ChainState = {
     isExpectedChain: true,
     provider: undefined,
     signer: undefined,
+    isWalletConnect: false,
     blockNumber: 0,
     blockTime: 0,
 }
@@ -56,7 +59,7 @@ export const chainSlice = createSlice({
 export const { 
     connectChain, disconnectChain, 
     updateSigner, 
-    setBlock 
+    setBlock,
 } = chainSlice.actions;
 
 export default chainSlice.reducer;

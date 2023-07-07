@@ -5,12 +5,30 @@ import { getAndUpdateBlock, getChainState, setAccountRedux, updateSigner } from 
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { fetchBalances } from "../redux/thunks/account";
 import { store } from "../redux/store";
+import { getEthersSigner } from "./walletconnect";
+import { CHAIN_ID } from "../config/walletconnect";
 
 
 export async function reconnectWallets(dispatch: Dispatch<AnyAction>) {
+    // try to reconnect walletconnect connection first
+    const wcSigner = await getEthersSigner({ chainId: parseInt(CHAIN_ID || "1") });
+    if (wcSigner !== undefined) {
+        console.log("reconnect walletconnect");
+        const provider = wcSigner.provider;
+        dispatch(connectChain(await getChainState(provider, true)));
+        setAccountRedux(wcSigner, dispatch);
+        store.dispatch(fetchBalances(wcSigner));
+
+        provider.on("block", (blockNumber: number) => {
+            getAndUpdateBlock(dispatch, provider, blockNumber);
+        });
+
+        return;
+    }
+
+    // if that fails, try to reconnect browser injected wallet
     // @ts-ignore
     if (window.ethereum !== undefined) {
-        // try browser wallet reconnection first (metamask, ...)
         // @ts-ignore: window.ethereum is injected by metamask
         const provider = new ethers.providers.Web3Provider(window.ethereum); 
         console.log("check if browser wallet reconnection is possible");
@@ -21,24 +39,7 @@ export async function reconnectWallets(dispatch: Dispatch<AnyAction>) {
             getAndSetWalletAccount(dispatch);
             return;
         }
-    }
-
-    // TODO: try walletconnect reconnection
-    // console.log("check if walletconnect reconnection is possible");
-    // const wcProvider = new WalletConnectProvider(walletConnectConfig);
-    // const hasWcAccounts = wcProvider.wc.accounts.length > 0;
-    // console.log("hasWcAccounts", hasWcAccounts);
-    // if (hasWcAccounts) {
-    //     console.log("reconnect walletconnect");
-    //     await wcProvider.enable();
-    //     const provider = new ethers.providers.Web3Provider(wcProvider);
-    //     dispatch(connectChain(await getChainState(provider)));
-    //     setAccountRedux(provider.getSigner(), dispatch);
-        
-    //     provider.on("block", (blockNumber: number) => {
-    //         getAndUpdateBlock(dispatch, provider, blockNumber);
-    //     });
-    // }
+    }    
 }
 
 export async function getAndSetWalletAccount(dispatch: Dispatch<AnyAction>) {
