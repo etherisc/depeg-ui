@@ -1,6 +1,5 @@
 version: '3'
 
-
 services:
   redis:
     image: redis/redis-stack-server:7.0.6-RC8
@@ -13,7 +12,7 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
       args:
-        VARIANT: 18-bullseye
+        VARIANT: 18-bookworm
     volumes:
       - ..:/workspaces/depeg-ui:cached
       - depeg-ui-node_modules:/workspaces/depeg-ui/node_modules
