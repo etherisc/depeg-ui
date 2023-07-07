@@ -1,13 +1,12 @@
-import { useState } from "react";
-import Button from '@mui/material/Button'
+import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, useMediaQuery, useTheme } from "@mui/material";
+import Button from '@mui/material/Button';
 import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, useMediaQuery, useTheme } from "@mui/material";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
-import LoginWithMetaMaskButton from "./login_metamask";
-import LoginWithWalletConnectButton from "./login_walletconnect";
+import { useState } from "react";
 import { useSelector } from "react-redux";
+import LoginWithMetaMaskButton from "./login_metamask";
 import LoginWithWalletConnectV2Button from "./login_walletconnectv2";
 
 export default function Login() {
