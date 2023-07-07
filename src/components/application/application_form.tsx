@@ -17,7 +17,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { ApplicationApi } from '../../backend/backend_api';
 import { BundleData, MAX_BUNDLE } from '../../backend/bundle_data';
-import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from '../../config/appConfig';
+import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from '../../utils/const';
 import { INPUT_VARIANT } from '../../config/theme';
 import { clearPremium, setApplicableBundleIds, setPremium, setPremiumCalculationInProgress, setPremiumErrorKey } from '../../redux/slices/application';
 import { RootState } from '../../redux/store';

@@ -1,32 +1,35 @@
-import '../../styles/globals.css'
-import type { AppProps } from 'next/app'
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import { faCartShopping, faChartLine, faCoins, faSackDollar, faShieldHalved } from "@fortawesome/free-solid-svg-icons";
 import CssBaseline from '@mui/material/CssBaseline';
-import React from 'react';
-import Head from 'next/head';
-import { SnackbarProvider } from 'notistack';
-import { appWithTranslation, useTranslation } from 'next-i18next';
+import { ThemeProvider } from '@mui/material/styles';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { getAndUpdateWalletAccount } from '../utils/wallet';
-import { ThemeProvider } from '@mui/material/styles';
-import { etheriscTheme } from '../config/theme';
-import Layout from '../components/layout/layout';
-import { faCartShopping, faShieldHalved, faSackDollar, faCoins, faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { appWithTranslation, useTranslation } from 'next-i18next';
+import type { AppProps } from 'next/app';
+import Head from 'next/head';
 import { GoogleAnalytics } from "nextjs-google-analytics";
+import { SnackbarProvider } from 'notistack';
+import React from 'react';
+import '../../styles/globals.css';
+import Layout from '../components/layout/layout';
+import { etheriscTheme } from '../config/theme';
+import { getAndUpdateWalletAccount } from '../utils/wallet';
 
 // The following import prevents a Font Awesome icon server-side rendering bug,
 // where the icons flash from a very large icon down to a properly sized one:
 import '@fortawesome/fontawesome-svg-core/styles.css';
 // Prevent fontawesome from adding its CSS since we did it manually above:
 import { config } from '@fortawesome/fontawesome-svg-core';
+import { Web3Modal } from '@web3modal/react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
+import { WagmiConfig } from 'wagmi';
+import { WALLET_CONNECT_PROJECT_ID, ethereumClient, wagmiConfig } from '../config/walletconnect';
+import { resetSelectedBundle } from '../redux/slices/bundles';
 import { RootState, store } from '../redux/store';
 import { removeSigner } from '../utils/chain';
-import { resetSelectedBundle } from '../redux/slices/bundles';
 config.autoAddCss = false; /* eslint-disable import/first */
 
 export function App(appProps: AppProps) {
@@ -103,10 +106,14 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
   appProps.pageProps.items = items;
   appProps.pageProps.title = t('apptitle_short');
 
+  
   return (
     <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "center", vertical: "top" }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Layout {...appProps} />
+        <WagmiConfig config={wagmiConfig}>
+          <Layout {...appProps} />
+        </WagmiConfig>
+        <Web3Modal projectId={WALLET_CONNECT_PROJECT_ID} ethereumClient={ethereumClient} />
       </LocalizationProvider>
     </SnackbarProvider>
   );

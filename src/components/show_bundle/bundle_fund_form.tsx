@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { BundleData } from "../../backend/bundle_data";
-import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from "../../config/appConfig";
+import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from "../../utils/const";
 import { INPUT_VARIANT } from "../../config/theme";
 import { RootState } from "../../redux/store";
 import TermsOfService from "../terms_of_service";
