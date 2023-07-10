@@ -8,7 +8,7 @@ import { useTranslation } from "next-i18next";
 import { useMemo, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { BundleData } from "../../backend/bundle_data";
-import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_TWO_DECIMALS } from "../../config/appConfig";
+import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_TWO_DECIMALS } from "../../utils/const";
 import { INPUT_VARIANT } from "../../config/theme";
 
 interface BundleWithdrawFormProps {

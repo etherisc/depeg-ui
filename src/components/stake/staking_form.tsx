@@ -16,7 +16,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { BackendApi } from '../../backend/backend_api';
-import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_TWO_DECIMALS } from '../../config/appConfig';
+import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS, REGEX_PATTERN_NUMBER_WITH_TWO_DECIMALS } from '../../utils/const';
 import { INPUT_VARIANT } from '../../config/theme';
 import { RootState } from '../../redux/store';
 import TermsOfService from '../terms_of_service';
