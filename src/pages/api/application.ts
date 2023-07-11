@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { redisClient } from "../../utils/redis";
 import { PendingApplication, getPendingApplicationRepository } from "../../utils/pending_application";
-import { CollectionsOutlined } from "@mui/icons-material";
 
 export const STREAM_KEY = process.env.REDIS_QUEUE_STREAM_KEY ?? "application:signatures";
 
@@ -36,7 +35,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse<Array<Pending
     const pendingTxRepo = await getPendingApplicationRepository();
     const pendingPolicyHolderTransactions = await pendingTxRepo.search().where("policyHolder").equals(address).return.all();
     console.log("pendingPolicyHolderTransactions", pendingPolicyHolderTransactions.length);
-    res.status(200).json(pendingPolicyHolderTransactions);
+    res.status(200).json(pendingPolicyHolderTransactions.map(tx => tx as any as PendingApplication));
 }
 
 async function handlePost(req: NextApiRequest, res: NextApiResponse) {
@@ -58,7 +57,7 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
     // store pending application in redis
     const repo = await getPendingApplicationRepository();
-    await repo.createAndSave({
+    await repo.save({
         policyHolder: policyHolder,
         protectedWallet: protectedWallet,
         protectedBalance: protectedBalance.toString(),
