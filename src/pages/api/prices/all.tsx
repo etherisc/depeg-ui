@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getPriceRepository } from "./fetch";
+import { Price } from "./redis_price_objects";
 
 /**
  * Returns all prices from redis.
@@ -31,11 +32,12 @@ export default async function handler(
         prices = await query.sortBy('roundId', 'DESC').return.all();
     }
 
-    res.status(200).json(prices.map(price => { 
+    res.status(200).json(prices.map(priceEnt => { 
+        const price = priceEnt as any as Price;
         return {
                 roundId: price.roundId, 
                 price: price.price, 
-                timestamp: price.timestamp.getTime()
+                timestamp: price.timestamp.getTime(),
             } as PriceData;
     }));
     

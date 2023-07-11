@@ -1,4 +1,4 @@
-import { Schema, Entity } from "redis-om";
+import { Schema } from "redis-om";
 
 export interface Price {
     roundId: string;
@@ -8,10 +8,7 @@ export interface Price {
     timestamp: Date;
 }
 
-export class Price extends Entity {
-}
-
-export const PRICE_SCHEMA = new Schema(Price, {
+export const PRICE_SCHEMA = new Schema('Price', {
     roundId: { type: 'string', sortable: true },
     aggregatorRoundId: { type: 'number', sortable: true },
     phaseId: { type: 'number', sortable: true },
