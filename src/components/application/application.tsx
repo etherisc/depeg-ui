@@ -124,7 +124,8 @@ export default function Application(props: ApplicationProps) {
                 console.log("approval failed", e);
                 showPersistentErrorSnackbarWithCopyDetails(
                     t('error.approval_failed', { ns: 'common', error: e.code }),
-                    e.reason
+                    e.reason,
+                    "application_approval"
                 );
                 return Promise.resolve(false);
             } else {
@@ -167,7 +168,8 @@ export default function Application(props: ApplicationProps) {
 
                 showPersistentErrorSnackbarWithCopyDetails(
                     t('error.transaction_failed', { ns: 'common', error: e.code }),
-                    e.reason
+                    e.reason,
+                    "application"
                 );
                 return Promise.resolve({ status: false, processId: undefined });
             } else {
