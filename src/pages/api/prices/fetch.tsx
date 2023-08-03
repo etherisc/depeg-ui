@@ -5,10 +5,10 @@ import { Repository } from "redis-om";
 import { AggregatorV3Interface } from "../../../contracts/chainlink-contracts";
 import { AggregatorV3Interface__factory, DepegProduct__factory, UsdcPriceDataProvider__factory } from "../../../contracts/depeg-contracts";
 import { getBackendVoidSigner } from "../../../utils/chain";
-import { redisOmClient } from "../../../utils/redis";
 import { clearAllPrices } from "./clear";
-import { Price, PRICE_SCHEMA } from "./redis_price_objects";
+import { PRICE_SCHEMA, Price } from "./redis_price_objects";
 import { isIpAllowedToConnect } from "../../../utils/check_ip";
+import { redisClient } from "../../../utils/redis";
 
 const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
 
@@ -28,10 +28,10 @@ export default async function handler(
     const aggregator = await getAggregator();
     const priceRepository = await getPriceRepository();
 
-    const latestPrice = await priceRepository.search().sortBy('aggregatorRoundId', 'DESC').return.first();
+    const latestPrice = (await priceRepository.search().sortBy('aggregatorRoundId', 'DESC').return.first());
     console.log("latestPrice", latestPrice);
 
-    const numPrices = await fetchPrices(aggregator, latestPrice, priceRepository);    
+    const numPrices = await fetchPrices(aggregator, latestPrice as any as Price || null, priceRepository);    
 
     res.status(200).json(numPrices);
     console.log("prices update finished");
@@ -40,7 +40,7 @@ export default async function handler(
 /**
  * Fetches all prices (or only prices never than the last fetched price) from chainlink price feed aggregator and stores them in redis.
  */
-export async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLastFetch: Price|null, priceRepository: Repository<Price>): Promise<number> {
+export async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLastFetch: Price|null, priceRepository: Repository): Promise<number> {
     const prices: PriceData[] = [];
     console.log("fetching latest round data");
     let roundData = await aggregator.latestRoundData();
@@ -73,7 +73,7 @@ export async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLa
 
         ++numPricesFetched;
         // store price to redis
-        priceRepository.createAndSave({ 
+        priceRepository.save({ 
             roundId: roundData.roundId.toString(), 
             price: roundData.answer.toNumber(), 
             timestamp: new Date(roundData.updatedAt.toNumber() * 1000), 
@@ -125,7 +125,7 @@ async function getAggregator(): Promise<AggregatorV3Interface> {
 }
 
 export async function getPriceRepository() {
-    const priceRepository = (await redisOmClient).fetchRepository(PRICE_SCHEMA);
+    const priceRepository = new Repository(PRICE_SCHEMA, redisClient);
     priceRepository.createIndex();
     return priceRepository;
 }
