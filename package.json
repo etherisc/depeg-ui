@@ -74,7 +74,7 @@
     "@testing-library/user-event": "^14.4.3",
     "@typechain/ethers-v5": "^11.0.0",
     "@types/canvas-confetti": "^1.6.0",
-    "@types/node": "^18.16.19",
+    "@types/node": "^18.17.3",
     "@types/react": "^18.2.14",
     "@types/react-blockies": "^1.4.1",
     "@types/react-dom": "^18.2.6",
