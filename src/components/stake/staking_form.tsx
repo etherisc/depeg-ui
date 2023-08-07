@@ -37,7 +37,6 @@ export interface StakingFormProperties {
 
 export type IStakingFormValues = {
     bundleName: string,
-    lifetime: string;
     lifetimeEndDate: Dayjs | null;
     stakedAmount: string;
     protectedAmountMin: string;
@@ -74,7 +73,6 @@ export default function StakingForm(props: StakingFormProperties) {
         reValidateMode: "onChange",
         defaultValues: {
             bundleName: '',
-            lifetime: defaultLifetime.toString(),
             lifetimeEndDate: dayjs().add(defaultLifetime, 'days'),
             stakedAmount: maxStakedAmount.toString(),
             protectedAmountMin: minProtectedAmount.toString(),
@@ -113,21 +111,22 @@ export default function StakingForm(props: StakingFormProperties) {
 
     const [ paymentInProgress, setPaymentInProgress ] = useState(false);
 
-    const onSubmit: SubmitHandler<IStakingFormValues> = async data => {
+    const onSubmit: SubmitHandler<IStakingFormValues> = data => {
         console.log("submit clicked", data);
         setPaymentInProgress(true);
 
         try {
             const values = getValues();
             const bundleName = values.bundleName.trim();
-            const lifetime = parseInt(values.lifetime) * 24 * 60 * 60;
+            const lifetime = (values.lifetimeEndDate?.startOf('day').diff(dayjs().startOf('day'), 'days') || 0) * 24 * 60 * 60;
+            // console.log("lifetime", lifetime);
             const stakedAmount = parseUnits(values.stakedAmount, props.usd2Decimals);
             const minProtectedAmount = parseUnits(values.protectedAmountMin, props.usd2Decimals);
             const maxProtectedAmount = parseUnits(values.protectedAmountMax, props.usd2Decimals);
             const minDuration = parseInt(values.coverageDurationMin);
             const maxDuration = parseInt(values.coverageDurationMax);
             const annualPctReturn = parseFloat(values.annualPctReturn);
-            await props.stake(bundleName, lifetime, stakedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
+            props.stake(bundleName, lifetime, stakedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
         } finally {
             setPaymentInProgress(false);
         }
@@ -220,40 +219,7 @@ export default function StakingForm(props: StakingFormProperties) {
                                 />}
                         />
                 </Grid>
-                <Grid item xs={12} md={6}>
-                    <Controller
-                        name="lifetime"
-                        control={control}
-                        rules={{ 
-                            required: true, 
-                            min: minLifetimeDays, 
-                            max: maxLifetimeDays, 
-                            pattern: /^[0-9]+$/ 
-                        }}
-                        render={({ field }) => 
-                            <TextField 
-                                label={t('lifetime')}
-                                fullWidth
-                                disabled={props.formDisabled}
-                                variant={INPUT_VARIANT}
-                                {...field} 
-                                InputProps={{
-                                    endAdornment: <InputAdornment position="end">{t('days')}</InputAdornment>,
-                                }}
-                                onBlur={(e) => {
-                                    field.onBlur();
-                                    setValue("lifetimeEndDate", dayjs().startOf('day').add(parseInt(e.target.value), 'days'));
-                                }}
-                                error={errors.lifetime !== undefined}
-                                helperText={errors.lifetime !== undefined 
-                                    ? ( errors.lifetime.type == 'pattern' 
-                                            ? t(`error.field.numberType`, { "ns": "common"}) 
-                                            : t(`error.field.${errors.lifetime.type}`, { "ns": "common", "minValue": minLifetimeDays, "maxValue": maxLifetimeDays }) 
-                                    ) : t('lifetime_hint')}
-                                />}
-                        />
-                </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={12}>
                     <Controller
                         name="lifetimeEndDate"
                         control={control}
@@ -268,11 +234,6 @@ export default function StakingForm(props: StakingFormProperties) {
                                     textField: { 
                                         variant: INPUT_VARIANT,
                                         fullWidth: true, 
-                                    }
-                                }}
-                                onAccept={(value: Dayjs|null) => {
-                                    if (value !== null) {
-                                        setValue("lifetime", value.startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
                                     }
                                 }}
                                 disablePast={true}
