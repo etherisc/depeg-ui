@@ -29,12 +29,12 @@ export default async function handler(
     const priceRepository = await getPriceRepository();
 
     const latestPrice = (await priceRepository.search().sortBy('aggregatorRoundId', 'DESC').return.first());
-    console.log("latestPrice", latestPrice);
+    // console.log("latestPrice", latestPrice);
 
     const numPrices = await fetchPrices(aggregator, latestPrice as any as Price || null, priceRepository);    
 
     res.status(200).json(numPrices);
-    console.log("prices update finished");
+    // console.log("prices update finished");
 }
 
 /**
@@ -42,10 +42,10 @@ export default async function handler(
  */
 export async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLastFetch: Price|null, priceRepository: Repository): Promise<number> {
     const prices: PriceData[] = [];
-    console.log("fetching latest round data");
+    // console.log("fetching latest round data");
     let roundData = await aggregator.latestRoundData();
     let { phaseId, aggregatorRoundId } = splitRoundId(roundData.roundId);
-    console.log("latestRoundData", formatUnits(roundData.roundId, 0), "(", phaseId, aggregatorRoundId, ")", roundData.updatedAt.toNumber(), roundData.answer.toNumber());
+    // console.log("latestRoundData", formatUnits(roundData.roundId, 0), "(", phaseId, aggregatorRoundId, ")", roundData.updatedAt.toNumber(), roundData.answer.toNumber());
 
     if (priceFromLastFetch !== null && priceFromLastFetch.phaseId !== phaseId) {
         await clearAllPrices(priceRepository);
@@ -61,13 +61,13 @@ export async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLa
             break;
         }
 
-        console.log("fetching round data", formatUnits(roundIdToFetch, 0));
+        // console.log("fetching round data", formatUnits(roundIdToFetch, 0));
         roundData = await aggregator.getRoundData(roundIdToFetch);
-        console.log("roundData", formatUnits(roundData.roundId, 0), "(", phaseId, aggregatorRoundId, ")", roundData.updatedAt.toNumber(), roundData.answer.toNumber());
+        // console.log("roundData", formatUnits(roundData.roundId, 0), "(", phaseId, aggregatorRoundId, ")", roundData.updatedAt.toNumber(), roundData.answer.toNumber());
 
         // abort loop if round not found
         if (roundData.roundId.eq(0)) {
-            console.log("roundId is 0, stopping");
+            // console.log("roundId is 0, stopping");
             break;
         }
 
@@ -83,18 +83,18 @@ export async function fetchPrices(aggregator: AggregatorV3Interface, priceFromLa
         roundIdToFetch = roundIdToFetch.sub(1);
     } 
     
-    console.log("price fetch finished. fetched", prices.length, "prices");
+    // console.log("price fetch finished. fetched", prices.length, "prices");
     return numPricesFetched;
 }
 
 function stopFetching(aggregatorRoundId: number, lastFetchAggregatorRoundId: number | null): Boolean {
     if ( aggregatorRoundId === 0 ) {
-        console.log("aggregatorRoundId is 0, stopping");
+        // console.log("aggregatorRoundId is 0, stopping");
         return true;
     }
 
     if ( lastFetchAggregatorRoundId !== null && aggregatorRoundId <= lastFetchAggregatorRoundId) {
-        console.log("aggregatorRoundId is lower than last fetched price, stopping");
+        // console.log("aggregatorRoundId is lower than last fetched price, stopping");
         return true;
     }
 
@@ -119,7 +119,7 @@ async function getAggregator(): Promise<AggregatorV3Interface> {
         address = await priceDataProvider.getChainlinkAggregatorAddress();
     }
 
-    console.log("aggregator address", address);
+    // console.log("aggregator address", address);
 
     return AggregatorV3Interface__factory.connect(address, signer);
 }

@@ -64,14 +64,14 @@ export class DepegRiskpoolApi {
 
     async getBundleData(
     ): Promise<Array<BundleData>> {
-        console.log("depegRiskpool.bundles");
+        // console.log("depegRiskpool.bundles");
         const numBundles = (await this.depegRiskpool.bundles()).toNumber();
-        console.log("number of bundles: " + numBundles);
+        // console.log("number of bundles: " + numBundles);
     
         let bundleData = new Array<BundleData>();
     
         for (let i = 0; i < numBundles; i++) {
-            console.log("depegRiskpool.getBundleId", i);
+            // console.log("depegRiskpool.getBundleId", i);
             const bundleId = (await this.depegRiskpool.getBundleId(i)).toNumber();
             // console.log('bundleId', bundleId);
             const bundle = await this.getBundleDataByBundleId(bundleId);
@@ -82,10 +82,10 @@ export class DepegRiskpoolApi {
     }
     
     async getBundleDataByBundleId(bundleId: number): Promise<BundleData> {
-        console.log("depegRiskpool.getBundleInfo", bundleId);
+        // console.log("depegRiskpool.getBundleInfo", bundleId);
         const { name, state, tokenId, owner, lifetime, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPercentageReturn, capital, lockedCapital, createdAt, balance } = await this.depegRiskpool.getBundleInfo(bundleId);
         const apr = 100 * annualPercentageReturn.toNumber() / (await this.depegRiskpool.getApr100PercentLevel()).toNumber();
-        console.log("depegRiskpool.getActivePolicies", bundleId);
+        // console.log("depegRiskpool.getActivePolicies", bundleId);
         const policies = await this.depegRiskpool.getActivePolicies(bundleId);
         const capacity = capital.sub(lockedCapital).mul(this.protectedAmountFactor);
         let capitalSupport = undefined;
@@ -136,43 +136,43 @@ export class DepegRiskpoolApi {
             const minSumInsured = BigNumber.from(bundle.minProtectedAmount);
             const maxSumInsured = BigNumber.from(bundle.maxProtectedAmount);
             if (sumInsured.lt(minSumInsured)) {
-                console.log("sumInsured less that min sum insured", sumInsured, bundle);
+                // console.log("sumInsured less that min sum insured", sumInsured, bundle);
                 return best;
             }
             if (sumInsured.gt(maxSumInsured)) {
-                console.log("sumInsured greater that max sum insured", sumInsured, bundle);
+                // console.log("sumInsured greater that max sum insured", sumInsured, bundle);
                 return best;
             }
             if (duration < bundle.minDuration) {
-                console.log("duration less that min duration", duration, bundle);
+                // console.log("duration less that min duration", duration, bundle);
                 return best;
             }
             if (duration > bundle.maxDuration) {
-                console.log("duration greater that max duration", duration, bundle);
+                // console.log("duration greater that max duration", duration, bundle);
                 return best;
             }
             if (best.apr < bundle.apr) {
-                console.log("bundle apr larger than best apr so far (best, bundle)", best, bundle);
+                // console.log("bundle apr larger than best apr so far (best, bundle)", best, bundle);
                 return best;
             }
             const capacity = BigNumber.from(bundle.capacity);
             if (sumInsured.gt(capacity)) {
-                console.log("sumInsured greater than capacity", sumInsured, bundle);
+                // console.log("sumInsured greater than capacity", sumInsured, bundle);
                 return best;
             }
             if (isStakingSupported) {
                 if (bundle.capitalSupport === undefined) {
-                    console.log("no stakes defined on bundle", bundle);
+                    // console.log("no stakes defined on bundle", bundle);
                     return best;
                 }
                 const lockedCapital = BigNumber.from(bundle.locked);
                 const stakesRemaining = BigNumber.from(bundle.capitalSupport).sub(lockedCapital)
                 if (stakesRemaining.lte(0)) {
-                    console.log("no stakes remaining on bundle", bundle);
+                    // console.log("no stakes remaining on bundle", bundle);
                     return best;
                 }
             }
-            console.log("bundle selected", bundle);
+            // console.log("bundle selected", bundle);
             return bundle;
         }, MAX_BUNDLE);
     }
@@ -241,12 +241,12 @@ export class DepegRiskpoolApi {
     }
     
     async getBundleTokenAddress(): Promise<string> {
-        console.log("getBundleTokenAddress");
+        // console.log("getBundleTokenAddress");
         return await this.instanceService.getBundleToken();
     }
     
     async getBundleCount(): Promise<number> {
-        console.log("getBundleCount");
+        // console.log("getBundleCount");
         return (await this.depegRiskpool.bundles()).toNumber();
     }
     

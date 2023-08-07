@@ -7,7 +7,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Array<BundleData>>
 ) {
-    console.log("getting all bundles from redis");
+    // console.log("getting all bundles from redis");
     const bundlesjson = await redisClient.get("bundles");
     
     if (bundlesjson == null) {
