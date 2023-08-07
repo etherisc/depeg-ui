@@ -13,10 +13,12 @@ export interface BundlesState {
     showBundle: BundleData | undefined;
     // show success dialog in bundle details page after bundle creation
     showCreationConfirmation: boolean;
-    // if true this will show the withdraw dialog for the bundle
+    // if true this will show the withdraw bundle dialog
     isShowBundleWithdraw: boolean;
-    // if true this will show the fund dialog for the bundle
+    // if true this will show the fund bundle dialog
     isShowBundleFund: boolean;
+    // if true this will show the extend bundle dialog
+    isShowBundleExtend: boolean;
 }
 
 const initialState: BundlesState = {
@@ -27,6 +29,7 @@ const initialState: BundlesState = {
     isLoadingBundles: false,
     isShowBundleWithdraw: false,
     isShowBundleFund: false,
+    isShowBundleExtend: false,
 }
 
 export const bundlesSlice = createSlice({
@@ -61,6 +64,7 @@ export const bundlesSlice = createSlice({
             state.showBundle = action.payload;
             state.isShowBundleFund = false;
             state.isShowBundleWithdraw = false;
+            state.isShowBundleExtend = false;
             state.showCreationConfirmation = false;
         },
         showCreationConfirmation(state, action: PayloadAction<boolean>) {
@@ -70,14 +74,22 @@ export const bundlesSlice = createSlice({
             state.showBundle = undefined;
             state.isShowBundleWithdraw = false;
             state.isShowBundleFund = false;
+            state.isShowBundleExtend = false;
         },
         showBundleWithdraw(state, action: PayloadAction<boolean>) {
             state.isShowBundleWithdraw = action.payload;
             state.isShowBundleFund = false;
+            state.isShowBundleExtend = false;
         },
         showBundleFund(state, action: PayloadAction<boolean>) {
             state.isShowBundleFund = action.payload;
             state.isShowBundleWithdraw = false;
+            state.isShowBundleExtend = false;
+        },
+        showBundleExtend(state, action: PayloadAction<boolean>) {
+            state.isShowBundleExtend = action.payload;
+            state.isShowBundleWithdraw = false;
+            state.isShowBundleFund = false;
         },
         setMaxActiveBundles(state, action: PayloadAction<number>) {
             state.maxActiveBundles = action.payload;
@@ -85,6 +97,7 @@ export const bundlesSlice = createSlice({
         resetSelectedBundle(state) {
             state.isShowBundleWithdraw = false;
             state.isShowBundleFund = false;
+            state.isShowBundleExtend = false;
             state.showCreationConfirmation = false;
             state.showBundle = undefined;
         }
@@ -100,6 +113,7 @@ export const {
     cleanup,
     showBundleWithdraw,
     showBundleFund,
+    showBundleExtend,
     showCreationConfirmation,
     resetSelectedBundle,
 } = bundlesSlice.actions;

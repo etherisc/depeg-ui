@@ -20,6 +20,7 @@
         "all_mine_bundles": "Show all risk bundles",
         "details": "Details",
         "fund": "Stake",
+        "extend": "Extend",
         "withdraw": "Unstake",
         "lock": "Lock",
         "unlock": "Unlock",

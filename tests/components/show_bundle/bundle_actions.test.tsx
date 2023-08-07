@@ -52,6 +52,7 @@ describe('When displaying the bundle actions', () => {
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),
+                    extend: jest.fn(),
                     lock: jest.fn(),
                     unlock: jest.fn(),
                     close: jest.fn(),
@@ -63,6 +64,7 @@ describe('When displaying the bundle actions', () => {
         expect(screen.getByRole("alert")).toHaveTextContent("alert.actions_only_owner");
         expect(screen.queryByTestId("button-fund")).toBeNull();
         expect(screen.queryByTestId("button-withdraw")).toBeNull();
+        expect(screen.queryByTestId("button-extend")).toBeNull();
         expect(screen.queryByTestId("button-lock")).toBeNull();
         expect(screen.queryByTestId("button-unlock")).toBeNull();
         expect(screen.queryByTestId("button-close")).toBeNull();
@@ -101,6 +103,7 @@ describe('When displaying the bundle actions', () => {
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),
+                    extend: jest.fn(),
                     lock: jest.fn(),
                     unlock: jest.fn(),
                     close: jest.fn(),
@@ -111,6 +114,7 @@ describe('When displaying the bundle actions', () => {
 
         expect(screen.getByTestId("button-fund")).toBeEnabled();
         expect(screen.getByTestId("button-withdraw")).toBeEnabled();
+        expect(screen.getByTestId("button-extend")).toBeEnabled();
         expect(screen.getByTestId("button-lock")).toBeEnabled();
         expect(screen.getByTestId("button-unlock")).toBeDisabled();
         expect(screen.getByTestId("button-close")).toBeEnabled();
@@ -149,6 +153,7 @@ describe('When displaying the bundle actions', () => {
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),
+                    extend: jest.fn(),
                     lock: jest.fn(),
                     unlock: jest.fn(),
                     close: jest.fn(),
@@ -159,6 +164,7 @@ describe('When displaying the bundle actions', () => {
 
         expect(screen.getByTestId("button-fund")).toBeEnabled();
         expect(screen.getByTestId("button-withdraw")).toBeEnabled();
+        expect(screen.getByTestId("button-extend")).toBeEnabled();
         expect(screen.getByTestId("button-lock")).toBeEnabled();
         expect(screen.getByTestId("button-unlock")).toBeDisabled();
         expect(screen.getByTestId("button-close")).toBeDisabled();
@@ -197,6 +203,7 @@ describe('When displaying the bundle actions', () => {
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),
+                    extend: jest.fn(),
                     lock: jest.fn(),
                     unlock: jest.fn(),
                     close: jest.fn(),
@@ -207,6 +214,7 @@ describe('When displaying the bundle actions', () => {
 
         expect(screen.getByTestId("button-fund")).toBeEnabled();
         expect(screen.getByTestId("button-withdraw")).toBeEnabled();
+        expect(screen.getByTestId("button-extend")).toBeDisabled();
         expect(screen.getByTestId("button-lock")).toBeDisabled();
         expect(screen.getByTestId("button-unlock")).toBeEnabled();
         expect(screen.getByTestId("button-close")).toBeDisabled();
@@ -245,6 +253,7 @@ describe('When displaying the bundle actions', () => {
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),
+                    extend: jest.fn(),
                     lock: jest.fn(),
                     unlock: jest.fn(),
                     close: jest.fn(),
@@ -255,6 +264,7 @@ describe('When displaying the bundle actions', () => {
 
         expect(screen.getByTestId("button-fund")).toBeEnabled();
         expect(screen.getByTestId("button-withdraw")).toBeEnabled();
+        expect(screen.getByTestId("button-extend")).toBeDisabled();
         expect(screen.getByTestId("button-lock")).toBeDisabled();
         expect(screen.getByTestId("button-unlock")).toBeDisabled();
         expect(screen.getByTestId("button-close")).toBeEnabled();
@@ -293,6 +303,7 @@ describe('When displaying the bundle actions', () => {
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),
+                    extend: jest.fn(),
                     lock: jest.fn(),
                     unlock: jest.fn(),
                     close: jest.fn(),
@@ -303,13 +314,14 @@ describe('When displaying the bundle actions', () => {
         
         expect(screen.getByTestId("button-fund")).toBeDisabled();
         expect(screen.getByTestId("button-withdraw")).toBeEnabled();
+        expect(screen.getByTestId("button-extend")).toBeDisabled();
         expect(screen.getByTestId("button-lock")).toBeDisabled();
         expect(screen.getByTestId("button-unlock")).toBeDisabled();
         expect(screen.getByTestId("button-close")).toBeDisabled();
         expect(screen.getByTestId("button-burn")).toBeEnabled();
     })
 
-    it('a burnt bundle shows no actions', async () => {
+    it('a burnt bundle shows disabled actions', async () => {
         const bundle = {
             id: 42,
             riskpoolId: 13,
@@ -341,6 +353,7 @@ describe('When displaying the bundle actions', () => {
                 actions={{ 
                     fund: jest.fn(),
                     withdraw: jest.fn(),
+                    extend: jest.fn(),
                     lock: jest.fn(),
                     unlock: jest.fn(),
                     close: jest.fn(),
@@ -351,6 +364,7 @@ describe('When displaying the bundle actions', () => {
 
         expect(screen.getByTestId("button-fund")).toBeDisabled();
         expect(screen.getByTestId("button-withdraw")).toBeDisabled();
+        expect(screen.getByTestId("button-extend")).toBeDisabled();
         expect(screen.getByTestId("button-lock")).toBeDisabled();
         expect(screen.getByTestId("button-unlock")).toBeDisabled();
         expect(screen.getByTestId("button-close")).toBeDisabled();

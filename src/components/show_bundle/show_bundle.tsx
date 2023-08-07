@@ -10,7 +10,7 @@ import { BackendApi } from "../../backend/backend_api";
 import { BundleData } from "../../backend/bundle_data";
 import useNotifications from "../../hooks/notifications";
 import useTransactionNotifications from "../../hooks/trx_notifications";
-import { showBundle, showBundleFund, showBundleWithdraw } from "../../redux/slices/bundles";
+import { showBundle, showBundleExtend, showBundleFund, showBundleWithdraw } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
 import { TransactionFailedError } from "../../utils/error";
 import { ga_event } from "../../utils/google_analytics";
@@ -18,6 +18,7 @@ import BundleActions from "./bundle_actions";
 import BundleDetails from "./bundle_details";
 import BundleFundForm from "./bundle_fund_form";
 import BundleWithdrawForm from "./bundle_withdraw_form";
+import BundleExtendForm from "./bundle_extend_form";
 
 interface ShowBundleProps {
     backend: BackendApi;
@@ -34,6 +35,7 @@ export default function ShowBundle(props: ShowBundleProps) {
     const connectedWalletAddress = useSelector((state: RootState) => state.account.address);
     const isShowBundleWithdraw = useSelector((state: RootState) => state.bundles.isShowBundleWithdraw);
     const isShowBundleFund = useSelector((state: RootState) => state.bundles.isShowBundleFund);
+    const isShowBundleExtend = useSelector((state: RootState) => state.bundles.isShowBundleExtend);
     const maxActiveBundles = useSelector((state: RootState) => state.bundles.maxActiveBundles);
     const walletAddress = useSelector((state: RootState) => state.account.address);
     const showCreationConfirmation = useSelector((state: RootState) => state.bundles.showCreationConfirmation);
@@ -49,6 +51,12 @@ export default function ShowBundle(props: ShowBundleProps) {
     async function withdraw(bundle: BundleData): Promise<boolean> {
         ga_event("bundle_defund", { category: 'navigation' });
         dispatch(showBundleWithdraw(true));
+        return Promise.resolve(true);
+    }
+
+    async function extend(bundle: BundleData): Promise<boolean> {
+        ga_event("bundle_extend", { category: 'navigation' });
+        dispatch(showBundleExtend(true));
         return Promise.resolve(true);
     }
 
@@ -108,6 +116,11 @@ export default function ShowBundle(props: ShowBundleProps) {
             dispatch(showBundleWithdraw(false));
             await props.backend.triggerBundleUpdate(bundleId, dispatch);
         }
+    }
+
+    async function extendBundle(bundle: BundleData): Promise<boolean> {
+        // TODO: implement
+        return Promise.resolve(true);
     }
 
     async function lock(bundle: BundleData): Promise<boolean> {
@@ -269,6 +282,7 @@ export default function ShowBundle(props: ShowBundleProps) {
                     actions={{
                         fund,
                         withdraw,
+                        extend,
                         lock,
                         unlock,
                         close,
@@ -292,6 +306,17 @@ export default function ShowBundle(props: ShowBundleProps) {
                         decimals={props.backend.usd2Decimals} 
                         doFund={fundBundle}
                         doCancel={() => dispatch(showBundleFund(false))}
+                        />
+                }
+                { isShowBundleExtend && <BundleExtendForm 
+                        bundle={bundle!} 
+                        maxStakedAmount={props.backend.bundleManagement.maxStakedAmount}
+                        getRemainingRiskpoolCapacity={getRemainingCapacity}
+                        getBundleCapitalCap={getBundleCapitalCap}
+                        currency={props.backend.usd2} 
+                        decimals={props.backend.usd2Decimals} 
+                        doExtend={extendBundle}
+                        doCancel={() => dispatch(showBundleExtend(false))}
                         />
                 }
             </Grid>

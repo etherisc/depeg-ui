@@ -10,6 +10,7 @@ interface BundleActionsProps {
     actions: {
         fund: (bundle: BundleData) => Promise<boolean>,
         withdraw: (bundle: BundleData) => Promise<boolean>,
+        extend: (bundle: BundleData) => Promise<boolean>,
         lock: (bundle: BundleData) => Promise<boolean>,
         unlock: (bundle: BundleData) => Promise<boolean>,
         close: (bundle: BundleData) => Promise<boolean>,
@@ -29,6 +30,8 @@ export default function BundleActions(props: BundleActionsProps) {
     const state = props.bundle.state;
     const isLockAllowed = isOwner && (state === 0);
     const isUnlockAllowed = isOwner && (state === 1) && (props.activeBundles < props.maxActiveBundles);
+    // TODO: only enable extend n-days before end date
+    const isExtendAllowed = isOwner && (state === 0);
     const isFundAllowed = isOwner && (state === 0 || state === 1);
     const isWithdrawAllowed = isOwner && (state !== 3);
     const isCloseAllowed = isOwner && (state === 0 || state === 1) && props.bundle.policies == 0;
@@ -40,6 +43,10 @@ export default function BundleActions(props: BundleActionsProps) {
 
     async function withdraw() {
         await props.actions.withdraw(props.bundle);
+    }
+
+    async function extend() {
+        await props.actions.extend(props.bundle);
     }
 
     async function lock() {
@@ -77,6 +84,15 @@ export default function BundleActions(props: BundleActionsProps) {
                 data-testid="button-withdraw"
                 sx={{ minWidth: '12rem' }}
                 >{t('action.withdraw')}</Button>
+        </Grid>
+        <Grid item xs={12}>
+            <Button 
+                onClick={extend}
+                variant="contained" 
+                disabled={!isExtendAllowed}
+                data-testid="button-extend"
+                sx={{ minWidth: '12rem' }}
+                >{t('action.extend')}</Button>
         </Grid>
         <Grid item xs={12}>
             <Button 
