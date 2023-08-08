@@ -5,6 +5,7 @@ import { BigNumber } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { BundleData } from '../../../src/backend/bundle_data';
 import BundleActions from '../../../src/components/show_bundle/bundle_actions';
+import dayjs from 'dayjs';
 
 jest.mock('react-i18next', () => ({
     ...jest.requireActual('react-i18next'),
@@ -37,7 +38,7 @@ describe('When displaying the bundle actions', () => {
             maxProtectedAmount: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
             maxDuration: 28 * 24 * 60 * 60,
-            createdAt: 1676541508,
+            createdAt: dayjs().subtract(2, 'days').unix(),
             lifetime: BigNumber.from(28 * 24 * 60 * 60).toString(),    
             state: 0,
             policies: 0,
@@ -88,7 +89,7 @@ describe('When displaying the bundle actions', () => {
             maxProtectedAmount: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
             maxDuration: 28 * 24 * 60 * 60,
-            createdAt: 1676541508,
+            createdAt: dayjs().subtract(2, 'days').unix(),
             lifetime: BigNumber.from(28 * 24 * 60 * 60).toString(),    
             state: 0,
             policies: 0,
@@ -138,7 +139,7 @@ describe('When displaying the bundle actions', () => {
             maxProtectedAmount: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
             maxDuration: 28 * 24 * 60 * 60,
-            createdAt: 1676541508,
+            createdAt: dayjs().subtract(2, 'days').unix(),
             lifetime: BigNumber.from(28 * 24 * 60 * 60).toString(),    
             state: 0,
             policies: 789,
@@ -171,6 +172,56 @@ describe('When displaying the bundle actions', () => {
         expect(screen.getByTestId("button-burn")).toBeDisabled();
     })
 
+    it('bundle extension is not allowed when remaining lifetime is more then 28 days (default)', async () => {
+        const bundle = {
+            id: 42,
+            riskpoolId: 13,
+            owner: "0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729",
+            tokenId: 7,
+            name: "Happy Testing",
+            apr: 3.1415,
+            capital: parseUnits("100000", 6).toString(),
+            balance: parseUnits("100123", 6).toString(),
+            capacity: parseUnits("90000", 6).toString(),
+            locked: parseUnits("10000", 6).toString(),
+            capitalSupport: parseUnits("80000", 6).toString(),
+            minProtectedAmount: parseUnits("1123", 6).toString(),
+            maxProtectedAmount: parseUnits("10456", 6).toString(),
+            minDuration: 11 * 24 * 60 * 60,
+            maxDuration: 28 * 24 * 60 * 60,
+            createdAt: dayjs().subtract(2, 'days').unix(),
+            lifetime: BigNumber.from(40 * 24 * 60 * 60).toString(),    
+            state: 0,
+            policies: 789,
+        } as BundleData;
+
+        const baseDom = render(
+            <BundleActions
+                bundle={bundle}
+                connectedWallet={bundle.owner}
+                maxActiveBundles={10}
+                activeBundles={5}
+                actions={{ 
+                    fund: jest.fn(),
+                    withdraw: jest.fn(),
+                    extend: jest.fn(),
+                    lock: jest.fn(),
+                    unlock: jest.fn(),
+                    close: jest.fn(),
+                    burn: jest.fn(),
+                }}
+                />
+        );
+
+        expect(screen.getByTestId("button-fund")).toBeEnabled();
+        expect(screen.getByTestId("button-withdraw")).toBeEnabled();
+        expect(screen.getByTestId("button-extend")).toBeDisabled();
+        expect(screen.getByTestId("button-lock")).toBeEnabled();
+        expect(screen.getByTestId("button-unlock")).toBeDisabled();
+        expect(screen.getByTestId("button-close")).toBeDisabled();
+        expect(screen.getByTestId("button-burn")).toBeDisabled();
+    })
+
     it('a locked bundle shows correct actions', async () => {
         const bundle = {
             id: 42,
@@ -188,7 +239,7 @@ describe('When displaying the bundle actions', () => {
             maxProtectedAmount: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
             maxDuration: 28 * 24 * 60 * 60,
-            createdAt: 1676541508,
+            createdAt: dayjs().subtract(2, 'days').unix(),
             lifetime: BigNumber.from(28 * 24 * 60 * 60).toString(),    
             state: 1,
             policies: 789,
@@ -238,7 +289,7 @@ describe('When displaying the bundle actions', () => {
             maxProtectedAmount: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
             maxDuration: 28 * 24 * 60 * 60,
-            createdAt: 1676541508,
+            createdAt: dayjs().subtract(2, 'days').unix(),
             lifetime: BigNumber.from(28 * 24 * 60 * 60).toString(),    
             state: 1,
             policies: 0,
@@ -288,7 +339,7 @@ describe('When displaying the bundle actions', () => {
             maxProtectedAmount: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
             maxDuration: 28 * 24 * 60 * 60,
-            createdAt: 1676541508,
+            createdAt: dayjs().subtract(2, 'days').unix(),
             lifetime: BigNumber.from(28 * 24 * 60 * 60).toString(),    
             state: 2,
             policies: 789,
@@ -338,7 +389,7 @@ describe('When displaying the bundle actions', () => {
             maxProtectedAmount: parseUnits("10456", 6).toString(),
             minDuration: 11 * 24 * 60 * 60,
             maxDuration: 28 * 24 * 60 * 60,
-            createdAt: 1676541508,
+            createdAt: dayjs().subtract(2, 'days').unix(),
             lifetime: BigNumber.from(28 * 24 * 60 * 60).toString(),    
             state: 3,
             policies: 789,

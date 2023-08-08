@@ -1,6 +1,8 @@
 import { Alert, Button, Grid } from "@mui/material";
 import { useTranslation } from "next-i18next";
 import { BundleData } from "../../backend/bundle_data";
+import dayjs from "dayjs";
+import { BigNumber } from "ethers";
 
 interface BundleActionsProps {
     bundle: BundleData;
@@ -27,11 +29,17 @@ export default function BundleActions(props: BundleActionsProps) {
         return (<Alert severity="info">{t('alert.actions_only_owner')}</Alert>);
     }
 
+    const extensionDaysBeforeEnd = parseInt(process.env.NEXT_PUBLIC_DEPEG_LIFETIME_EXTENSION_DAYS_BEFORE_END || "28");
+    const bundleExpirationDate = dayjs.unix(props.bundle.createdAt).add(BigNumber.from(props.bundle.lifetime).toNumber(), 's');
+
     const state = props.bundle.state;
     const isLockAllowed = isOwner && (state === 0);
-    const isUnlockAllowed = isOwner && (state === 1) && (props.activeBundles < props.maxActiveBundles);
-    // TODO: only enable extend n-days before end date
-    const isExtendAllowed = isOwner && (state === 0);
+    const isUnlockAllowed = isOwner 
+        && (state === 1) 
+        && (props.activeBundles < props.maxActiveBundles);
+    const isExtendAllowed = isOwner 
+        && (state === 0) 
+        && (bundleExpirationDate.diff(dayjs(), 'days') <= extensionDaysBeforeEnd);
     const isFundAllowed = isOwner && (state === 0 || state === 1);
     const isWithdrawAllowed = isOwner && (state !== 3);
     const isCloseAllowed = isOwner && (state === 0 || state === 1) && props.bundle.policies == 0;
