@@ -33,7 +33,7 @@
     "@types/color": "^3.0.3",
     "@types/request-ip": "^0.0.38",
     "@web3modal/ethereum": "^2.7.1",
-    "@web3modal/react": "^2.6.2",
+    "@web3modal/react": "^2.7.1",
     "abi-coder": "^4.1.1",
     "canvas-confetti": "^1.6.0",
     "chart.js": "^4.3.3",
