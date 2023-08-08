@@ -169,6 +169,7 @@ describe('When rendering the BundleFundForm', () => {
                     chain: {
                         chainId: "0x0",
                         isConnected: true,
+                        isWalletConnect: false,
                         isExpectedChain: true,
                         provider: undefined,
                         signer: undefined,
@@ -245,6 +246,7 @@ describe('When rendering the BundleFundForm', () => {
                     chain: {
                         chainId: "0x0",
                         isConnected: true,
+                        isWalletConnect: false,
                         isExpectedChain: true,
                         provider: undefined,
                         signer: undefined,
@@ -325,6 +327,7 @@ describe('When rendering the BundleFundForm', () => {
                     chain: {
                         chainId: "0x0",
                         isConnected: true,
+                        isWalletConnect: false,
                         isExpectedChain: true,
                         provider: undefined,
                         signer: undefined,
