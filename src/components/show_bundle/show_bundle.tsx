@@ -19,6 +19,8 @@ import BundleDetails from "./bundle_details";
 import BundleFundForm from "./bundle_fund_form";
 import BundleWithdrawForm from "./bundle_withdraw_form";
 import BundleExtendForm from "./bundle_extend_form";
+import { BackendApiMock } from "../../backend/backend_api_mock";
+import dayjs from "dayjs";
 
 interface ShowBundleProps {
     backend: BackendApi;
@@ -39,6 +41,10 @@ export default function ShowBundle(props: ShowBundleProps) {
     const maxActiveBundles = useSelector((state: RootState) => state.bundles.maxActiveBundles);
     const walletAddress = useSelector((state: RootState) => state.account.address);
     const showCreationConfirmation = useSelector((state: RootState) => state.bundles.showCreationConfirmation);
+    
+    const bundleManagementProps = props.backend.bundleManagement;
+    const minLifetime = bundleManagementProps.minLifetime;
+    const maxLifetime = bundleManagementProps.maxLifetime;
     
     useTransactionNotifications();
 
@@ -118,9 +124,26 @@ export default function ShowBundle(props: ShowBundleProps) {
         }
     }
 
-    async function extendBundle(bundle: BundleData): Promise<boolean> {
-        // TODO: implement
-        return Promise.resolve(true);
+    async function extendBundle(bundleId: number, extensionDuration: number): Promise<boolean> {
+        ga_event("trx_start_extend", { category: 'chain_trx' });
+        try {
+            const r = await props.backend.bundleManagement.extendBundle(bundleId, extensionDuration);
+            ga_event("trx_success_lock", { category: 'chain_trx' });
+            showSuccessNotification(t('extend_successful'));
+            return r;
+        } catch(e) {
+            ga_event("trx_fail_extend", { category: 'chain_trx' });
+            if ( e instanceof TransactionFailedError) {
+                console.log("transaction failed", e);
+                showTrxFailedNotification(e, "extend");
+                return false;
+            } else {
+                throw e;
+            }
+        } finally {
+            dispatch(showBundleExtend(false));
+            await props.backend.triggerBundleUpdate(bundleId, dispatch);
+        }
     }
 
     async function lock(bundle: BundleData): Promise<boolean> {
@@ -310,11 +333,8 @@ export default function ShowBundle(props: ShowBundleProps) {
                 }
                 { isShowBundleExtend && <BundleExtendForm 
                         bundle={bundle!} 
-                        maxStakedAmount={props.backend.bundleManagement.maxStakedAmount}
-                        getRemainingRiskpoolCapacity={getRemainingCapacity}
-                        getBundleCapitalCap={getBundleCapitalCap}
-                        currency={props.backend.usd2} 
-                        decimals={props.backend.usd2Decimals} 
+                        minLifetime={minLifetime}
+                        maxLifetime={maxLifetime}
                         doExtend={extendBundle}
                         doCancel={() => dispatch(showBundleExtend(false))}
                         />

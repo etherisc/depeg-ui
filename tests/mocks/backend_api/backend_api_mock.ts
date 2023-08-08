@@ -285,6 +285,9 @@ function bundleManagementMock(
         async fundBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
             return Promise.resolve(true);
         },
+        async extendBundle(bundleId: number, lifetime: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
         getBundleCapitalCap(): Promise<BigNumber> {
             return Promise.resolve(bundleCapitalCap);
         },

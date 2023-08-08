@@ -12,125 +12,86 @@ import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from "../../utils/const";
 import { INPUT_VARIANT } from "../../config/theme";
 import { RootState } from "../../redux/store";
 import TermsOfService from "../terms_of_service";
+import dayjs, { Dayjs } from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers";
 
 interface BundleExtendFormProps {
     bundle: BundleData;
-    currency: string;
-    decimals: number;
-    maxStakedAmount: BigNumber;
-    getBundleCapitalCap: () => Promise<BigNumber>;
-    getRemainingRiskpoolCapacity: () => Promise<number>;
-    doExtend: (bundle: BundleData) => Promise<boolean>;
+    minLifetime: number;
+    maxLifetime: number;
+    doExtend: (bundleId: number, extensionDuration: number) => Promise<boolean>;
     doCancel: () => void;
 }
 
 export type IFundFormValues = {
-    amount: string;
+    extensionEndDate: Dayjs | null,
     termsAndConditions: boolean;
 };
 
 export default function BundleExtendForm(props: BundleExtendFormProps) {
     const { t } = useTranslation('bundles');
 
-    // TODO: implement correct form with just a date for extension. min and max from bundle end date
-
-    const [ fundInProgress, setFundInProgress ] = useState(false);
-    const [ maxFundAmount, setMaxFundAmount ] = useState(props.maxStakedAmount.toNumber());
-    const isConnected = useSelector((state: RootState) => state.chain.isConnected);
-    const getRemainingCapacity = props.getRemainingRiskpoolCapacity;
-    const decimals = props.decimals;
-    const bundle = props.bundle;
-    const getBundleCapitalCap = props.getBundleCapitalCap;
-
-    const minFundAmount = 1;
-
+    const [ inProgress, setInProgress ] = useState(false);
+    
+    const defaultLifetime = 90;
+    const currentEndDate = dayjs.unix(props.bundle.createdAt).add(BigNumber.from(props.bundle.lifetime).toNumber(), 's');
+    const minExtensionDate = currentEndDate.add(props.minLifetime, 'days');
+    const maxExtensionDate = currentEndDate.add(props.maxLifetime, 'days');
+    console.log("currentEndDate", currentEndDate, "minExtensionDate", minExtensionDate, "maxExtensionDate", maxExtensionDate);
+    
     const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IFundFormValues>({ 
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
-            amount: "0",
+            extensionEndDate: currentEndDate.add(defaultLifetime, 'days'),
             termsAndConditions: false,
         }
     });
 
-    useEffect(() => {
-        async function checkMaxFundAmount() {
-            let fundAmountMaxBN = parseUnits(maxFundAmount.toString(), decimals);
-
-            const bundleCapital = BigNumber.from(bundle.capital);
-            const bundleCapitalCapBN = await getBundleCapitalCap();
-            // remaining capacity of the bundle
-            fundAmountMaxBN = bundleCapitalCapBN.sub(bundleCapital);
-            let fundAmountMax = parseFloat(formatUnits(fundAmountMaxBN, decimals));
-            console.log("fundAmountMax", fundAmountMax);
-
-            const riskpoolRemainingCapacity = await getRemainingCapacity();
-            console.log("riskpoolRemainingCapacity", riskpoolRemainingCapacity.toString());
-            if (riskpoolRemainingCapacity < fundAmountMax) {
-                fundAmountMax = riskpoolRemainingCapacity;
-            }
-
-            setMaxFundAmount(fundAmountMax);
-        }
-        if (isConnected) {
-            checkMaxFundAmount();
-        }
-    }, [isConnected, getRemainingCapacity, maxFundAmount, setValue, bundle, decimals, getBundleCapitalCap]);
-
-    const errors = useMemo(() => formState.errors, [formState]);
+    // const errors = useMemo(() => formState.errors, [formState]);
     
     const onSubmit: SubmitHandler<IFundFormValues> = async data => {
         console.log("submit clicked", data);
-        setFundInProgress(true);
+        setInProgress(true);
 
         try {
+            const bundleId = props.bundle.id;
             const values = getValues();
-            const amount = parseUnits(values.amount, props.decimals);
-            await props.doExtend({} as BundleData);
+            const extensionLifetime = values.extensionEndDate?.startOf('day').diff(currentEndDate.startOf('day'), 's') || 0;
+            console.log("bundle extension", "bundleId", bundleId, "extensionLifetime", extensionLifetime);
+            await props.doExtend(bundleId, extensionLifetime);
         } finally {
-            setFundInProgress(false);
+            setInProgress(false);
         }
     }
 
-    const bundleIsAsCapacity = maxFundAmount <= 0;
-
-    if (bundleIsAsCapacity) {
-        return (<>
-            <Typography variant="h6" m={2} mt={4}>{t('title_fund')}</Typography>
-            <Alert severity="error" variant="outlined" sx={{ mt: 4 }} data-testid="alert-bundle-at-capacity">{t('alert.bundle_at_capacity')}</Alert>
-        </>);
-    }
-
-    const readyToSubmit = formState.isValid;
-    const loadingBar = fundInProgress ? <LinearProgress /> : null;
+    const loadingBar = inProgress ? <LinearProgress /> : null;
 
     return (<>
-        <Typography variant="h6" m={2} mt={4}>{t('title_fund')}</Typography>
+        <Typography variant="h6" m={2} mt={4}>{t('title_extend')}</Typography>
 
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={2} mt={{ 'xs': 0, 'md': 2 }} 
                 sx={{ ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
                 <Grid item xs={12}>
                     <Controller
-                        name="amount"
+                        name="extensionEndDate"
                         control={control}
-                        rules={{ required: true, min: minFundAmount, max: maxFundAmount, pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS }}
+                        rules={{ required: true }}
                         render={({ field }) => 
-                            <TextField 
-                                label={t('amount')}
-                                fullWidth
-                                variant={INPUT_VARIANT}
+                            <DatePicker
                                 {...field} 
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start">{props.currency}</InputAdornment>,
+                                label={t('extensionUntil')}
+                                format="DD.MM.YYYY"
+                                slotProps={{ 
+                                    textField: { 
+                                        variant: INPUT_VARIANT,
+                                        fullWidth: true, 
+                                    }
                                 }}
-                                error={errors.amount !== undefined}
-                                helperText={errors.amount !== undefined 
-                                    ? ( errors.amount.type == 'pattern' 
-                                            ? t(`error.field.amountType`, { "ns": "common"}) 
-                                            : t(`error.field.${errors.amount.type}`, { "ns": "common", "minValue": `${props.currency} ${minFundAmount}`, "maxValue": `${props.currency} ${maxFundAmount}` })
-                                    ) : ""}
-                                data-testid="amount"
+                                disablePast={true}
+                                minDate={minExtensionDate}
+                                maxDate={maxExtensionDate}
                                 />}
                         />
                 </Grid>
@@ -167,13 +128,13 @@ export default function BundleExtendForm(props: BundleExtendFormProps) {
                         <Button 
                             variant='contained'
                             type="submit"
-                            disabled={!readyToSubmit}
+                            disabled={!formState.isValid}
                             fullWidth
                             sx={{ p: 1, m: 1 }}
                             data-testid="fund-button"
                             >
                                 <FontAwesomeIcon icon={faMoneyBillTransfer} className="fa" />
-                                {t('action.fund')}
+                                {t('action.extend')}
                         </Button>
                     </Box>
                     {loadingBar}

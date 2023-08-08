@@ -274,6 +274,9 @@ function bundleManagementMock(enqueueSnackbar: (message: SnackbarMessage, option
         async fundBundle(bundleId: number): Promise<boolean> {
             return Promise.resolve(true);
         },
+        async extendBundle(bundleId: number): Promise<boolean> {
+            return Promise.resolve(true);
+        },
         getBundleCapitalCap(): Promise<BigNumber> {
             return Promise.resolve(BigNumber.from(100000000000));
         },

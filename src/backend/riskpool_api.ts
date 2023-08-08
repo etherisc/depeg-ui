@@ -218,7 +218,31 @@ export class DepegRiskpoolApi {
             throw new TransactionFailedError(e.code, e);
         }
     }
-    
+
+    async extendBundle(
+        bundleId: number,
+        lifetime: number,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("extendBundle", bundleId, lifetime);
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_EXTEND }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            // TODO: implement when smartcontract is ready
+            // const tx = await this.depegRiskpool.extendBundle(bundleId);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            // const receipt = await tx.wait();
+            // return Promise.resolve([tx, receipt]);
+            return Promise.resolve([{} as ContractTransaction, {} as ContractReceipt]);
+        } catch (e) {
+            console.log("caught error while locking bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
     extractBundleIdFromApplicationLogs(logs: any[]): string|undefined {
         const riskpoolAbiCoder = new Coder(IRiskpoolBuild.abi);
         let bundleId = undefined;

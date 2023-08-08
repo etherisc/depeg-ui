@@ -153,6 +153,13 @@ export class InvestApiSmartContract implements BundleManagementApi {
         return { status: receipt.status === 1, bundleId };
     }
 
+    async extendBundle(bundleId: number, lifetime: number): Promise<boolean> {
+        console.log("extendBundle", bundleId, lifetime);
+        const [tx, receipt] = await (await this.riskpoolApi()).extendBundle(bundleId, lifetime);
+        console.log("tx", tx, "receipt", receipt);
+        return receipt.status === 1;
+    }
+
     async bundleTokenAddress(): Promise<string> {
         return await(await this.riskpoolApi()).getBundleTokenAddress();
     }
