@@ -23,7 +23,25 @@ export default function useNotifications() {
                 );
     }
 
-    function showPersistentErrorSnackbarWithCopyDetails(message: string, details: string): SnackbarKey {
+    function showPersistentErrorSnackbarWithCopyDetails(message: string, details: string, action: string): SnackbarKey {
+        // POST to client error handler
+        try {
+            const body = JSON.stringify({
+                message: message,
+                stack: details?.toString(),
+                action: action || 'unknown',
+                client_timestamp : Math.floor(Date.now()),
+            });
+            fetch('/api/client_error', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body
+            });
+        } catch (e) {
+            console.log("failed to POST to client error handler", e);
+        }
         return enqueueSnackbar(
                     message,
                     { 

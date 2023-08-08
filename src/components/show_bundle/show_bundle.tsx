@@ -63,7 +63,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             ga_event("trx_fail_unstake", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
-                showTrxFailedNotification(e);
+                showTrxFailedNotification(e, "withdraw");
                 return false;
             } else {
                 throw e;
@@ -83,7 +83,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             ga_event("trx_fail_stake_add_approval", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
-                showTrxFailedNotification(e);
+                showTrxFailedNotification(e, "fund_approval");
                 return false;
             } else {
                 throw e;
@@ -99,7 +99,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             ga_event("trx_fail_stake_add", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
-                showTrxFailedNotification(e);
+                showTrxFailedNotification(e, "fund");
                 return false;
             } else {
                 throw e;
@@ -122,7 +122,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             ga_event("trx_fail_lock", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
-                showTrxFailedNotification(e);
+                showTrxFailedNotification(e, "lock");
                 return false;
             } else {
                 throw e;
@@ -144,7 +144,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             ga_event("trx_fail_unlock", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
-                showTrxFailedNotification(e);
+                showTrxFailedNotification(e, 'unlock');
                 return false;
             } else {
                 throw e;
@@ -166,7 +166,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             ga_event("trx_fail_close", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
-                showTrxFailedNotification(e);
+                showTrxFailedNotification(e, "close");
                 return false;
             } else {
                 throw e;
@@ -188,7 +188,7 @@ export default function ShowBundle(props: ShowBundleProps) {
             ga_event("trx_fail_burn", { category: 'chain_trx' });
             if ( e instanceof TransactionFailedError) {
                 console.log("transaction failed", e);
-                showTrxFailedNotification(e);
+                showTrxFailedNotification(e, "burn");
                 return false;
             } else {
                 throw e;
@@ -198,10 +198,11 @@ export default function ShowBundle(props: ShowBundleProps) {
         }
     }
 
-    function showTrxFailedNotification(e: TransactionFailedError) {
+    function showTrxFailedNotification(e: TransactionFailedError, action: string) {
         showPersistentErrorSnackbarWithCopyDetails(
             t('error.transaction_failed', { ns: 'common', error: e.code }),
-            e.reason
+            e.reason,
+            action,
         );
     }
 

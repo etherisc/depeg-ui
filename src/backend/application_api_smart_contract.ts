@@ -183,7 +183,8 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         const knownProcessIds = store.getState().policies.policies.map(p => p.id);
 
         for (const application of pendingApplications) {
-            if (application.transactionHash !== null && application.transactionHash !== '') {
+            // console.log("application", application);
+            if (application.transactionHash !== undefined && application.transactionHash !== '') {
                 // don't show mined applications with a known processId or with enough confirmations
                 const tx = await signer.provider?.getTransaction(application.transactionHash);
                 if (tx !== null && tx?.blockHash !== null) {
