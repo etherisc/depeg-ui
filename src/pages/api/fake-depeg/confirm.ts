@@ -3,7 +3,7 @@ import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { ethers, Signer } from 'ethers';
 import { formatBytes32String } from 'ethers/lib/utils';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { DepegProduct__factory } from '../../../contracts/depeg-contracts';
+import { DepegProduct__factory, IPriceDataProvider__factory } from '../../../contracts/depeg-contracts';
 import { redisClient } from '../../../utils/redis';
 
 type Data = {
@@ -25,7 +25,9 @@ export default async function handler(
 
     const latestBlockNumber = await productOwnerSigner.provider!.getBlockNumber();
     const depegProduct = DepegProduct__factory.connect(process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "", productOwnerSigner);
-    await depegProduct.setDepeggedBlockNumber(latestBlockNumber, formatBytes32String('Depegged'));
+    const dataProviderAddress = await depegProduct.getPriceDataProvider();
+    const dataProvider = IPriceDataProvider__factory.connect(dataProviderAddress, productOwnerSigner);
+    await dataProvider.setDepeggedBlockNumber(latestBlockNumber, formatBytes32String('Depegged'));
 
     await redisClient.set("fake-depeg-block-number", latestBlockNumber);
 

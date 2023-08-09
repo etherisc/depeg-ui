@@ -1,14 +1,13 @@
 import { BigNumber } from "ethers";
+import { store } from "../redux/store";
 import { ComponentState } from "../types/component_state";
+import { PendingApplication } from "../utils/pending_application";
 import { ApplicationGasless } from "./application_gasless";
 import { ApplicationApi } from "./backend_api";
 import { BundleData } from "./bundle_data";
 import { DepegProductApi } from "./depeg_product_api";
 import { APPLICATION_STATE_PENDING_MINING, PolicyData } from "./policy_data";
 import { DepegRiskpoolApi } from "./riskpool_api";
-import { PendingApplication } from "../utils/pending_application";
-import ts from "typescript";
-import { store } from "../redux/store";
 
 export const CHAIN_MINUMUM_REQUIRED_CONFIRMATIONS = process.env.NEXT_PUBLIC_CHAIN_MINUMUM_REQUIRED_CONFIRMATIONS ? parseInt(process.env.NEXT_PUBLIC_CHAIN_MINUMUM_REQUIRED_CONFIRMATIONS) : 6;
 
@@ -37,7 +36,8 @@ export class ApplicationApiSmartContract implements ApplicationApi {
     private async getDepegProductApi(): Promise<DepegProductApi> {
         if (! this.depegProductApi.isInitialized()) {
             await this.depegProductApi.initialize();
-            this.applicationGasless = new ApplicationGasless(this.depegProductApi.getSigner());
+            const messageSignerContractAddress = await this.depegProductApi.getMessageSignerContractAddress();
+            this.applicationGasless = new ApplicationGasless(this.depegProductApi.getSigner(), messageSignerContractAddress);
         }
         return this.depegProductApi;
     }

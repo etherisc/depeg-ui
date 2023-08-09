@@ -137,6 +137,7 @@ export interface BundleManagementApi {
         ): Promise<boolean>;
     withdrawBundle(bundleId: number, amount: BigNumber): Promise<boolean>;
     fundBundle(bundleId: number, amount: BigNumber): Promise<boolean>;
+    extendBundle(bundleId: number, lifetime: number): Promise<boolean>;
     getBundleCapitalCap(): Promise<BigNumber>;
     getBundleLifetimeMin(): Promise<number>;
     getBundleLifetimeMax(): Promise<number>;

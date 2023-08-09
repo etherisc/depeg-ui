@@ -95,7 +95,7 @@ export class DepegRiskpoolApi {
         if (this.stakingApi !== undefined) {
             capitalSupport = await this.stakingApi.getSupportedCapital(bundleId);
             supportedCapacity = capitalSupport?.mul(this.protectedAmountFactor);
-            supportedCapacityRemaining = minBigNumber(capacity, supportedCapacity);
+            supportedCapacityRemaining = minBigNumber(capacity, supportedCapacity.sub(lockedCapital.mul(this.protectedAmountFactor)));
         }
 
         return {
@@ -218,7 +218,29 @@ export class DepegRiskpoolApi {
             throw new TransactionFailedError(e.code, e);
         }
     }
-    
+
+    async extendBundle(
+        bundleId: number,
+        lifetime: number,
+    ): Promise<[ContractTransaction, ContractReceipt]> {
+        console.log("extendBundle", bundleId, lifetime);
+        const riskpoolAddress = this.depegRiskpool.address;
+        store.dispatch(start({ type: TrxType.BUNDLE_EXTEND }));
+        store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
+        try {
+            const tx = await this.depegRiskpool.extendBundleLifetime(bundleId, lifetime);
+            store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
+        } catch (e) {
+            console.log("caught error while locking bundle: ", e);
+            // @ts-ignore e.code
+            throw new TransactionFailedError(e.code, e);
+        } finally {
+            store.dispatch(finish());
+        }
+    }
+
     extractBundleIdFromApplicationLogs(logs: any[]): string|undefined {
         const riskpoolAbiCoder = new Coder(IRiskpoolBuild.abi);
         let bundleId = undefined;

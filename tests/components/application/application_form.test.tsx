@@ -266,6 +266,7 @@ describe('ApplicationForm', () => {
                         premium: undefined,
                         premiumErrorKey: undefined,
                         premiumCalculationInProgress: false,
+                        claimGracePeriod: 30,
                     },
                 },
             }

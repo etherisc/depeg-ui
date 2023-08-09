@@ -21,9 +21,18 @@ export const policiesSlice = createSlice({
     initialState,
     reducers: {
         addPolicy: (state, action: PayloadAction<PolicyData>) => {
-            const hasPolicy = state.policies.find((p) => p.id === action.payload.id) !== undefined;
-            if (!hasPolicy) {
-                state.policies.push(action.payload);
+            if (action.payload.id !== '') { 
+                // active policies have an id
+                const hasPolicy = state.policies.find((p) => p.id === action.payload.id) !== undefined;
+                if (!hasPolicy) {
+                    state.policies.push(action.payload);
+                }
+            } else {
+                // future policies based on a pending transaction need to be identified by createdAt and protectedWallet
+                const hasPolicy = state.policies.find((p) => p.createdAt === action.payload.createdAt && p.protectedWallet === action.payload.protectedWallet) !== undefined;
+                if (!hasPolicy) {
+                    state.policies.push(action.payload);
+                }
             }
         },
         reset: (state) => {
