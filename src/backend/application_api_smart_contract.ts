@@ -37,7 +37,8 @@ export class ApplicationApiSmartContract implements ApplicationApi {
     private async getDepegProductApi(): Promise<DepegProductApi> {
         if (! this.depegProductApi.isInitialized()) {
             await this.depegProductApi.initialize();
-            this.applicationGasless = new ApplicationGasless(this.depegProductApi.getSigner());
+            const messageSignerContractAddress = await this.depegProductApi.getMessageSignerContractAddress();
+            this.applicationGasless = new ApplicationGasless(this.depegProductApi.getSigner(), messageSignerContractAddress);
         }
         return this.depegProductApi;
     }

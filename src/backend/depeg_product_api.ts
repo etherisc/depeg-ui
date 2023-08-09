@@ -276,5 +276,9 @@ export class DepegProductApi {
         return mapComponentState(state!);
     }
 
+    async getMessageSignerContractAddress(): Promise<string> {
+        return await this.depegProduct!.getMessageHelperAddress();
+    }
+
 }
 

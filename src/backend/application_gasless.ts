@@ -3,14 +3,15 @@ import { toHex } from "../utils/numbers";
 import { formatUnits, formatBytes32String } from "ethers/lib/utils";
 import { nanoid } from "nanoid";
 import { TransactionFailedError } from "../utils/error";
+import { DepegProduct__factory } from "../contracts/depeg-contracts";
 
 export class ApplicationGasless {
-    private depegProductAddress: string | undefined;
+    private messageSignerContractAddress: string;
     private chainId: string;
     private signer: Signer;
 
-    constructor(signer: Signer) {
-        this.depegProductAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
+    constructor(signer: Signer, messageSignerContractAddress: string) {
+        this.messageSignerContractAddress = messageSignerContractAddress;
         this.chainId = toHex(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "1"));
         this.signer = signer;
     }
@@ -32,12 +33,11 @@ export class ApplicationGasless {
         if (beforeApplyCallback !== undefined) {
             beforeApplyCallback("");
         }
-        
+
         const domain = {
             chainId: this.chainId,
             name: 'EtheriscDepeg',
-            // TODO: helper address
-            verifyingContract: this.depegProductAddress,
+            verifyingContract: this.messageSignerContractAddress,
             version: '1',
         };
 
@@ -62,7 +62,6 @@ export class ApplicationGasless {
 
         const policyHolderAddress = await this.signer.getAddress();
         console.log("sending sign request", policyHolderAddress, domain, types, message);
-        // const signature = await (signer.provider! as providers.Web3Provider).send("eth_signTypedData_v4", [sender, msgParams]);
         let signature;
 
         try {
