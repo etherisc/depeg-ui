@@ -95,7 +95,7 @@ export class DepegRiskpoolApi {
         if (this.stakingApi !== undefined) {
             capitalSupport = await this.stakingApi.getSupportedCapital(bundleId);
             supportedCapacity = capitalSupport?.mul(this.protectedAmountFactor);
-            supportedCapacityRemaining = minBigNumber(capacity, supportedCapacity);
+            supportedCapacityRemaining = minBigNumber(capacity, supportedCapacity.sub(lockedCapital.mul(this.protectedAmountFactor)));
         }
 
         return {
