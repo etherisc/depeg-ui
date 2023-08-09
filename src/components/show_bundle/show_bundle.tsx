@@ -16,11 +16,9 @@ import { TransactionFailedError } from "../../utils/error";
 import { ga_event } from "../../utils/google_analytics";
 import BundleActions from "./bundle_actions";
 import BundleDetails from "./bundle_details";
+import BundleExtendForm from "./bundle_extend_form";
 import BundleFundForm from "./bundle_fund_form";
 import BundleWithdrawForm from "./bundle_withdraw_form";
-import BundleExtendForm from "./bundle_extend_form";
-import { BackendApiMock } from "../../backend/backend_api_mock";
-import dayjs from "dayjs";
 
 interface ShowBundleProps {
     backend: BackendApi;

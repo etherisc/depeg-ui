@@ -3,7 +3,6 @@ import { toHex } from "../utils/numbers";
 import { formatUnits, formatBytes32String } from "ethers/lib/utils";
 import { nanoid } from "nanoid";
 import { TransactionFailedError } from "../utils/error";
-import { DepegProduct__factory } from "../contracts/depeg-contracts";
 
 export class ApplicationGasless {
     private messageSignerContractAddress: string;

@@ -1,19 +1,15 @@
 import { faArrowLeft, faMoneyBillTransfer } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Alert, Box, Button, Checkbox, FormControlLabel, Grid, InputAdornment, LinearProgress, TextField, Typography } from "@mui/material";
-import { BigNumber } from "ethers";
-import { formatUnits, parseUnits } from "ethers/lib/utils";
-import { useTranslation } from "next-i18next";
-import { useEffect, useMemo, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { BundleData } from "../../backend/bundle_data";
-import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from "../../utils/const";
-import { INPUT_VARIANT } from "../../config/theme";
-import { RootState } from "../../redux/store";
-import TermsOfService from "../terms_of_service";
-import dayjs, { Dayjs } from "dayjs";
+import { Box, Button, Checkbox, FormControlLabel, Grid, LinearProgress, Typography } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
+import { BigNumber } from "ethers";
+import { useTranslation } from "next-i18next";
+import { useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { BundleData } from "../../backend/bundle_data";
+import { INPUT_VARIANT } from "../../config/theme";
+import TermsOfService from "../terms_of_service";
 
 interface BundleExtendFormProps {
     bundle: BundleData;
