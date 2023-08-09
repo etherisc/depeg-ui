@@ -29,7 +29,7 @@ export default function BundleActions(props: BundleActionsProps) {
         return (<Alert severity="info">{t('alert.actions_only_owner')}</Alert>);
     }
 
-    const extensionDaysBeforeEnd = parseInt(process.env.NEXT_PUBLIC_DEPEG_LIFETIME_EXTENSION_DAYS_BEFORE_END || "28");
+    const extensionDaysBeforeEnd = parseInt(process.env.NEXT_PUBLIC_DEPEG_LIFETIME_EXTENSION_DAYS_BEFORE_END || "31");
     const bundleExpirationDate = dayjs.unix(props.bundle.createdAt).add(BigNumber.from(props.bundle.lifetime).toNumber(), 's');
 
     const state = props.bundle.state;

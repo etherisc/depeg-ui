@@ -228,12 +228,10 @@ export class DepegRiskpoolApi {
         store.dispatch(start({ type: TrxType.BUNDLE_EXTEND }));
         store.dispatch(waitingForUser({ active: true, params: { address: riskpoolAddress }}));
         try {
-            // TODO: implement when smartcontract is ready
-            // const tx = await this.depegRiskpool.extendBundle(bundleId);
+            const tx = await this.depegRiskpool.extendBundleLifetime(bundleId, lifetime);
             store.dispatch(waitingForTransaction({ active: true, params: { address: riskpoolAddress }}));
-            // const receipt = await tx.wait();
-            // return Promise.resolve([tx, receipt]);
-            return Promise.resolve([{} as ContractTransaction, {} as ContractReceipt]);
+            const receipt = await tx.wait();
+            return Promise.resolve([tx, receipt]);
         } catch (e) {
             console.log("caught error while locking bundle: ", e);
             // @ts-ignore e.code

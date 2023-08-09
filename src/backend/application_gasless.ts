@@ -36,6 +36,7 @@ export class ApplicationGasless {
         const domain = {
             chainId: this.chainId,
             name: 'EtheriscDepeg',
+            // TODO: helper address
             verifyingContract: this.depegProductAddress,
             version: '1',
         };
