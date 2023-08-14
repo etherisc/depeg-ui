@@ -3,7 +3,7 @@
 const { i18n } = require('./next-i18next.config');
 
 const nextConfig = {
-  // output: 'export',
+  output: 'standalone',
   reactStrictMode: true,
   swcMinify: true,
   i18n,
