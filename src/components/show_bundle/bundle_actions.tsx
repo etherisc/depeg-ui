@@ -29,18 +29,26 @@ export default function BundleActions(props: BundleActionsProps) {
         return (<Alert severity="info">{t('alert.actions_only_owner')}</Alert>);
     }
 
+    function isExpired(bundle: BundleData) {
+        const expiredAt = dayjs.unix(props.bundle.createdAt).add(parseInt(props.bundle.lifetime), 's');
+        return expiredAt.isBefore(dayjs());
+    }
+    
+
     const extensionDaysBeforeEnd = parseInt(process.env.NEXT_PUBLIC_DEPEG_LIFETIME_EXTENSION_DAYS_BEFORE_END || "31");
     const bundleExpirationDate = dayjs.unix(props.bundle.createdAt).add(BigNumber.from(props.bundle.lifetime).toNumber(), 's');
 
     const state = props.bundle.state;
-    const isLockAllowed = isOwner && (state === 0);
+    const isLockAllowed = isOwner && (state === 0) && ! isExpired(props.bundle);
     const isUnlockAllowed = isOwner 
         && (state === 1) 
-        && (props.activeBundles < props.maxActiveBundles);
+        && (props.activeBundles < props.maxActiveBundles)
+        && ! isExpired(props.bundle);
     const isExtendAllowed = isOwner 
         && (state === 0) 
-        && (bundleExpirationDate.diff(dayjs(), 'days') <= extensionDaysBeforeEnd);
-    const isFundAllowed = isOwner && (state === 0 || state === 1);
+        && (bundleExpirationDate.diff(dayjs(), 'days') <= extensionDaysBeforeEnd)
+        && ! isExpired(props.bundle);
+    const isFundAllowed = isOwner && (state === 0 || state === 1) && ! isExpired(props.bundle);
     const isWithdrawAllowed = isOwner && (state !== 3);
     const isCloseAllowed = isOwner && (state === 0 || state === 1) && props.bundle.policies == 0;
     const isBurnAllowed = isOwner && (state === 2);
