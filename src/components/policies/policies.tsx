@@ -280,7 +280,7 @@ export default function Policies(props: PoliciesProps) {
                         </Typography>
                     </Tooltip>
                 </>)},
-            sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2),
+            sortComparator: (v1: PolicyData, v2: PolicyData) => bigNumberComparator(BigNumber.from(v1.protectedAmount), BigNumber.from(v2.protectedAmount)),
         },
         { 
             field: 'createdAt', 
@@ -324,6 +324,7 @@ export default function Policies(props: PoliciesProps) {
         {
             field: 'action',
             headerName: t('table.header.action'), 
+            sortable: false,
             flex: 0.6,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
