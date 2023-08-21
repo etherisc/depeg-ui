@@ -248,6 +248,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
                         sortModel: [{ field: 'apr', sort: 'asc' }],
                     },
                 }}
+                sortingOrder={['desc', 'asc']}
                 paginationModel={paginationModel}
                 pageSizeOptions={[5, 10, 20, 50]}
                 onPaginationModelChange={setPaginationModel}

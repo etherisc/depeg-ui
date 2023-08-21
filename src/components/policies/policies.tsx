@@ -408,6 +408,7 @@ export default function Policies(props: PoliciesProps) {
                         sortModel: [{ field: 'coverageUntil', sort: 'asc' }],
                     },
                 }}
+                sortingOrder={['desc', 'asc']}
                 paginationModel={paginationModel}
                 pageSizeOptions={[5, 10, 20, 50]}
                 onPaginationModelChange={setPaginationModel}
