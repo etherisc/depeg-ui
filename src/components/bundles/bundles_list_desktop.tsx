@@ -22,6 +22,7 @@ import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
 import { LinkBehaviour } from "../link_behaviour";
 import Timestamp from "../timestamp";
 import StakeUsageIndicator from "./stake_usage_indicator";
+import { bigNumberComparator } from "../../utils/bignumber";
 
 export interface BundlesProps {
     usd2: string;
@@ -74,6 +75,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             flex: 0.3,
             valueGetter: (params: GridValueGetterParams) => params.row,
             valueFormatter: (params: GridValueFormatterParams<BundleData>) => formatBundleState(params.value!, t),
+            sortComparator: (v1: BundleData, v2: BundleData) =>  v2.state - v1.state,
         },
         {
             field: 'apr',
@@ -81,7 +83,8 @@ export default function BundlesListDesktop(props: BundlesProps) {
             flex: 0.3,
             valueFormatter: (params: GridValueFormatterParams<number>) => {
                 return `${params.value.toFixed(2)}%`
-            }
+            },
+            sortComparator: (v1: number, v2: number) =>  v2 - v1,
         },
         { 
             field: 'balance', 
@@ -91,7 +94,8 @@ export default function BundlesListDesktop(props: BundlesProps) {
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
                 const capital = formatCurrencyBN(params.value, props.usd2Decimals);
                 return `${props.usd2} ${capital}`;
-            }
+            },
+            sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2)
         },
         { 
             field: 'capacity', 
@@ -101,7 +105,8 @@ export default function BundlesListDesktop(props: BundlesProps) {
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
                 const capacity = formatCurrencyBN(params.value, props.usd2Decimals);
                 return `${props.usd2} ${capacity}`
-            }
+            },
+            sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2)
         },
         { 
             field: 'lifetime', 
