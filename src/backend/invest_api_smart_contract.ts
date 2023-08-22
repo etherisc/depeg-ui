@@ -48,9 +48,6 @@ export class InvestApiSmartContract implements BundleManagementApi {
 
         const riskpoolCapacityLimit = process.env.NEXT_PUBLIC_RISKPOOL_CAPACITY_LIMIT;
         this.riskpoolCapacityLimit = riskpoolCapacityLimit !== undefined ? parseUnits(riskpoolCapacityLimit, usd2Decimals) : undefined;
-
-        const investorWhiteList = process.env.NEXT_PUBLIC_INVESTOR_WHITELIST;
-        this.investorWhitelist = investorWhiteList !== undefined ? investorWhiteList.split(',').map(w => w.trim()) : undefined;
     }
 
     /**

@@ -99,13 +99,6 @@ Check the riskpool capacity limit and show a warning if the limit is reached (wo
 
 - `NEXT_PUBLIC_RISKPOOL_CAPACITY_LIMIT=250000` - configure the riskpool capacity limit to USD2 250000 
 
-#### Override investor whitelist
-
-Check if the investor is whitelisted before investment and show a warning if the investor is not whitelisted.
-
-- `NEXT_PUBLIC_INVESTOR_WHITELIST=0x2CeC4C063Fef1074B0CD53022C3306A6FADb4729` - configure the investor whitelist addresses (comma separated list of addresses)
-
-
 
 ### Feature flags
 
