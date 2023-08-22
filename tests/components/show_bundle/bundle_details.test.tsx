@@ -31,7 +31,7 @@ describe('When displaying the bundle detail component', () => {
             name: "Happy Testing",
             apr: 3.1415,
             capital: parseUnits("100000", 6).toString(),
-            balance: parseUnits("100123", 6).toString(),
+            balance: parseUnits("100123.778999", 6).toString(),
             capacity: parseUnits("90000", 6).toString(),
             locked: parseUnits("12000", 6).toString(),
             capitalSupport: parseUnits("8000", 6).toString(),
@@ -60,7 +60,7 @@ describe('When displaying the bundle detail component', () => {
         );
 
         expect(screen.getByText('bundle_state_1')).toBeInTheDocument();
-        expect(screen.getByText('USDT 100,123.00')).toBeInTheDocument(); // balance
+        expect(screen.getByText('USDT 100,123.77')).toBeInTheDocument(); // balance (rounded down to 2 decimals)
         expect(screen.getByText('USDT 100,000.00')).toBeInTheDocument(); // capital
         expect(screen.getByText('USDT 8,000.00')).toBeInTheDocument(); // capital support
         expect(screen.getByText('USDT 12,000.00')).toBeInTheDocument(); // locked

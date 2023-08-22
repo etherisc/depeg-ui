@@ -47,37 +47,37 @@ export default function BundleDetails(props: BundleDetailsProps) {
             <NameValue name={t('state')} value={<>{formatBundleState(props.bundle, t)}</>}/>
             <NameValue name={t('balance')} value={
                 <>
-                    {symbol + " " + formatCurrencyBN(balance, props.decimals)} 
+                    {symbol + " " + formatCurrencyBN(balance, props.decimals, 2)} 
                     <WithTooltip tooltipText={t('balance_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
             <NameValue name={t('capital')} value={
                 <>
-                    {symbol + " " + formatCurrencyBN(capital, props.decimals)} 
+                    {symbol + " " + formatCurrencyBN(capital, props.decimals, 2)} 
                     <WithTooltip tooltipText={t('capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
             <NameValue name={t('supported_capital')} value={
                 <>
-                    {symbol + " " + formatCurrencyBN(supportedCapital, props.decimals)} 
+                    {symbol + " " + formatCurrencyBN(supportedCapital, props.decimals, 2)} 
                     <WithTooltip tooltipText={t('supported_capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
             <NameValue name={t('locked')} value={
                 <>
-                    {symbol + " " + formatCurrencyBN(locked, props.decimals)}
+                    {symbol + " " + formatCurrencyBN(locked, props.decimals, 2)}
                     <WithTooltip tooltipText={t('locked_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>}  />
             <NameValue name={t('capacity')} value={
             <>
-                {symbolProtected + " " + formatCurrencyBN(capacity, props.decimalsProtected)}
+                {symbolProtected + " " + formatCurrencyBN(capacity, props.decimalsProtected, 2)}
                 <WithTooltip tooltipText={t('capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
             </>} />
             <NameValue name={t('supported_capacity')} value={
                 <>
-                    {symbolProtected + " " + formatCurrencyBN(supportedCapacity, props.decimalsProtected)}
+                    {symbolProtected + " " + formatCurrencyBN(supportedCapacity, props.decimalsProtected, 2)}
                     <WithTooltip tooltipText={t('supported_capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>}  />
             <NameValue name={t('supported_capacity_remaining')} value={
                 <>
-                    {symbolProtected + " " + formatCurrencyBN(supportedCapacityRemaining, props.decimalsProtected)}
+                    {symbolProtected + " " + formatCurrencyBN(supportedCapacityRemaining, props.decimalsProtected, 2)}
                     <WithTooltip tooltipText={t('supported_capacity_remaining_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
             <NameValue name={t('min_max_sum_insured')} value={<>{symbolProtected + " " + formatCurrencyBN(minSumInsured, props.decimalsProtected) + " / " + formatCurrencyBN(maxSumInsured, props.decimalsProtected)}</>}/>

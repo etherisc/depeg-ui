@@ -92,7 +92,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             flex: 0.65,
             valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
-                const capital = formatCurrencyBN(params.value, props.usd2Decimals);
+                const capital = formatCurrencyBN(params.value, props.usd2Decimals, 2);
                 return `${props.usd2} ${capital}`;
             },
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2)
@@ -103,7 +103,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             flex: 0.65,
             valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
-                const capacity = formatCurrencyBN(params.value, props.usd2Decimals);
+                const capacity = formatCurrencyBN(params.value, props.usd2Decimals, 2);
                 return `${props.usd2} ${capacity}`
             },
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2)
