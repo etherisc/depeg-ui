@@ -181,7 +181,7 @@ export default function StakingForm(props: StakingFormProperties) {
     
     return (<>
         <form onSubmit={handleSubmit(onSubmit)}>
-            <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
+            <Grid container maxWidth={{ 'xs': 'none', 'md': 'lg'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
                 sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
                 <Grid item xs={12}>
                     <Controller
