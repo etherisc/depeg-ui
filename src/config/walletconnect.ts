@@ -6,7 +6,7 @@ import { publicProvider } from 'wagmi/providers/public';
 export const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID;
 console.log("wallet connect config", "chainid", CHAIN_ID);
 
-export const WALLET_CONNECT_PROJECT_ID = '6cf24be37dc19d58bc113806ab03aded';
+export const WALLET_CONNECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || "";
 
 // configure walletconnect v2
 let chainsList;
