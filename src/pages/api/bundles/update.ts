@@ -31,10 +31,10 @@ export default async function handler(
     let bundles;
 
     if (updateOnlyBundle !== undefined) {
-        console.log("fetching bundle", updateOnlyBundle);
+        // console.debug("fetching bundle", updateOnlyBundle);
         bundles = await updateBundle(riskpoolApi, parseInt(updateOnlyBundle));
     } else {
-        console.log("fetching all bundles");
+        // console.debug("fetching all bundles");
         bundles = await updateAllBundles(riskpoolApi);
     }
 

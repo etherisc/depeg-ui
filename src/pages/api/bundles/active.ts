@@ -10,7 +10,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Array<BundleData>>
 ) {
-    console.log("getting active bundles from redis");
+    // console.log("getting active bundles from redis");
     const bundlesjson = await redisClient.get("bundles");
     
     if (bundlesjson == null) {
@@ -24,25 +24,25 @@ export default async function handler(
     res.status(200).json(bundles.filter(bundle => {
         // ignore bundles with state not active
         if (bundle.state !== 0) {
-            console.log("bundle not active", bundle.id);
+            // console.log("bundle not active", bundle.id);
             return false;
         }
 
         // ignore expired bundles
         if (lastBlockTimestamp > (bundle.createdAt + parseInt(bundle.lifetime))) {
-            console.log("bundle expired", bundle.id);
+            // console.log("bundle expired", bundle.id);
             return false;
         }
 
         const capacity = BigNumber.from(bundle.capacity);
         // ignore bundles with no capacity
         if (capacity.lte(0)) {
-            console.log("bundle no capacity", bundle.id);
+            // console.log("bundle no capacity", bundle.id);
             return false;
         }
         // ignore bundles with less capacity then min protected amount (inconsistent)
         if (BigNumber.from(bundle.minProtectedAmount).gt(capacity)) {
-            console.log("bundle minSumInsured greater than capacity", bundle.id);
+            // console.log("bundle minSumInsured greater than capacity", bundle.id);
             return false;
         }
         const capitalSupport = bundle.capitalSupport;
@@ -51,17 +51,17 @@ export default async function handler(
             const supportedCapacityRemainingBN = BigNumber.from(bundle.supportedCapacityRemaining);
             // stake adjusted capacity
             const remainingCapacity = minBigNumber(capacity, supportedCapacityRemainingBN);
-            console.log("bundleid", bundle.id, "remainingCapacity", remainingCapacity.toString(), "locked", bundle.locked, "capitalSupport", capitalSupport);
+            // console.log("bundleid", bundle.id, "remainingCapacity", remainingCapacity.toString(), "locked", bundle.locked, "capitalSupport", capitalSupport);
             if (remainingCapacity.lte(BigNumber.from(0))) {
-                console.log("remaining capacity less than 0", bundle.id);
+                // console.log("remaining capacity less than 0", bundle.id);
                 return false;
             }
             if (remainingCapacity.lt(BigNumber.from(bundle.minProtectedAmount))) {
-                console.log("remaining capacity less than min sum insured", bundle.id);
+                // console.log("remaining capacity less than min sum insured", bundle.id);
                 return false;
             }
         }
-        console.log("bundle is active", bundle.id);
+        // console.log("bundle is active", bundle.id);
         return true;
     }));
 }

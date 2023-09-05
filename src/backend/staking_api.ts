@@ -30,9 +30,9 @@ export default class StakingApi {
 
     async getSupportedCapital(bundleId: number): Promise<BigNumber> {
         const instanceId = await this.getInstanceId();
-        console.log("chainRegistryContract!.getBundleNftId", instanceId, bundleId);
+        // console.log("chainRegistryContract!.getBundleNftId", instanceId, bundleId);
         const bundleNftId = await this.chainRegistryContract!.getBundleNftId(instanceId, bundleId);
-        console.log("stakingContract.capitalSupport", bundleNftId.toNumber());
+        // console.log("stakingContract.capitalSupport", bundleNftId.toNumber());
         return await this.stakingContract.capitalSupport(bundleNftId);
     }
 
