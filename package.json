@@ -30,7 +30,7 @@
     "@mui/x-data-grid": "^6.11.0",
     "@mui/x-date-pickers": "^6.12.1",
     "@reduxjs/toolkit": "^1.9.5",
-    "@types/color": "^3.0.3",
+    "@types/color": "^3.0.4",
     "@types/request-ip": "^0.0.38",
     "@web3modal/ethereum": "^2.7.1",
     "@web3modal/react": "^2.7.1",
