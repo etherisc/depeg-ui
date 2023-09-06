@@ -113,6 +113,7 @@ describe('When rendering the bundles list', () => {
                         isLoadingBundles: false,
                         showBundle: undefined,
                         showCreationConfirmation: false,
+                        isShowBundleExtend: false,
                         isShowBundleFund: false,
                         isShowBundleWithdraw: false,
                     }

@@ -41,6 +41,9 @@ export const etheriscTheme = createTheme({
             },
         },
     },
+    typography: {
+        fontSize: 16,
+    },
 });
 
 export const INPUT_VARIANT = 'filled';

@@ -49,7 +49,7 @@ export default function useNotifications() {
                         persist: true,
                         action: (key) => {
                             return (<>
-                                <Button onClick={async () => await navigator.clipboard.writeText(details) }>
+                                <Button onClick={async () => await navigator.clipboard.writeText(message + "\n" + details) }>
                                     <WithTooltip tooltipText={t('action.copy_details')}>
                                         {t('action.copy')}
                                     </WithTooltip>

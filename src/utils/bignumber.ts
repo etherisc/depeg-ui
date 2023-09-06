@@ -6,6 +6,14 @@ export function formatEthersNumber(num: BigNumber, decimals: number): string {
 }
 
 export function bigNumberComparator(v1: BigNumber, v2: BigNumber): number {
+    if (v1 === undefined && v2 === undefined) {
+        return 0;
+    } else if (v1 === undefined) {
+        return -1;
+    } else if (v2 === undefined) {
+        return 1;
+    }
+
     if (v1.gt(v2)) {
         return 1;
     }

@@ -17,13 +17,25 @@ export function formatCurrency(value: number | undefined, decimals: number, disp
         maximumFractionDigits: displayPrecision || DISPLAY_PRECISION });
 }
 
-export function formatCurrencyBN(value: BigNumber, decimals: number, displayPrecision?: number): string {
+export function formatCurrencyBN(value: BigNumber, decimals: number, roundDownDecimals?: number): string {
     if (value === undefined) {
         return "";
     }
-    return parseFloat(formatUnits(value, decimals)).toLocaleString(undefined, { useGrouping: true, 
-        minimumFractionDigits: displayPrecision || DISPLAY_PRECISION,
-        maximumFractionDigits: displayPrecision || DISPLAY_PRECISION });
+
+    let val = parseFloat(formatUnits(value, decimals));
+
+    if (roundDownDecimals !== undefined) {
+        val = roundDownToDec(val, roundDownDecimals);
+    }
+    
+    return val.toLocaleString(undefined, { useGrouping: true, 
+        minimumFractionDigits: DISPLAY_PRECISION,
+        maximumFractionDigits: DISPLAY_PRECISION });
+}
+
+function roundDownToDec(float: number, decimals: number) {
+    const factor = Math.pow(10, decimals);
+    return Math.floor(float * factor) / factor;
 }
 
 export function toHexString(valStr: string): string {

@@ -34,7 +34,7 @@ export default function Layout({ Component, pageProps }: AppProps) {
         if (notice !== undefined && notice?.trim() !== "" ) {
             return (<>
                 <Container maxWidth={false} sx={{ backgroundColor: `${type}.main` }}>
-                    <Container maxWidth="lg">
+                    <Container maxWidth="xl">
                         <Collapse in={!noticeDismissed}>
                             <Alert 
                                 severity={type as AlertColor} 
@@ -58,7 +58,7 @@ export default function Layout({ Component, pageProps }: AppProps) {
     return (<Box component="div" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         {globalNotice()}
         <Header title={title} items={items} />
-        <Container maxWidth="lg" sx={{ p: 1 }}>
+        <Container maxWidth="xl" sx={{ p: 1 }}>
             {content()}
         </Container>
         <Footer />
