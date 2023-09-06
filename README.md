@@ -170,7 +170,7 @@ To initiate a fake depeg event these steps are required
 
 ```
 docker build -t depeg-ui --build-arg INSTANCE=mumbai .
-docker run --rm -p 3002:3000 depeg-ui
+docker run --rm -p 3002:3000 -e HOSTNAME=0.0.0.0 depeg-ui
 ```
 
 open browser at http://localhost:3002
@@ -241,6 +241,7 @@ dokku letsencrypt:enable goerli-depeg
 
 # configure backend chain rpc url
 dokku config:set goerli-depeg BACKEND_CHAIN_RPC_URL=<chain rpc url>
+dokku config:set goerli-depeg HOSTNAME=0.0.0.0
 
 # initial update of the bundle cache (probably empty)
 curl https://<application-url>/api/bundles/update
