@@ -60,7 +60,7 @@
     "wagmi": "^1.4.1"
   },
   "devDependencies": {
-    "@chainlink/contracts": "^0.6.1",
+    "@chainlink/contracts": "^0.7.1",
     "@etherisc/depeg-contracts": "1.2.0",
     "@etherisc/registry-contracts": "1.2.0",
     "@hookform/devtools": "^4.3.1",
