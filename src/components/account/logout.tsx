@@ -4,19 +4,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { removeSigner } from '../../utils/chain';
-import { useDisconnect } from 'wagmi';
+// import { useDisconnect } from 'wagmi';
 
 export default function Logout() {
     const { t } = useTranslation('common');
     const { isConnected, isWalletConnect } = useSelector((state: any) => state.chain);
     const dispatch = useDispatch();
-    const { disconnect: wagmiDisconnect } = useDisconnect();
+    // const { disconnect: wagmiDisconnect } = useDisconnect();
 
     const logout = async () => {
         removeSigner(dispatch);
-        if (isWalletConnect) {
-            wagmiDisconnect();
-        }
+        // if (isWalletConnect) {
+        //     wagmiDisconnect();
+        // }
     }
         
     let button = (<></>);

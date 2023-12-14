@@ -5,26 +5,24 @@ import { getAndUpdateBlock, getChainState, setAccountRedux, updateSigner } from 
 import { AnyAction, Dispatch } from "@reduxjs/toolkit";
 import { fetchBalances } from "../redux/thunks/account";
 import { store } from "../redux/store";
-import { getEthersSigner } from "./walletconnect";
-import { CHAIN_ID } from "../config/walletconnect";
 
 
 export async function reconnectWallets(dispatch: Dispatch<AnyAction>) {
     // try to reconnect walletconnect connection first
-    const wcSigner = await getEthersSigner({ chainId: parseInt(CHAIN_ID || "1") });
-    if (wcSigner !== undefined) {
-        console.log("reconnect walletconnect");
-        const provider = wcSigner.provider;
-        dispatch(connectChain(await getChainState(provider, true)));
-        setAccountRedux(wcSigner, dispatch);
-        store.dispatch(fetchBalances(wcSigner));
+    // const wcSigner = await getEthersSigner({ chainId: parseInt(CHAIN_ID || "1") });
+    // if (wcSigner !== undefined) {
+    //     console.log("reconnect walletconnect");
+    //     const provider = wcSigner.provider;
+    //     dispatch(connectChain(await getChainState(provider, true)));
+    //     setAccountRedux(wcSigner, dispatch);
+    //     store.dispatch(fetchBalances(wcSigner));
 
-        provider.on("block", (blockNumber: number) => {
-            getAndUpdateBlock(dispatch, provider, blockNumber);
-        });
+    //     provider.on("block", (blockNumber: number) => {
+    //         getAndUpdateBlock(dispatch, provider, blockNumber);
+    //     });
 
-        return;
-    }
+    //     return;
+    // }
 
     // if that fails, try to reconnect browser injected wallet
     // @ts-ignore

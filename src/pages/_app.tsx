@@ -23,9 +23,9 @@ import { getAndUpdateWalletAccount } from '../utils/wallet';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 // Prevent fontawesome from adding its CSS since we did it manually above:
 import { config } from '@fortawesome/fontawesome-svg-core';
-import { Web3Modal } from '@web3modal/react';
+// import { Web3Modal } from '@web3modal/react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { WagmiConfig } from 'wagmi';
+// import { WagmiConfig } from 'wagmi';
 import { WALLET_CONNECT_PROJECT_ID, ethereumClient, wagmiConfig } from '../config/walletconnect';
 import { resetSelectedBundle } from '../redux/slices/bundles';
 import { RootState, store } from '../redux/store';
@@ -110,10 +110,10 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
   return (
     <SnackbarProvider maxSnack={3} anchorOrigin={{ horizontal: "center", vertical: "top" }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <WagmiConfig config={wagmiConfig}>
+        {/* <WagmiConfig config={wagmiConfig}> */}
           <Layout {...appProps} />
-        </WagmiConfig>
-        <Web3Modal projectId={WALLET_CONNECT_PROJECT_ID} ethereumClient={ethereumClient} />
+        {/* </WagmiConfig> */}
+        {/* <Web3Modal projectId={WALLET_CONNECT_PROJECT_ID} ethereumClient={ethereumClient} /> */}
       </LocalizationProvider>
     </SnackbarProvider>
   );
