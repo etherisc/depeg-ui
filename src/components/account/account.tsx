@@ -9,7 +9,7 @@ import { reconnectWallets } from "../../utils/wallet";
 import Login from "./login";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, store } from "../../redux/store";
-// import { useWalletClient } from "wagmi";
+import { useWalletClient } from "wagmi";
 import { getEthersSigner } from "../../utils/walletconnect";
 import { getAndUpdateBlock, getChainState, setAccountRedux } from "../../utils/chain";
 import { connectChain, disconnectChain } from "../../redux/slices/chain";
@@ -24,8 +24,7 @@ export default function Account() {
     const balanceUsd1 = useSelector((state: RootState) => state.account.balanceUsd1);
     const balanceUsd2 = useSelector((state: RootState) => state.account.balanceUsd2);
     const balances = [balance, balanceUsd1, balanceUsd2];
-    // const { data: walletClient } = useWalletClient();
-    const walletClient = undefined;
+    const { data: walletClient } = useWalletClient();
     
     const [ activeBalance, setActiveBalance ] = useState(0);
 
@@ -47,31 +46,31 @@ export default function Account() {
 
 
     // handle wallet connect connection state (login/logout)
-    // useEffect(() => {
-    //     console.log("walletClient changed", walletClient);
-    //     async function login() {
-    //         console.log("wallet connect login");
-    //         const signer = await getEthersSigner({ chainId: parseInt(CHAIN_ID || "1") });
-    //         if (signer === undefined) {
-    //             return;
-    //         }
-    //         const provider = signer.provider;
-    //         dispatch(connectChain(await getChainState(provider, true)));
-    //         setAccountRedux(signer, dispatch);
-    //         store.dispatch(fetchBalances(signer));
+    useEffect(() => {
+        console.log("walletClient changed", walletClient);
+        async function login() {
+            console.log("wallet connect login");
+            const signer = await getEthersSigner({ chainId: parseInt(CHAIN_ID || "1") });
+            if (signer === undefined) {
+                return;
+            }
+            const provider = signer.provider;
+            dispatch(connectChain(await getChainState(provider, true)));
+            setAccountRedux(signer, dispatch);
+            store.dispatch(fetchBalances(signer));
 
-    //         provider.on("block", (blockNumber: number) => {
-    //             getAndUpdateBlock(dispatch, provider, blockNumber);
-    //         });
-    //     }
+            provider.on("block", (blockNumber: number) => {
+                getAndUpdateBlock(dispatch, provider, blockNumber);
+            });
+        }
         
-    //     if (walletClient !== undefined && ! loggedIn) {
-    //         login();
-    //     } else if (walletClient === undefined && loggedIn && isWalletConnect) {
-    //         console.log("wallet connect logout")
-    //         dispatch(disconnectChain());
-    //     }
-    // }, [walletClient, loggedIn, dispatch, isWalletConnect]);
+        if (walletClient !== undefined && ! loggedIn) {
+            login();
+        } else if (walletClient === undefined && loggedIn && isWalletConnect) {
+            console.log("wallet connect logout")
+            dispatch(disconnectChain());
+        }
+    }, [walletClient, loggedIn, dispatch]);
 
 
     if (! loggedIn) {

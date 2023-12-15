@@ -3,13 +3,13 @@ import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMediaQuery, useTheme } from "@mui/material";
 import Button from '@mui/material/Button';
-// import { useWeb3Modal } from "@web3modal/react";
+import { useWeb3Modal } from "@web3modal/react";
 import { useTranslation } from "next-i18next";
 import { useSelector } from "react-redux";
 
 export default function LoginWithWalletConnectV2Button(props: any) {
     const { closeDialog } = props;
-    // const { open } = useWeb3Modal();
+    const { open } = useWeb3Modal();
 
     const { t } = useTranslation('common');
     const theme = useTheme();
@@ -20,7 +20,7 @@ export default function LoginWithWalletConnectV2Button(props: any) {
         console.log("wallet connect v2 login");
         closeDialog();
         // show walletconnect v2 modal
-        // open();
+        open();
     }
 
     let button = (<></>);
