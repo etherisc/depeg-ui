@@ -47,9 +47,9 @@ export default function Login() {
                         <Grid item xs={12}  sx={{ p: 1 }}>
                             <LoginWithMetaMaskButton closeDialog={() => setShowLoginDialog(false)} />
                         </Grid>
-                        {/* <Grid item xs={12}  sx={{ p: 1 }}>
+                        <Grid item xs={12}  sx={{ p: 1 }}>
                             <LoginWithWalletConnectV2Button closeDialog={() => setShowLoginDialog(false)} /> 
-                        </Grid> */}
+                        </Grid>
                     </Grid>
                 </DialogContentText>
             </DialogContent>
