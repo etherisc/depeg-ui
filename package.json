@@ -27,7 +27,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.20",
-    "@mui/x-data-grid": "^6.18.3",
+    "@mui/x-data-grid": "^6.18.5",
     "@mui/x-date-pickers": "^6.18.4",
     "@reduxjs/toolkit": "^1.9.7",
     "@web3modal/ethereum": "^2.7.1",
