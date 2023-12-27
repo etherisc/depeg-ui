@@ -10,7 +10,7 @@ export interface TransactionState {
     waitingForTransactionParams: any;
 }
 
-const initialState: TransactionState = {
+export const INITIAL_TRANSACTION_STATE: TransactionState = {
     isActive: null,
     isWaitingForUser: false,
     waitingForUserParams: {},
@@ -20,7 +20,7 @@ const initialState: TransactionState = {
 
 export const transactionSlice = createSlice({
     name: 'transaction',
-    initialState,
+    initialState: INITIAL_TRANSACTION_STATE,
     reducers: {
         start: (state, action: PayloadAction<{ type?: TrxType }>) => {
             // console.log('start', action.payload.type);

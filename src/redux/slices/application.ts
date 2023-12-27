@@ -16,7 +16,7 @@ export interface ApplicationState {
     premiumCalculationInProgress: boolean;
 }
 
-const initialState: ApplicationState = {
+export const INITIAL_APPLICATION_STATE: ApplicationState = {
     productComponentState: ComponentState.Active,
     bundles: [],
     isLoadingBundles: false,
@@ -31,7 +31,7 @@ const initialState: ApplicationState = {
 
 export const applicationSlice = createSlice({
     name: 'application',
-    initialState,
+    initialState: INITIAL_APPLICATION_STATE,
     reducers: {
         addBundle: (state, action: PayloadAction<BundleData>) => {
             const hasBundle = state.bundles.find((bundle) => bundle.id === action.payload.id) !== undefined;

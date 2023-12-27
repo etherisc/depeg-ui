@@ -21,7 +21,7 @@ export interface BundlesState {
     isShowBundleExtend: boolean;
 }
 
-const initialState: BundlesState = {
+export const INITIAL_BUNDLES_STATE: BundlesState = {
     bundles: [],
     maxActiveBundles: 0,
     showBundle: undefined,
@@ -34,7 +34,7 @@ const initialState: BundlesState = {
 
 export const bundlesSlice = createSlice({
     name: 'bundles',
-    initialState,
+    initialState: INITIAL_BUNDLES_STATE,
     reducers: {
         addBundle: (state, action: PayloadAction<BundleData>) => {
             const hasBundle = state.bundles.find((bundle) => bundle.id === action.payload.id) !== undefined;
