@@ -72,7 +72,7 @@
     "@types/color": "^3.0.6",
     "@types/jest": "^29.5.11",
     "@types/node": "^18.19.2",
-    "@types/react": "^18.2.43",
+    "@types/react": "^18.2.45",
     "@types/react-blockies": "^1.4.4",
     "@types/react-dom": "^18.2.18",
     "@types/request-ip": "^0.0.41",
