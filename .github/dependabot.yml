@@ -11,7 +11,7 @@ updates:
       interval: "weekly"
     ignore:
     - dependency-name: "node"
-      versions: ["19-alpine", "20-alpine"]
+      versions: ["21-alpine"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -23,7 +23,7 @@ updates:
     open-pull-requests-limit: 30
     ignore:
     - dependency-name: "@types/node" 
-      versions: ["19.x", "20.x"]
+      versions: ["21.x"]
     - dependency-name: "@etherisc/gif-interface"
       # ignore all updates to this dependency 
     - dependency-name: "@etherisc/depeg-contracts"

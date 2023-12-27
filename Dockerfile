@@ -1,4 +1,4 @@
-ARG VARIANT=node:18-alpine
+ARG VARIANT=node:20-alpine
 # Install dependencies only when needed
 FROM ${VARIANT} AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
