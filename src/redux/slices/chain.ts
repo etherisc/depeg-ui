@@ -19,7 +19,7 @@ export interface ChainState {
     blockTime: number,
 }
 
-const initialState: ChainState = {
+export const INITIAL_CHAIN_STATE: ChainState = {
     chainId: "0x0",
     isConnected: false,
     isExpectedChain: true,
@@ -32,7 +32,7 @@ const initialState: ChainState = {
 
 export const chainSlice = createSlice({
     name: 'chain',
-    initialState,
+    initialState: INITIAL_CHAIN_STATE,
     reducers: {
         connectChain(state, action: PayloadAction<ChainState>) {
             state.provider?.removeAllListeners();
@@ -40,7 +40,7 @@ export const chainSlice = createSlice({
         },
         disconnectChain(state) {
             state.provider?.removeAllListeners();
-            Object.assign(state, initialState);
+            Object.assign(state, INITIAL_CHAIN_STATE);
         },
         updateSigner(state, action: PayloadAction<Signer>) {
             state.signer = action.payload;

@@ -1,4 +1,4 @@
-import { combineReducers, configureStore, PreloadedState } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import accountReducer from './slices/account';
 import applicationReducer from './slices/application';
 import bundlesReducer from './slices/bundles';
@@ -18,7 +18,7 @@ const rootReducer = combineReducers({
     transaction: transactionReducer,
 })
 
-export const setupStore = (preloadedState?: PreloadedState<RootState>) => {
+export const setupStore = (preloadedState?: RootState) => {
     return configureStore({
         reducer: rootReducer,
         preloadedState

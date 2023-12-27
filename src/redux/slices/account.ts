@@ -21,7 +21,7 @@ const emptyUsd = {
     decimals: 6,
 };
 
-const initialState: AccountState = {
+export const INITIAL_ACCOUNT_STATE: AccountState = {
     address: undefined,
     balance: emptyEth,
     balanceUsd1: emptyUsd,
@@ -30,7 +30,7 @@ const initialState: AccountState = {
 
 export const accountSlice = createSlice({
     name: 'account',
-    initialState,
+    initialState: INITIAL_ACCOUNT_STATE,
     reducers: {
         setAccount(state, action: PayloadAction<string>) {
             state.address = action.payload;

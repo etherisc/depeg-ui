@@ -31,7 +31,7 @@ const initialPrice = {
 } as PriceInfo;
 
 
-const initialState: PriceState = {
+export const INITIAL_PRICE_STATE: PriceState = {
     symbol: "USDC",
     name: "USD Coin",
     decimals: 8,
@@ -47,7 +47,7 @@ const initialState: PriceState = {
 
 export const priceSlice = createSlice({
     name: 'price',
-    initialState,
+    initialState: INITIAL_PRICE_STATE,
     reducers: {
         setCoin: (state, action: PayloadAction<{ symbol: string, name: string, decimals: number}>) => {
             state.symbol = action.payload.symbol;

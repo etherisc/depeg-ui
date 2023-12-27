@@ -9,7 +9,7 @@ export interface PoliciesState {
     isDepegged: boolean;
 }
 
-const initialState: PoliciesState = {
+export const INITIAL_POLICIES_STATE: PoliciesState = {
     policies: [],
     claimedPolicy: null,
     isLoading: false,
@@ -18,7 +18,7 @@ const initialState: PoliciesState = {
 
 export const policiesSlice = createSlice({
     name: 'policies',
-    initialState,
+    initialState: INITIAL_POLICIES_STATE,
     reducers: {
         addPolicy: (state, action: PayloadAction<PolicyData>) => {
             if (action.payload.id !== '') { 
