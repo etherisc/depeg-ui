@@ -10,7 +10,7 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
       args:
-        VARIANT: 18-bookworm
+        VARIANT: 20-bookworm
     volumes:
       - ..:/workspaces/depeg-ui:cached
       - depeg-ui-node_modules:/workspaces/depeg-ui/node_modules

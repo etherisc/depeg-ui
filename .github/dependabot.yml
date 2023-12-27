@@ -11,7 +11,7 @@ updates:
       interval: "weekly"
     ignore:
     - dependency-name: "node"
-      versions: ["19-alpine", "20-alpine"]
+      # versions: ["19-alpine", "20-alpine"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
