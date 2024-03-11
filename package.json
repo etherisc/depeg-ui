@@ -26,7 +26,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/icons-material": "^5.15.5",
-    "@mui/material": "^5.15.5",
+    "@mui/material": "^5.15.12",
     "@mui/x-data-grid": "^6.19.1",
     "@mui/x-date-pickers": "^6.19.0",
     "@reduxjs/toolkit": "^2.0.1",
