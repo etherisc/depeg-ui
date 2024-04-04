@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import { DataGrid, GridActionsCellItem, GridCellParams, GridColDef, GridRenderCellParams, GridRowParams, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowParams, GridToolbarContainer } from '@mui/x-data-grid';
 import dayjs from "dayjs";
 import { BigNumber } from "ethers";
 import { Trans, useTranslation } from "next-i18next";
@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BundleData } from "../../backend/bundle_data";
 import { showBundle } from "../../redux/slices/bundles";
 import { RootState } from "../../redux/store";
+import { bigNumberComparator } from "../../utils/bignumber";
 import { formatBundleState } from "../../utils/bundles";
 import { ga_event } from "../../utils/google_analytics";
 import { formatCurrencyBN } from "../../utils/numbers";
@@ -22,7 +23,6 @@ import { calculateStakeUsage, isStakingSupported } from "../../utils/staking";
 import { LinkBehaviour } from "../link_behaviour";
 import Timestamp from "../timestamp";
 import StakeUsageIndicator from "./stake_usage_indicator";
-import { bigNumberComparator } from "../../utils/bignumber";
 
 export interface BundlesProps {
     usd2: string;
@@ -55,7 +55,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'id', 
             headerName: t('table.header.id'), 
             flex: 0.2,
-            valueGetter: (params: GridValueGetterParams) => params.row,
+            valueGetter: (_value, row) => row,
             renderCell: (params: GridRenderCellParams<BundleData>) => {
                 if (params.value?.owner === address) {
                     return (<>{params.value?.id} &nbsp; <FontAwesomeIcon icon={faUser} /></>)
@@ -73,16 +73,16 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'state', 
             headerName: t('table.header.state'), 
             flex: 0.3,
-            valueGetter: (params: GridValueGetterParams) => params.row,
-            valueFormatter: (params: GridValueFormatterParams<BundleData>) => formatBundleState(params.value!, t),
+            valueGetter: (_value, row) => row,
+            valueFormatter: (value: BundleData) => formatBundleState(value!, t),
             sortComparator: (v1: BundleData, v2: BundleData) =>  v2.state - v1.state,
         },
         {
             field: 'apr',
             headerName: t('table.header.apr'),
             flex: 0.3,
-            valueFormatter: (params: GridValueFormatterParams<number>) => {
-                return `${params.value.toFixed(2)}%`
+            valueFormatter: (value: number) => {
+                return `${value.toFixed(2)}%`
             },
             sortComparator: (v1: number, v2: number) =>  v2 - v1,
         },
@@ -90,9 +90,9 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'balance', 
             headerName: t('table.header.balance'), 
             flex: 0.65,
-            valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
-            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
-                const capital = formatCurrencyBN(params.value, props.usd2Decimals, 2);
+            valueGetter: (value, _row) => BigNumber.from(value),
+            valueFormatter: (value: BigNumber) => {
+                const capital = formatCurrencyBN(value, props.usd2Decimals, 2);
                 return `${props.usd2} ${capital}`;
             },
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2)
@@ -101,9 +101,9 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'capacity', 
             headerName: t('table.header.capacity'), 
             flex: 0.65,
-            valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
-            valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
-                const capacity = formatCurrencyBN(params.value, props.usd2Decimals, 2);
+            valueGetter: (value, _row) => BigNumber.from(value),
+            valueFormatter: (value: BigNumber) => {
+                const capacity = formatCurrencyBN(value, props.usd2Decimals, 2);
                 return `${props.usd2} ${capacity}`
             },
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2)
@@ -112,7 +112,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'lifetime', 
             headerName: t('table.header.lifetime'), 
             flex: 0.5,
-            valueGetter: (params: GridValueGetterParams) => params.row,
+            valueGetter: (_value, row) => row,
             colSpan: 1,
             renderCell: (params: GridRenderCellParams<BundleData>) => {
                 const bundle = params.value!;
@@ -136,7 +136,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             type: 'actions',
             flex: 0.2,
             headerName: '', 
-            valueGetter: (params: GridValueGetterParams) => params.row,
+            valueGetter: (_value, row) => row,
             getActions: (params: GridRowParams) => {
                 const bundleData = params.row as BundleData;
                 return [
@@ -162,9 +162,9 @@ export default function BundlesListDesktop(props: BundlesProps) {
             field: 'stakeUsage', 
             headerName: t('table.header.stake_usage'), 
             flex: 0.3,
-            valueGetter: (params: GridValueGetterParams) => {
-                const capitalSupport = params.row.capitalSupport !== undefined ? BigNumber.from(params.row.capitalSupport) : undefined;
-                const lockedCapital = params.row.locked !== undefined ? BigNumber.from(params.row.locked) : BigNumber.from(0);
+            valueGetter: (_value, row) => {
+                const capitalSupport = row.capitalSupport !== undefined ? BigNumber.from(row.capitalSupport) : undefined;
+                const lockedCapital = row.locked !== undefined ? BigNumber.from(row.locked) : BigNumber.from(0);
                 let stakeUsage = calculateStakeUsage(capitalSupport, lockedCapital);
                 return [ stakeUsage, capitalSupport, lockedCapital, props.usd2, props.usd2Decimals ];
             },
@@ -237,11 +237,9 @@ export default function BundlesListDesktop(props: BundlesProps) {
                 rows={bundles.filter((bundle) => showAllBundles || bundle.owner === address)} 
                 columns={columns} 
                 getRowId={(row) => row.id}
-                components={{
-                    Toolbar: GridToolbar,
-                }}
                 slots={{
                     noRowsOverlay: NoRowsOverlay,
+                    toolbar: GridToolbar,
                 }}
                 initialState={{
                     sorting: {
@@ -254,7 +252,6 @@ export default function BundlesListDesktop(props: BundlesProps) {
                 onPaginationModelChange={setPaginationModel}
                 disableRowSelectionOnClick={true}
                 disableColumnMenu={true}
-                columnBuffer={9}
                 />
         </>
     );

@@ -3,13 +3,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Alert, AlertTitle, Container, Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { grey } from "@mui/material/colors";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import LinearProgress from "@mui/material/LinearProgress";
 import Link from "@mui/material/Link";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
-import { DataGrid, GridColDef, gridNumberComparator, GridRenderCellParams, GridSortCellParams, gridStringOrNumberComparator, GridToolbarContainer, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
+import { grey } from "@mui/material/colors";
+import { DataGrid, GridColDef, GridRenderCellParams, GridSortCellParams, GridToolbarContainer, gridNumberComparator, gridStringOrNumberComparator } from '@mui/x-data-grid';
 import { BigNumber } from "ethers";
 import { Trans, useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -243,7 +243,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'id', 
             headerName: t('table.header.policyId'), 
             flex: 0.8,
-            valueGetter: (params: GridValueGetterParams) => params.row,
+            valueGetter: (_value, row) => row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 if (params.value.id === '') {
                     return (<></>);
@@ -257,7 +257,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'protectedWallet', 
             headerName: t('table.header.walletAddress'), 
             flex: 0.8,
-            valueGetter: (params: GridValueGetterParams) => params.row,
+            valueGetter: (_value, row) => row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return (<><Address address={params.value!.protectedWallet} iconColor="secondary.main" />{protectedByBadge(params.value!)}</>);
             },
@@ -268,7 +268,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'protectedAmount', 
             headerName: t('table.header.protectedAmount'), 
             flex: 0.8,
-            valueGetter: (params: GridValueGetterParams) => params.row,
+            valueGetter: (_value, row) => row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 const protectedAmount = BigNumber.from(params.value!.protectedAmount);
                 const payoutCap = BigNumber.from(params.value!.payoutCap || 0);
@@ -293,7 +293,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'coverageUntil', 
             headerName: t('table.header.coverageUntil'), 
             flex: 0.7,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+            valueGetter: (_value, row) => row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 if (! isActivePolicy(params.value!)) {
                     return (<></>);
@@ -311,7 +311,7 @@ export default function Policies(props: PoliciesProps) {
             field: 'applicationState', 
             headerName: t('table.header.status'), 
             flex: 0.9,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+            valueGetter: (_value, row) => row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return render_application_state(params.value!);
             },
@@ -326,7 +326,7 @@ export default function Policies(props: PoliciesProps) {
             headerName: t('table.header.action'), 
             sortable: false,
             flex: 0.6,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+            valueGetter: (_value, row) => row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return renderClaimCell(params.value!);
             },
@@ -397,11 +397,9 @@ export default function Policies(props: PoliciesProps) {
                 rows={policies} 
                 columns={columns} 
                 getRowId={(row) => row.id}
-                components={{
-                    Toolbar: GridToolbar,
-                }}
                 slots={{
                     noRowsOverlay: NoRowsOverlay,
+                    toolbar: GridToolbar,
                 }}
                 initialState={{
                     sorting: {
@@ -414,7 +412,6 @@ export default function Policies(props: PoliciesProps) {
                 onPaginationModelChange={setPaginationModel}
                 disableRowSelectionOnClick={true}
                 disableColumnMenu={true}
-                columnBuffer={7}
                 />
         </>
     );
