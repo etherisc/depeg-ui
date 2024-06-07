@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next";
 import { useSnackbar } from "notistack";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from "@fortawesome/free-solid-svg-icons";
-import { useMediaQuery, useTheme } from "@mui/material";
+import { Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function LoginWithMetaMaskButton(props: any) {
@@ -50,10 +50,15 @@ export default function LoginWithMetaMaskButton(props: any) {
     
     if (! isConnected ) {
         button = (
-            <Button variant="contained" color="secondary" onClick={login} sx={{ mr: 1}} fullWidth>
-                <FontAwesomeIcon icon={faRightToBracket} className="fa" />
-                {buttonText}
-            </Button>
+            <div>
+                <Button variant="contained" color="secondary" onClick={login} sx={{ mr: 1}} fullWidth>
+                    <FontAwesomeIcon icon={faRightToBracket} className="fa" />
+                    {buttonText}
+                </Button>
+                <Typography sx={{ textAlign: 'center' }} color="ButtonText">
+                    <small>(MetaMask, Rabby Wallet, Coinbase Wallet, ...)</small>
+                </Typography>
+            </div>
         );
     }
 
