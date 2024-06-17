@@ -28,7 +28,7 @@
     "@mui/icons-material": "^5.15.19",
     "@mui/material": "^5.15.18",
     "@mui/x-data-grid": "^7.5.1",
-    "@mui/x-date-pickers": "^7.5.1",
+    "@mui/x-date-pickers": "^7.7.0",
     "@reduxjs/toolkit": "^2.2.5",
     "@web3modal/ethereum": "^2.7.1",
     "@web3modal/react": "^2.7.1",
