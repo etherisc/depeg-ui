@@ -200,26 +200,26 @@ git push <dokku-remote-repo> <branch-to-deploy>:main
 
 #### Initial instance setup
 
-Replace application name (`goerli-setup`) with whatever fits your need. DNS is expected to be prepared in advance.
+Replace application name (`amoy-setup`) with whatever fits your need. DNS is expected to be prepared in advance.
 
 ```
 # create dokku application 
-dokku apps:create goerli-depeg
+dokku apps:create amoy-depeg
 
 # add new domain and remove default domain
-dokku domains:add goerli-depeg depeg.goerli.etherisc.com
-dokku domains:remove goerli-depeg goerli-depeg.depeg-test.etherisc.com
+dokku domains:add amoy-depeg depeg.amoy.etherisc.com
+dokku domains:remove amoy-depeg amoy-depeg.depeg-test.etherisc.com
 
 # configure dokku docker build to load correct instance environment during build
-dokku docker-options:add goerli-depeg build --build-arg INSTANCE=goerli
+dokku docker-options:add amoy-depeg build --build-arg INSTANCE=amoy
 
 # set correct proxy ports for http and https
-dokku proxy:ports-add goerli-depeg https:443:3000
-dokku proxy:ports-add goerli-depeg http:80:3000
-dokku proxy:ports-remove goerli-depeg http:80:5000
+dokku ports:add amoy-depeg https:443:3000
+dokku ports:add amoy-depeg http:80:3000
+dokku ports:remove amoy-depeg http:80:5000
 
 # create redis service
-dokku redis:create depeg-test-goerli-redis -i redis/redis-stack-server -I 7.2.0-v0
+dokku redis:create depeg-amoy-redis -i redis/redis-stack-server -I 7.2.0-v0
 
 # now you need to manually enable redissearch and redisjson modules in the redis config (replace 'depeg-mumbai-redis' below with correct service name)
 vi /var/lib/dokku/services/redis/depeg-mumbai-redis/config/redis.conf
@@ -228,20 +228,20 @@ vi /var/lib/dokku/services/redis/depeg-mumbai-redis/config/redis.conf
 # loadmodule /opt/redis-stack/lib/rejson.so
 
 # restart redis service
-dokku redis:restart depeg-mumbai-redis
+dokku redis:restart depeg-amoy-redis
 # link the redis service to the app
-dokku redis:link depeg-test-goerli-redis goerli-depeg
+dokku redis:link depeg-amoy-redis amoy-depeg
 
 # now push deployment via git 
-# 1. add new git remote 'git remote add dokku-goerli dokku@<host>:goerli-depeg'
-# 2. 'git push dokku-goerli develop:main'
+# 1. add new git remote 'git remote add dokku-amoy  dokku@<host>:amoy-depeg'
+# 2. 'git push dokku-amoy develop:main'
 
 # enable let's encrypt for https certificates
-dokku letsencrypt:enable goerli-depeg
+dokku letsencrypt:enable amoy-depeg
 
 # configure backend chain rpc url
-dokku config:set goerli-depeg BACKEND_CHAIN_RPC_URL=<chain rpc url>
-dokku config:set goerli-depeg HOSTNAME=0.0.0.0
+dokku config:set amoy-depeg BACKEND_CHAIN_RPC_URL=<chain rpc url>
+dokku config:set amoy-depeg HOSTNAME=0.0.0.0
 
 # initial update of the bundle cache (probably empty)
 curl https://<application-url>/api/bundles/update
@@ -251,8 +251,8 @@ curl https://<application-url>/api/prices/fetch
 # app should be ready now - open in browser
 
 # do not forget to configure a cronjob to regularly update the bundles. e.g.
-# '*/5 * * * * curl https://depeg.goerli.etherisc.com/api/bundles/update'
-# '* * * * * curl https://depeg.goerli.etherisc.com/api/prices/fetch'
+# '*/5 * * * * curl https://depeg.amoy.etherisc.com/api/bundles/update'
+# '* * * * * curl https://depeg.amoy.etherisc.com/api/prices/fetch'
 ```
 
 #### Dokku redis debug connection
