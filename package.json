@@ -29,7 +29,7 @@
     "@mui/material": "^5.15.20",
     "@mui/x-data-grid": "^7.7.0",
     "@mui/x-date-pickers": "^7.7.0",
-    "@reduxjs/toolkit": "^2.2.5",
+    "@reduxjs/toolkit": "^2.2.6",
     "@web3modal/ethereum": "^2.7.1",
     "@web3modal/react": "^2.7.1",
     "abi-coder": "^4.1.1",
