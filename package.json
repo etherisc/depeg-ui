@@ -37,7 +37,7 @@
     "chart.js": "^4.4.3",
     "chartjs-adapter-moment": "^1.0.1",
     "color": "^4.2.3",
-    "dayjs": "^1.11.12",
+    "dayjs": "^1.11.13",
     "ethers": "^5.7.2",
     "i18next": "^22.5.1",
     "moment": "^2.30.1",
