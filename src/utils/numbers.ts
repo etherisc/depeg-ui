@@ -1,9 +1,6 @@
 import { BigNumber } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 
-export const THOUSANDS_SEPARATOR = Intl.NumberFormat().format(11111).replace(/\p{Number}/gu, '');
-export const DECIMAL_SEPARATOR = Intl.NumberFormat().format(1.1).replace(/\p{Number}/gu, '');
-
 export const DISPLAY_PRECISION = parseInt(process.env.NEXT_PUBLIC_DEPECT_TOKEN_DISPLAY_PRECISION || '2');
 export const USD1_DECIMALS = parseInt(process.env.NEXT_PUBLIC_DEPEG_USD1_DECIMALS || '6');
 export const USD2_DECIMALS = parseInt(process.env.NEXT_PUBLIC_DEPEG_USD1_DECIMALS || '6');
