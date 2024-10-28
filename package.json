@@ -70,7 +70,7 @@
     "@typechain/ethers-v5": "^11.1.2",
     "@types/canvas-confetti": "^1.6.4",
     "@types/color": "^3.0.6",
-    "@types/jest": "^29.5.13",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22",
     "@types/react": "^18.3.6",
     "@types/react-blockies": "^1.4.4",
