@@ -1,6 +1,6 @@
 {
   "name": "depeg-interface",
-  "version": "1.2.14",
+  "version": "1.2.15",
   "private": true,
   "scripts": {
     "postinstall": "$npm_execpath run typechainDepegTypes && $npm_execpath run typechainRegistryTypes && $npm_execpath run typechainChainlinkTypes",
