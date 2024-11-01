@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { redisClient } from "../../utils/redis";
 import { PendingApplication, getPendingApplicationRepository } from "../../utils/pending_application";
 import { EntityId } from "redis-om";
+import { ulid } from "ulid";
 
 export const STREAM_KEY = process.env.REDIS_QUEUE_STREAM_KEY ?? "application:signatures";
 
@@ -58,7 +59,8 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
 
     // store pending application in redis
     const repo = await getPendingApplicationRepository();
-    const savedEntity = await repo.save({
+    const entityId = ulid();
+    await repo.save(entityId, {
         policyHolder: policyHolder,
         protectedWallet: protectedWallet,
         protectedBalance: protectedBalance.toString(),
@@ -69,11 +71,6 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse) {
         transactionHash: null,
         timestamp: new Date(),
     });
-    const entityId = savedEntity[EntityId];
-    if (entityId === undefined) {
-        res.status(500).send("Failed to create pending application");
-        return;
-    }
     console.log("created pending application", signatureId, entityId);
 
     // push message to stream (queue)
