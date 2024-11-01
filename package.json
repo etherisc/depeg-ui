@@ -54,8 +54,9 @@
     "react-i18next": "^12.3.1",
     "react-redux": "^9.1.2",
     "redis": "^4.7.0",
-    "redis-om": "^0.4.3",
+    "redis-om": "^0.4.7",
     "request-ip": "^3.3.0",
+    "ulid": "^2.3.0",
     "viem": "^1.21.1",
     "wagmi": "^1.4.13"
   },
