@@ -51,7 +51,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
-    "react-i18next": "^12.3.1",
+    "react-i18next": "^15.4.0",
     "react-redux": "^9.2.0",
     "redis": "^4.7.0",
     "redis-om": "^0.4.7",
