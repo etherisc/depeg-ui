@@ -35,7 +35,13 @@
         "duration": "Min / max duration",
         "apr": "APR",
         "capacity": "Available",
-        "stake_usage": "Stakes"
+        "stake_usage": "Stakes",
+        "help": {
+            "apr": "Annual percentage return used to price protection in this risk bundle.",
+            "suminsured": "Minimum and maximum {{currency}} amount that can be protected by this risk bundle.",
+            "duration": "Minimum and maximum coverage duration supported by this risk bundle.",
+            "capacity": "Remaining {{currency}} capacity available for new protections in this risk bundle."
+        }
     },
     "confirmation": {
         "alert": {

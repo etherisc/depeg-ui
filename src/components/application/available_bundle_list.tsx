@@ -1,4 +1,4 @@
-import { Table, TableHead, TableRow, TableCell, TableBody, Typography, LinearProgress, styled, tableCellClasses, Alert } from "@mui/material";
+import { Table, TableHead, TableRow, TableCell, TableBody, Typography, LinearProgress, styled, tableCellClasses, Alert, Tooltip } from "@mui/material";
 import { blue, blueGrey } from "@mui/material/colors";
 import Paper from "@mui/material/Paper";
 import TableContainer from "@mui/material/TableContainer";
@@ -64,6 +64,16 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
         );
     }
 
+    function headerWithTooltip(label: string, tooltip: string) {
+        return (
+            <Tooltip title={tooltip} arrow>
+                <Typography component="span" sx={{ cursor: 'help', textDecoration: 'underline dotted' }}>
+                    {label}
+                </Typography>
+            </Tooltip>
+        );
+    }
+
     return (<>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>{t('bundles.title')}</Typography>
             {progress}
@@ -73,10 +83,18 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
                         <TableRow>
                             <StyledTableCell>{t('bundles.id')}</StyledTableCell>
                             <StyledTableCell>{t('bundles.name')}</StyledTableCell>
-                            <StyledTableCell align="right">{t('bundles.apr')}</StyledTableCell>
-                            <StyledTableCell align="right">{t('bundles.suminsured', { currency: props.currency })}</StyledTableCell>
-                            <StyledTableCell align="right">{t('bundles.duration')}</StyledTableCell>
-                            <StyledTableCell align="right">{t('bundles.capacity', { currency: props.currency })}</StyledTableCell>
+                            <StyledTableCell align="right">
+                                {headerWithTooltip(t('bundles.apr'), t('bundles.help.apr'))}
+                            </StyledTableCell>
+                            <StyledTableCell align="right">
+                                {headerWithTooltip(t('bundles.suminsured', { currency: props.currency }), t('bundles.help.suminsured', { currency: props.currency }))}
+                            </StyledTableCell>
+                            <StyledTableCell align="right">
+                                {headerWithTooltip(t('bundles.duration'), t('bundles.help.duration'))}
+                            </StyledTableCell>
+                            <StyledTableCell align="right">
+                                {headerWithTooltip(t('bundles.capacity', { currency: props.currency }), t('bundles.help.capacity', { currency: props.currency }))}
+                            </StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

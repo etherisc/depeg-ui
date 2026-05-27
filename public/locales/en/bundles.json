@@ -12,6 +12,12 @@
             "created": "Created",
             "stake_usage": "Stakes",
             "apr": "APR"
+        },
+        "help": {
+            "apr": "Annual percentage return earned by the risk bundle owner.",
+            "balance": "Total capital currently held by the risk bundle.",
+            "capacity": "Capital still available for new protections.",
+            "stake_usage": "How much of the DIP-supported capacity is currently used by locked capital."
         }
     },  
     "no_bundles": "No risk bundles found - \u00A0<0>click here</0>\u00A0to create a new risk bundle",
