@@ -80,7 +80,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ coverageUntilMin, setCoverageUntilMin ] = useState(dayjs().add(props.applicationApi.coverageDurationDaysMin, 'days'));
     const [ coverageUntilMax, setCoverageUntilMax ] = useState(dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days'));
     
-    const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IAplicationFormValues>({ 
+    const { handleSubmit, control, formState, getFieldState, getValues, setValue, trigger, watch } = useForm<IAplicationFormValues>({
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
@@ -102,14 +102,15 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     const errors = useMemo(() => formState.errors, [formState]);
 
-    const validateFormState = useCallback(() => {
+    const validateFormState = useCallback(async () => {
         // console.log("validateFormState");
-        if (formState.touchedFields.protectedAmount === undefined) {
+        if (!getFieldState("protectedAmount").isTouched) {
             console.log("amount not touched, not calculating premium...");
             return false;
         }
 
-        if (errors.coverageDuration !== undefined || errors.insuredWallet !== undefined || errors.protectedAmount !== undefined) {
+        const formFieldsAreValid = await trigger(["protectedAmount", "coverageDuration", "coverageEndDate"]);
+        if (!formFieldsAreValid) {
             console.log("Form is invalid, not calculating premium...");
             return false;
         }
@@ -119,7 +120,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             return false;
         }
         return true;
-    }, [errors, formState.touchedFields.protectedAmount, bundles.length]);
+    }, [bundles.length, getFieldState, trigger]);
 
     const getPremiumParameters = useCallback(() => {
         // console.log("getPremiumParameters");
@@ -132,7 +133,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     const calculatePremium = useCallback(async () => {
         // console.log("calculatePremium");
-        if ( ! validateFormState()) {
+        if ( ! await validateFormState()) {
             console.log("form not valid, not calculating premium");
             dispatch(setApplicableBundleIds(undefined));
             dispatch(clearPremium());
@@ -212,13 +213,16 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             setCoverageDaysMin(minCoverageDays);
             setCoverageDaysMax(maxCoverageDays);
             const coverageDays = maxCoverageDays < 30 ? maxCoverageDays : 30;
-            setValue("coverageDuration", coverageDays.toString());
-            setValue("coverageEndDate", dayjs().add(coverageDays, 'days'));
+            setValue("coverageDuration", coverageDays.toString(), { shouldValidate: true });
+            setValue("coverageEndDate", dayjs().add(coverageDays, 'days'), { shouldValidate: true });
             setCoverageUntilMin(dayjs().add(minCoverageDays, 'days'));
             setCoverageUntilMax(dayjs().add(maxCoverageDays, 'days'));
 
+            if (getFieldState("protectedAmount").isTouched) {
+                void calculatePremium();
+            }
         }
-    }, [bundles, props.usd1Decimals, setValue]);
+    }, [bundles, calculatePremium, getFieldState, props.usd1Decimals, setValue]);
 
     const switchBundle = useCallback(async (bundle: BundleData) => {
         const { insuredWallet, protectedAmount, coverageSeconds } = getPremiumParameters();
@@ -250,6 +254,19 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
     const walletUsd1BalanceBN = BigNumber.from(walletUsd1Balance.amount);
+
+    function coverageEndDateErrorText(): string {
+        if (errors.coverageEndDate === undefined) {
+            return "";
+        }
+        if (errors.coverageEndDate.type === "minDate") {
+            return t("error.field.min", { ns: "common", minValue: coverageUntilMin.format("DD.MM.YYYY") });
+        }
+        if (errors.coverageEndDate.type === "maxDate") {
+            return t("error.field.max", { ns: "common", maxValue: coverageUntilMax.format("DD.MM.YYYY") });
+        }
+        return t(`error.field.${errors.coverageEndDate.type}`, { ns: "common" });
+    }
 
     return (<>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -341,7 +358,14 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 {...field} 
                                 onBlur={async (e) => { 
                                     field.onBlur(); 
-                                    setValue("coverageEndDate", dayjs().startOf('day').add(parseInt(e.target.value), 'days'));
+                                    const durationDays = parseInt(e.target.value, 10);
+                                    if (!Number.isNaN(durationDays)) {
+                                        setValue(
+                                            "coverageEndDate",
+                                            dayjs().startOf('day').add(durationDays, 'days'),
+                                            { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+                                        );
+                                    }
                                     await calculatePremium();
                                 }}
                                 InputProps={{
@@ -361,7 +385,13 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Controller
                         name="coverageEndDate"
                         control={control}
-                        rules={{ required: true }}
+                        rules={{
+                            required: true,
+                            validate: {
+                                minDate: (value) => value === null || !value.startOf('day').isBefore(coverageUntilMin.startOf('day')),
+                                maxDate: (value) => value === null || !value.startOf('day').isAfter(coverageUntilMax.startOf('day')),
+                            }
+                        }}
                         render={({ field }) => 
                             <DatePicker
                                 {...field} 
@@ -371,11 +401,20 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 slotProps={{ 
                                     textField: { 
                                         variant: INPUT_VARIANT,
-                                        fullWidth: true, 
+                                        fullWidth: true,
+                                        error: errors.coverageEndDate !== undefined,
+                                        helperText: coverageEndDateErrorText(),
+                                        inputProps: {
+                                            "data-testid": "coverageEndDate",
+                                        },
                                     }
                                 }}
                                 onAccept={async (date) => {
-                                    setValue("coverageDuration", dayjs(date).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
+                                    setValue(
+                                        "coverageDuration",
+                                        dayjs(date).startOf('day').diff(dayjs().startOf('day'), 'days').toString(),
+                                        { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+                                    );
                                     await calculatePremium();
                                 }}
                                 disablePast={true}
