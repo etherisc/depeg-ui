@@ -1,6 +1,6 @@
 import { faEye, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Alert, Container, FormControlLabel, Switch, useTheme } from "@mui/material";
+import { Alert, Container, FormControlLabel, Switch, Tooltip, useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -50,6 +50,16 @@ export default function BundlesListDesktop(props: BundlesProps) {
         setShowAllBundles(!showAllBundles);
     }
 
+    function renderHeaderWithTooltip(label: string, tooltip: string) {
+        return (
+            <Tooltip title={tooltip} arrow>
+                <Typography component="span" sx={{ cursor: 'help', textDecoration: 'underline dotted', fontWeight: 500 }}>
+                    {label}
+                </Typography>
+            </Tooltip>
+        );
+    }
+
     const columns: GridColDef[] = [
         { 
             field: 'id', 
@@ -80,6 +90,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
         {
             field: 'apr',
             headerName: t('table.header.apr'),
+            renderHeader: () => renderHeaderWithTooltip(t('table.header.apr'), t('table.help.apr')),
             flex: 0.3,
             valueFormatter: (value: number) => {
                 return `${value.toFixed(2)}%`
@@ -89,6 +100,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
         { 
             field: 'balance', 
             headerName: t('table.header.balance'), 
+            renderHeader: () => renderHeaderWithTooltip(t('table.header.balance'), t('table.help.balance')),
             flex: 0.65,
             valueGetter: (value, _row) => BigNumber.from(value),
             valueFormatter: (value: BigNumber) => {
@@ -100,6 +112,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
         { 
             field: 'capacity', 
             headerName: t('table.header.capacity'), 
+            renderHeader: () => renderHeaderWithTooltip(t('table.header.capacity'), t('table.help.capacity')),
             flex: 0.65,
             valueGetter: (value, _row) => BigNumber.from(value),
             valueFormatter: (value: BigNumber) => {
@@ -161,6 +174,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
         columns.splice(6, 0, {
             field: 'stakeUsage', 
             headerName: t('table.header.stake_usage'), 
+            renderHeader: () => renderHeaderWithTooltip(t('table.header.stake_usage'), t('table.help.stake_usage')),
             flex: 0.3,
             valueGetter: (_value, row) => {
                 const capitalSupport = row.capitalSupport !== undefined ? BigNumber.from(row.capitalSupport) : undefined;
