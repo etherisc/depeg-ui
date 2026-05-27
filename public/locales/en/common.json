@@ -34,6 +34,8 @@
         "unexpected_network_title": "Unexpected network",
         "unexpected_network": "Please connect your wallet to '{{network}}'",
         "metamask_not_found": "Missing metamask plugin - get it from",
+        "wallet_provider_missing": "No browser wallet provider was found.",
+        "switch_network_failed": "Network switch failed.",
         "wallet_connect_failed": "WalletConnect login failed or cancelled",
         "field": {
             "required": "This field is required",
