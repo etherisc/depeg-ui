@@ -104,8 +104,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
     const validateFormState = useCallback(() => {
         // console.log("validateFormState");
-        if (formState.touchedFields.protectedAmount === undefined) {
-            console.log("amount not touched, not calculating premium...");
+        if (getValues().protectedAmount === undefined || getValues().protectedAmount === "") {
+            console.log("amount empty, not calculating premium...");
             return false;
         }
 
@@ -372,11 +372,24 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                     textField: { 
                                         variant: INPUT_VARIANT,
                                         fullWidth: true, 
+                                        error: errors.coverageEndDate !== undefined || field.value?.isBefore(coverageUntilMin, 'day') || field.value?.isAfter(coverageUntilMax, 'day'),
+                                        helperText: errors.coverageEndDate !== undefined 
+                                            ? t('error.field.required', { ns: 'common' }) 
+                                            : (field.value?.isBefore(coverageUntilMin, 'day')
+                                                ? t('error.field.min', { ns: 'common', minValue: coverageUntilMin.format('DD.MM.YYYY') }) 
+                                                : (field.value?.isAfter(coverageUntilMax, 'day')
+                                                    ? t('error.field.max', { ns: 'common', maxValue: coverageUntilMax.format('DD.MM.YYYY') }) 
+                                                    : ""
+                                                )
+                                            )
                                     }
                                 }}
-                                onAccept={async (date) => {
-                                    setValue("coverageDuration", dayjs(date).startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
-                                    await calculatePremium();
+                                onChange={async (date) => {
+                                    field.onChange(date);
+                                    if (date && date.isValid()) {
+                                        setValue("coverageDuration", dayjs(date).startOf('day').diff(dayjs().startOf('day'), 'days').toString(), { shouldValidate: true }); 
+                                        await calculatePremium();
+                                    }
                                 }}
                                 disablePast={true}
                                 minDate={coverageUntilMin}

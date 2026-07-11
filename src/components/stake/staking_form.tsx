@@ -234,6 +234,16 @@ export default function StakingForm(props: StakingFormProperties) {
                                     textField: { 
                                         variant: INPUT_VARIANT,
                                         fullWidth: true, 
+                                        error: errors.lifetimeEndDate !== undefined || field.value?.isBefore(minLifetimeEndDate, 'day') || field.value?.isAfter(maxLifetimeEndDate, 'day'),
+                                        helperText: errors.lifetimeEndDate !== undefined 
+                                            ? t('error.field.required', { ns: 'common' }) 
+                                            : (field.value?.isBefore(minLifetimeEndDate, 'day')
+                                                ? t('error.field.min', { ns: 'common', minValue: minLifetimeEndDate.format('DD.MM.YYYY') }) 
+                                                : (field.value?.isAfter(maxLifetimeEndDate, 'day')
+                                                    ? t('error.field.max', { ns: 'common', maxValue: maxLifetimeEndDate.format('DD.MM.YYYY') }) 
+                                                    : ""
+                                                )
+                                            )
                                     }
                                 }}
                                 disablePast={true}

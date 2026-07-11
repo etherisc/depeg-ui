@@ -5,7 +5,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { BigNumber } from "ethers";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { BundleData } from "../../backend/bundle_data";
 import { INPUT_VARIANT } from "../../config/theme";
@@ -44,7 +44,7 @@ export default function BundleExtendForm(props: BundleExtendFormProps) {
         }
     });
 
-    // const errors = useMemo(() => formState.errors, [formState]);
+    const errors = useMemo(() => formState.errors, [formState]);
     
     const onSubmit: SubmitHandler<IFundFormValues> = async data => {
         console.log("submit clicked", data);
@@ -83,6 +83,16 @@ export default function BundleExtendForm(props: BundleExtendFormProps) {
                                     textField: { 
                                         variant: INPUT_VARIANT,
                                         fullWidth: true, 
+                                        error: errors.extensionEndDate !== undefined || field.value?.isBefore(minExtensionDate, 'day') || field.value?.isAfter(maxExtensionDate, 'day'),
+                                        helperText: errors.extensionEndDate !== undefined 
+                                            ? t('error.field.required', { ns: 'common' }) 
+                                            : (field.value?.isBefore(minExtensionDate, 'day')
+                                                ? t('error.field.min', { ns: 'common', minValue: minExtensionDate.format('DD.MM.YYYY') }) 
+                                                : (field.value?.isAfter(maxExtensionDate, 'day')
+                                                    ? t('error.field.max', { ns: 'common', maxValue: maxExtensionDate.format('DD.MM.YYYY') }) 
+                                                    : ""
+                                                )
+                                            )
                                     }
                                 }}
                                 disablePast={true}
