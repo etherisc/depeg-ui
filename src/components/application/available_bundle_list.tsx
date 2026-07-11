@@ -73,10 +73,10 @@ export function AvailableBundleList(props: AvailableBundleListProps) {
                         <TableRow>
                             <StyledTableCell>{t('bundles.id')}</StyledTableCell>
                             <StyledTableCell>{t('bundles.name')}</StyledTableCell>
-                            <StyledTableCell align="right">{t('bundles.apr')}</StyledTableCell>
+                            <StyledTableCell align="right" title={t('bundles.apr_tooltip') as string}>{t('bundles.apr')}</StyledTableCell>
                             <StyledTableCell align="right">{t('bundles.suminsured', { currency: props.currency })}</StyledTableCell>
                             <StyledTableCell align="right">{t('bundles.duration')}</StyledTableCell>
-                            <StyledTableCell align="right">{t('bundles.capacity', { currency: props.currency })}</StyledTableCell>
+                            <StyledTableCell align="right" title={t('bundles.capacity_tooltip') as string}>{t('bundles.capacity', { currency: props.currency })}</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

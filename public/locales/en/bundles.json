@@ -13,8 +13,8 @@
             "stake_usage": "Stakes",
             "apr": "APR"
         }
-    },  
-    "no_bundles": "No risk bundles found - \u00A0<0>click here</0>\u00A0to create a new risk bundle",
+    },
+    "no_bundles": "No risk bundles found - \u00a0<0>click here</0>\u00a0to create a new risk bundle",
     "action": {
         "create_bundle": "Create new risk bundle",
         "all_mine_bundles": "Show all risk bundles",
@@ -78,5 +78,6 @@
         "actions_only_owner": "Risk bundle management operations are only available to the owner of the risk bundle.",
         "bundle_at_capacity": "The risk bundle is at capacity and cannot accept any more funds.",
         "no_wallet_connected": "Please connect your wallet to view bundles"
-    }
+    },
+    "stake_usage_tooltip": "The stake usage shows the ratio of locked capital to supported capital"
 }
