@@ -80,6 +80,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
         {
             field: 'apr',
             headerName: t('table.header.apr'),
+            description: t('apr'),
             flex: 0.3,
             valueFormatter: (value: number) => {
                 return `${value.toFixed(2)}%`
@@ -99,7 +100,8 @@ export default function BundlesListDesktop(props: BundlesProps) {
         },
         { 
             field: 'capacity', 
-            headerName: t('table.header.capacity'), 
+            headerName: t('table.header.capacity'),
+            description: t('capacity_tooltip'), 
             flex: 0.65,
             valueGetter: (value, _row) => BigNumber.from(value),
             valueFormatter: (value: BigNumber) => {
@@ -160,7 +162,8 @@ export default function BundlesListDesktop(props: BundlesProps) {
     if (isStakingSupported) {
         columns.splice(6, 0, {
             field: 'stakeUsage', 
-            headerName: t('table.header.stake_usage'), 
+            headerName: t('table.header.stake_usage'),
+            description: t('stake_usage_tooltip'), 
             flex: 0.3,
             valueGetter: (_value, row) => {
                 const capitalSupport = row.capitalSupport !== undefined ? BigNumber.from(row.capitalSupport) : undefined;

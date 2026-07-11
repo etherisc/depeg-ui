@@ -35,7 +35,10 @@
         "duration": "Min / max duration",
         "apr": "APR",
         "capacity": "Available",
-        "stake_usage": "Stakes"
+        "stake_usage": "Stakes",
+        "apr_tooltip": "Annual percentage return",
+        "capacity_tooltip": "The capacity is the amount of tokens available to cover new protections",
+        "stake_usage_tooltip": "The stake usage shows the ratio of locked capital to supported capital"
     },
     "confirmation": {
         "alert": {
