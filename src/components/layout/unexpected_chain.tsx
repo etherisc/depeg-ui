@@ -22,9 +22,14 @@ export default function UnexpectedChain() {
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: toHexString(chainId ?? '0') }],
             });
-        } catch(switchError) {
-            // @ts-ignore
-            if (allowAutoAdd && switchError.code === 4902) {
+        } catch(switchError: any) {
+            const isMissingChainError = 
+                switchError.code === 4902 || 
+                switchError?.data?.originalError?.code === 4902 ||
+                switchError?.info?.error?.code === 4902 ||
+                switchError?.message?.includes('Unrecognized chain ID');
+
+            if (allowAutoAdd && isMissingChainError) {
                 addNetwork();
             }
         }
